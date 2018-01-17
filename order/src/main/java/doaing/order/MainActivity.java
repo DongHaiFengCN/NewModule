@@ -7,7 +7,6 @@ import android.widget.Button;
 
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.jakewharton.rxbinding.view.RxView;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
