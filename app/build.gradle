@@ -28,5 +28,7 @@ dependencies {
     implementation project(':common')
     if (!isModule.toBoolean()) {
         implementation project(':order')
+        compile 'com.tencent.bugly:crashreport:2.2.0'
     }
+
 }
