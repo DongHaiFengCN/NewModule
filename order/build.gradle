@@ -1,0 +1,78 @@
+if (isModule.toBoolean()) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+apply plugin: 'com.jakewharton.butterknife'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ moduleName : project.getName() ]
+            }
+        }
+
+    }
+    sourceSets {
+        main {
+            if (isModule.toBoolean()) {
+                manifest.srcFile 'src/main/java/module/AndroidManifest.xml'
+            } else {
+                //  Manifest.srcFile 'src/AndroidManifest.xml'
+
+                //集成开发模式下排除debug文件夹中的所有Java文件
+                java {
+                    exclude 'debug/**'
+                }
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation rootProject.ext.libSupportConstraint
+    implementation project(':common')
+    implementation rootProject.ext.libSupportAppcompat
+    implementation rootProject.ext.libSupportDesign
+
+    //阿里路由
+    //implementation 'com.android.support:support-v13:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    annotationProcessor libArouter_compiler
+
+    //Butterknife
+    implementation rootProject.ext.libButterknife
+    annotationProcessor rootProject.ext.libBbutterknife_compiler
+
+    //RxAndroid 相关库
+    implementation rootProject.ext.libRxAndroid
+    implementation rootProject.ext.libRxJava
+    implementation rootProject.ext.libRxBinding
+    implementation rootProject.ext.libRxBindingAppcompatV7
+    implementation rootProject.ext.libRxBindingDesign
+    //testImplementation 'junit:junit:4.12'
+    testImplementation rootProject.ext.libTestImplementation
+    /*
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'*/
+    implementation project(':common')
+
+
+}

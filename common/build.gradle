@@ -1,0 +1,60 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+
+
+
+    defaultConfig {
+
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    /*    javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ moduleName : project.getName() ]
+            }
+        }*/
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation rootProject.ext.libSupportAppcompat
+    implementation rootProject.ext.libSupportDesign
+
+
+    //网络请求相关库
+    implementation rootProject.ext.libRetrofit
+    implementation rootProject.ext.libGson
+    implementation rootProject.ext.libRetrofitAdapterRxJava
+
+    //图片加载相关库
+    implementation rootProject.ext.libGlide
+
+    // 要与compiler匹配使用，均使用最新版可以保证兼容
+    compile rootProject.ext.libAlibaba
+    //Butterknife
+    implementation rootProject.ext.libButterknife
+    annotationProcessor rootProject.ext.libBbutterknife_compiler
+
+
+    //RxAndroid 相关库
+    implementation rootProject.ext.libRxAndroid
+    implementation rootProject.ext.libRxJava
+
+    implementation rootProject.ext.libRxBinding
+    implementation rootProject.ext.libRxBindingAppcompatV7
+    implementation rootProject.ext.libRxBindingDesign
+}
