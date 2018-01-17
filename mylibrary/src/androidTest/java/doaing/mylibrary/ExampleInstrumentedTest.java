@@ -1,4 +1,4 @@
-package doaing.commom;
+package doaing.mylibrary;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("doaing.commom.test", appContext.getPackageName());
+        assertEquals("doaing.mylibrary.test", appContext.getPackageName());
     }
 }

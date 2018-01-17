@@ -21,7 +21,7 @@ import rx.functions.Action1;
  */
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.bt)
+    @BindView(R2.id.bt)
     Button bt;
 
     @Override

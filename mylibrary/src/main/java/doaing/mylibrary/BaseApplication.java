@@ -1,4 +1,4 @@
-package doaing.commom.application;
+package doaing.mylibrary;
 
 import android.app.Application;
 import android.content.Context;

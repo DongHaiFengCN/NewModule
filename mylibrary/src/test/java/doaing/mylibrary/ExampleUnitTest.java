@@ -1,4 +1,4 @@
-package doaing.commom;
+package doaing.mylibrary;
 
 import org.junit.Test;
 

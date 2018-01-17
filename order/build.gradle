@@ -48,19 +48,15 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation rootProject.ext.libSupportConstraint
-    implementation project(':common')
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
-
     //阿里路由
     //implementation 'com.android.support:support-v13:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     annotationProcessor libArouter_compiler
-
     //Butterknife
     implementation rootProject.ext.libButterknife
     annotationProcessor rootProject.ext.libBbutterknife_compiler
-
     //RxAndroid 相关库
     implementation rootProject.ext.libRxAndroid
     implementation rootProject.ext.libRxJava
@@ -68,10 +64,7 @@ dependencies {
     implementation rootProject.ext.libRxBindingAppcompatV7
     implementation rootProject.ext.libRxBindingDesign
     testImplementation rootProject.ext.libTestImplementation
-
-    implementation project(':common')
-
-    compile 'com.tencent.bugly:crashreport:2.2.0' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
-
-
+    compile 'com.tencent.bugly:crashreport:2.2.0'
+    //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
+    implementation project(':mylibrary')
 }
