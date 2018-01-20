@@ -1,0 +1,14 @@
+<resources>
+    <string name="DishesManagerMainActivity">菜品管理</string>
+    <string name="TasteActivity">编辑口味</string>
+    <string name="DishesActivity">编辑菜品</string>
+    <string name="DishesKindActivity">编辑菜类</string>
+    <string name="PackageActivity">编辑套餐</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="tastel">口味</string>
+    <string name="dishesname">菜品</string>
+    <string name="disheskindname">菜类</string>
+    <string name="taocan">套餐</string>
+    <string name="todo">TODO</string>
+    <string name="yes">添加</string>
+</resources>
