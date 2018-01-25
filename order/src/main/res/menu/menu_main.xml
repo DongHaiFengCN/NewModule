@@ -1,0 +1,16 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.donghaifeng.myapplication.MainActivity">
+
+       <!--<item android:id="@+id/action_cancel"
+           android:title="退出当前账号"
+           app:showAsAction="never"
+         />-->
+
+       <item android:id="@+id/action_search"
+           android:icon="@drawable/animcut"
+           app:showAsAction="ifRoom"
+           android:title="@string/search"/>
+
+</menu>

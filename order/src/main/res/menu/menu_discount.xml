@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.donghaifeng.myapplication.MainActivity">
+
+
+     <item android:id="@+id/reset"
+         app:showAsAction="ifRoom"
+         android:title="打印"
+          />
+
+</menu>

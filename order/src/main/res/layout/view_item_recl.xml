@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/select_ln"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:descendantFocusability="blocksDescendants"
+
+    >
+    <TextView
+        android:id="@+id/item_info"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textColor="@color/md_grey_800"
+        tools:text="item"
+        />
+    <TextView
+        android:id="@+id/price_tv"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="1111"
+        android:gravity="center"
+        />
+    <ImageView
+        android:id="@+id/substruct_iv"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:clickable="true"
+        android:src="@mipmap/icon_jian"
+        android:visibility="invisible"
+        android:text="1"
+        android:padding="15dp"
+        />
+    <TextView
+        android:id="@+id/view_shu"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:text="0.0"
+        android:clickable="true"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/md_black_1000"
+        android:focusable="true"
+        android:visibility="invisible"
+        />
+
+    <ImageView
+        android:id="@+id/addtion_iv"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:src="@mipmap/icon_tj"
+        android:layout_gravity="center"
+        android:text="2"
+        android:padding="15dp"
+
+        />
+
+</LinearLayout>
+

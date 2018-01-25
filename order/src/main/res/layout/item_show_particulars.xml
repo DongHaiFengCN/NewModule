@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/item_show_lin"
+    >
+
+    <TextView
+        android:id="@+id/item_show_mc"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="名称"
+        android:gravity="center_vertical"
+        android:textSize="15dp"
+        android:paddingLeft="20dp"
+        />
+
+    <TextView
+        android:id="@+id/item_show_kw"
+        android:layout_weight="1.2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="口味"
+        android:gravity="center"
+        android:textSize="15dp"
+        />
+    <TextView
+        android:id="@+id/item_show_dj"
+        android:layout_weight="1.4"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="单价"
+        android:gravity="center"
+        android:textSize="15dp"
+        />
+    <TextView
+        android:id="@+id/item_show_sl"
+        android:layout_weight="1.4"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="数量"
+        android:gravity="center"
+        android:textSize="15dp"
+        />
+
+</LinearLayout>

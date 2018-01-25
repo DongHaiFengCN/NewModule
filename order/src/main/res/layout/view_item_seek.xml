@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:background="@drawable/background_select"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:clickable="true"
+        android:addStatesFromChildren="true"
+        android:layout_margin="1dp">
+        <LinearLayout
+            android:id="@+id/item_seek_ln"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/item_seek_info"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:textColor="@color/md_grey_800"
+                tools:text="item"
+
+                />
+            <TextView
+                android:id="@+id/item_seek_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                />
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1.3">
+
+            <RelativeLayout
+                android:id="@+id/view_jian"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/view_shu"
+                android:visibility="invisible">
+                <ImageView
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:layout_centerVertical="true"
+                    android:src="@mipmap/icon_jian"
+                    android:layout_marginLeft="20sp"
+
+                    />
+
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/view_shu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="0"
+                android:inputType="number"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:textColor="@color/md_black_1000"
+                android:visibility="invisible"
+                />
+
+            <RelativeLayout
+                android:id="@+id/view_tj"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/view_shu">
+
+                <ImageView
+
+                    android:layout_width="20sp"
+                    android:layout_height="20sp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="20sp"
+                    android:src="@mipmap/icon_tj"
+                    />
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>
+

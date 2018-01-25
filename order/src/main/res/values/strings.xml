@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">Order</string>
+    <string name="search">搜索</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_main">点餐</string>
+    <string name="title_activity_pay">账单结算</string>
+    <string name="title_activity_discount">账单优惠</string>
+    <string name="title_activity_sale">会员特惠</string>
+    <string name="zm">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 </resources>

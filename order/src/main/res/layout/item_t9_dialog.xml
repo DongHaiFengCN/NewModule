@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/md_white_1000">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/item_tv_caipin"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="1111"
+            android:textSize="20dp"
+            android:textColor="@color/md_black_1000"
+            android:gravity="center"
+            android:layout_marginLeft="20dp"
+            />
+
+            <CheckBox
+                android:id="@+id/item_ck_caipin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="30dp"
+                android:button="@drawable/caipincheck"
+                android:layout_centerVertical="true"
+                android:clickable="false"
+                />
+
+
+
+    </RelativeLayout>
+
+
+</LinearLayout>

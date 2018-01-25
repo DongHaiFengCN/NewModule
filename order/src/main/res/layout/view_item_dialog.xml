@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="800dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/view_dialog_recycler"
+        >
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+    <doaing.order.view.AmountView
+        android:id="@+id/amount_view"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:gravity="center"
+        app:btnTextSize="14sp"
+        app:btnWidth="50dp"
+        app:tvWidth="70dp"
+
+        />
+
+    <TextView
+
+        android:id="@+id/price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="left"
+        android:padding="12dp"
+        android:text="0￥"
+        android:textColor="@color/md_blue_grey_800"
+        android:textSize="18dp" />
+</LinearLayout>
