@@ -4,11 +4,11 @@
     tools:context="com.example.menutest.MainActivity" >
 
     <item
-        android:id="@+id/action_search"
-        android:title="搜索"
+        android:id="@+id/action_delet"
+        android:title="删除"
         app:showAsAction="always"
-        android:icon="@mipmap/ic_launcher"
-        app:actionViewClass="android.support.v7.widget.SearchView" />
+        android:icon="@mipmap/icon_delet_dishe"
+       />
 
 
 </menu>

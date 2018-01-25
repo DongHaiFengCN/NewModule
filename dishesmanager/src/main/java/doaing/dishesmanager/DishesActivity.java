@@ -23,6 +23,7 @@ import com.couchbase.lite.Expression;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.LiveQueryChange;
 import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Log;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
@@ -295,11 +296,11 @@ public class DishesActivity extends BaseToobarActivity {
                     dishesList.clear();
                 }
 
-              // Log.e("dishesKindList长度：",dishesKindList.size()+"");
-
                 Document document = (Document) dishesKindList.get(position);
 
                 Array array = document.getArray("dishesListId");
+
+                Log.e("DOAING",array.count()+"");
 
                 if(array == null){
                     
@@ -357,7 +358,7 @@ public class DishesActivity extends BaseToobarActivity {
     public void updataPosition(Integer integer){
 
         //刷新菜品信息
-        query.run();
+        disheKindQuery();
         disheskind_Lv.performItemClick(disheskind_Lv.getChildAt(integer), integer, disheskind_Lv
                 .getItemIdAtPosition(integer));
     }

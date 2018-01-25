@@ -110,8 +110,8 @@
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
                 android:src="@mipmap/icon_triangle"
-                android:padding="8dp"
-                android:layout_marginRight="8dp"
+                android:padding="8.5dp"
+                android:layout_marginRight="7dp"
                 />
 
         </LinearLayout>

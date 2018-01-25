@@ -74,24 +74,20 @@ public class DisheAddActivity extends BaseToobarActivity {
     private List<Document> list;
     String url = "http://123.207.174.171:3000/dishes/";
     private String newFileUrl;
-
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.dishe_name)
     EditText disheName;
     @BindView(R.id.dishe_price_et)
     EditText dishePriceEt;
-
     @BindView(R.id.disheKind_sp)
     DishesKindSpinner disheKindSp;
-
     @BindView(R.id.dishe_submit_bt)
     Button disheSubmitBt;
     @BindView(R.id.dishe_im)
     ImageView disheIm;
     @BindView(R.id.taste_im_bt)
     ImageView tasteImBt;
-
     Document document;
     String[] strings;
     private int position = 0;
@@ -218,6 +214,13 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                     e.printStackTrace();
                 }
+
+                //提交静态图片
+
+                if (newFileUrl != null && !newFileUrl.isEmpty()) {
+                    upDataPicture(new File(newFileUrl));
+                }
+
 
             }
         });
