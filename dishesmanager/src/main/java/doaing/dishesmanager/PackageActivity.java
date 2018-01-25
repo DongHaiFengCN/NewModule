@@ -1,5 +1,6 @@
 package doaing.dishesmanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
@@ -22,7 +23,7 @@ public class PackageActivity extends BaseToobarActivity {
         return toolbar;
     }
     @Override
-    public void initData() {
+    public void initData(Intent intent) {
 
     }
 

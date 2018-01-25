@@ -2,12 +2,22 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="doaing.dishesmanager">
 
+    <!-- 使用网络权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 写sd卡的权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 读sd卡权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name="module.MyApplication"
@@ -28,23 +38,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:label="@string/TasteActivity"
             android:name=".TasteActivity"
-            android:launchMode="singleInstance" />
+            android:label="@string/TasteActivity"
+            android:launchMode="singleTask" />
         <activity
-            android:label="@string/DishesKindActivity"
             android:name=".DishesKindActivity"
-            android:launchMode="singleInstance"
-            />
+            android:label="@string/DishesKindActivity"
+            android:launchMode="singleTask" />
         <activity
-            android:label="@string/DishesActivity"
             android:name=".DishesActivity"
-            android:launchMode="singleInstance"
-            />
+            android:label="@string/DishesActivity"
+            android:launchMode="singleTask" />
         <activity
-            android:label="@string/PackageActivity"
             android:name=".PackageActivity"
-            android:launchMode="singleInstance" />
+            android:label="@string/PackageActivity"
+            android:launchMode="singleTask" />
+        <activity
+            android:name=".DisheAddActivity"
+            android:label="@string/DishesAddActivity"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name=".DisheEditActivity"
+            android:label="@string/title_activity_dishe_edit"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package doaing.dishesmanager;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -71,7 +72,7 @@ public class TasteActivity extends BaseToobarActivity {
     }
 
     @Override
-    public void initData() {
+    public void initData(Intent intent) {
 
         initList();
 
@@ -87,9 +88,6 @@ public class TasteActivity extends BaseToobarActivity {
         taste_lv.setAdapter(listAdapter);
 
         database = ((MyApplication) getApplicationContext()).getDatabase();
-
-
-
 
 
         LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
@@ -120,8 +118,6 @@ public class TasteActivity extends BaseToobarActivity {
         });
 
         query.run();
-
-      //  list.add("酸");
 
 
     }

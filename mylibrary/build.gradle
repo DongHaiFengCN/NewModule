@@ -25,38 +25,31 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
-
-
     //网络请求相关库
     implementation rootProject.ext.libRetrofit
     implementation rootProject.ext.libGson
     implementation rootProject.ext.libRetrofitAdapterRxJava
-
     //图片加载相关库
     implementation rootProject.ext.libGlide
-
     // 要与compiler匹配使用，均使用最新版可以保证兼容
     compile rootProject.ext.libAlibaba
     //Butterknife
     implementation rootProject.ext.libButterknife
     annotationProcessor rootProject.ext.libBbutterknife_compiler
-
-
     //RxAndroid 相关库
     implementation rootProject.ext.libRxAndroid
     implementation rootProject.ext.libRxJava
-
     implementation rootProject.ext.libRxBinding
     implementation rootProject.ext.libRxBindingAppcompatV7
     implementation rootProject.ext.libRxBindingDesign
-
-    compile 'com.tencent.bugly:crashreport:2.2.0' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
-
+    compile 'com.tencent.bugly:crashreport:2.2.0'
+    //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     //Database依赖
     compile 'com.couchbase.lite:couchbase-lite-android:2.0.0-DB020'
     //ObjectMapper依赖
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3'
+    implementation files('libs/pinyin4j_android.jar')
 }

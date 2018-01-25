@@ -1,12 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="doaing.dishesmanager.TasteActivity">
+    >
     <include layout="@layout/common_view_toolbar"></include>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false">
+            <ListView
+                android:layout_weight="7"
+                android:id="@+id/disheskind_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></ListView>
+            <ListView
+                android:layout_weight="3"
+                android:id="@+id/dishes_lv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></ListView>
+
+        </LinearLayout>
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@color/colorAccent"
+
+            app:srcCompat="@mipmap/icon_add"
+        />
+    </RelativeLayout>
 
 </LinearLayout>
 

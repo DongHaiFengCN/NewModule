@@ -2,6 +2,7 @@ package doaing.dishesmanager;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
@@ -71,7 +73,7 @@ public class DishesKindActivity extends BaseToobarActivity {
     }
 
     @Override
-    public void initData() {
+    public void initData(Intent intent) {
         initList();
         listAdapter = new ListAdapter();
 
@@ -149,6 +151,7 @@ public class DishesKindActivity extends BaseToobarActivity {
                     document.setString("channelId", "gysz");
                     document.setString("className", "DishesKindC");
                     document.setString("kindName", mSearchAutoComplete.getText().toString());
+                    document.setArray("dishesListId", new Array());
                     try {
                         database.save(document);
                     } catch (CouchbaseLiteException e) {

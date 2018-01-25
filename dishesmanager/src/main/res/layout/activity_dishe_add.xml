@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:background="@color/md_white_1000"
+    android:orientation="vertical"
+    tools:context="doaing.dishesmanager.DisheEditActivity">
+
+    <include layout="@layout/common_view_toolbar"></include>
+
+    <ImageView
+        android:id="@+id/dishe_im"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/vertical_margin"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:src="@mipmap/icon_image_onclick"
+        tools:ignore="InvalidId" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_height"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="名称:" />
+
+        <EditText
+            android:id="@+id/dishe_name"
+            android:paddingLeft="12dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/shape_eidt_selector"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:drawableRight="@mipmap/icon_dishename_big" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_height"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="单价:" />
+
+        <EditText
+            android:id="@+id/dishe_price_et"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:background="@drawable/shape_eidt_selector"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:inputType="numberDecimal"
+            android:drawableRight="@mipmap/icon_price"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_height"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="口味:" />
+        <LinearLayout
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@drawable/shape_edit_normar"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/reyview"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent">
+            </android.support.v7.widget.RecyclerView>
+            <ImageView
+                android:id="@+id/taste_im_bt"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/icon_triangle"
+                android:padding="8dp"
+                android:layout_marginRight="8dp"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_height"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="菜类:" />
+        <LinearLayout
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_edit_normar"
+            >
+
+            <doaing.dishesmanager.widget.DishesKindSpinner
+                android:id="@+id/disheKind_sp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10sp"
+                >
+            </doaing.dishesmanager.widget.DishesKindSpinner>
+        </LinearLayout>
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/dishe_submit_bt"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_button_focuse"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:textSize="@dimen/text_size"
+        android:textColor="@color/md_white_1000"
+        android:text="提交" />
+</LinearLayout>

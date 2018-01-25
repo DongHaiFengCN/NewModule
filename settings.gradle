@@ -1,1 +1,1 @@
-include ':app', ':order', ':mylibrary'
+include ':app', ':order', ':mylibrary', ':dishesmanager'

@@ -39,7 +39,7 @@ public class DishesManagerMainActivity extends BaseToobarActivity {
     }
 
     @Override
-    public void initData() {
+    public void initData(Intent intent) {
 
         tasteImBt.setOnClickListener(new View.OnClickListener() {
             @Override
