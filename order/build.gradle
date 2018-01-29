@@ -74,7 +74,6 @@ dependencies {
     implementation project(':mylibrary')
     //你的其他依赖
     compile name: 'SMSSDK-3.0.0', ext: 'aar'
-    implementation files('libs/modlelib.jar')
     implementation files('libs/MobCommons-2017.0607.1736.jar')
     implementation files('libs/MobTools-2017.0607.1736.jar')
     compile 'com.android.support:cardview-v7:26.+'
@@ -88,4 +87,6 @@ dependencies {
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
     implementation files('libs/xUtils-2.6.14.jar')
     implementation files('libs/ksoap2-android-assembly-2.5.2-jar-with-dependencies.jar')
+    implementation files('libs/com.baidu.tts_2.3.0.jar')
+    implementation files('libs/modlelib0127.jar')
 }
