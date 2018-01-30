@@ -112,9 +112,9 @@ public class DishesActivity extends BaseToobarActivity {
                 Document dishes = ((Document) dishesList.get(position));
 
 
-                Intent intent1 = new Intent(DishesActivity.this,DisheEditActivity.class);
-                intent1.putExtra("dishes",dishes.getId());
-                intent1.putExtra("position",kindPosition);
+                Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
+                intent1.putExtra("dishes", dishes.getId());
+                intent1.putExtra("position", kindPosition);
                 startActivity(intent1);
 
 
@@ -123,7 +123,7 @@ public class DishesActivity extends BaseToobarActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              startActivity(new Intent(DishesActivity.this,DisheAddActivity.class));
+                startActivity(new Intent(DishesActivity.this, DisheAddActivity.class));
             }
         });
     }
@@ -146,6 +146,7 @@ public class DishesActivity extends BaseToobarActivity {
 
             this.names = names;
         }
+
         @Override
         public int getCount() {
             return names == null ? 0 : names.size();
@@ -202,12 +203,14 @@ public class DishesActivity extends BaseToobarActivity {
         }
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
         EventBus.getDefault().unregister(this);
     }
+
     /**
      * 菜品的适配器
      */
@@ -257,8 +260,8 @@ public class DishesActivity extends BaseToobarActivity {
             if (taskBlob != null) {
                 Glide.with(DishesActivity.this).load(taskBlob.getContent()).into(viewHolder.dishe_im);
 
-            }else {
-               Glide.with(DishesActivity.this).load(R.mipmap.ic_launcher).into(viewHolder.dishe_im);
+            } else {
+                Glide.with(DishesActivity.this).load(R.mipmap.ic_launcher).into(viewHolder.dishe_im);
             }
             return convertView;
         }
@@ -300,10 +303,9 @@ public class DishesActivity extends BaseToobarActivity {
 
                 Array array = document.getArray("dishesListId");
 
-                Log.e("DOAING",array.count()+"");
 
-                if(array == null){
-                    
+                if (array == null) {
+
                     return;
                 }
 
@@ -355,7 +357,7 @@ public class DishesActivity extends BaseToobarActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void updataPosition(Integer integer){
+    public void updataPosition(Integer integer) {
 
         //刷新菜品信息
         disheKindQuery();

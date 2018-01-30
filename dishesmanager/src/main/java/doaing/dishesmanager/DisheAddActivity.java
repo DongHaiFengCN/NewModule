@@ -45,6 +45,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -72,7 +73,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     private Bitmap bitmap;
     private Document kind;
     private List<Document> list;
-    String url = "http://123.207.174.171:3000/dishes/";
+    String url = "https://www.yaodiandian.net/dishes/";
     private String newFileUrl;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -102,7 +103,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     public void initData(Intent intent) {
 
 
-        document = new Document();
+        document = new Document("DishesC."+ToolUtil.getUUID());
         //初始化口味
         initTasteData();
 
@@ -158,13 +159,12 @@ public class DisheAddActivity extends BaseToobarActivity {
                 } else {
 
                     String dishesName = disheName.getText().toString();
-                    Log.e("DOAING", dishesName);
+                  //  Log.e("DOAING", dishesName);
                     document.setString("dishesName", dishesName);
 
-                    String dishesNameCode9 = ToolUtil.ChangeSZ(dishesName);
-                    Log.e("DOAING", dishesNameCode9);
+                    String dishesNameCode9 = ToolUtil.ChangeSZ(ToolUtil.getFirstSpell(dishesName));
+                   // Log.e("DOAING", dishesNameCode9);
                     document.setString("dishesNameCode9", dishesNameCode9);
-
 
                 }
                 if (dishePriceEt.getText().toString().equals("")) {
@@ -175,9 +175,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                 } else {
 
-
                     document.setFloat("price", Float.valueOf(dishePriceEt.getText().toString()));
-
                 }
                 //判断菜类是否存在
                 if (disheKindSp.getDishesKindList().isEmpty()) {
@@ -216,8 +214,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                 }
 
                 //提交静态图片
-
-                if (newFileUrl != null && !newFileUrl.isEmpty()) {
+               if (newFileUrl != null && !newFileUrl.isEmpty()) {
                     upDataPicture(new File(newFileUrl));
                 }
 
@@ -252,6 +249,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                 }
                 ResultSet rows = change.getRows();
                 Result row = null;
+
                 while ((row = rows.next()) != null) {
 
                     String id = row.getString(0);
@@ -259,7 +257,6 @@ public class DisheAddActivity extends BaseToobarActivity {
                     tasteList.add(doc);
 
                 }
-
                 strings = new String[tasteList.size()];
                 for (int i = 0; i < strings.length; i++) {
                     strings[i] = tasteList.get(i).getString("tasteName");
@@ -277,10 +274,12 @@ public class DisheAddActivity extends BaseToobarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                         if (isChecked) {
+
                             list.add(tasteList.get(which));
 
-                        } else {
-                            list.remove(which);
+                        } else{
+
+                            list.remove(tasteList.get(which));
 
                         }
                     }
@@ -420,10 +419,17 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                 flag[0] = response.isSuccessful();
 
+                if(flag[0]){
+                    Toast.makeText(DisheAddActivity.this,"上传成功！",Toast.LENGTH_LONG).show();
+                }else {
+                    Toast.makeText(DisheAddActivity.this,"上传失败！",Toast.LENGTH_LONG).show();
+                }
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(DisheAddActivity.this,"请求访问失败！",Toast.LENGTH_LONG).show();
 
             }
         });

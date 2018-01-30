@@ -50,18 +50,20 @@
             android:label="@string/DishesActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".PackageActivity"
-            android:label="@string/PackageActivity"
-            android:launchMode="singleTask" />
-        <activity
             android:name=".DisheAddActivity"
             android:label="@string/DishesAddActivity"
             android:launchMode="singleTask" />
-
         <activity
             android:name=".DisheEditActivity"
             android:label="@string/title_activity_dishe_edit"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".PackageActivity"
+            android:label="@string/taocan"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".PackageAddActivity"
+            android:label="@string/packageadd"
+            ></activity>
     </application>
 
 </manifest>

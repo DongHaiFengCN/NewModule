@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.UUID;
 
 /**
  * 项目名称：dlcache
@@ -165,5 +166,12 @@ public class ToolUtil {
         // defaultFormat=null;
 
         return pybf.toString().replaceAll("\\W", "").trim();
+    }
+
+    public static String getUUID(){
+        UUID uuid=UUID.randomUUID();
+        String str = uuid.toString();
+        String uuidStr=str.replace("-", "");
+        return uuidStr;
     }
 }

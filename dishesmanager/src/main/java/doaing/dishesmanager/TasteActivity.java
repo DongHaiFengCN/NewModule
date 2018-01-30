@@ -40,6 +40,7 @@ import doaing.dishesmanager.view.MySwipeListLayout;
 
 import module.MyApplication;
 import tools.MyLog;
+import tools.ToolUtil;
 import view.BaseToobarActivity;
 
 /**
@@ -131,12 +132,12 @@ public class TasteActivity extends BaseToobarActivity {
         final SearchView.SearchAutoComplete mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
         ImageView searchButton = mSearchView.findViewById(R.id.search_button);
         searchButton.setImageResource(R.mipmap.icon_add);
-
+        mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this,R.color.md_white));
         //设置Hint文字颜色
-        // mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this,android.R.color.darker_gray));
+        mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this,android.R.color.darker_gray));
         mSearchView.setQueryHint("添加口味");
         //设置输入文字颜色
-        mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+        mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.md_blue_grey_700));
         //设置是否显示搜索框展开时的提交按钮
         mSearchView.setSubmitButtonEnabled(false);
         mSearchAutoComplete.setImeOptions(EditorInfo.IME_ACTION_SEND);
@@ -149,7 +150,7 @@ public class TasteActivity extends BaseToobarActivity {
 
                     //1.添加数据到数据库
 
-                    Document document = new Document();
+                    Document document = new Document("DishesTasteC."+ ToolUtil.getUUID());
                     document.setString("channelId", "gysz");
                     document.setString("className", "DishesTasteC");
                     document.setString("tasteName", mSearchAutoComplete.getText().toString());
@@ -176,7 +177,7 @@ public class TasteActivity extends BaseToobarActivity {
 
         @Override
         public int getCount() {
-            return list.size() == 0 ? 0 : list.size();
+            return list.size();
         }
 
         @Override

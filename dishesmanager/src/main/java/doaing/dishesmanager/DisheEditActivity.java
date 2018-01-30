@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.couchbase.lite.Array;
@@ -46,6 +47,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -149,12 +151,14 @@ public class DisheEditActivity extends BaseToobarActivity {
                 builder.setMultiChoiceItems(strings, new boolean[strings.length], new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
                         if (isChecked) {
 
                             tasteList.add(tasteAllList.get(which));
 
                         } else {
-                            tasteList.remove(which);
+
+                            tasteList.remove(tasteAllList.get(which));
 
                         }
                     }
@@ -187,7 +191,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                 } else if (!dishesName.equals(document.getString("dishesName"))) {
 
                     document.setString("dishesName", dishesName);
-                    String dishesNameCode9 = ToolUtil.ChangeSZ(dishesName);
+                    String dishesNameCode9 = ToolUtil.ChangeSZ(ToolUtil.getFirstSpell(dishesName));
                     document.setString("dishesNameCode9", dishesNameCode9);
 
 
@@ -289,11 +293,19 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 flag[0] = response.isSuccessful();
 
+                try {
+                    android.util.Log.e("DOAING",response.body().string());
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
+                android.util.Log.e("DOAING",t.getMessage());
             }
         });
 
@@ -522,8 +534,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    //删除服务器静态资源
-                    //deletePicturesFromServer();
+
 
                     //移除菜类下菜品的关联
                     removeDisheIdFromDishesKindList();
@@ -532,6 +543,8 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                         database.save(oldKind);
                         database.delete(document);
+                        //删除服务器静态资源
+                        deletePicturesFromServer();
                         EventBus.getDefault().postSticky(new Integer(kindPosition));
                         finish();
 
@@ -552,6 +565,9 @@ public class DisheEditActivity extends BaseToobarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 从服务器删除静态图片资源
+     */
     private void deletePicturesFromServer() {
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
@@ -560,16 +576,25 @@ public class DisheEditActivity extends BaseToobarActivity {
         FileDeletService service = retrofit.create(FileDeletService.class);
 
         Call call = service.delet(document.getId());
+
         call.enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) {
 
-                //  Log.e("DOAING",response.isSuccessful()+"");
+                if(response.isSuccessful()){
+
+                    Toast.makeText(DisheEditActivity.this,"删除成功！",Toast.LENGTH_LONG).show();
+
+                }else {
+                    Toast.makeText(DisheEditActivity.this,"删除失败！",Toast.LENGTH_LONG).show();
+                }
+
             }
 
             @Override
             public void onFailure(Call call, Throwable t) {
-                //   Log.e("DOAING",t.getMessage());
+
+                Toast.makeText(DisheEditActivity.this,"请求访问失败！",Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -584,7 +609,7 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 oldArry.remove(i);
 
-                Log.e("删除的id", document.getId());
+              //  Log.e("删除的id", document.getId());
                 break;
 
             }

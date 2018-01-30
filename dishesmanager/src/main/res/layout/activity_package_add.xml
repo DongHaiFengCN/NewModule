@@ -7,10 +7,6 @@
     android:orientation="vertical"
     tools:context="doaing.dishesmanager.TasteActivity">
     <include layout="@layout/common_view_toolbar"></include>
-    <ExpandableListView
-        android:id="@+id/package_explv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </ExpandableListView>
-</LinearLayout>
 
+
+</LinearLayout>

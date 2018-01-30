@@ -10,6 +10,7 @@
     <string name="dishesname">菜品</string>
     <string name="disheskindname">菜类</string>
     <string name="taocan">套餐</string>
+    <string name="packageadd">套餐添加</string>
     <string name="todo">TODO</string>
     <string name="yes">添加</string>
     <string name="title_activity_t">TActivity</string>
