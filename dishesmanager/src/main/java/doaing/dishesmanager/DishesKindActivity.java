@@ -217,6 +217,12 @@ public class DishesKindActivity extends BaseToobarActivity {
 
                                     document.setString("kindName", editText.getText().toString());
 
+                                    try {
+                                        database.save(document);
+                                    } catch (CouchbaseLiteException e) {
+                                        e.printStackTrace();
+                                    }
+
                                 }
                             })
                             .setPositiveButton("取消", new DialogInterface.OnClickListener() {

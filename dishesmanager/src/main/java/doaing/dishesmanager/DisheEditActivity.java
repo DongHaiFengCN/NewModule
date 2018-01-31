@@ -583,10 +583,10 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 if(response.isSuccessful()){
 
-                    Toast.makeText(DisheEditActivity.this,"删除成功！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisheEditActivity.this,"图片删除成功！",Toast.LENGTH_LONG).show();
 
                 }else {
-                    Toast.makeText(DisheEditActivity.this,"删除失败！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisheEditActivity.this,"图片删除失败！",Toast.LENGTH_LONG).show();
                 }
 
             }

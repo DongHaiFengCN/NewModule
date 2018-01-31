@@ -143,7 +143,6 @@ public class ToolUtil {
     public static String getFirstSpell(String chinese) {
         char[] arr;
         StringBuffer pybf = new StringBuffer();
-        arr = null;
         arr = chinese.toCharArray();
 
         defaultFormat.setCaseType(HanyuPinyinCaseType.LOWERCASE);

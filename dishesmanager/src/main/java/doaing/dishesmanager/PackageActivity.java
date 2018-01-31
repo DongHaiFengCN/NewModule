@@ -1,46 +1,51 @@
 package doaing.dishesmanager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.LiveQuery;
+import com.couchbase.lite.LiveQueryChange;
+import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bean.kitchenmanage.dishes.DishesKindC;
 import butterknife.BindView;
+import doaing.dishesmanager.adapter.PackageManagerExpandableAdapter;
 import module.MyApplication;
+import tools.ToolUtil;
 import view.BaseToobarActivity;
 
 public class PackageActivity extends BaseToobarActivity {
-    private Map<String, List<String>> dataset = new HashMap<>();
-    private String[] parentList = new String[]{"春季套餐", "夏季套餐", "秋季套餐", "冬季套餐"};
-    private List<String> childrenList1 = new ArrayList<>();
-    private List<String> childrenList2 = new ArrayList<>();
-    private List<String> childrenList3 = new ArrayList<>();
-    private List<String> childrenList4 = new ArrayList<>();
 
     private Database database;
-
+    private Map<String, List<Document>> dataset = new HashMap<>();
+    private List<Document> groupList = new ArrayList<Document>();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.package_explv)
@@ -59,11 +64,64 @@ public class PackageActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent) {
 
+        initList();
+
+        packageExplv.setAdapter(new PackageManagerExpandableAdapter(groupList, dataset, PackageActivity.this));
+
+        packageExplv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+
+                return false;
+            }
+        });
+
+    }
+
+    private void initList() {
         database = ((MyApplication) getApplicationContext()).getDatabase();
+        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
+                .from(DataSource.database(database))
+                .where(Expression.property("className").equalTo("DishesKindC")
+                        .add(Expression.property("setMenu").equalTo(true))).toLive();
+        query.addChangeListener(new LiveQueryChangeListener() {
+            @Override
+            public void changed(LiveQueryChange change) {
 
-        initialData();
+                if (!groupList.isEmpty()) {
+                    groupList.clear();
+                }
+                ResultSet rows = change.getRows();
+                Result row = null;
+                while ((row = rows.next()) != null) {
 
-        packageExplv.setAdapter(new MyExpandableListViewAdapter());
+                    String id = row.getString(0);
+                    Document doc = database.getDocument(id);
+                    groupList.add(doc);
+                }
+            }
+        });
+        query.run();
+
+        for (int i = 0; i < groupList.size(); i++) {
+            List<Document> childList;
+            Array array = groupList.get(i).getArray("dishesListId");
+            if(array!=null){
+                childList = new ArrayList<>();
+            }else {
+                dataset.put(groupList.get(i).getString("kindName"),new ArrayList<Document>());
+                continue;
+            }
+
+
+            for (int j = 0; j < array.count(); j++) {
+                Log.e("DIANG","包含子："+array.getString(j));
+                childList.add(database.getDocument(array.getString(j)));
+            }
+
+            dataset.put(groupList.get(i).getString("kindName"),childList);
+        }
+
 
 
     }
@@ -95,10 +153,12 @@ public class PackageActivity extends BaseToobarActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
 
                     //1.添加数据到数据库
-                    Document document = new Document();
-                    document.setString("channelId", "gysz");
-                    document.setString("className", "DishesTasteC");
-                    document.setString("tasteName", mSearchAutoComplete.getText().toString());
+                    Document document = new Document("DishesKindC."+ ToolUtil.getUUID());
+                    document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
+                    document.setString("className", "DishesKindC");
+                    document.setString("kindName", mSearchAutoComplete.getText().toString());
+                    document.setBoolean("setMenu",true);
+                    document.setArray("dishesListId",new Array());
                     try {
                         database.save(document);
                     } catch (CouchbaseLiteException e) {
@@ -114,124 +174,5 @@ public class PackageActivity extends BaseToobarActivity {
 
     }
 
-    private void initialData() {
 
-        childrenList1.add(parentList[0] + "-" + "1");
-        childrenList1.add(parentList[0] + "-" + "2");
-        childrenList1.add(parentList[0] + "-" + "3");
-        childrenList2.add(parentList[1] + "-" + "1");
-        childrenList2.add(parentList[1] + "-" + "2");
-        childrenList2.add(parentList[1] + "-" + "3");
-        childrenList3.add(parentList[2] + "-" + "1");
-        childrenList3.add(parentList[2] + "-" + "2");
-        childrenList3.add(parentList[2] + "-" + "3");
-        childrenList4.add(parentList[3] + "-" + "1");
-        childrenList4.add(parentList[3] + "-" + "2");
-        childrenList4.add(parentList[3] + "-" + "3");
-        dataset.put(parentList[0], childrenList1);
-        dataset.put(parentList[1], childrenList2);
-        dataset.put(parentList[2], childrenList3);
-        dataset.put(parentList[3], childrenList4);
-
-
-    }
-
-    private class MyExpandableListViewAdapter extends BaseExpandableListAdapter {
-
-
-        //  获得某个父项的某个子项
-        @Override
-        public Object getChild(int parentPos, int childPos) {
-            return dataset.get(parentList[parentPos]).get(childPos);
-        }
-
-        //  获得父项的数量
-        @Override
-        public int getGroupCount() {
-            return dataset.size();
-        }
-
-        //  获得某个父项的子项数目
-        @Override
-        public int getChildrenCount(int parentPos) {
-            return dataset.get(parentList[parentPos]).size();
-        }
-
-        //  获得某个父项
-        @Override
-        public Object getGroup(int parentPos) {
-            return dataset.get(parentList[parentPos]);
-        }
-
-        //  获得某个父项的id
-        @Override
-        public long getGroupId(int parentPos) {
-            return parentPos;
-        }
-
-        //  获得某个父项的某个子项的id
-        @Override
-        public long getChildId(int parentPos, int childPos) {
-            return childPos;
-        }
-
-        //  按函数的名字来理解应该是是否具有稳定的id，这个方法目前一直都是返回false，没有去改动过
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-
-        //  获得父项显示的view
-        @Override
-        public View getGroupView(int parentPos, boolean b, View view, ViewGroup viewGroup) {
-            if (view == null) {
-                LayoutInflater inflater = (LayoutInflater) PackageActivity
-                        .this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.parent_item, null);
-            }
-            view.setTag(R.layout.parent_item, parentPos);
-            view.setTag(R.layout.child_item, -1);
-            TextView text = view.findViewById(R.id.parent_title);
-            text.setText(parentList[parentPos]);
-     /*       if (dataset.get(parentList[parentPos]) == null) {
-
-                text.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        Toast.makeText(PackageActivity.this, "!!", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }*/
-            return view;
-        }
-
-        //  获得子项显示的view
-        @Override
-        public View getChildView(int parentPos, int childPos, boolean b, View view, ViewGroup viewGroup) {
-            if (view == null) {
-                LayoutInflater inflater = (LayoutInflater) PackageActivity
-                        .this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                view = inflater.inflate(R.layout.child_item, null);
-            }
-            view.setTag(R.layout.parent_item, parentPos);
-            view.setTag(R.layout.child_item, childPos);
-            TextView text = view.findViewById(R.id.child_title);
-            text.setText(dataset.get(parentList[parentPos]).get(childPos));
-            text.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(PackageActivity.this, "点到了内置的textview", Toast.LENGTH_SHORT).show();
-                }
-            });
-            return view;
-        }
-
-        //  子项是否可选中，如果需要设置子项的点击事件，需要返回true
-        @Override
-        public boolean isChildSelectable(int i, int i1) {
-            return false;
-        }
-    }
 }

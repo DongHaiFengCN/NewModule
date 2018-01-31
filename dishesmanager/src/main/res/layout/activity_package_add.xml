@@ -8,5 +8,9 @@
     tools:context="doaing.dishesmanager.TasteActivity">
     <include layout="@layout/common_view_toolbar"></include>
 
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="添加"
+        />
 </LinearLayout>

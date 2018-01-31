@@ -420,9 +420,9 @@ public class DisheAddActivity extends BaseToobarActivity {
                 flag[0] = response.isSuccessful();
 
                 if(flag[0]){
-                    Toast.makeText(DisheAddActivity.this,"上传成功！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisheAddActivity.this,"图片上传成功！",Toast.LENGTH_LONG).show();
                 }else {
-                    Toast.makeText(DisheAddActivity.this,"上传失败！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisheAddActivity.this,"图片上传失败！",Toast.LENGTH_LONG).show();
                 }
 
             }
