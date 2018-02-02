@@ -40,6 +40,7 @@ public class DishesManagerMainActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
+        setToolbarName("产品管理");
 
         tasteImBt.setOnClickListener(new View.OnClickListener() {
             @Override

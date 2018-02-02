@@ -74,6 +74,7 @@ public class TasteActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
+        setToolbarName("口味管理");
 
         initList();
 

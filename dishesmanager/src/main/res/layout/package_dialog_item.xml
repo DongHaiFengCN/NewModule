@@ -25,6 +25,7 @@
         android:background="@drawable/shape_eidt_selector"
         android:layout_margin="@dimen/activity_vertical_margin"
 
+        android:inputType="number"
         />
 
 </LinearLayout>

@@ -27,14 +27,22 @@ import tools.ToolUtil;
 public abstract class BaseToobarActivity extends AppCompatActivity {
 
     private Subscription subscription;
+    private String name;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(setMyContentView());
         ButterKnife.bind(this);
-        setToolbar(setToolBarInfo());
         initData(getIntent());
+        setToolbar(setToolBarInfo());
+
+    }
+
+    protected void setToolbarName(String name) {
+
+        this.name = name;
+
 
     }
 
@@ -68,6 +76,11 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
 
             }
         });
+
+        if(!"".equals(this.name )){
+             getSupportActionBar().setTitle(this.name );
+        }
+
     }
 
 

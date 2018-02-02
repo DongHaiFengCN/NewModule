@@ -66,7 +66,7 @@ public class PackageActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
-
+        setToolbarName("套餐管理");
         initList();
 
         packageExplv.setAdapter(new PackageManagerExpandableAdapter(groupList, dataset, PackageActivity.this));

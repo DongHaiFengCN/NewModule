@@ -75,6 +75,7 @@ public class DishesKindActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
+        setToolbarName("菜类管理");
         initList();
         listAdapter = new ListAdapter();
 

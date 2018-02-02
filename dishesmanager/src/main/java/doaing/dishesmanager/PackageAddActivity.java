@@ -65,6 +65,7 @@ public class PackageAddActivity extends BaseToobarActivity {
 
     @Override
     public void initData(final Intent intent) {
+        setToolbarName("添加二级套餐");
 
         database = ((MyApplication) getApplicationContext()).getDatabase();
         packageDcoument = database.getDocument(intent.getExtras().get("id").toString());
@@ -177,11 +178,12 @@ public class PackageAddActivity extends BaseToobarActivity {
                                     packagePriceEt.setError("不能为空！");
 
                                 } else {
+                                    float sum = Float.valueOf(packagePriceEt.getText().toString());
 
                                     disheDcoument.setString("dishesName",packageNameEt.getText().toString());
 
                                     //保存数据库,设置套餐价格
-                                    disheDcoument.setFloat("price", finalSum);
+                                    disheDcoument.setFloat("price", finalSum * (sum / 100f));
 
                                     try {
                                         database.save(packageDcoument);
@@ -236,7 +238,7 @@ public class PackageAddActivity extends BaseToobarActivity {
                                             float sum = Float.valueOf(packagePriceEt.getText().toString());
                                             disheDcoument.setString("dishesName",packageNameEt.getText().toString());
                                             //保存数据库,设置套餐价格
-                                            disheDcoument.setFloat("price", finalSum * (sum / 100));
+                                            disheDcoument.setFloat("price", sum);
 
                                             try {
                                                 database.save(packageDcoument);

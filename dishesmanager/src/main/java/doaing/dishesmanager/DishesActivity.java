@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.couchbase.lite.Array;
@@ -74,6 +75,7 @@ public class DishesActivity extends BaseToobarActivity {
 
     @Override
     public void initData(final Intent intent) {
+        setToolbarName("菜品管理");
 
         EventBus.getDefault().register(this);
 
@@ -124,6 +126,12 @@ public class DishesActivity extends BaseToobarActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(dishesKindList.size() == 0){
+
+                    return;
+                }
+
+
                 startActivity(new Intent(DishesActivity.this, DisheAddActivity.class));
             }
         });
@@ -227,6 +235,11 @@ public class DishesActivity extends BaseToobarActivity {
                 //加载菜品的信息
                 if (!dishesList.isEmpty()) {
                     dishesList.clear();
+                }
+                if(dishesKindList.size() == 0){
+
+                    Toast.makeText(DishesActivity.this,"请添加菜类",Toast.LENGTH_LONG).show();
+                    return;
                 }
 
                 Document document = (Document) dishesKindList.get(position);

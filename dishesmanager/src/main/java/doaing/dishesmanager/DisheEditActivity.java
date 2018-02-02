@@ -111,6 +111,7 @@ public class DisheEditActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent) {
 
+        setToolbarName("菜品编辑");
         database = ((MyApplication) getApplicationContext()).getDatabase();
         document = database.getDocument(intent.getStringExtra("dishes"));
         kindPosition = intent.getIntExtra("position", 0);

@@ -102,7 +102,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent) {
 
-
+        setToolbarName("菜品添加");
         document = new Document("DishesC."+ToolUtil.getUUID());
         //初始化口味
         initTasteData();
