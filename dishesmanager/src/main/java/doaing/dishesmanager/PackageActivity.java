@@ -8,12 +8,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -34,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bean.kitchenmanage.dishes.DishesKindC;
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.PackageManagerExpandableAdapter;
 import module.MyApplication;
@@ -62,19 +59,17 @@ public class PackageActivity extends BaseToobarActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        initData(null);
+    }
+
+    @Override
     public void initData(Intent intent) {
 
         initList();
 
         packageExplv.setAdapter(new PackageManagerExpandableAdapter(groupList, dataset, PackageActivity.this));
-
-        packageExplv.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-
-                return false;
-            }
-        });
 
     }
 
@@ -83,7 +78,7 @@ public class PackageActivity extends BaseToobarActivity {
         LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo("DishesKindC")
-                        .add(Expression.property("setMenu").equalTo(true))).toLive();
+                        .and(Expression.property("setMenu").equalTo(true))).toLive();
         query.addChangeListener(new LiveQueryChangeListener() {
             @Override
             public void changed(LiveQueryChange change) {
@@ -106,22 +101,20 @@ public class PackageActivity extends BaseToobarActivity {
         for (int i = 0; i < groupList.size(); i++) {
             List<Document> childList;
             Array array = groupList.get(i).getArray("dishesListId");
-            if(array!=null){
+            if (array != null) {
                 childList = new ArrayList<>();
-            }else {
-                dataset.put(groupList.get(i).getString("kindName"),new ArrayList<Document>());
+            } else {
+                dataset.put(groupList.get(i).getString("kindName"), new ArrayList<Document>());
                 continue;
             }
 
 
             for (int j = 0; j < array.count(); j++) {
-                Log.e("DIANG","包含子："+array.getString(j));
                 childList.add(database.getDocument(array.getString(j)));
             }
 
-            dataset.put(groupList.get(i).getString("kindName"),childList);
+            dataset.put(groupList.get(i).getString("kindName"), childList);
         }
-
 
 
     }
@@ -153,12 +146,12 @@ public class PackageActivity extends BaseToobarActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
 
                     //1.添加数据到数据库
-                    Document document = new Document("DishesKindC."+ ToolUtil.getUUID());
-                    document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
+                    Document document = new Document("DishesKindC." + ToolUtil.getUUID());
+                    document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
                     document.setString("className", "DishesKindC");
                     document.setString("kindName", mSearchAutoComplete.getText().toString());
-                    document.setBoolean("setMenu",true);
-                    document.setArray("dishesListId",new Array());
+                    document.setBoolean("setMenu", true);
+                    document.setArray("dishesListId", new Array());
                     try {
                         database.save(document);
                     } catch (CouchbaseLiteException e) {

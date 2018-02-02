@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import doaing.dishesmanager.adapter.DishesKindAdapter;
 import module.MyApplication;
 import view.BaseToobarActivity;
 
@@ -133,77 +134,6 @@ public class DishesActivity extends BaseToobarActivity {
         return toolbar;
     }
 
-    /**
-     * 菜类的适配器
-     */
-    public class DishesKindAdapter extends BaseAdapter {
-
-        private int mSelect = 0; //选中项
-
-        private List<Document> names;
-
-        private DishesKindAdapter(List<Document> names) {
-
-            this.names = names;
-        }
-
-        @Override
-        public int getCount() {
-            return names == null ? 0 : names.size();
-        }
-
-        @Override
-        public Object getItem(int i) {
-            return names.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            LayoutInflater listContainerLeft;
-            listContainerLeft = LayoutInflater.from(DishesActivity.this);
-            ListItemView listItemView = null;
-            if (view == null) {
-                listItemView = new ListItemView();
-                view = listContainerLeft.inflate(R.layout.disheskind_list_item, null);
-                listItemView.tv_title = view.findViewById(R.id.title);
-                listItemView.imageView = view.findViewById(R.id.imageView);
-                view.setTag(listItemView);
-            } else {
-                listItemView = (ListItemView) view.getTag();
-            }
-            if (mSelect == i) {
-                view.setBackgroundResource(R.color.md_grey_50);  //选中项背景
-                listItemView.imageView.setVisibility(View.VISIBLE);
-            } else {
-                view.setBackgroundResource(R.color.md_grey_100);  //其他项背景
-                listItemView.imageView.setVisibility(View.INVISIBLE);
-            }
-
-            listItemView.tv_title.setText(names.get(i).getString("kindName"));
-
-            return view;
-
-        }
-
-        public void changeSelected(int positon) { //刷新方法
-            mSelect = positon;
-            notifyDataSetChanged();
-        }
-
-        class ListItemView {
-
-            TextView tv_title;
-            ImageView imageView;
-        }
-
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -278,7 +208,7 @@ public class DishesActivity extends BaseToobarActivity {
         database = ((MyApplication) getApplicationContext()).getDatabase();
 
         //默认绑定dishesKindAdapter
-        dishesKindAdapter = new DishesKindAdapter(dishesKindList);
+        dishesKindAdapter = new DishesKindAdapter(dishesKindList,getApplicationContext());
         disheskind_Lv.setAdapter(dishesKindAdapter);
 
         //默认绑定dishes
@@ -331,7 +261,8 @@ public class DishesActivity extends BaseToobarActivity {
         //动态监听DisheKind信息
         query = Query.select(SelectResult.expression(Expression.meta().getId()))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesKindC")).toLive();
+                .where(Expression.property("className").equalTo("DishesKindC")
+                        .and(Expression.property("setMenu").equalTo(false))).toLive();
         query.addChangeListener(new LiveQueryChangeListener() {
             @Override
             public void changed(LiveQueryChange change) {

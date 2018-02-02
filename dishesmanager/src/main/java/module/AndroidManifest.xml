@@ -60,11 +60,14 @@
         <activity
             android:name=".PackageActivity"
             android:label="@string/taocan"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".PackageAddActivity"
             android:label="@string/packageadd" />
-        <activity android:name=".PackageEditActivity"></activity>
+        <activity android:name=".PackageEditActivity"
+            android:label="@string/packageedit"
+            ></activity>
     </application>
 
 </manifest>

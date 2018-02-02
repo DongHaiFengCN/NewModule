@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Log;
@@ -55,7 +56,7 @@ public class PackageManagerExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return groupList.get(groupPosition).getArray("dishesListId").count()+1;
+        return groupList.get(groupPosition).getArray("dishesListId").count() + 1;
     }
 
     @Override
@@ -104,13 +105,13 @@ public class PackageManagerExpandableAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         ChildView childView;
         if (convertView == null) {
             childView = new ChildView();
             convertView = LayoutInflater.from(context).inflate(R.layout.child_item, null);
             childView.childTv = convertView.findViewById(R.id.child_title);
-           childView.childBt = convertView.findViewById(R.id.child_bt);
+            childView.childBt = convertView.findViewById(R.id.child_bt);
             convertView.setTag(childView);
         } else {
             childView = (ChildView) convertView.getTag();
@@ -118,32 +119,28 @@ public class PackageManagerExpandableAdapter extends BaseExpandableListAdapter {
 
         final Document document = groupList.get(groupPosition);
 
-        Log.e("DOAING","一级套餐："+document.getString("kindName"));
 
-        if(!isLastChild){
-
+        if (!isLastChild) {
 
 
-          /*  Log.e("DOAING","二级套餐数量："+dataset.get(document.getString("kindName")).size());
+            childView.childTv.setVisibility(View.VISIBLE);
+            childView.childBt.setVisibility(View.GONE);
 
-            Log.e("DOAING","二级套餐ID："+dataset.get(document.getString("kindName")).get(childPosition).getId());
-            Log.e("DOAING","二级套餐名称："+dataset.get(document.getString("kindName")).get(childPosition).getString("dishesName"));
-*/
             childView.childTv.setText(dataset.get(document.getString("kindName")).get(childPosition)
                     .getString("dishesName"));
             childView.childTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-
-                    Intent intent = new Intent(context,PackageEditActivity.class);
-                    intent.putExtra("id",document.getId());
+                    Intent intent = new Intent(context, PackageEditActivity.class);
+                    intent.putExtra("kindId", document.getId());
+                    intent.putExtra("disheId", dataset.get(document.getString("kindName")).get(childPosition).getId());
                     context.startActivity(intent);
 
                 }
             });
 
-        }else {
+        } else {
 
             childView.childTv.setVisibility(View.GONE);
             childView.childBt.setVisibility(View.VISIBLE);
@@ -152,8 +149,8 @@ public class PackageManagerExpandableAdapter extends BaseExpandableListAdapter {
                 @Override
                 public void onClick(View v) {
 
-                    Intent intent = new Intent(context,PackageAddActivity.class);
-                    intent.putExtra("id",document.getId());
+                    Intent intent = new Intent(context, PackageAddActivity.class);
+                    intent.putExtra("id", document.getId());
                     context.startActivity(intent);
                 }
             });

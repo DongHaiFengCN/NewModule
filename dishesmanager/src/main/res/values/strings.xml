@@ -3,14 +3,15 @@
     <string name="TasteActivity">管理口味</string>
     <string name="DishesActivity">管理菜品</string>
     <string name="DishesAddActivity">添加菜品</string>
-    <string name="DishesKindActivity">编辑菜类</string>
+    <string name="DishesKindActivity">菜类与一级套餐</string>
     <string name="PackageActivity">编辑套餐</string>
     <string name="title_item_detail">Item Detail</string>
     <string name="tastel">口味</string>
     <string name="dishesname">菜品</string>
-    <string name="disheskindname">菜类</string>
+    <string name="disheskindname">菜类与一级套餐</string>
     <string name="taocan">套餐</string>
     <string name="packageadd">套餐添加</string>
+    <string name="packageedit">套餐编辑</string>
     <string name="todo">TODO</string>
     <string name="yes">添加</string>
     <string name="title_activity_t">TActivity</string>

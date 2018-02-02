@@ -135,7 +135,7 @@ public class DishesKindActivity extends BaseToobarActivity {
         mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.md_white));
         //设置Hint文字颜色
         mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
-        mSearchView.setQueryHint("添加菜类");
+        mSearchView.setQueryHint("添加菜类或一级套餐");
         //设置输入文字颜色
         mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.md_blue_grey_700));
         //设置是否显示搜索框展开时的提交按钮
@@ -148,19 +148,52 @@ public class DishesKindActivity extends BaseToobarActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
 
-                    Document document = new Document("DishesKindC."+ ToolUtil.getUUID());
-                    document.setString("channelId", "gysz");
-                    document.setString("className", "DishesKindC");
-                    document.setString("kindName", mSearchAutoComplete.getText().toString());
-                    document.setArray("dishesListId", new Array());
-                    try {
-                        database.save(document);
-                    } catch (CouchbaseLiteException e) {
-                        e.printStackTrace();
-                    }
+                    new AlertDialog.Builder(DishesKindActivity.this)
+                            .setTitle("选择添加类型")
+                            .setPositiveButton("菜类", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
 
-                    mSearchAutoComplete.setText("");
+                                    Document document = new Document("DishesKindC." + ToolUtil.getUUID());
+                                    document.setString("channelId", "gysz");
+                                    document.setString("className", "DishesKindC");
+                                    document.setBoolean("setMenu", false);
+                                    document.setString("kindName", mSearchAutoComplete.getText().toString());
+                                    document.setArray("dishesListId", new Array());
+                                    try {
+                                        database.save(document);
+                                    } catch (CouchbaseLiteException e) {
+                                        e.printStackTrace();
+                                    }
 
+                                    mSearchAutoComplete.setText("");
+                                }
+                            })
+                            .setNegativeButton("一级套餐", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    Document document = new Document("DishesKindC." + ToolUtil.getUUID());
+                                    document.setString("channelId", "gysz");
+                                    document.setString("className", "DishesKindC");
+                                    document.setBoolean("setMenu", true);
+                                    document.setString("kindName", mSearchAutoComplete.getText().toString());
+                                    document.setArray("dishesListId", new Array());
+                                    try {
+                                        database.save(document);
+                                    } catch (CouchbaseLiteException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    mSearchAutoComplete.setText("");
+                                }
+                            })
+                            .setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            }).show();
 
                 }
 
@@ -207,24 +240,9 @@ public class DishesKindActivity extends BaseToobarActivity {
 
                     final EditText editText = new EditText(DishesKindActivity.this);
 
-                    new AlertDialog.Builder(DishesKindActivity.this).setTitle("修改菜类名称")
+                    final AlertDialog alertDialog = new AlertDialog.Builder(DishesKindActivity.this).setTitle("修改菜类或套餐名称")
                             .setView(editText)
-                            .setNegativeButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    Document document = list.get(arg0);
-
-                                    document.setString("kindName", editText.getText().toString());
-
-                                    try {
-                                        database.save(document);
-                                    } catch (CouchbaseLiteException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                }
-                            })
+                            .setNegativeButton("确定", null)
                             .setPositiveButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -234,6 +252,33 @@ public class DishesKindActivity extends BaseToobarActivity {
                             .show();
 
 
+                    alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if (editText.getText().toString().equals("")) {
+
+                                editText.setError("不能为空！");
+
+                                return;
+                            } else {
+
+
+                                Document document = list.get(arg0);
+
+                                document.setString("kindName", editText.getText().toString());
+
+                                try {
+                                    database.save(document);
+                                    alertDialog.dismiss();
+                                } catch (CouchbaseLiteException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+
+                        }
+                    });
                     sll_main.setStatus(MySwipeListLayout.Status.Close, true);
 
 
@@ -261,7 +306,7 @@ public class DishesKindActivity extends BaseToobarActivity {
                                         //删除菜品
                                         Array array = document.getArray("dishesListId");
 
-                                        if(array == null){
+                                        if (array == null) {
                                             return;
                                         }
                                         for (int i = 0; i < array.count(); i++) {

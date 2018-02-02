@@ -34,7 +34,6 @@ import com.couchbase.lite.Expression;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.LiveQueryChange;
 import com.couchbase.lite.LiveQueryChangeListener;
-import com.couchbase.lite.Log;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
@@ -453,6 +452,7 @@ public class DisheEditActivity extends BaseToobarActivity {
      */
     private void attachData(Document document) {
 
+
         //得到当前菜品所属菜类
         oldKind = database.getDocument(document.getString("dishesKindId"));
 
@@ -518,7 +518,7 @@ public class DisheEditActivity extends BaseToobarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.dishe_edit, menu);
+        getMenuInflater().inflate(R.menu.toobar_delet, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
