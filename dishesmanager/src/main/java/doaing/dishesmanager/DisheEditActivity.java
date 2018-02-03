@@ -54,7 +54,8 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
-import module.MyApplication;
+
+import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -82,22 +83,22 @@ public class DisheEditActivity extends BaseToobarActivity {
     private String[] strings;
     private String newFileUrl;
     private Bitmap bitmap;
-    @BindView(R.id.dishe_im)
+    @BindView(R2.id.dishe_im)
     ImageView disheIm;
-    @BindView(R.id.dishe_name)
+    @BindView(R2.id.dishe_name)
     EditText disheName;
-    @BindView(R.id.dishe_price_et)
+    @BindView(R2.id.dishe_price_et)
     EditText dishePriceEt;
-    @BindView(R.id.reyview)
+    @BindView(R2.id.reyview)
     RecyclerView reyview;
-    @BindView(R.id.taste_im_bt)
+    @BindView(R2.id.taste_im_bt)
     ImageView tasteImBt;
-    @BindView(R.id.disheKind_sp)
+    @BindView(R2.id.disheKind_sp)
     DishesKindSpinner disheKindSp;
-    @BindView(R.id.dishe_submit_bt)
+    @BindView(R2.id.dishe_submit_bt)
     Button disheSubmitBt;
     private Database database;
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
     Document document;
     private Document newKind;
@@ -198,7 +199,8 @@ public class DisheEditActivity extends BaseToobarActivity {
                 }
                 String price = dishePriceEt.getText().toString();
 
-                if (price.equals("")) {
+                if ("".equals(price)) {
+
 
                     dishePriceEt.setError("价格不能为空");
 
@@ -330,7 +332,6 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 //显示图片名字
                 disheName.setText(name);
-                // disheName.setCursorVisible(false);
                 //显示图片
                 Glide.with(this).load(uri).into(disheIm);
 

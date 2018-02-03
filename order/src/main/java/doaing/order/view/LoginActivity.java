@@ -20,20 +20,20 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Ordering;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import bean.kitchenmanage.dishes.DishesKindC;
 import bean.kitchenmanage.user.UsersC;
+import doaing.mylibrary.ISharedPreferences;
+import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.application.CDBHelper;
-import doaing.order.presenter.ILoginPresenter;
 import doaing.order.module.ILoginView;
-import doaing.order.application.ISharedPreferences;
+import doaing.order.presenter.ILoginPresenter;
 import doaing.order.presenter.LoginPresentImpl;
-import doaing.order.application.MyApplication;
+
 
 /**
  * @author 董海峰
@@ -71,7 +71,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, ISha
 
         }
 
-        //  myApplication.cancleSharePreferences();
 
         //查看是否有缓存
 
@@ -114,7 +113,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, ISha
             password.setFocusableInTouchMode(false);
 
         }
-
 
     }
 
@@ -211,7 +209,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, ISha
     @Override
     public void success() {
 
-        myApplication.setUsersC(usersC);
+       // myApplication.setUsersC(usersC);
 
         initDishesData();
         startActivity(intent);
@@ -238,6 +236,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, ISha
 
 
     public void initDishesData() {
+/*
         myApplication.mExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -266,6 +265,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, ISha
 
             }
         });
+*/
 
     }
 

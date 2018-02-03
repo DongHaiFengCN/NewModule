@@ -39,20 +39,21 @@ import java.util.List;
 
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.DishesKindAdapter;
-import module.MyApplication;
+
+import doaing.mylibrary.MyApplication;
 import view.BaseToobarActivity;
 
 public class DishesActivity extends BaseToobarActivity {
 
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.fab)
+    @BindView(R2.id.fab)
     FloatingActionButton fab;
 
-    @BindView(R.id.dishes_lv)
+    @BindView(R2.id.dishes_lv)
     ListView dishes_Lv;
 
-    @BindView(R.id.disheskind_lv)
+    @BindView(R2.id.disheskind_lv)
     ListView disheskind_Lv;
 
     private DishesKindAdapter dishesKindAdapter;

@@ -1,6 +1,7 @@
 package doaing.order.module;
 
-import doaing.order.application.ISharedPreferences;
+
+import doaing.mylibrary.ISharedPreferences;
 
 /**
  * 项目名称：Order

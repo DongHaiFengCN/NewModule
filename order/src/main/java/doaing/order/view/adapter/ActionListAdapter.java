@@ -1,3 +1,4 @@
+/*
 package doaing.order.view.adapter;
 
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import bean.kitchenmanage.promotion.PromotionC;
 import doaing.order.R;
 import doaing.order.view.PayActivity;
 
+*/
 /**
  * 项目名称：Order
  * 类描述：
@@ -23,7 +25,8 @@ import doaing.order.view.PayActivity;
  * 修改人：donghaifeng
  * 修改时间：2017/11/1 10:54
  * 修改备注：
- */
+ *//*
+
 
 public class ActionListAdapter extends BaseAdapter {
 
@@ -167,3 +170,4 @@ public class ActionListAdapter extends BaseAdapter {
         public void click(int p);
     }
 }
+*/

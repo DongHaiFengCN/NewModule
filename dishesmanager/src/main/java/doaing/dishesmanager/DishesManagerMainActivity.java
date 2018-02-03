@@ -17,15 +17,15 @@ import view.BaseToobarActivity;
 
 public class DishesManagerMainActivity extends BaseToobarActivity {
 
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.taste_im_bt)
+    @BindView(R2.id.taste_im_bt)
     ImageView tasteImBt;
-    @BindView(R.id.dishes_im_bt)
+    @BindView(R2.id.dishes_im_bt)
     ImageView dishesImBt;
-    @BindView(R.id.disheskind_im_bt)
+    @BindView(R2.id.disheskind_im_bt)
     ImageView disheskindImBt;
-    @BindView(R.id.package_im_bt)
+    @BindView(R2.id.package_im_bt)
     ImageView packageImBt;
 
     @Override

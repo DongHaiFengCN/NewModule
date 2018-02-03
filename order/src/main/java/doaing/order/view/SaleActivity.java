@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.content.Context;
@@ -38,6 +39,7 @@ import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 
 
+*/
 /**
  * 项目名称：Order
  * 类描述：
@@ -46,7 +48,8 @@ import doaing.order.untils.Tool;
  * 修改人：donghaifeng
  * 修改时间：2017/10/27
  * 修改备注：会员折扣界面
- */
+ *//*
+
 
 public class SaleActivity extends AppCompatActivity {
 
@@ -170,9 +173,11 @@ public class SaleActivity extends AppCompatActivity {
     }
 
 
-    /**
+    */
+/**
      * 绑定数据到控件
-     */
+     *//*
+
     public void setData() {
 
 
@@ -398,3 +403,4 @@ public class SaleActivity extends AppCompatActivity {
 
     }
 }
+*/

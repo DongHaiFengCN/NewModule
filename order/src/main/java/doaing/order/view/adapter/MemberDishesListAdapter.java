@@ -1,3 +1,4 @@
+/*
 package doaing.order.view.adapter;
 
 import android.util.SparseArray;
@@ -14,6 +15,7 @@ import java.util.List;
 import doaing.order.R;
 import doaing.order.view.PayActivity;
 
+*/
 /**
  * 项目名称：Order
  * 类描述：
@@ -22,7 +24,8 @@ import doaing.order.view.PayActivity;
  * 修改人：donghaifeng
  * 修改时间：2017/11/1 10:54
  * 修改备注：
- */
+ *//*
+
 
 public class MemberDishesListAdapter extends BaseAdapter {
     private List list;
@@ -111,3 +114,4 @@ public class MemberDishesListAdapter extends BaseAdapter {
 
     }
 }
+*/

@@ -1,3 +1,4 @@
+
 package doaing.order.view;
 
 import android.app.ProgressDialog;
@@ -47,12 +48,14 @@ import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.qrcode.qrcodeC;
 import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.table.TableC;
+import doaing.mylibrary.MyApplication;
 import doaing.order.R;
+import doaing.order.R2;
+import doaing.order.application.CDBHelper;
+import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
 import doaing.order.view.adapter.LiveTableRecyclerAdapter;
-import doaing.order.application.CDBHelper;
-import doaing.order.application.MyApplication;
-import doaing.order.untils.Tool;
+
 
 public class DeskActivity extends AppCompatActivity {
 
@@ -233,6 +236,7 @@ public class DeskActivity extends AppCompatActivity {
                     final AlertDialog alertDialog = builder.create();
 
                     alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
                         public void onShow(DialogInterface dialog) {
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
@@ -253,7 +257,7 @@ public class DeskActivity extends AppCompatActivity {
                     {
                         //使用状态下跳到查看订单界面
                         Intent mainIntent = new Intent();
-                        mainIntent.setClass(DeskActivity.this, ShowParticularsActivity.class);
+                       // mainIntent.setClass(DeskActivity.this, ShowParticularsActivity.class);
                         startActivity(mainIntent);
                     }else {
                         //转跳点餐界面
@@ -435,7 +439,7 @@ public class DeskActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (an[mPos].equals("是否买单")){
                                     Intent mainIntent = new Intent();
-                                    mainIntent.setClass(DeskActivity.this, PayActivity.class);
+                                   // mainIntent.setClass(DeskActivity.this, PayActivity.class);
                                     startActivity(mainIntent);
                                     dialog.dismiss();
                                 }else{
@@ -569,7 +573,7 @@ public class DeskActivity extends AppCompatActivity {
 
     private void turnMainActivity() {
         Intent mainIntent = new Intent();
-        mainIntent.setClass(DeskActivity.this, MainActivity.class);
+      //  mainIntent.setClass(DeskActivity.this, MainActivity.class);
         startActivity(mainIntent);
     }
     @Override
@@ -581,23 +585,25 @@ public class DeskActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
+
+    case android.R.id.home:
                 this.finish(); // back button
                 break;
-            case R.id.action_alipay:
+            case R2.id.action_alipay:
 
                 flag = 1;
                 turnScan();
 
 
                 break;
-            case R.id.action_wechat:
+            case R2.id.action_wechat:
 
                 flag = 2;
                 turnScan();
                 break;
                 default:
                     break;
+
         }
         return true;
     }

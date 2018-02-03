@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
-import module.MyApplication;
+import doaing.mylibrary.MyApplication;
 import rx.functions.Action1;
 import view.BaseToobarActivity;
 
@@ -37,13 +37,13 @@ import view.BaseToobarActivity;
 public class PackageEditActivity extends BaseToobarActivity {
 
     private List<Document> list = new ArrayList<>();
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.dishes_lv)
+    @BindView(R2.id.dishes_lv)
     ListView dishesLv;
-    @BindView(R.id.revise_info_bt)
+    @BindView(R2.id.revise_info_bt)
     Button submit;
-    @BindView(R.id.revise_price_et)
+    @BindView(R2.id.revise_price_et)
     EditText revisePriceEt;
 
     Document oneLevel;

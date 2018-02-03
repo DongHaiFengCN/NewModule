@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
-import module.MyApplication;
+import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -75,19 +75,19 @@ public class DisheAddActivity extends BaseToobarActivity {
     private List<Document> list;
     String url = "https://www.yaodiandian.net/dishes/";
     private String newFileUrl;
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.dishe_name)
+    @BindView(R2.id.dishe_name)
     EditText disheName;
-    @BindView(R.id.dishe_price_et)
+    @BindView(R2.id.dishe_price_et)
     EditText dishePriceEt;
-    @BindView(R.id.disheKind_sp)
+    @BindView(R2.id.disheKind_sp)
     DishesKindSpinner disheKindSp;
-    @BindView(R.id.dishe_submit_bt)
+    @BindView(R2.id.dishe_submit_bt)
     Button disheSubmitBt;
-    @BindView(R.id.dishe_im)
+    @BindView(R2.id.dishe_im)
     ImageView disheIm;
-    @BindView(R.id.taste_im_bt)
+    @BindView(R2.id.taste_im_bt)
     ImageView tasteImBt;
     Document document;
     String[] strings;
@@ -159,15 +159,14 @@ public class DisheAddActivity extends BaseToobarActivity {
                 } else {
 
                     String dishesName = disheName.getText().toString();
-                  //  Log.e("DOAING", dishesName);
                     document.setString("dishesName", dishesName);
 
                     String dishesNameCode9 = ToolUtil.ChangeSZ(ToolUtil.getFirstSpell(dishesName));
-                   // Log.e("DOAING", dishesNameCode9);
+
                     document.setString("dishesNameCode9", dishesNameCode9);
 
                 }
-                if (dishePriceEt.getText().toString().equals("")) {
+                if ("".equals(dishePriceEt.getText().toString())) {
 
                     dishePriceEt.setError("价格不能为空");
 
@@ -337,7 +336,6 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                 //显示图片名字
                 disheName.setText(name);
-                // disheName.setCursorVisible(false);
                 //显示图片
                 Glide.with(this).load(uri).into(disheIm);
 
@@ -426,7 +424,6 @@ public class DisheAddActivity extends BaseToobarActivity {
                 }
 
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(DisheAddActivity.this,"请求访问失败！",Toast.LENGTH_LONG).show();

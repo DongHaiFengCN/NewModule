@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.app.AlertDialog;
@@ -35,9 +36,11 @@ import doaing.order.untils.MyBigDecimal;
 import static doaing.order.application.CDBHelper.getFormatDate;
 
 
+*/
 /**
  * Created by lenovo on 2017/10/26.
- */
+ *//*
+
 
 public class SeekT9Adapter extends BaseAdapter {
 
@@ -420,3 +423,4 @@ public class SeekT9Adapter extends BaseAdapter {
     }
 
 }
+*/

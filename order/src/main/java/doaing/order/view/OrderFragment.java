@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.app.Fragment;
@@ -38,9 +39,11 @@ import doaing.order.application.CDBHelper;
 import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
 
+*/
 /**
  * Created by lenovo on 2017/10/26.
- */
+ *//*
+
 
 public class OrderFragment extends Fragment {
 
@@ -58,7 +61,8 @@ public class OrderFragment extends Fragment {
     private Map<String, float[]> dishesCollection = new HashMap<>();
     private Map<String, List<Document>> dishesObjectCollection;
     private boolean[] booleans;
-    //*************************
+    /*/
+/*************************
     List<DishesKindC> dishesKindCList;
 
     String kindId;
@@ -176,9 +180,11 @@ public class OrderFragment extends Fragment {
         myNotifyDataSetChanged();
     }
 
-    /**
+    */
+/**
      * 刷新所有展示数据
-     */
+     *//*
+
     private void myNotifyDataSetChanged() {
 
 
@@ -293,9 +299,11 @@ public class OrderFragment extends Fragment {
     }
 
 
-    /**
+    */
+/**
      * 菜品选择弹出框编辑模块
-     */
+     *//*
+
     private void showDialog(final DishesC dishesC, final int position, float number) {
 
         final DishesMessage dishesMessage = new DishesMessage();
@@ -526,3 +534,4 @@ public class OrderFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 }
+*/

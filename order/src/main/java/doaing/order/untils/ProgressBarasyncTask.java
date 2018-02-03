@@ -1,3 +1,4 @@
+/*
 package doaing.order.untils;
 
 import android.bluetooth.BluetoothAdapter;
@@ -22,6 +23,7 @@ import doaing.order.view.PayActivity;
 import doaing.order.application.CDBHelper;
 import doaing.order.application.MyApplication;
 
+*/
 /**
  * 项目名称：Order
  * 类描述：
@@ -30,7 +32,8 @@ import doaing.order.application.MyApplication;
  * 修改人：donghaifeng
  * 修改时间：2017/9/28 10:13
  * 修改备注：
- */
+ *//*
+
 
 public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
     private  Date date;
@@ -238,10 +241,12 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
 
     }
 
-    /**
+    */
+/**
      *
      * @return 时间格式 yyyy-MM-dd HH:mm:ss
-     */
+     *//*
+
     public String getFormatDate(){
 
         if(date != null){
@@ -251,19 +256,23 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
 
         return null;
     }
-    /**
+    */
+/**
      * @return 订单号
-     */
+     *//*
+
     public String OrderId(){
         date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         return formatter.format(date);
     }
 
-    /**
+    */
+/**
      *
      * @param checkOrderC 需要打印的参数
-     */
+     *//*
+
     public void setDate(CheckOrderC checkOrderC){
 
         this.checkOrderC = checkOrderC;
@@ -316,3 +325,4 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
     }
 
 }
+*/

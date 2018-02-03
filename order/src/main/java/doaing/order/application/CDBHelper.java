@@ -47,6 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import doaing.mylibrary.MyApplication;
+
 public class CDBHelper {
     public static Database db;
 

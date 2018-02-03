@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.app.Fragment;
@@ -49,16 +50,20 @@ import doaing.order.untils.MyLog;
 import static doaing.order.application.CDBHelper.getFormatDate;
 
 
+*/
 /**
  * Created by lenovo on 2017/10/26.
- */
+ *//*
+
 
 public class SeekT9Fragment extends Fragment {
 
     @BindView(R.id.activity_seek_list)
     ListView activitySeekList;
-    /* @BindView(R.id.activity_seek_list)
-     RecyclerView activitySeekList;*/
+    */
+/* @BindView(R.id.activity_seek_list)
+     RecyclerView activitySeekList;*//*
+
     Unbinder unbinder;
     @BindView(R.id.activity_seek_edit)
     EditText activitySeekEdit;
@@ -176,12 +181,14 @@ public class SeekT9Fragment extends Fragment {
     }
 
 
-    /**
+    */
+/**
      * 菜品选择弹出框编辑模块
      *
      * @param name  传入的菜品的名称
      * @param price 传入的菜品的价格
-     */
+     *//*
+
     private void showDialog(final String name, final float price, final int selGoodsPos)
     {
 
@@ -710,3 +717,4 @@ public class SeekT9Fragment extends Fragment {
         }
     }
 }
+*/

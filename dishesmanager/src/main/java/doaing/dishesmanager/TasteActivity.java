@@ -38,7 +38,8 @@ import java.util.List;
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
 
-import module.MyApplication;
+
+import doaing.mylibrary.MyApplication;
 import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
@@ -56,10 +57,10 @@ public class TasteActivity extends BaseToobarActivity {
 
     private ListAdapter listAdapter;
     private Database database;
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
 
-    @BindView(R.id.taste_lv)
+    @BindView(R2.id.taste_lv)
     ListView taste_lv;
 
     @Override

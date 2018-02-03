@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.bluetooth.BluetoothAdapter;
@@ -69,10 +70,12 @@ import doaing.order.untils.MyLog;
 import doaing.order.untils.ProgressBarasyncTask;
 import doaing.order.untils.Tool;
 
+*/
 /**
  * @author 董海峰
  * @date 2017/10/25
- */
+ *//*
+
 
 public class PayActivity extends AppCompatActivity {
 
@@ -280,11 +283,13 @@ public class PayActivity extends AppCompatActivity {
 
     }
 
-    /**
+    */
+/**
      * 准备所有的数据
      *
      * @param
-     */
+     *//*
+
     private void getAll() {
 
         //支付宝收款码,网络获取**********
@@ -383,9 +388,11 @@ public class PayActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
+    */
+/**
      * onActivityResult的方法获取
-     */
+     *//*
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -421,11 +428,13 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    */
+/**
      * 账单减免功能
      *
      * @param data
-     */
+     *//*
+
 
     private void turnDiscount(Intent data) {
 
@@ -458,11 +467,13 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    */
+/**
      * 会员折扣卡处理逻辑
      *
      * @param data
-     */
+     *//*
+
     private void turnSale(Intent data) {
 
         //打折时初始化实际支付总价设置为 0
@@ -687,12 +698,14 @@ public class PayActivity extends AppCompatActivity {
         });
     }
 
-    /**
+    */
+/**
      * 设置会员消费记录
      *
      * @param members 会员
      * @param consum  消费金额
-     */
+     *//*
+
 
     private void setConsumLog(Document members, float consum) {
 
@@ -707,11 +720,13 @@ public class PayActivity extends AppCompatActivity {
 
     }
 
-    /**
+    */
+/**
      * 充值卡扣款功能
      *
      * @param data
-     */
+     *//*
+
 
     private void turnRechange(Intent data) {
 
@@ -835,9 +850,11 @@ public class PayActivity extends AppCompatActivity {
         });
     }
 
-    /**
+    */
+/**
      * 打印账单
-     */
+     *//*
+
 
     private void printOrder() {
 
@@ -879,9 +896,11 @@ public class PayActivity extends AppCompatActivity {
     }
 
 
-    /**
+    */
+/**
      * 跳转抹零功能界面
-     */
+     *//*
+
     private void turnDiscount() {
 
         Intent discount = new Intent();
@@ -890,9 +909,11 @@ public class PayActivity extends AppCompatActivity {
         startActivityForResult(discount, DISTCOUNT);
     }
 
-    /**
+    */
+/**
      * 跳转会员折扣界面
-     */
+     *//*
+
 
     private void turnSale() {
 
@@ -1082,9 +1103,11 @@ public class PayActivity extends AppCompatActivity {
     }
 
 
-    /**
+    */
+/**
      * 活动扣款
-     */
+     *//*
+
     private void setAction() {
 
 
@@ -1373,12 +1396,14 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    */
+/**
      * 支付细节设置
      *
      * @param type 支付类型
      * @param pay  支付的钱数
-     */
+     *//*
+
     private void setPayDetail(int type, float pay) {
 
         //支付细节
@@ -1399,11 +1424,13 @@ public class PayActivity extends AppCompatActivity {
 //        myApplication.setTable_sel_obj(tableC);
 //    }
 
-    /**
+    */
+/**
      * 提交结账信息
      * <p>
      * 设置order的状态为买单
-     */
+     *//*
+
     public void submitCheckOrder() throws CouchbaseLiteException {
 
         Date date = new Date();
@@ -1505,12 +1532,14 @@ public class PayActivity extends AppCompatActivity {
 
     }
 
-    /**
+    */
+/**
      * 字符串生成二维码图片
      *
      * @param str 二维码字符串
      * @return Bitmap
-     */
+     *//*
+
 
     private Bitmap encodeAsBitmap(String str) {
         Bitmap bitmap = null;
@@ -1546,3 +1575,4 @@ public class PayActivity extends AppCompatActivity {
     }
 }
 
+*/

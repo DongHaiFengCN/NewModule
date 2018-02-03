@@ -34,7 +34,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.PackageManagerExpandableAdapter;
-import module.MyApplication;
+import doaing.mylibrary.MyApplication;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -43,9 +43,9 @@ public class PackageActivity extends BaseToobarActivity {
     private Database database;
     private Map<String, List<Document>> dataset = new HashMap<>();
     private List<Document> groupList = new ArrayList<Document>();
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.package_explv)
+    @BindView(R2.id.package_explv)
     ExpandableListView packageExplv;
 
     @Override

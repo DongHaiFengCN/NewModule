@@ -1,3 +1,4 @@
+/*
 package doaing.order.view.adapter;
 
 import android.app.Activity;
@@ -15,9 +16,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.order.R;
 
+*/
 /**
  * Created by lenovo on 2017/11/9.
- */
+ *//*
+
 
 public class MyGridAdapter extends RecyclerView.Adapter{
     private int index = 0;
@@ -90,3 +93,4 @@ public class MyGridAdapter extends RecyclerView.Adapter{
         }
     }
 }
+*/

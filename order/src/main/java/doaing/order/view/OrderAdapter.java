@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.os.Handler;
@@ -16,6 +17,7 @@ import bean.kitchenmanage.order.GoodsC;
 import doaing.order.R;
 import doaing.order.untils.MyLog;
 
+*/
 /**
  * 项目名称：Order
  * 类描述：
@@ -24,14 +26,17 @@ import doaing.order.untils.MyLog;
  * 修改人：donghaifeng
  * 修改时间：2017/9/20 16:20
  * 修改备注：
- */
+ *//*
+
 
 public class OrderAdapter extends BaseAdapter {
 
-    /**
+    */
+/**
      * SparseArray<Object> 中 0位置是菜品名字;1位置是菜品口味;2位置是菜品选择的数量;3单价}
      *
-     */
+     *//*
+
 
     private List<GoodsC> goodsCs;
     private MainActivity context;
@@ -191,3 +196,4 @@ public class OrderAdapter extends BaseAdapter {
 
 
 }
+*/

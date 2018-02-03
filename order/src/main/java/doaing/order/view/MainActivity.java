@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.app.Dialog;
@@ -192,9 +193,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 全屏展示
-        /*if (Build.VERSION.SDK_INT >= 16) {
+        */
+/*if (Build.VERSION.SDK_INT >= 16) {
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }*/
+        }*//*
+
 
         if (Build.VERSION.SDK_INT >= 18) {
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
@@ -203,12 +206,14 @@ public class MainActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(systemUiVisibility);
     }
 
-    /*public boolean onKeyDown(int keyCode, KeyEvent event) {
+    */
+/*public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             return true;
         }
         return false;
-    }*/
+    }*//*
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -230,11 +235,13 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(ACTION_CONNECT_STATUS));
         // 注册实时状态查询广播
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-        /**
+        */
+/**
          * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
          * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
          * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
-         **/
+         **//*
+
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
     }
 
@@ -683,9 +690,11 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    /**
+    */
+/**
      * 厨房分单打印
-     */
+     *//*
+
     private void printOrderToKitchen()
     {
         //1\ 查询出所有厨房,并分配菜品
@@ -1039,12 +1048,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /**
+    */
+/**
      * 打印机连接状态判断
      *
      * @param index
      * @return
-     */
+     *//*
+
     private Boolean isPrinterConnected(int index) {
 //        if (!printerSat)
 //            return false;
@@ -1062,9 +1073,11 @@ public class MainActivity extends AppCompatActivity {
         return status == GpDevice.STATE_CONNECTED;
     }
 
-    /**
+    */
+/**
      *
-     */
+     *//*
+
     private void connectPrinter() {
         conn = new PrinterServiceConnection();
         Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
@@ -1073,11 +1086,13 @@ public class MainActivity extends AppCompatActivity {
         MyLog.e("connectPrinter ret=" + ret);
     }
 
-    /**
+    */
+/**
      * @author  loongsun
      * @Time    0104
      * @version v2  去掉实时状态判断，这个功能不准确
-     */
+     *//*
+
     class PrinterServiceConnection implements ServiceConnection {
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -1102,9 +1117,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    */
+/**
      * 清空订单列表
-     */
+     *//*
+
 
     private void clearOrder() {
 
@@ -1394,11 +1411,13 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    /**
+    */
+/**
      * 模拟原始数据
      *
      * @return
-     */
+     *//*
+
 
 
     @Override
@@ -1419,7 +1438,8 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_search) {
             select(isFlag);
 
-        } /*else if (id == R.id.action_cancel) {
+        } */
+/*else if (id == R.id.action_cancel) {
 
             myApp.cancleSharePreferences();
             Intent itent = new Intent();
@@ -1427,16 +1447,19 @@ public class MainActivity extends AppCompatActivity {
             startActivity(itent);
             finish();
 
-        }*/
+        }*//*
+
 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
+    */
+/**
      * @param dishesMessage
      * @author 董海峰
      * @date 2017/12/22 14:58
-     */
+     *//*
+
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void setMessage(DishesMessage dishesMessage) {
         boolean isDishes = true;
@@ -1623,3 +1646,4 @@ public class MainActivity extends AppCompatActivity {
     };
 
 }
+*/

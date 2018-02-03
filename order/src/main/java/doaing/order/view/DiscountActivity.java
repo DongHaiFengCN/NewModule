@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.content.Context;
@@ -243,10 +244,12 @@ public class DiscountActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    */
+/**
      * 判断是否满足抹零条件
      * @param t
-     */
+     *//*
+
       public void compareTotal(float t){
 
 
@@ -264,3 +267,4 @@ public class DiscountActivity extends AppCompatActivity {
       }
 
 }
+*/

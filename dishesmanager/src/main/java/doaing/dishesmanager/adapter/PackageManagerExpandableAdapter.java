@@ -8,19 +8,12 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.couchbase.lite.Document;
-import com.couchbase.lite.Log;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.dishes.DishesKindC;
-import doaing.dishesmanager.PackageActivity;
 import doaing.dishesmanager.PackageAddActivity;
 import doaing.dishesmanager.PackageEditActivity;
 import doaing.dishesmanager.R;

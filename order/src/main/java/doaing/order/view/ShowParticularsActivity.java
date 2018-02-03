@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.app.Activity;
@@ -86,9 +87,11 @@ import doaing.order.untils.Tool;
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
 import static doaing.order.application.CDBHelper.getFormatDate;
 
+*/
 /**
  * Created by lenovo on 2017/12/13.
- */
+ *//*
+
 
 public class ShowParticularsActivity extends Activity {
 
@@ -146,11 +149,13 @@ public class ShowParticularsActivity extends Activity {
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_CONNECT_STATUS));
         // 注册实时状态查询广播
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-        /**
+        */
+/**
          * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
          * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
          * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
-         **/
+         **//*
+
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
     }
 
@@ -249,9 +254,11 @@ public class ShowParticularsActivity extends Activity {
     };
 
 
-    /**
+    */
+/**
      *
-     */
+     *//*
+
     private void connectPrinter() {
         conn = new PrinterServiceConnection();
         Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
@@ -260,11 +267,13 @@ public class ShowParticularsActivity extends Activity {
         MyLog.e("connectPrinter ret=" + ret);
     }
 
-    /**
+    */
+/**
      * @author  loongsun
      * @Time    0104
      * @version v2  去掉实时状态判断，这个功能不准确
-     */
+     *//*
+
     class PrinterServiceConnection implements ServiceConnection {
         @Override
         public void onServiceDisconnected(ComponentName name) {
@@ -589,11 +598,13 @@ public class ShowParticularsActivity extends Activity {
         }
     }
 
-    /**
+    */
+/**
      * 对正常菜品进行弹框处理
      *
      * @param pos
-     */
+     *//*
+
     private void normalDishesDialog(final int pos) {
         final int position = pos;
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ShowParticularsActivity.this);
@@ -932,9 +943,11 @@ public class ShowParticularsActivity extends Activity {
         dialog.show();
     }
 
-    /**
+    */
+/**
      * 转换为辅助单位
-     */
+     *//*
+
     private void modificationUnit(View view, final TextView title, final int position,final EditText editText){
         final CheckBox checkBox = view.findViewById(R.id.dialog_delete_supDishes);
         final float unitCount = goodsCList.get(position).getDishesCount();
@@ -1136,9 +1149,11 @@ public class ShowParticularsActivity extends Activity {
             }
         );
     }
-    /**
+    */
+/**
      * 查询所有订单并合并
-     */
+     *//*
+
     private void setAll() {
         goodsCList.clear();
         all = 0f;
@@ -1348,9 +1363,11 @@ public class ShowParticularsActivity extends Activity {
         }
     }
 
-    /**
+    */
+/**
      * 厨房分单打印
-     */
+     *//*
+
     private void printOrderToKitchen()
     {
         //1\ 查询出所有厨房,并分配菜品
@@ -1517,12 +1534,14 @@ public class ShowParticularsActivity extends Activity {
         return rel;
     }
 
-    /**
+    */
+/**
      * 打印机连接状态判断
      *
      * @param index
      * @return
-     */
+     *//*
+
     private Boolean isPrinterConnected(int index) {
 //        if (!printerSat)
 //            return false;
@@ -1766,3 +1785,4 @@ public class ShowParticularsActivity extends Activity {
 
 
 }
+*/

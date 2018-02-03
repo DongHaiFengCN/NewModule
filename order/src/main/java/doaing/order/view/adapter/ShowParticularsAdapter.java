@@ -1,3 +1,4 @@
+/*
 package doaing.order.view.adapter;
 
 import android.app.Activity;
@@ -16,9 +17,11 @@ import bean.kitchenmanage.order.GoodsC;
 import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
 
+*/
 /**
  * Created by lenovo on 2017/12/13.
- */
+ *//*
+
 
 public class ShowParticularsAdapter extends BaseAdapter {
 
@@ -109,3 +112,4 @@ public class ShowParticularsAdapter extends BaseAdapter {
 
     }
 }
+*/

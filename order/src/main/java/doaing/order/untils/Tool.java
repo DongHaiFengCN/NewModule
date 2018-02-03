@@ -1,3 +1,4 @@
+
 package doaing.order.untils;
 
 import android.content.Context;
@@ -19,8 +20,10 @@ import java.util.Locale;
 
 import bean.kitchenmanage.order.OrderNum;
 import bean.kitchenmanage.promotion.PromotionRuleC;
+import doaing.mylibrary.MyApplication;
 import doaing.order.application.CDBHelper;
-import doaing.order.application.MyApplication;
+
+
 
 /**
  * 项目名称：Order
@@ -31,6 +34,7 @@ import doaing.order.application.MyApplication;
  * 修改时间：2017/10/30 10:07
  * 修改备注：
  */
+
 
 public class Tool {
     private static long lastClickTime;
@@ -149,11 +153,13 @@ public class Tool {
     }
 
 
-    /**
+
+/**
      * 返回最近的一次时间
      * @param s
      * @return
      */
+
 
     public static int getLastCheckOrder(List<String> s){
 
@@ -267,3 +273,4 @@ public class Tool {
 
     }
 }
+

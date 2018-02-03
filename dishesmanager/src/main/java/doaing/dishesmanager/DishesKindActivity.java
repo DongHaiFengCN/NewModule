@@ -38,7 +38,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
-import module.MyApplication;
+
+import doaing.mylibrary.MyApplication;
 import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
@@ -58,9 +59,9 @@ public class DishesKindActivity extends BaseToobarActivity {
 
     ListAdapter listAdapter;
 
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.disheskind_lv)
+    @BindView(R2.id.disheskind_lv)
     ListView dishesKind_lv;
 
     @Override

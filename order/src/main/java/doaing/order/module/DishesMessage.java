@@ -1,7 +1,4 @@
 package doaing.order.module;
-
-import bean.kitchenmanage.dishes.DishesC;
-
 /**
  * 项目名称：Order
  * 类描述：
@@ -21,7 +18,7 @@ public class DishesMessage {
     String dishesTaste;
 
     //菜品实体
-    DishesC dishesC;
+   // DishesC dishesC;
 
     //加减操作 true +  false -
     boolean operation;
@@ -79,13 +76,13 @@ public class DishesMessage {
         this.dishesTaste = dishesTaste;
     }
 
-    public DishesC getDishesC() {
+/*    public DishesC getDishesC() {
         return dishesC;
     }
 
     public void setDishesC(DishesC dishesC) {
         this.dishesC = dishesC;
-    }
+    }*/
 
 
     public String getName() {
@@ -104,10 +101,10 @@ public class DishesMessage {
         this.count = count;
     }
 
-    public float getTotal() {
+  /*  public float getTotal() {
 
         return (total > dishesC.getPrice() ? total : dishesC.getPrice());
-    }
+    }*/
 
     public void setTotal(float total) {
         this.total = total;

@@ -20,7 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import doaing.dishesmanager.adapter.DishesKindAdapter;
-import module.MyApplication;
+import doaing.mylibrary.MyApplication;
+
 
 /**
  * 项目名称：new

@@ -1,3 +1,4 @@
+/*
 package doaing.order.view;
 
 import android.content.Context;
@@ -24,9 +25,11 @@ import doaing.order.R;
 import doaing.order.application.CDBHelper;
 import doaing.order.module.DishesMessage;
 
+*/
 /**
  * Created by lenovo on 2017/10/30.
- */
+ *//*
+
 
 public class OrderDragAdapter extends BaseAdapter {
 
@@ -173,13 +176,15 @@ public class OrderDragAdapter extends BaseAdapter {
         return convertView;
     }
 
-    /**
+    */
+/**
      * 初始化需要发送的数据，并发送到 MainActivity
      *
      * @param dishesC 获取的菜品实体类
      * @param flag    true+  false-
      * @return 是否发送成功
-     */
+     *//*
+
     private void setMessage(final DishesC dishesC, final boolean flag, final int position) {
 
         final DishesMessage dishesMessage = new DishesMessage();
@@ -337,3 +342,4 @@ public class OrderDragAdapter extends BaseAdapter {
 
     }
 }
+*/

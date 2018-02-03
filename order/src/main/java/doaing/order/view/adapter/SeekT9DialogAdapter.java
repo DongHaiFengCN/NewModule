@@ -1,3 +1,4 @@
+/*
 package doaing.order.view.adapter;
 
 import android.content.Context;
@@ -16,9 +17,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.order.R;
 
+*/
 /**
  * Created by lenovo on 2017/11/8.
- */
+ *//*
+
 
 public class SeekT9DialogAdapter extends RecyclerView.Adapter {
 
@@ -103,3 +106,4 @@ public class SeekT9DialogAdapter extends RecyclerView.Adapter {
     }
 
 }
+*/

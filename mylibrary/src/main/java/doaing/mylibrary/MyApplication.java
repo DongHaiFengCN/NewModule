@@ -1,9 +1,8 @@
-package module;
+package doaing.mylibrary;
 
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Conflict;
@@ -18,10 +17,8 @@ import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
 import com.couchbase.lite.ReplicatorConfiguration;
-import com.tencent.bugly.Bugly;
-import com.tencent.bugly.crashreport.CrashReport;
 
-import java.io.File;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -32,6 +29,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import bean.kitchenmanage.dishes.DishesKindC;
+import bean.kitchenmanage.table.TableC;
+import bean.kitchenmanage.user.UsersC;
 
 /**
  * 项目名称：Order
@@ -61,7 +62,7 @@ public class MyApplication extends Application implements ISharedPreferences, Re
 
     private Map<String, List<Document>> dishesObjectCollection = new HashMap<>();
 
- /*   public List<DishesKindC> getDishesKindCList() {
+    public List<DishesKindC> getDishesKindCList() {
         return dishesKindCList;
     }
 
@@ -69,7 +70,7 @@ public class MyApplication extends Application implements ISharedPreferences, Re
         this.dishesKindCList = dishesKindCList;
     }
 
-    List<DishesKindC> dishesKindCList;*/
+    List<DishesKindC> dishesKindCList;
 
 //    private String Company_ID="gysz";
 //    private final static String DATABASE_NAME = "gyszdb";
@@ -86,7 +87,7 @@ public class MyApplication extends Application implements ISharedPreferences, Re
     private Replicator replicator;
 
 
-/*    private TableC table_sel_obj;
+    private TableC table_sel_obj;
 
     public UsersC getUsersC() {
         return usersC;
@@ -96,7 +97,7 @@ public class MyApplication extends Application implements ISharedPreferences, Re
         this.usersC = usersC;
     }
 
-    private UsersC usersC;*/
+    private UsersC usersC;
 
     public ExecutorService mExecutor;
 
@@ -104,10 +105,10 @@ public class MyApplication extends Application implements ISharedPreferences, Re
     @Override
     public void onCreate() {
         super.onCreate();
-        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
+      /*  CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
         strategy.setAppChannel("开发部");
         Bugly.init(getApplicationContext(), "c11c0d8e58", true, strategy);
-        CrashReport.setUserId("1002");
+        CrashReport.setUserId("1002");*/
         startSession(DATABASE_NAME);
         mExecutor = Executors.newCachedThreadPool();
     }
@@ -269,12 +270,11 @@ public class MyApplication extends Application implements ISharedPreferences, Re
     public void setCompany_ID(String company_ID) {
         Company_ID = company_ID;
     }
-/*
     public TableC getTable_sel_obj() {
         return table_sel_obj;
     }
 
     public void setTable_sel_obj(TableC table_sel_obj) {
         this.table_sel_obj = table_sel_obj;
-    }*/
+    }
 }

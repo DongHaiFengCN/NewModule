@@ -1,4 +1,4 @@
-package doaing.order.application;
+package doaing.mylibrary;
 
 import android.content.SharedPreferences;
 

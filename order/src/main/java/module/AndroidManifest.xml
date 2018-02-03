@@ -2,9 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="doaing.order">
 
-    <uses-sdk
+<!--    <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="22" />
+        android:targetSdkVersion="22" />-->
 
     // 管理蓝牙设备的权限
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -39,7 +39,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
-        android:name=".application.MyApplication"
+        android:name="doaing.mylibrary.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -60,7 +60,7 @@
             android:name=".view.DeskActivity"
             android:launchMode="singleTask"
             />
-        <activity
+<!--        <activity
             android:name=".view.PayActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -78,7 +78,7 @@
         <activity
             android:name=".view.ScanActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <!-- 通过AndroidManifest配置AppKey和AppSecret，如果你选择通过代码配置，则不需要配置以下meta-data -->
+        &lt;!&ndash; 通过AndroidManifest配置AppKey和AppSecret，如果你选择通过代码配置，则不需要配置以下meta-data &ndash;&gt;
         <meta-data
             android:name="Mob-AppKey"
             android:value="21efc5a881e60" />
@@ -89,7 +89,7 @@
             android:name=".view.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
             android:theme="@style/AppTheme.NoActionBar"
-            ></activity>
+            ></activity>-->
         <service
             android:name="com.gprinter.service.GpPrintService"
             android:enabled="true"

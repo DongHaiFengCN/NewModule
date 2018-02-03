@@ -22,7 +22,8 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import module.MyApplication;
+import doaing.mylibrary.MyApplication;
+
 
 /**
  * 项目名称：new

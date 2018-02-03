@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,18 +22,15 @@ import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
-import com.couchbase.lite.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.dishes.DishesKindC;
 import butterknife.BindView;
 import doaing.dishesmanager.widget.DishesKindListView;
-import module.MyApplication;
+import doaing.mylibrary.MyApplication;
 import view.BaseToobarActivity;
 
 public class PackageAddActivity extends BaseToobarActivity {
@@ -43,18 +39,16 @@ public class PackageAddActivity extends BaseToobarActivity {
 
     private Map<Integer, boolean[]> listMap = new HashMap<>();
     private Document disheDcoument;
-
-    private Array packageArray = new Array();
     private DishesAdapter dishesAdapter;
-    @BindView(R.id.disheskind_lv)
+    @BindView(R2.id.disheskind_lv)
     DishesKindListView disheskindLv;
-    @BindView(R.id.dishes_lv)
+    @BindView(R2.id.dishes_lv)
     ListView dishesLv;
-    @BindView(R.id.submit_bt)
+    @BindView(R2.id.submit_bt)
     Button submitBt;
     private Database database;
     Document packageDcoument;
-    @BindView(R.id.toolbar)
+    @BindView(R2.id.toolbar)
     Toolbar toolbar;
 
 
