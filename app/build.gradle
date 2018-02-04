@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
-
+// 添加插件
+apply plugin: 'com.mob.sdk'
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
 
@@ -16,14 +17,20 @@ android {
         }
     }
 }
+// 在MobSDK的扩展中注册SMSSDK的相关信息
+MobSDK {
+    appKey "d580ad56b4b5"
+    appSecret "7fcae59a62342e7e2759e9e397c82bdd"
 
+    SMSSDK {}
+}
 dependencies {
     implementation rootProject.ext.libSupportAppcompat
 
     if (!isModule.toBoolean()) {
         implementation project(':order')
         // compile 'com.tencent.bugly:crashreport:2.2.0'
-        implementation project(':dishesmanager')
+        //implementation project(':dishesmanager')
 
     }
     implementation project(':mylibrary')

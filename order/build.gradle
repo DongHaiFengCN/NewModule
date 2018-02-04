@@ -1,9 +1,13 @@
 if (isModule.toBoolean()) {
     apply plugin: 'com.android.application'
+    apply plugin: "com.mob.sdk"
+
 } else {
     apply plugin: 'com.android.library'
+
 }
 apply plugin: 'com.jakewharton.butterknife'
+
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -18,6 +22,7 @@ android {
                 arguments = [ moduleName : project.getName() ]
             }
         }
+
 
     }
     sourceSets {

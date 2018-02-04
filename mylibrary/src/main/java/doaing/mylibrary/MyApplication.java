@@ -17,8 +17,6 @@ import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
 import com.couchbase.lite.ReplicatorConfiguration;
-
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;

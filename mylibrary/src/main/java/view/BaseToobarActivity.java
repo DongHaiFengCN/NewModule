@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,7 +16,6 @@ import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import tools.MyLog;
 import tools.ToolUtil;
 
 
@@ -49,15 +47,23 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
 
     /**
      * 返回布局文件
+     * @return 获取布局资源的id
      */
 
     protected abstract int setMyContentView();
-    //初始化数据
+
+
+    /**
+     * 初始化数据
+     *
+     * @param intent 获取其他activity传入的参数
+     */
     public abstract void initData(Intent intent);
 
     /**
      * 设置toolbar
      *
+     * @return Toolbar
      */
     protected abstract Toolbar setToolBarInfo();
 
@@ -87,7 +93,7 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
     /**
      * 点击软键盘之外的空白处，隐藏软件盘
      *
-     * @param ev
+     * @param ev 触发事件
      * @return
      */
     @Override
