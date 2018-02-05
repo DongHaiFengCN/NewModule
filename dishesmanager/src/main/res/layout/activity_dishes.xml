@@ -1,12 +1,12 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
-    <include layout="@layout/common_view_toolbar"></include>
+
+    <include layout="@layout/common_view_toolbar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,16 +17,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:baselineAligned="false">
+
             <ListView
                 android:layout_weight="7"
                 android:id="@+id/disheskind_lv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></ListView>
+                android:layout_height="match_parent" />
+
             <ListView
                 android:layout_weight="3"
                 android:id="@+id/dishes_lv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"></ListView>
+                android:layout_height="match_parent" />
 
         </LinearLayout>
 

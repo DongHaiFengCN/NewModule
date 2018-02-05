@@ -92,7 +92,7 @@ public class PackageEditActivity extends BaseToobarActivity {
 
                 if (!"".equals(price)) {
 
-                    secondLevel.setFloat("", Float.valueOf(price));
+                    secondLevel.setFloat("price", Float.valueOf(price));
                 }
                 try {
 
