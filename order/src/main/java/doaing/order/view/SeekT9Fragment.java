@@ -1,6 +1,6 @@
-/*
 package doaing.order.view;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -40,64 +40,29 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.view.adapter.MyGridAdapter;
 import doaing.order.application.CDBHelper;
-import doaing.order.application.MyApplication;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
+import doaing.order.view.adapter.MyGridAdapter;
 
 import static doaing.order.application.CDBHelper.getFormatDate;
 
 
-*/
-/**
+/*
+*
  * Created by lenovo on 2017/10/26.
- *//*
+*/
 
 
-public class SeekT9Fragment extends Fragment {
 
-    @BindView(R.id.activity_seek_list)
+public class SeekT9Fragment extends Fragment implements View.OnClickListener{
+
     ListView activitySeekList;
-    */
-/* @BindView(R.id.activity_seek_list)
-     RecyclerView activitySeekList;*//*
-
-    Unbinder unbinder;
-    @BindView(R.id.activity_seek_edit)
     EditText activitySeekEdit;
-    @BindView(R.id.ibtn_key_1)
-    RelativeLayout ibtnKey1;
-    @BindView(R.id.ibtn_key_2)
-    RelativeLayout ibtnKey2;
-    @BindView(R.id.ibtn_key_3)
-    RelativeLayout ibtnKey3;
-    @BindView(R.id.ibtn_key_4)
-    RelativeLayout ibtnKey4;
-    @BindView(R.id.ibtn_key_5)
-    RelativeLayout ibtnKey5;
-    @BindView(R.id.ibtn_key_6)
-    RelativeLayout ibtnKey6;
-    @BindView(R.id.ibtn_key_7)
-    RelativeLayout ibtnKey7;
-    @BindView(R.id.ibtn_key_8)
-    RelativeLayout ibtnKey8;
-    @BindView(R.id.ibtn_key_9)
-    RelativeLayout ibtnKey9;
-    @BindView(R.id.ibtn_key_l)
-    RelativeLayout ibtnKeyL;
-    @BindView(R.id.ibtn_key_0)
-    RelativeLayout ibtnKey0;
-    @BindView(R.id.ibtn_key_r)
-    RelativeLayout ibtnKeyR;
-    @BindView(R.id.ibtn_key_del)
-    RelativeLayout ibtnKeyDel;
-    @BindView(R.id.tl_key_grid)
-    TableLayout tlKeyGrid;
-    @BindView(R.id.activity_seek_lin_26)
     LinearLayout activitySeekLin26;
-
+    TableLayout tlKeyGrid;
     public static String[][] pinyin2sz = new String[][]{{"a", "b", "c", ""}, {"d", "e", "f", ""}, {"g", "h", "i", ""}, {"j", "k", "l", ""}, {"m", "n", "o", ""}, {"p", "q", "r", "s"}, {"t", "u", "v", ""}, {"w", "x", "y", "z"}};
     private float total = 0.0f;
     public int point = 1, tastePos;
@@ -120,14 +85,65 @@ public class SeekT9Fragment extends Fragment {
 
         MyLog.d( "onCreateView");
         View view = inflater.inflate(R.layout.activity_seek, container, false);
-
-        unbinder = ButterKnife.bind(this, view);
         mHandler = new Handler();
         myapp = (MyApplication) getActivity().getApplication();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("T9and26", 0);
         isT9And261 = sharedPreferences.getBoolean("isFlag",true);
+        initData(view);
         initView();
+
         return view;
+
+    }
+
+    @SuppressLint("WrongViewCast")
+    private void initData(View view) {
+        activitySeekList = view.findViewById(R.id.activity_seek_list);
+        activitySeekEdit = view.findViewById(R.id.activity_seek_edit);
+        activitySeekLin26 = view.findViewById(R.id.activity_seek_lin_26);
+        tlKeyGrid = view.findViewById(R.id.tl_key_grid);
+        view.findViewById(R.id.ibtn_key_1).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_2).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_3).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_4).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_5).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_6).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_7).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_8).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_9).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_l).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_0).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_r).setOnClickListener(this);
+        view.findViewById(R.id.ibtn_key_del).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_q).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_w).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_e).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_r).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_t).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_y).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_u).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_i).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_o).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_p).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_a).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_s).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_d).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_f).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_g).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_h).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_j).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_k).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_l).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_z).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_x).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_c).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_v).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_b).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_n).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_m).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_sc).setOnClickListener(this);
+        view.findViewById(R.id.seek_26_qh).setOnClickListener(this);
+
 
     }
 
@@ -181,13 +197,14 @@ public class SeekT9Fragment extends Fragment {
     }
 
 
-    */
-/**
+/*
+*
      * 菜品选择弹出框编辑模块
      *
      * @param name  传入的菜品的名称
      * @param price 传入的菜品的价格
-     *//*
+*/
+
 
     private void showDialog(final String name, final float price, final int selGoodsPos)
     {
@@ -381,7 +398,6 @@ public class SeekT9Fragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
     }
     private  String findZDCKindId()
     {
@@ -394,327 +410,290 @@ public class SeekT9Fragment extends Fragment {
         else return "";
     }
 
-    @OnClick({R.id.activity_seek_edit, R.id.ibtn_key_1, R.id.ibtn_key_2, R.id.ibtn_key_3, R.id.ibtn_key_4, R.id.ibtn_key_5, R.id.ibtn_key_6, R.id.ibtn_key_7, R.id.ibtn_key_8, R.id.ibtn_key_9, R.id.ibtn_key_l, R.id.ibtn_key_0, R.id.ibtn_key_r, R.id.ibtn_key_del,R.id.seek_26_q, R.id.seek_26_w, R.id.seek_26_e, R.id.seek_26_r, R.id.seek_26_t, R.id.seek_26_y, R.id.seek_26_u, R.id.seek_26_i, R.id.seek_26_o, R.id.seek_26_p, R.id.seek_26_a, R.id.seek_26_s, R.id.seek_26_d, R.id.seek_26_f, R.id.seek_26_g, R.id.seek_26_h, R.id.seek_26_j, R.id.seek_26_k, R.id.seek_26_l, R.id.seek_26_z, R.id.seek_26_x, R.id.seek_26_c, R.id.seek_26_v, R.id.seek_26_b, R.id.seek_26_n, R.id.seek_26_m,R.id.seek_26_sc,R.id.seek_26_qh})
     public void onClick(View view) {
-        switch (view.getId()) {
+        int i = view.getId();
+        if (i == R.id.activity_seek_edit) {
+        } else if (i == R.id.ibtn_key_1) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "1");
+            isT9And26 = true;
 
-            case R.id.activity_seek_edit:
-
-                break;
-
-            case R.id.ibtn_key_1:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "1");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_2:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "2");
-                isT9And26 = true;
-
-                break;
-
-            case R.id.ibtn_key_3:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "3");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_4:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "4");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_5:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "5");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_6:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "6");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_7:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "7");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_8:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "8");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_9:
-
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "9");
-                isT9And26 = true;
-                break;
-
-            case R.id.ibtn_key_l:
+        } else if (i == R.id.ibtn_key_2) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "2");
+            isT9And26 = true;
 
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                View view1 = View
-                        .inflate(getActivity(), R.layout.custom_dc_dialog, null);//设置弹窗布局
-                alert.setView(view1);
-                alert.setCancelable(true);
-                final EditText cm = view1.findViewById(R.id.custom_dc_c);//菜名
-                final EditText jg = view1.findViewById(R.id.custom_dc_t);//价格
-                final EditText f_count = view1.findViewById(R.id.custom_dc_count);
-                f_count.clearFocus();
-                f_count.setFocusableInTouchMode(false);
-                f_count.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View view, MotionEvent motionEvent) {
-                        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-                            f_count.setFocusableInTouchMode(true);
-                            f_count.requestFocus();
-                            f_count.selectAll();
-                        }
-                        return false;
+        } else if (i == R.id.ibtn_key_3) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "3");
+            isT9And26 = true;
+
+        } else if (i == R.id.ibtn_key_4) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "4");
+            isT9And26 = true;
+
+        } else if (i == R.id.ibtn_key_5) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "5");
+            isT9And26 = true;
+
+        } else if (i == R.id.ibtn_key_6) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "6");
+            isT9And26 = true;
+
+        } else if (i == R.id.ibtn_key_7) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "7");
+            isT9And26 = true;
+
+        } else if (i == R.id.ibtn_key_8) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "8");
+            isT9And26 = true;
+
+        } else if (i == R.id.ibtn_key_9) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "9");
+            isT9And26 = true;
+
+        } else if (i == R.id.ibtn_key_l) {
+            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+            View view1 = View
+                    .inflate(getActivity(), R.layout.custom_dc_dialog, null);//设置弹窗布局
+            alert.setView(view1);
+            alert.setCancelable(true);
+            final EditText cm = view1.findViewById(R.id.custom_dc_c);//菜名
+            final EditText jg = view1.findViewById(R.id.custom_dc_t);//价格
+            final EditText f_count = view1.findViewById(R.id.custom_dc_count);
+            f_count.clearFocus();
+            f_count.setFocusableInTouchMode(false);
+            f_count.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                        f_count.setFocusableInTouchMode(true);
+                        f_count.requestFocus();
+                        f_count.selectAll();
                     }
-                });
-                //取消或确定按钮监听事件处理
-                final AlertDialog dialog = alert.create();
-                Button btn_cancel = view1
-                        .findViewById(R.id.custom_dc_qx);//取消按钮
-                btn_cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
+                    return false;
+                }
+            });
+            //取消或确定按钮监听事件处理
+            final AlertDialog dialog = alert.create();
+            Button btn_cancel = view1
+                    .findViewById(R.id.custom_dc_qx);//取消按钮
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
 
+                }
+            });
+
+
+            Button btn_comfirm = view1
+                    .findViewById(R.id.custom_dc_qd);//确定按钮
+
+            btn_comfirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GoodsC obj = new GoodsC(myapp.getCompany_ID());
+                    if (TextUtils.isEmpty(f_count.getText().toString())) {
+                        Toast.makeText(getActivity(), "数量不能为空或者.", Toast.LENGTH_LONG).show();
+                        return;
                     }
-                });
+                    if (!TextUtils.isEmpty(cm.getText()) && !cm.getText().toString().equals(".")) {
+                        obj.setDishesName(cm.getText().toString());
+                        if (!jg.getText().toString().equals(".") && !TextUtils.isEmpty(jg.getText())) {
+                            float singlePrice = Float.parseFloat(jg.getText().toString());
+                            obj.setPrice(singlePrice);
+                            float counts = Float.parseFloat(f_count.getText().toString());
+                            obj.setDishesCount(counts);
+                            //obj.setDishesId("DishesC."+ UUID.randomUUID());
+                            String zdcDishedKindId = findZDCKindId();
+                            obj.setDishesKindId(zdcDishedKindId);
+                            obj.setGoodsType(3);
+                            obj.setCreatedTime(getFormatDate());
+                            ((MainActivity) getActivity()).getGoodsList().add(obj);
+                            //购物车计数器数据更新
+                            point = (((MainActivity) getActivity()).getPoint());
+                            point++;
+                            ((MainActivity) getActivity()).setPoint(point);
+
+                            //计算总价
+                            total = ((MainActivity) getActivity()).getTotal();
+                            total = MyBigDecimal.add(total, MyBigDecimal.mul(singlePrice, counts, 2), 2);
+                            ((MainActivity) getActivity()).setTotal(total);
 
 
-                Button btn_comfirm = view1
-                        .findViewById(R.id.custom_dc_qd);//确定按钮
-
-                btn_comfirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        GoodsC obj = new GoodsC(myapp.getCompany_ID());
-                        if(TextUtils.isEmpty(f_count.getText().toString()))
-                        {
-                            Toast.makeText(getActivity(), "数量不能为空或者.", Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                        if (!TextUtils.isEmpty(cm.getText())&&!cm.getText().toString().equals(".")) {
-                            obj.setDishesName(cm.getText().toString());
-                            if (!jg.getText().toString().equals(".") && !TextUtils.isEmpty(jg.getText()))
-                            {
-                                float singlePrice =  Float.parseFloat(jg.getText().toString());
-                                obj.setPrice(singlePrice);
-                                float counts = Float.parseFloat(f_count.getText().toString());
-                                obj.setDishesCount(counts);
-                                //obj.setDishesId("DishesC."+ UUID.randomUUID());
-                                String zdcDishedKindId = findZDCKindId();
-                                obj.setDishesKindId(zdcDishedKindId);
-                                obj.setGoodsType(3);
-                                obj.setCreatedTime(getFormatDate());
-                                ((MainActivity) getActivity()).getGoodsList().add(obj);
-                                //购物车计数器数据更新
-                                point = (((MainActivity) getActivity()).getPoint());
-                                point++;
-                                ((MainActivity) getActivity()).setPoint(point);
-
-                                //计算总价
-                                total = ((MainActivity) getActivity()).getTotal();
-                                total = MyBigDecimal.add(total,MyBigDecimal.mul(singlePrice,counts,2),2);
-                                ((MainActivity) getActivity()).setTotal(total);
-
-
-                                dialog.dismiss();
-                            } else {
-                                Toast.makeText(getActivity(), "价格不可以为空或者.", Toast.LENGTH_LONG).show();
-                            }
-
+                            dialog.dismiss();
                         } else {
-                            Toast.makeText(getActivity(), "菜名不可以为空或者.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "价格不可以为空或者.", Toast.LENGTH_LONG).show();
                         }
 
+                    } else {
+                        Toast.makeText(getActivity(), "菜名不可以为空或者.", Toast.LENGTH_LONG).show();
                     }
-                });
-                dialog.show();
 
-                break;
+                }
+            });
+            dialog.show();
 
-            case R.id.ibtn_key_0:
 
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "0");
+        } else if (i == R.id.ibtn_key_0) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "0");
+            search(activitySeekEdit.getText().toString());
+
+        } else if (i == R.id.ibtn_key_r) {
+            tlKeyGrid.setVisibility(View.GONE);
+            activitySeekLin26.setVisibility(View.VISIBLE);
+            activitySeekEdit.setText("");
+            t9GoodsList.clear();
+            seekT9Adapter.notifyDataSetChanged();
+            SharedPreferences settings = getActivity().getSharedPreferences("T9and26", 0);
+            SharedPreferences.Editor editor = settings.edit();
+            editor.clear();
+            editor.commit();
+            editor.putBoolean("isFlag", true);
+            editor.commit();
+
+        } else if (i == R.id.ibtn_key_del) {
+            int length = activitySeekEdit.getSelectionEnd();
+            if (length > 1) {
+                activitySeekEdit.getText().delete(length - 1, length);
                 search(activitySeekEdit.getText().toString());
-                break;
+            }
+            if (length == 1) {
+                search("oo");
+                activitySeekEdit.getText().delete(length - 1, length);
+            }
 
-            case R.id.ibtn_key_r:
-                tlKeyGrid.setVisibility(View.GONE);
-                activitySeekLin26.setVisibility(View.VISIBLE);
-                activitySeekEdit.setText("");
-                t9GoodsList.clear();
-                seekT9Adapter.notifyDataSetChanged();
-                SharedPreferences settings = getActivity().getSharedPreferences("T9and26", 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.clear();
-                editor.commit();
-                editor.putBoolean("isFlag",true);
-                editor.commit();
-                break;
-            case R.id.ibtn_key_del:
-                int length = activitySeekEdit.getSelectionEnd();
-                if (length > 1) {
-                    activitySeekEdit.getText().delete(length - 1, length);
-                    search(activitySeekEdit.getText().toString());
-                }
-                if (length == 1) {
-                    search("oo");
-                    activitySeekEdit.getText().delete(length - 1, length);
-                }
 
-                break;
+        } else if (i == R.id.activity_seek_lin_26) {
+        } else if (i == R.id.seek_26_q) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "q");
+            isT9And26 = false;
 
-            case R.id.activity_seek_lin_26:
-                break;
-            case R.id.seek_26_q:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "q");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_w:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "w");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_e:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "e");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_r:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "r");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_t:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "t");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_y:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "y");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_u:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "u");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_i:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "i");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_o:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "o");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_p:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "p");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_a:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "a");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_s:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "s");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_d:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "d");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_f:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "f");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_g:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "g");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_h:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "h");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_j:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "j");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_k:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "k");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_l:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "l");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_z:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "z");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_x:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "x");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_c:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "c");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_v:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "v");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_b:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "b");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_n:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "n");
-                isT9And26 = false;
-                break;
-            case R.id.seek_26_m:
-                activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "m");
-                isT9And26 = false;
-                break;
+        } else if (i == R.id.seek_26_w) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "w");
+            isT9And26 = false;
 
-            case R.id.seek_26_qh:
-                tlKeyGrid.setVisibility(View.VISIBLE);
-                activitySeekLin26.setVisibility(View.GONE);
-                activitySeekEdit.setText("");
-                t9GoodsList.clear();
-                seekT9Adapter.notifyDataSetChanged();
+        } else if (i == R.id.seek_26_e) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "e");
+            isT9And26 = false;
 
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("T9and26", 0);
-                SharedPreferences.Editor edit = sharedPreferences.edit();
-                edit.clear();
-                edit.commit();
-                edit.putBoolean("isFlag",false);
-                edit.commit();
-                break;
+        } else if (i == R.id.seek_26_r) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "r");
+            isT9And26 = false;
 
-            case R.id.seek_26_sc:
-                int length1 = activitySeekEdit.getSelectionEnd();
-                if (length1 > 1) {
-                    activitySeekEdit.getText().delete(length1 - 1, length1);
-                    search(activitySeekEdit.getText().toString());
-                }
-                if (length1 == 1) {
-                    search("oo");
-                    activitySeekEdit.getText().delete(length1 - 1, length1);
-                }
-                break;
+        } else if (i == R.id.seek_26_t) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "t");
+            isT9And26 = false;
 
-            default:
-                break;
+        } else if (i == R.id.seek_26_y) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "y");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_u) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "u");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_i) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "i");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_o) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "o");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_p) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "p");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_a) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "a");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_s) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "s");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_d) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "d");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_f) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "f");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_g) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "g");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_h) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "h");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_j) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "j");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_k) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "k");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_l) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "l");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_z) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "z");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_x) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "x");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_c) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "c");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_v) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "v");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_b) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "b");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_n) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "n");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_m) {
+            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "m");
+            isT9And26 = false;
+
+        } else if (i == R.id.seek_26_qh) {
+            tlKeyGrid.setVisibility(View.VISIBLE);
+            activitySeekLin26.setVisibility(View.GONE);
+            activitySeekEdit.setText("");
+            t9GoodsList.clear();
+            seekT9Adapter.notifyDataSetChanged();
+
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("T9and26", 0);
+            SharedPreferences.Editor edit = sharedPreferences.edit();
+            edit.clear();
+            edit.commit();
+            edit.putBoolean("isFlag", false);
+            edit.commit();
+
+        } else if (i == R.id.seek_26_sc) {
+            int length1 = activitySeekEdit.getSelectionEnd();
+            if (length1 > 1) {
+                activitySeekEdit.getText().delete(length1 - 1, length1);
+                search(activitySeekEdit.getText().toString());
+            }
+            if (length1 == 1) {
+                search("oo");
+                activitySeekEdit.getText().delete(length1 - 1, length1);
+            }
+
+        } else {
         }
     }
 }
-*/

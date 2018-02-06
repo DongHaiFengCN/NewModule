@@ -1,4 +1,3 @@
-/*
 package doaing.order.view;
 
 import android.content.Context;
@@ -29,21 +28,14 @@ import doaing.order.R;
 import doaing.order.untils.Tool;
 
 
-public class DiscountActivity extends AppCompatActivity {
+public class DiscountActivity extends AppCompatActivity implements View.OnClickListener {
 
-    @BindView(R.id.unit_ten)
     RadioButton unitTen;
-    @BindView(R.id.unit_element)
     RadioButton unitElement;
-    @BindView(R.id.unit_horn)
     RadioButton unitHorn;
-    @BindView(R.id.unit)
     RadioGroup unit;
-    @BindView(R.id.submit_area)
     Button submitArea;
-    @BindView(R.id.total_tv)
     TextView totalTv;
-    @BindView(R.id.discount_et)
     EditText discountEt;
     private float stashTotal;
     private CharSequence c;
@@ -58,7 +50,7 @@ public class DiscountActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        initView();
 
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -131,6 +123,21 @@ public class DiscountActivity extends AppCompatActivity {
 
     }
 
+    private void initView() {
+        unitTen = findViewById(R.id.unit_ten);
+        unitElement = findViewById(R.id.unit_element);
+        unitHorn = findViewById(R.id.unit_horn);
+        unit = findViewById(R.id.unit);
+        submitArea = findViewById(R.id.submit_area);
+        totalTv = findViewById(R.id.total_tv);
+        discountEt = findViewById(R.id.discount_et);
+        unitTen.setOnClickListener(this);
+        unitElement.setOnClickListener(this);
+        unitHorn.setOnClickListener(this);
+        submitArea.setOnClickListener(this);
+
+    }
+
     private void reset() {
         if(unitTen.isChecked()){
 
@@ -167,34 +174,28 @@ public class DiscountActivity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            finish();
 
-                finish();
-                break;
+        } else if (i == R.id.reset) {
+            reset();
 
-            case R.id.reset:
+            if (!TextUtils.isEmpty(discountEt.getText().toString())) {
 
-                reset();
+                discountEt.setText("");
+            }
+            if (discountEt.isCursorVisible()) {
 
-                if(!TextUtils.isEmpty(discountEt.getText().toString())){
-
-                    discountEt.setText("");
-                }
-                if(discountEt.isCursorVisible()){
-
-                    discountEt.setCursorVisible(false);
-                }
+                discountEt.setCursorVisible(false);
+            }
 
 
-                break;
-            default:
-                break;
+        } else {
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.unit_ten, R.id.unit_element, R.id.unit_horn,R.id.submit_area})
     public void onClick(View view) {
 
         if(discountEt.isCursorVisible()){
@@ -212,43 +213,38 @@ public class DiscountActivity extends AppCompatActivity {
             }
         }
 
-        switch (view.getId()) {
+        int i = view.getId();
+        if (i == R.id.unit_ten) {
+            compareTotal(100f);
 
-            case R.id.unit_ten:
 
-                compareTotal(100f);
+        } else if (i == R.id.unit_element) {
+            compareTotal(10f);
 
-                break;
-            case R.id.unit_element:
 
-                compareTotal(10f);
+        } else if (i == R.id.unit_horn) {
+            compareTotal(1f);
 
-                break;
-            case R.id.unit_horn:
 
-                compareTotal(1f);
+        } else if (i == R.id.submit_area) {
+            Intent intent = new Intent();
+            intent.putExtra("Total", getTextTotal());
+            intent.putExtra("Margin", Tool.substrct(stashTotal, getTextTotal()));
+            // MyLog.e(getTextTotal()+"");
+            setResult(RESULT_OK, intent);
+            finish();
 
-                break;
-            case R.id.submit_area:
 
-                Intent intent = new Intent();
-                intent.putExtra("Total", getTextTotal());
-                intent.putExtra("Margin", Tool.substrct(stashTotal,getTextTotal()));
-               // MyLog.e(getTextTotal()+"");
-                setResult(RESULT_OK, intent);
-                finish();
-
-                break;
-            default:
-                break;
+        } else {
         }
     }
 
-    */
-/**
+/*
+*
      * 判断是否满足抹零条件
      * @param t
-     *//*
+*/
+
 
       public void compareTotal(float t){
 
@@ -267,4 +263,3 @@ public class DiscountActivity extends AppCompatActivity {
       }
 
 }
-*/

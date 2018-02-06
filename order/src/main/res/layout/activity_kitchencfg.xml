@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/title"
+        >
+        <ImageView
+            android:id="@+id/activity_kitchen_back"
+            android:layout_width="32dp"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/animback"
+            android:layout_marginLeft="20dp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="厨房添加"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:gravity="center"
+
+            />
+
+        <ImageView
+            android:id="@+id/activity_kitchen_tj"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:padding="4dp"
+            android:src="@drawable/animadd"
+            android:layout_centerVertical="true"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/client_config_title1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/backgroud">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="序号"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="厨房名称"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="打印机名称"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="编辑"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="删除"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listViewKC"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        android:background="@color/white"></ListView>
+
+</LinearLayout>

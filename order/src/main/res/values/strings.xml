@@ -7,4 +7,118 @@
     <string name="title_activity_discount">账单优惠</string>
     <string name="title_activity_sale">会员特惠</string>
     <string name="zm">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+
+    <string name="bluetooth">蓝牙</string>
+
+    <string name="usb">USB</string>
+
+    <string name="ethernet">网口</string>
+
+    <string name="print_mode">打印模式</string>
+
+    <string name="tsc">标签</string>
+
+    <string name="esc">票据</string>
+
+    <string name="print_text">打印文字</string>
+
+    <string name="print_image">打印图片</string>
+
+    <string name="print_1d_barcode">打印一维码</string>
+
+    <string name="open">打开端口</string>
+
+    <string name="close">关闭端口</string>
+
+    <string name="receive">接收的数据</string>
+
+    <string name="query">查询状态</string>
+
+    <string name="init_port_info">接口:未设定 地址:不详</string>
+
+    <string name="port">接口:</string>
+
+    <string name="address">地址:</string>
+
+    <string name="port_parameters_wrong">端口参数错误！</string>
+
+    <string name="port_parameters_is_not_save">端口参数未保存！</string>
+
+    <string name="gprinter001">Printer 001</string>
+    <string name="gprinter002">Printer 002</string>
+    <string name="gprinter003">Printer 003</string>
+    <string name="gprinter004">Printer 004</string>
+    <string name="gprinter005">Printer 005</string>
+    <string name="gprinter006">Printer 006</string>
+    <string name="gprinter007">Printer 007</string>
+    <string name="gprinter008">Printer 008</string>
+    <string name="gprinter009">Printer 009</string>
+    <string name="gprinter010">Printer 010</string>
+    <string name="gprinter011">Printer 011</string>
+    <string name="gprinter012">Printer 012</string>
+    <string name="gprinter013">Printer 013</string>
+    <string name="gprinter014">Printer 014</string>
+    <string name="gprinter015">Printer 015</string>
+    <string name="gprinter016">Printer 016</string>
+    <string name="gprinter017">Printer 017</string>
+    <string name="gprinter018">Printer 018</string>
+    <string name="gprinter019">Printer 019</string>
+    <string name="gprinter020">Printer 020</string>
+
+    <string name="disconnect">未连接</string>
+
+    <string name="cut">断开</string>
+
+    <string name="cutting">断开中</string>
+
+    <string name="connect">连接</string>
+
+    <string name="connected">已连接</string>
+
+    <string name="connecting">连接中</string>
+
+    <string name="ok">确定</string>
+
+    <string name="port_configuration">端口设置</string>
+
+    <string name="bluetooth_is_not_enabled">蓝牙没有开启</string>
+
+    <string name="title_paired_devices">已配对</string>
+
+    <string name="title_other_devices">新设备</string>
+
+    <string name="scan">扫描</string>
+
+    <string name="bluetooth_device_list">蓝牙设备列表</string>
+
+    <string name="select_bluetooth_device">选择蓝牙设备</string>
+
+    <string name="none_bluetooth_device_found">没有找到蓝牙设备</string>
+
+    <string name="none_paired">没有配对的设备</string>
+
+    <string name="refresh_bluetooth_list">打开蓝牙设备列表</string>
+
+    <string name="scaning">正在扫描。。。</string>
+
+    <string name="usb_info">扫描到的设备USB信息</string>
+
+    <string name="refresh_usb_device">扫描USB设备</string>
+
+    <string name="ip_address">ip:</string>
+
+    <string name="default_ip_address">192.168.123.100</string>
+
+    <string name="port_number">port:</string>
+
+    <string name="default_port_number">9100</string>
+
+    <string name="bluetooth_address">蓝牙地址： </string>
+
+    <string name="usb_address">USB： </string>
+
+    <string name="usb_devices_list">USB设备列表</string>
+
+    <string name="none_usb_device">未连接USB打印机</string>
+    <string name="copy_right_cn">xxxx 版权所有</string>
 </resources>

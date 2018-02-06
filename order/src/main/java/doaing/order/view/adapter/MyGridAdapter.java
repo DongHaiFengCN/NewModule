@@ -1,4 +1,3 @@
-/*
 package doaing.order.view.adapter;
 
 import android.app.Activity;
@@ -15,11 +14,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.order.R;
-
-*/
-/**
+/*
+*
  * Created by lenovo on 2017/11/9.
- *//*
+*/
+
 
 
 public class MyGridAdapter extends RecyclerView.Adapter{
@@ -83,14 +82,12 @@ public class MyGridAdapter extends RecyclerView.Adapter{
 
     class HolderView extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.item_rc_tv)
         TextView itemRcTv;
-        @BindView(R.id.item_rc_ck)
         CheckBox itemRcCk;
         public HolderView(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            itemRcTv = itemView.findViewById(R.id.item_rc_tv);
+            itemRcCk = itemView.findViewById(R.id.item_rc_ck);
         }
     }
 }
-*/

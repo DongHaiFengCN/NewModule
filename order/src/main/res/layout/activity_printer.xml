@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".device.PrinterConnectDialog">
+
+    <include layout="@layout/common_view_toolbar"></include>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/page_backgroup">
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="打印机名称"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:textColor="@color/md_black_1000"
+
+            />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="打印机类型"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:textColor="@color/md_black_1000"
+
+            />
+
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="打印机地址"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:textColor="@color/md_black_1000"
+
+            />
+
+        <TextView
+            android:layout_weight="1.1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="连接"
+            android:gravity="center"
+            android:textSize="18dp"
+            android:textColor="@color/md_black_1000"
+
+            />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/activity_printer_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+    </ListView>
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="2dp"
+            android:layout_weight="5"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@color/d_bg"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btn_wxadd_pay"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.5"
+                    android:scaleType="fitCenter"
+                    android:onClick="OnAddTbQrcodepay"
+                    android:src="@mipmap/icon_wxsm" />
+
+                <TextView
+                    android:id="@+id/tv_wxqrcode_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="#ffffff"
+                    android:gravity="left|center_vertical"
+                    android:textColor="#020202" />
+
+                <CheckBox
+                    android:id="@+id/cbox_qrcode_ifprint1"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#00aaaaaa"
+                    android:gravity="left|center_vertical"
+                    android:text="打印到小票"
+                    android:textColor="@color/md_black_1000" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@color/d_bg"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btn_zfbadd_pay"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.5"
+                    android:scaleType="fitCenter"
+                    android:onClick="OnAddZfbQrcodepay"
+                    android:src="@mipmap/icon_zfb" />
+
+                <TextView
+                    android:id="@+id/tv_zfbqrcode_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:background="#ffffff"
+                    android:gravity="left|center_vertical"
+                    android:textColor="#020202" />
+
+                <CheckBox
+                    android:id="@+id/cbox_qrcode_ifprint2"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="#00aaaaaa"
+                    android:gravity="left|center_vertical"
+                    android:text="打印到小票"
+                    android:textColor="@color/md_black_1000" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:background="@color/d_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/msgtxt1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:text="打印份数:"
+                android:textColor="@color/md_black_1000"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edt_print_nums"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:inputType="number"
+                android:lines="1"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                android:background="#ffffff"
+                android:text="1" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

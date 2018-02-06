@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -28,6 +29,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
@@ -50,8 +52,10 @@ import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.table.TableC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.R2;
 import doaing.order.application.CDBHelper;
+import doaing.order.device.DeviceMain;
+import doaing.order.device.PrinterConnectDialog;
+import doaing.order.device.kitchen.KitchenCfgActivity;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
 import doaing.order.view.adapter.LiveTableRecyclerAdapter;
@@ -69,6 +73,7 @@ public class DeskActivity extends AppCompatActivity {
     private List<Document> freeTableList = new ArrayList<>();
     private String[] tablesNos,tablesName;
     public int pos = 0,mPos = 0;
+    private Toolbar toolbar;
 
 
     private MyApplication myapp;
@@ -98,16 +103,19 @@ public class DeskActivity extends AppCompatActivity {
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_desk);
-
-
-        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null){
-            actionBar.setTitle("桌位");
-            actionBar.setHomeButtonEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("桌位");
+        setSupportActionBar(toolbar);
+        //关键下面两句话，设置了回退按钮，及点击事件的效果
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         myapp= (MyApplication) getApplicationContext();
-      //  myapp.initDishesData();
+        //  myapp.initDishesData();
 
         initWidget();
 
@@ -257,7 +265,7 @@ public class DeskActivity extends AppCompatActivity {
                     {
                         //使用状态下跳到查看订单界面
                         Intent mainIntent = new Intent();
-                       // mainIntent.setClass(DeskActivity.this, ShowParticularsActivity.class);
+                        mainIntent.setClass(DeskActivity.this, ShowParticularsActivity.class);
                         startActivity(mainIntent);
                     }else {
                         //转跳点餐界面
@@ -573,7 +581,7 @@ public class DeskActivity extends AppCompatActivity {
 
     private void turnMainActivity() {
         Intent mainIntent = new Intent();
-      //  mainIntent.setClass(DeskActivity.this, MainActivity.class);
+         mainIntent.setClass(DeskActivity.this, MainActivity.class);
         startActivity(mainIntent);
     }
     @Override
@@ -584,26 +592,29 @@ public class DeskActivity extends AppCompatActivity {
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        int i = item.getItemId();
+        if (i == android.R.id.home) {
+            this.finish(); // back button
 
-    case android.R.id.home:
-                this.finish(); // back button
-                break;
-            case R2.id.action_alipay:
-
-                flag = 1;
-                turnScan();
+        } else if (i == R.id.action_alipay) {
+            flag = 1;
+            turnScan();
 
 
-                break;
-            case R2.id.action_wechat:
+        } else if (i == R.id.action_wechat) {
+            flag = 2;
+            turnScan();
 
-                flag = 2;
-                turnScan();
-                break;
-                default:
-                    break;
+        } else if (i == R.id.action_dishes) {
 
+            ARouter.getInstance().build("/doaing/DishesManagerMainActivity").navigation();
+
+        }else if (i == R.id.action_device) {
+
+            Intent intent = new Intent(DeskActivity.this, DeviceMain.class);
+            startActivity(intent);
+
+        }else {
         }
         return true;
     }

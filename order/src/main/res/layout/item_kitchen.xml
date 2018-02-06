@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/client_config_title1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="1"
+        android:background="@color/backgroud">
+
+        <TextView
+            android:id="@+id/item_kitchen_num"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="序号"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:id="@+id/item_kitchen_kname"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="厨房名称"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+
+        <TextView
+            android:id="@+id/item_kitchen_pname"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:text="打印机名称"
+            android:textColor="@color/title_font"
+            android:textSize="18sp"
+            />
+
+        <ImageView
+            android:id="@+id/item_kitchen_bianji"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:singleLine="true"
+            android:padding="13dp"
+            android:src="@drawable/animedit"
+            />
+
+        <ImageView
+            android:id="@+id/item_kitchen_delete"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:padding="12dp"
+            android:src="@drawable/animdelete"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

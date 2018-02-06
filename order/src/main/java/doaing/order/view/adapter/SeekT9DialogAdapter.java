@@ -1,4 +1,3 @@
-/*
 package doaing.order.view.adapter;
 
 import android.content.Context;
@@ -17,10 +16,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.order.R;
 
-*/
-/**
+/*
+*
  * Created by lenovo on 2017/11/8.
- *//*
+*/
+
 
 
 public class SeekT9DialogAdapter extends RecyclerView.Adapter {
@@ -93,17 +93,16 @@ public class SeekT9DialogAdapter extends RecyclerView.Adapter {
 
 
     public class HolderView extends RecyclerView.ViewHolder {
-        @BindView(R.id.item_tv_caipin)
         TextView itemTvCaipin;
-        @BindView(R.id.item_ck_caipin)
         CheckBox itemCkCaipin;
 
 
         public HolderView(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            itemTvCaipin = itemView.findViewById(R.id.item_tv_caipin);
+            itemCkCaipin = itemView.findViewById(R.id.item_ck_caipin);
+
         }
     }
 
 }
-*/

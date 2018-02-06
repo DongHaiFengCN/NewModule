@@ -1,4 +1,3 @@
-/*
 package doaing.order.view;
 
 import android.app.Dialog;
@@ -31,6 +30,7 @@ import android.util.DisplayMetrics;
 import android.util.SparseArray;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,9 +57,8 @@ import com.gprinter.command.EscCommand;
 import com.gprinter.command.GpCom;
 import com.gprinter.io.GpDevice;
 import com.gprinter.io.PortParameters;
+import com.gprinter.save.PortParamDataBase;
 import com.gprinter.service.GpPrintService;
-import com.tencent.bugly.crashreport.CrashReport;
-
 
 import org.apache.commons.lang.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -85,11 +84,11 @@ import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.user.CompanyC;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.BluetoothUtil;
 import doaing.order.application.CDBHelper;
 import doaing.order.module.DishesMessage;
-import doaing.order.application.MyApplication;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
@@ -100,9 +99,7 @@ import static doaing.order.application.CDBHelper.getFormatDate;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.activity_frame)
     FrameLayout activityFrame;
-
     public MyApplication getMyApp() {
         return myApp;
     }
@@ -161,7 +158,8 @@ public class MainActivity extends AppCompatActivity {
         EventBus.getDefault().register(this);
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("");
+        toolbar.setTitle("点餐");
+        activityFrame = findViewById(R.id.activity_frame);
         setSupportActionBar(toolbar);
         hideNavigationBar();
         //关键下面两句话，设置了回退按钮，及点击事件的效果
@@ -173,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         myApp = (MyApplication) getApplicationContext();
-
         SharedPreferences sharedPreferences = getSharedPreferences("T9andOrder", 0);
         isFlag = sharedPreferences.getBoolean("isFlag",true);
         initView();
@@ -193,10 +190,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 全屏展示
-        */
-/*if (Build.VERSION.SDK_INT >= 16) {
+if (Build.VERSION.SDK_INT >= 16) {
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
-        }*//*
+        }
 
 
         if (Build.VERSION.SDK_INT >= 18) {
@@ -206,13 +202,12 @@ public class MainActivity extends AppCompatActivity {
         getWindow().getDecorView().setSystemUiVisibility(systemUiVisibility);
     }
 
-    */
-/*public boolean onKeyDown(int keyCode, KeyEvent event) {
+public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             return true;
         }
         return false;
-    }*//*
+    }
 
     @Override
     protected void onStart() {
@@ -235,12 +230,11 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(ACTION_CONNECT_STATUS));
         // 注册实时状态查询广播
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-        */
-/**
-         * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
-         * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
-         * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
-         **//*
+//*
+//         * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
+//         * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
+//         * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
+//         *
 
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
     }
@@ -690,11 +684,8 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    */
-/**
-     * 厨房分单打印
-     *//*
 
+    // 厨房分单打印
     private void printOrderToKitchen()
     {
         //1\ 查询出所有厨房,并分配菜品
@@ -963,43 +954,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    Boolean CheckPortParamters(PortParameters param) {
-        boolean rel = false;
-        int type = param.getPortType();
-        if (type == PortParameters.BLUETOOTH) {
-            if (!param.getBluetoothAddr().equals("")) {
-                rel = true;
-            }
-        } else if (type == PortParameters.ETHERNET) {
-            if ((!param.getIpAddr().equals("")) && (param.getPortNumber() != 0)) {
-                rel = true;
-            }
-        } else if (type == PortParameters.USB) {
-            if (!param.getUsbDeviceName().equals("")) {
-                rel = true;
-            }
-        }
-        return rel;
-    }
-
     private int connectClientPrint(int index) {
         if (mGpService != null) {
             try {
-                //PortParamDataBase database = new PortParamDataBase(this);
+                PortParamDataBase database = new PortParamDataBase(this);
                 PortParameters mPortParam = new PortParameters();
-                mPortParam.setPortType(PortParameters.ETHERNET);
-                mPortParam.setIpAddr(pIp);
-                mPortParam.setPortNumber(pPortNum);
+                mPortParam = database.queryPortParamDataBase(""+index);
+//                mPortParam.setPortType(PortParameters.ETHERNET);
+//                mPortParam.setIpAddr(pIp);
+//                mPortParam.setPortNumber(pPortNum);
+                Log.e("MainActivity",""+mPortParam.getPortNumber()+"----"+mPortParam.getIpAddr());
                 int rel = -1;
 
-                if (CheckPortParamters(mPortParam)) {
                     try {
                         mGpService.closePort(index);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                     switch (mPortParam.getPortType())
-
                     {
                         case PortParameters.USB:
                             rel = mGpService.openPort(index, mPortParam.getPortType(),
@@ -1025,9 +997,8 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                     }
-                }
 
-                //database.close();
+                database.close();
                 GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
                 if (r != GpCom.ERROR_CODE.SUCCESS) {
                     if (r == GpCom.ERROR_CODE.DEVICE_ALREADY_OPEN) {
@@ -1048,13 +1019,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    */
-/**
-     * 打印机连接状态判断
+     /*打印机连接状态判断
      *
      * @param index
      * @return
-     *//*
+     * */
+
 
     private Boolean isPrinterConnected(int index) {
 //        if (!printerSat)
@@ -1073,11 +1043,6 @@ public class MainActivity extends AppCompatActivity {
         return status == GpDevice.STATE_CONNECTED;
     }
 
-    */
-/**
-     *
-     *//*
-
     private void connectPrinter() {
         conn = new PrinterServiceConnection();
         Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
@@ -1086,12 +1051,12 @@ public class MainActivity extends AppCompatActivity {
         MyLog.e("connectPrinter ret=" + ret);
     }
 
-    */
-/**
+    /*
      * @author  loongsun
      * @Time    0104
      * @version v2  去掉实时状态判断，这个功能不准确
-     *//*
+     */
+
 
     class PrinterServiceConnection implements ServiceConnection {
         @Override
@@ -1117,12 +1082,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    */
-/**
-     * 清空订单列表
-     *//*
-
-
+//     * 清空订单列表
     private void clearOrder() {
 
         point = 0;
@@ -1343,8 +1303,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (CouchbaseLiteException e) {
 
             e.printStackTrace();
-            CrashReport.postCatchedException(e);
-
         }
 
 
@@ -1411,12 +1369,11 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    */
-/**
-     * 模拟原始数据
-     *
-     * @return
-     *//*
+//*
+//     * 模拟原始数据
+//     *
+//     * @return
+
 
 
 
@@ -1438,27 +1395,15 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_search) {
             select(isFlag);
 
-        } */
-/*else if (id == R.id.action_cancel) {
-
-            myApp.cancleSharePreferences();
-            Intent itent = new Intent();
-            itent.setClass(MainActivity.this, LoginActivity.class);
-            startActivity(itent);
-            finish();
-
-        }*//*
-
-
+        }
         return super.onOptionsItemSelected(item);
     }
 
-    */
-/**
-     * @param dishesMessage
-     * @author 董海峰
-     * @date 2017/12/22 14:58
-     *//*
+//    *
+//     * @param dishesMessage
+//     * @author 董海峰
+//     * @date 2017/12/22 14:58
+
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void setMessage(DishesMessage dishesMessage) {
@@ -1646,4 +1591,3 @@ public class MainActivity extends AppCompatActivity {
     };
 
 }
-*/
