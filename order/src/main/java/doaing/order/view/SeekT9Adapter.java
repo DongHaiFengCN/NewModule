@@ -1,4 +1,3 @@
-/*
 package doaing.order.view;
 
 import android.app.AlertDialog;
@@ -27,19 +26,20 @@ import bean.kitchenmanage.dishes.DishesC;
 import bean.kitchenmanage.order.GoodsC;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.view.adapter.SeekT9DialogAdapter;
 import doaing.order.application.CDBHelper;
-import doaing.order.application.MyApplication;
 import doaing.order.untils.MyBigDecimal;
+import doaing.order.view.adapter.SeekT9DialogAdapter;
 
 import static doaing.order.application.CDBHelper.getFormatDate;
 
 
-*/
-/**
+/*
+*
  * Created by lenovo on 2017/10/26.
- *//*
+*/
+
 
 
 public class SeekT9Adapter extends BaseAdapter {
@@ -404,23 +404,21 @@ public class SeekT9Adapter extends BaseAdapter {
     }
 
     public class ViewHolder {
-        @BindView(R.id.item_seek_info)
         TextView itemSeekInfo;
-        @BindView(R.id.item_seek_tv)
         TextView itemSeekTv;
-        @BindView(R.id.item_seek_ln)
         LinearLayout itemSeekLn;
-        @BindView(R.id.view_jian)
         RelativeLayout viewJian;
-        @BindView(R.id.view_shu)
         TextView viewShu;
-        @BindView(R.id.view_tj)
         RelativeLayout viewTj;
 
         ViewHolder(View view) {
-            ButterKnife.bind(this, view);
+            itemSeekInfo = view.findViewById(R.id.item_seek_info);
+            itemSeekTv = view.findViewById(R.id.item_seek_tv);
+            itemSeekLn = view.findViewById(R.id.item_seek_ln);
+            viewJian = view.findViewById(R.id.view_jian);
+            viewShu = view.findViewById(R.id.view_shu);
+            viewTj = view.findViewById(R.id.view_tj);
         }
     }
 
 }
-*/

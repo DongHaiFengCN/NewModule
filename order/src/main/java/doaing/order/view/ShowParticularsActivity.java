@@ -1,4 +1,3 @@
-/*
 package doaing.order.view;
 
 import android.app.Activity;
@@ -39,6 +38,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
@@ -49,7 +49,6 @@ import com.gprinter.command.GpCom;
 import com.gprinter.io.GpDevice;
 import com.gprinter.io.PortParameters;
 import com.gprinter.service.GpPrintService;
-import com.tencent.bugly.crashreport.CrashReport;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
@@ -74,39 +73,32 @@ import bean.kitchenmanage.user.CompanyC;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.view.adapter.ShowParticularsAdapter;
 import doaing.order.untils.BluetoothUtil;
 import doaing.order.application.CDBHelper;
-import doaing.order.application.MyApplication;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
+import doaing.order.view.adapter.ShowParticularsAdapter;
 
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
 import static doaing.order.application.CDBHelper.getFormatDate;
 
-*/
-/**
+/*
+*
  * Created by lenovo on 2017/12/13.
- *//*
+*/
 
 
-public class ShowParticularsActivity extends Activity {
+public class ShowParticularsActivity extends Activity implements View.OnClickListener{
 
-    @BindView(R.id.show_listView)
     ListView showListView;
-    @BindView(R.id.show_but_dc)
     LinearLayout showButDc;
-    @BindView(R.id.show_but_md)
     LinearLayout showButMd;
-    @BindView(R.id.show_tv_sl)
     TextView showTvSl;
-    @BindView(R.id.show_tv_area)
     TextView showTvArea;
-
-    @BindView(R.id.show_img)
     ImageView showImg;
 
     ShowParticularsAdapter adatper;
@@ -149,12 +141,11 @@ public class ShowParticularsActivity extends Activity {
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_CONNECT_STATUS));
         // 注册实时状态查询广播
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-        */
 /**
          * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
          * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
          * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
-         **//*
+         **/
 
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
     }
@@ -253,12 +244,6 @@ public class ShowParticularsActivity extends Activity {
         }
     };
 
-
-    */
-/**
-     *
-     *//*
-
     private void connectPrinter() {
         conn = new PrinterServiceConnection();
         Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
@@ -266,13 +251,12 @@ public class ShowParticularsActivity extends Activity {
         boolean ret = bindService(intent, conn, Context.BIND_AUTO_CREATE);
         MyLog.e("connectPrinter ret=" + ret);
     }
-
-    */
-/**
+/*
+*
      * @author  loongsun
      * @Time    0104
-     * @version v2  去掉实时状态判断，这个功能不准确
-     *//*
+     * @version v2  去掉实时状态判断，这个功能不准确*/
+
 
     class PrinterServiceConnection implements ServiceConnection {
         @Override
@@ -598,12 +582,12 @@ public class ShowParticularsActivity extends Activity {
         }
     }
 
-    */
 /**
      * 对正常菜品进行弹框处理
      *
      * @param pos
-     *//*
+ **/
+
 
     private void normalDishesDialog(final int pos) {
         final int position = pos;
@@ -762,7 +746,6 @@ public class ShowParticularsActivity extends Activity {
                         );
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
-                        CrashReport.postCatchedException(e);
                     }
 
                     setAll();
@@ -943,10 +926,11 @@ public class ShowParticularsActivity extends Activity {
         dialog.show();
     }
 
-    */
-/**
+/*
+*
      * 转换为辅助单位
-     *//*
+*/
+
 
     private void modificationUnit(View view, final TextView title, final int position,final EditText editText){
         final CheckBox checkBox = view.findViewById(R.id.dialog_delete_supDishes);
@@ -1000,12 +984,11 @@ public class ShowParticularsActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
-        ButterKnife.bind(this);
         myapp = (MyApplication) getApplication();
         tableName = myapp.getTable_sel_obj().getTableName();
         AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myapp.getTable_sel_obj().getAreaId(), AreaC.class);
         areaName = areaC.getAreaName();
-
+       initView();
         goodsCList = new ArrayList<>();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         adatper = new ShowParticularsAdapter(this, goodsCList);
@@ -1038,6 +1021,19 @@ public class ShowParticularsActivity extends Activity {
 
             }
         });
+    }
+
+    private void initView() {
+         showListView = findViewById(R.id.show_listView);
+         showButDc = findViewById(R.id.show_but_dc);
+         showButMd = findViewById(R.id.show_but_md);
+         showTvSl = findViewById(R.id.show_tv_sl);
+         showTvArea = findViewById(R.id.show_tv_area);
+         showImg = findViewById(R.id.show_img);
+        showImg.setOnClickListener(this);
+        showButMd.setOnClickListener(this);
+        showButDc.setOnClickListener(this);
+        findViewById(R.id.show_but_dy).setOnClickListener(this);
     }
 
     private void initData()
@@ -1149,11 +1145,10 @@ public class ShowParticularsActivity extends Activity {
             }
         );
     }
-    */
-/**
-     * 查询所有订单并合并
-     *//*
-
+/*
+*
+    * 查询所有订单并合并
+*/
     private void setAll() {
         goodsCList.clear();
         all = 0f;
@@ -1249,42 +1244,32 @@ public class ShowParticularsActivity extends Activity {
         showTvSl.setText(goodsCList.size() + "道菜，总计：" + all + "元");
     }
 
-    @OnClick({R.id.show_but_dc, R.id.show_but_md, R.id.show_img, R.id.show_but_dy})
     public void onClick(View view) {
         Intent intent;
-        switch (view.getId()) {
+        int i = view.getId();
+        if (i == R.id.show_but_dc) {
+            intent = new Intent(ShowParticularsActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
 
-            case R.id.show_but_dc:
-                intent = new Intent(ShowParticularsActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                break;
+        } else if (i == R.id.show_but_md) {
+            intent = new Intent(ShowParticularsActivity.this, PayActivity.class);
+            startActivity(intent);
+            finish();
 
-            case R.id.show_but_md:
-                intent = new Intent(ShowParticularsActivity.this, PayActivity.class);
-                startActivity(intent);
-                finish();
-                break;
+        } else if (i == R.id.show_img) {
+            finish();
 
-            case R.id.show_img:
-                finish();
-                break;
-
-            case R.id.show_but_dy:
-
-                if (Tool.isFastDoubleClick()) {
-                    Toast.makeText(ShowParticularsActivity.this,"点击太快，请稍候",Toast.LENGTH_LONG).show();
-                    return;
-                } else {
-                    setPrintOrder();
-                }
+        } else if (i == R.id.show_but_dy) {
+            if (Tool.isFastDoubleClick()) {
+                Toast.makeText(ShowParticularsActivity.this, "点击太快，请稍候", Toast.LENGTH_LONG).show();
+                return;
+            } else {
+                setPrintOrder();
+            }
 
 
-                break;
-
-            default:
-
-                break;
+        } else {
         }
     }
 
@@ -1314,8 +1299,6 @@ public class ShowParticularsActivity extends Activity {
     }
 
     private void onPrint() {
-
-
         String waiter = myapp.getUsersC().getEmployeeName();
         List<CompanyC> companyCs = CDBHelper.getObjByClass(getApplicationContext(), CompanyC.class);
         PrintUtils.selectCommand(PrintUtils.RESET);
@@ -1363,10 +1346,11 @@ public class ShowParticularsActivity extends Activity {
         }
     }
 
-    */
-/**
+/*
+*
      * 厨房分单打印
-     *//*
+
+*/
 
     private void printOrderToKitchen()
     {
@@ -1534,13 +1518,14 @@ public class ShowParticularsActivity extends Activity {
         return rel;
     }
 
-    */
-/**
+/*
+*
      * 打印机连接状态判断
      *
      * @param index
      * @return
-     *//*
+*/
+
 
     private Boolean isPrinterConnected(int index) {
 //        if (!printerSat)
@@ -1785,4 +1770,3 @@ public class ShowParticularsActivity extends Activity {
 
 
 }
-*/

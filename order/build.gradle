@@ -1,13 +1,19 @@
 if (isModule.toBoolean()) {
     apply plugin: 'com.android.application'
-    apply plugin: "com.mob.sdk"
 
 } else {
     apply plugin: 'com.android.library'
-
 }
+apply plugin: "com.mob.sdk"
 apply plugin: 'com.jakewharton.butterknife'
 
+// 在MobSDK的扩展中注册SMSSDK的相关信息
+MobSDK {
+    appKey "21efc5a881e60"
+    appSecret "db061f16515cf08d8c98c9857c4550d9"
+
+    SMSSDK {}
+}
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -74,24 +80,19 @@ dependencies {
     implementation rootProject.ext.libRxBindingAppcompatV7
     implementation rootProject.ext.libRxBindingDesign
     testImplementation rootProject.ext.libTestImplementation
-    //compile 'com.tencent.bugly:crashreport:2.2.0'
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     implementation project(':mylibrary')
-    //你的其他依赖
-   /* compile name: 'SMSSDK-3.0.0', ext: 'aar'
-    implementation files('libs/MobCommons-2017.0607.1736.jar')
-    implementation files('libs/MobTools-2017.0607.1736.jar')*/
     compile 'com.android.support:cardview-v7:26.+'
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     compile 'com.journeyapps:zxing-android-embedded:3.3.0'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3'
     compile 'com.google.zxing:core:3.2.1'
     compile 'org.greenrobot:eventbus:3.0.0'
-    implementation files('libs/gprintersdkv22.jar')
     implementation files('libs/commons-lang-2.6.jar')
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
     implementation files('libs/xUtils-2.6.14.jar')
     implementation files('libs/ksoap2-android-assembly-2.5.2-jar-with-dependencies.jar')
     //implementation files('libs/com.baidu.tts_2.3.0.jar')
     implementation files('libs/modlelib0127.jar')
+    implementation files('libs/gprintersdkv22.jar')
 }

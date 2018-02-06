@@ -1,4 +1,3 @@
-/*
 package doaing.order.view;
 
 import android.content.Context;
@@ -39,7 +38,6 @@ import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 
 
-*/
 /**
  * 项目名称：Order
  * 类描述：
@@ -48,34 +46,24 @@ import doaing.order.untils.Tool;
  * 修改人：donghaifeng
  * 修改时间：2017/10/27
  * 修改备注：会员折扣界面
- *//*
+ **/
 
 
-public class SaleActivity extends AppCompatActivity {
+
+
+public class SaleActivity extends AppCompatActivity implements View.OnClickListener {
 
     EventHandler eventHandler;
-    @BindView(R.id.submitphone)
     Button submitphone;
-    @BindView(R.id.submitcode)
     Button submitcode;
-    @BindView(R.id.etAmountphone)
     EditText etAmountphone;
-    @BindView(R.id.etcode)
     EditText etcode;
-
-    @BindView(R.id.name)
     TextView name;
-    @BindView(R.id.number)
     TextView number;
-    @BindView(R.id.type)
     TextView type;
-    @BindView(R.id.status)
     TextView status;
-    @BindView(R.id.discount)
     TextView discount;
-    @BindView(R.id.submit_area)
     Button submitArea;
-    @BindView(R.id.balance)
     TextView balance;
 
     private int STATUS;
@@ -101,7 +89,7 @@ public class SaleActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         idbManager = DBFactory.get(DatabaseSource.CouchBase, this);
-
+        initView();
       //  setData();
         // 创建EventHandler对象
         eventHandler = new EventHandler() {
@@ -172,11 +160,30 @@ public class SaleActivity extends AppCompatActivity {
 
     }
 
+    private void initView() {
+         submitphone = findViewById(R.id.submitphone);
+         submitcode = findViewById(R.id.submitcode);
+         etAmountphone = findViewById(R.id.etAmountphone);
+         etcode = findViewById(R.id.etcode);
+         name = findViewById(R.id.name);
+         number = findViewById(R.id.number);
+         type = findViewById(R.id.type);
+         status = findViewById(R.id.status);
+         discount = findViewById(R.id.discount);
+         submitArea = findViewById(R.id.submit_area);
+         balance = findViewById(R.id.balance);
 
-    */
-/**
+        submitArea.setOnClickListener(this);
+        submitphone.setOnClickListener(this);
+        submitcode.setOnClickListener(this);
+    }
+
+/*
+
+*
      * 绑定数据到控件
-     *//*
+*/
+
 
     public void setData() {
 
@@ -293,42 +300,87 @@ public class SaleActivity extends AppCompatActivity {
         SMSSDK.unregisterEventHandler(eventHandler);
     }
 
-    @OnClick({R.id.submitphone, R.id.submitcode})
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.submitphone:
-                if (TextUtils.isEmpty(etAmountphone.getText().toString())) {
+        int i = view.getId();
+        if (i == R.id.submitphone) {
+            if (TextUtils.isEmpty(etAmountphone.getText().toString())) {
 
-                    etAmountphone.setError("号码不能为空");
+                etAmountphone.setError("号码不能为空");
 
-                } else {
+            } else {
 
-                    SMSSDK.getVerificationCode("86", etAmountphone.getText().toString());
+                SMSSDK.getVerificationCode("86", etAmountphone.getText().toString());
 
-                    if(inputMethodManager.isActive()){
-                        inputMethodManager.hideSoftInputFromWindow(SaleActivity.this.getCurrentFocus().getWindowToken(), 0);
-                    }
+                if (inputMethodManager.isActive()) {
+                    inputMethodManager.hideSoftInputFromWindow(SaleActivity.this.getCurrentFocus().getWindowToken(), 0);
+                }
+            }
+
+
+        } else if (i == R.id.submitcode) {
+            if (TextUtils.isEmpty(etcode.getText().toString())) {
+
+                etcode.setError("验证码不能为空！");
+
+            } else {
+
+                SMSSDK.submitVerificationCode("+86", etAmountphone.getText().toString(), etcode.getText().toString());
+                if (inputMethodManager.isActive()) {
+                    inputMethodManager.hideSoftInputFromWindow(SaleActivity.this.getCurrentFocus().getWindowToken(), 0);
+                }
+                //etcode.setCursorVisible(false);
+            }
+
+        }else if (i == R.id.submit_area) {
+            if (STATUS == 1) {
+
+                Intent intent = new Intent();
+
+                //设置会员卡类型
+
+                intent.putExtra("CardTypeFlag", CardTypeFlag);
+
+                if(TextUtils.isEmpty(etAmountphone.getText().toString())){
+
+                    etAmountphone.setError("数据为空");
+
+                    return;
+
+                }
+
+                intent.putExtra("tel", etAmountphone.getText().toString());
+                // intent.putExtra("tel", "8888");
+                //折扣卡返回折扣率及支持的菜品列表
+
+                if (CardTypeFlag == 1) {
+
+                    MyLog.e("折扣");
+
+                    intent.putExtra("disrate", disrate);
+
+                    intent.putParcelableArrayListExtra("DishseList", DishesIdList);
+
+
+                } else if (CardTypeFlag == 2) {
+
+
+                    MyLog.e("充值");
+
+                    intent.putExtra("remainder", remainder);
+
                 }
 
 
-                break;
-            case R.id.submitcode:
+                //返回支持打折菜品id
 
-                if (TextUtils.isEmpty(etcode.getText().toString())) {
+                setResult(RESULT_OK, intent);
 
-                    etcode.setError("验证码不能为空！");
+                finish();
 
-                } else {
-
-                    SMSSDK.submitVerificationCode("+86", etAmountphone.getText().toString(), etcode.getText().toString());
-                    if(inputMethodManager.isActive()){
-                        inputMethodManager.hideSoftInputFromWindow(SaleActivity.this.getCurrentFocus().getWindowToken(), 0);
-                    }
-                    //etcode.setCursorVisible(false);
-                }
-                break;
-            default:
-                break;
+            } else {
+                Toast.makeText(SaleActivity.this, "当前会员无效", Toast.LENGTH_SHORT).show();
+            }
+        } else {
         }
     }
 
@@ -347,60 +399,4 @@ public class SaleActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    @OnClick(R.id.submit_area)
-    public void onClick() {
-
-        if (STATUS == 1) {
-
-            Intent intent = new Intent();
-
-            //设置会员卡类型
-
-            intent.putExtra("CardTypeFlag", CardTypeFlag);
-
-            if(TextUtils.isEmpty(etAmountphone.getText().toString())){
-
-                etAmountphone.setError("数据为空");
-
-                return;
-
-            }
-
-            intent.putExtra("tel", etAmountphone.getText().toString());
-           // intent.putExtra("tel", "8888");
-            //折扣卡返回折扣率及支持的菜品列表
-
-            if (CardTypeFlag == 1) {
-
-                MyLog.e("折扣");
-
-                intent.putExtra("disrate", disrate);
-
-                intent.putParcelableArrayListExtra("DishseList", DishesIdList);
-
-
-            } else if (CardTypeFlag == 2) {
-
-
-                MyLog.e("充值");
-
-                intent.putExtra("remainder", remainder);
-
-            }
-
-
-            //返回支持打折菜品id
-
-            setResult(RESULT_OK, intent);
-
-            finish();
-
-        } else {
-            Toast.makeText(SaleActivity.this, "当前会员无效", Toast.LENGTH_SHORT).show();
-        }
-
-
-    }
 }
-*/

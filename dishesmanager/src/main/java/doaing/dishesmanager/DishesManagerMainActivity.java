@@ -6,6 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import view.BaseToobarActivity;
@@ -14,7 +16,7 @@ import view.BaseToobarActivity;
  * @author donghaifeng
  * @Data 2018/1/17
  */
-
+@Route(path = "/doaing/DishesManagerMainActivity")
 public class DishesManagerMainActivity extends BaseToobarActivity {
 
     @BindView(R2.id.toolbar)

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:background="@color/title"
+        >
+        <ImageView
+            android:id="@+id/addclient_bt_back"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/animback" />
+
+        <TextView
+            android:id="@+id/textView221"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3" />
+
+        <ImageView
+            android:id="@+id/selectall"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="3dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/animselectall" />
+
+
+        <ImageView
+            android:id="@+id/bt_deselectall"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/animinvertselect"
+            android:text="反选" />
+
+
+        <ImageView
+            android:id="@+id/cancelselectall"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/animcancel" />
+
+        <ImageView
+            android:id="@+id/btn_kcsave"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="3dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/animsave" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/backgroud"
+            android:gravity="center_vertical|center_horizontal"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/tv_clientname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="厨房名称"
+                android:textColor="@color/md_blue_grey_900"
+                android:textSize="15sp"
+                 />
+
+            <EditText
+                android:id="@+id/et_clientname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="5dp"
+                android:textSize="15sp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                />
+
+            <TextView
+                android:id="@+id/tv_iptab"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="选择打印机"
+                android:textColor="@color/md_blue_grey_900"
+                android:textSize="15sp"
+                />
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:background="@color/darkgray"
+                android:layout_marginTop="10sp"
+                android:layout_marginRight="5dp"
+                android:layout_marginLeft="5dp">
+
+                <Button
+                    android:id="@+id/spPrinter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:gravity="left|center_vertical"
+                    android:textSize="9dp"
+                    android:textAllCaps="false"
+                    />
+
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="30dp"
+                    android:src="@mipmap/icon_xzg" />
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:src="@mipmap/icon_caipin_xiala" />
+
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="9"
+                android:background="@color/backgroud"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView214"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="12dp"
+                    android:layout_weight="1"
+                    android:gravity="left|center"
+                    android:singleLine="true"
+                    android:text="菜品名称"
+                    android:textColor="@color/title_font"
+                    android:textSize="18sp"
+                     />
+
+                <TextView
+                    android:id="@+id/autofitTextView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="32dp"
+                    android:layout_weight="1"
+                    android:gravity="right|center"
+                    android:singleLine="true"
+                    android:text="选择"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@color/title_font"
+                    android:textSize="18sp"
+                    />
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/listView_ck"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+
+            </ListView>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

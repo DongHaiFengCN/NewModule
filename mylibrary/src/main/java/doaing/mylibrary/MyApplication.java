@@ -3,7 +3,9 @@ package doaing.mylibrary;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 
+import com.alibaba.android.arouter.launcher.ARouter;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.Conflict;
 import com.couchbase.lite.ConflictResolver;
@@ -17,6 +19,8 @@ import com.couchbase.lite.Replicator;
 import com.couchbase.lite.ReplicatorChange;
 import com.couchbase.lite.ReplicatorChangeListener;
 import com.couchbase.lite.ReplicatorConfiguration;
+
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -27,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import bean.kitchenmanage.dishes.DishesKindC;
 import bean.kitchenmanage.table.TableC;
 import bean.kitchenmanage.user.UsersC;
@@ -46,7 +49,7 @@ public class MyApplication extends Application implements ISharedPreferences, Re
 
     private static final String TAG = Application.class.getSimpleName();
 
-    private final static boolean SYNC_ENABLED = true;
+    private final static boolean SYNC_ENABLED = false;
 
     public Map<String, List<Document>> getDishesObjectCollection() {
         return dishesObjectCollection;
@@ -99,16 +102,19 @@ public class MyApplication extends Application implements ISharedPreferences, Re
 
     public ExecutorService mExecutor;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
-      /*  CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
+        /*CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(this);
         strategy.setAppChannel("开发部");
         Bugly.init(getApplicationContext(), "c11c0d8e58", true, strategy);
         CrashReport.setUserId("1002");*/
         startSession(DATABASE_NAME);
         mExecutor = Executors.newCachedThreadPool();
+        //初始化阿里路由
+        ARouter.openDebug();
+        ARouter.init(this); // 尽可能早，推荐在Application中初始化
+
     }
 
 
@@ -124,7 +130,7 @@ public class MyApplication extends Application implements ISharedPreferences, Re
 
     private void startSession(String dbName) {
         openDatabase(dbName);
-        startReplication(getCompany_ID(), "123456");
+        startReplication("qiao", "123456");
     }
 
     // -------------------------
@@ -134,8 +140,8 @@ public class MyApplication extends Application implements ISharedPreferences, Re
     private void openDatabase(String dbname) {
 
         DatabaseConfiguration config = new DatabaseConfiguration(getApplicationContext());
-       // File folder = new File(String.format("%s/SmartKitchenPad", Environment.getExternalStorageDirectory()));
-        //config.setDirectory(folder);
+        File folder = new File(String.format("%s/SmartKitchenPad", Environment.getExternalStorageDirectory()));
+        config.setDirectory(folder);
         config.setConflictResolver(getConflictResolver());
         try {
             database = new Database(dbname, config);

@@ -1,4 +1,3 @@
-/*
 package doaing.order.view;
 
 import android.bluetooth.BluetoothAdapter;
@@ -56,7 +55,9 @@ import bean.kitchenmanage.table.TableC;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import doaing.mylibrary.MyApplication;
 import doaing.order.R;
+import doaing.order.untils.ProgressBarasyncTask;
 import doaing.order.view.adapter.ActionListAdapter;
 import doaing.order.view.adapter.MemberDishesListAdapter;
 import doaing.order.untils.BluetoothUtil;
@@ -64,45 +65,31 @@ import doaing.order.application.CDBHelper;
 import doaing.order.module.DBFactory;
 import doaing.order.module.DatabaseSource;
 import doaing.order.module.IDBManager;
-import doaing.order.application.MyApplication;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
-import doaing.order.untils.ProgressBarasyncTask;
 import doaing.order.untils.Tool;
 
-*/
 /**
  * @author 董海峰
  * @date 2017/10/25
- *//*
+ */
 
 
-public class PayActivity extends AppCompatActivity {
+
+public class PayActivity extends AppCompatActivity implements View.OnClickListener{
 
     String id;
-    @BindView(R.id.fact_tv)
     TextView factTv;
-    @BindView(R.id.discount_tv)
     TextView discountTv;
-    @BindView(R.id.total_tv)
     TextView totalTv;
-    @BindView(R.id.associator_tv)
     TextView associatorTv;
-    @BindView(R.id.action_tv)
     TextView actionTv;
-    @BindView(R.id.associator)
     LinearLayout associator;
-    @BindView(R.id.discount)
     LinearLayout discount;
-    @BindView(R.id.action)
     LinearLayout action;
-    @BindView(R.id.ivalipay)
     ImageView ivalipay;
-    @BindView(R.id.ivwechat)
     ImageView ivwechat;
-    @BindView(R.id.cash)
     ImageView cash;
-    @BindView(R.id.table_number)
     TextView tableNumber;
 
     List<PromotionRuleC> promotionRuleCList;
@@ -148,7 +135,7 @@ public class PayActivity extends AppCompatActivity {
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        initView();
         //取消分割阴影
         getSupportActionBar().setElevation(0);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -205,6 +192,28 @@ public class PayActivity extends AppCompatActivity {
         totalTv.setText(total + "");
         //显示操作后价格
         factTv.setText(stringBuilder.append(total));
+    }
+
+    private void initView() {
+        factTv = findViewById(R.id.fact_tv);
+        discountTv = findViewById(R.id.discount_tv);
+        totalTv = findViewById(R.id.total_tv);
+        associatorTv = findViewById(R.id.associator_tv);
+         actionTv = findViewById(R.id.action_tv);
+         associator = findViewById(R.id.associator);
+         discount = findViewById(R.id.discount);
+         action = findViewById(R.id.action);
+         ivalipay = findViewById(R.id.ivalipay);
+         ivwechat = findViewById(R.id.ivwechat);
+         cash = findViewById(R.id.cash);
+         tableNumber = findViewById(R.id.table_number);
+        associator.setOnClickListener(this);
+        discount.setOnClickListener(this);
+        action.setOnClickListener(this);
+        ivalipay.setOnClickListener(this);
+        ivwechat.setOnClickListener(this);
+        cash.setOnClickListener(this);
+        findViewById(R.id.bankcard).setOnClickListener(this);
     }
 
 
@@ -283,12 +292,13 @@ public class PayActivity extends AppCompatActivity {
 
     }
 
-    */
-/**
+/*
+*
      * 准备所有的数据
      *
      * @param
-     *//*
+*/
+
 
     private void getAll() {
 
@@ -388,10 +398,11 @@ public class PayActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    */
-/**
+/*
+*
      * onActivityResult的方法获取
-     *//*
+*/
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -428,12 +439,13 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    */
-/**
+/*
+*
      * 账单减免功能
      *
      * @param data
-     *//*
+*/
+
 
 
     private void turnDiscount(Intent data) {
@@ -467,12 +479,13 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    */
-/**
+/*
+*
      * 会员折扣卡处理逻辑
      *
      * @param data
-     *//*
+*/
+
 
     private void turnSale(Intent data) {
 
@@ -698,13 +711,14 @@ public class PayActivity extends AppCompatActivity {
         });
     }
 
-    */
-/**
+/*
+*
      * 设置会员消费记录
      *
      * @param members 会员
      * @param consum  消费金额
-     *//*
+*/
+
 
 
     private void setConsumLog(Document members, float consum) {
@@ -720,12 +734,13 @@ public class PayActivity extends AppCompatActivity {
 
     }
 
-    */
-/**
+/*
+*
      * 充值卡扣款功能
      *
      * @param data
-     *//*
+*/
+
 
 
     private void turnRechange(Intent data) {
@@ -850,12 +865,11 @@ public class PayActivity extends AppCompatActivity {
         });
     }
 
-    */
-/**
+/*
+*
      * 打印账单
-     *//*
 
-
+*/
     private void printOrder() {
 
         ProgressBarasyncTask progressBarasyncTask = new ProgressBarasyncTask(PayActivity.this);
@@ -896,10 +910,11 @@ public class PayActivity extends AppCompatActivity {
     }
 
 
-    */
-/**
+/*
+*
      * 跳转抹零功能界面
-     *//*
+*/
+
 
     private void turnDiscount() {
 
@@ -909,10 +924,9 @@ public class PayActivity extends AppCompatActivity {
         startActivityForResult(discount, DISTCOUNT);
     }
 
-    */
-/**
+/*
      * 跳转会员折扣界面
-     *//*
+*/
 
 
     private void turnSale() {
@@ -924,128 +938,42 @@ public class PayActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.associator, R.id.discount, R.id.action, R.id.ivalipay, R.id.ivwechat, R.id.cash, R.id.bankcard})
     public void onClick(View view) {
-        switch (view.getId()) {
-
-            //会员的支付方式
-            case R.id.associator:
-
-                turnSale();
-
-                break;
-            case R.id.discount:
-
-                //抹零
-
-                turnDiscount();
-
-                break;
-            case R.id.action:
-
-                //活动
-                setAction();
-
-                break;
-            case R.id.ivalipay:
-
-                //支付宝支付
-
-                if (alipayBitmap != null) {
-
-                    View alipayView = getLayoutInflater().inflate(R.layout.view_alipay_dialog, null);
-                    ImageView alipayIv = alipayView.findViewById(R.id.encode);
-                    alipayIv.setImageBitmap(alipayBitmap);
-
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(PayActivity.this);
-                    alertDialog.setView(alipayView);
-                    alertDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    });
-                    alertDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                            setPayDetail(4, total);
-
-                            try {
-                                submitCheckOrder();
-                            } catch (CouchbaseLiteException e) {
-                                e.printStackTrace();
-                            }
+        int i = view.getId();
+        if (i == R.id.associator) {
+            turnSale();
 
 
-                        }
-                    });
+        } else if (i == R.id.discount) {//抹零
 
-                    alertDialog.show();
-                } else {
-                    Toast.makeText(PayActivity.this, "没有添加二维码", Toast.LENGTH_SHORT).show();
-                }
-                break;
-            case R.id.ivwechat:
-
-                //微信支付
-
-                if (wechatBitmap != null) {
-
-                    View wechatView = getLayoutInflater().inflate(R.layout.view_wechat_dialog, null);
-                    ImageView wechatIv = wechatView.findViewById(R.id.encode);
-                    wechatIv.setImageBitmap(wechatBitmap);
-
-                    AlertDialog.Builder wechatDialog = new AlertDialog.Builder(PayActivity.this);
-                    wechatDialog.setView(wechatView);
-                    wechatDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    });
-                    wechatDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+            turnDiscount();
 
 
-                            setPayDetail(3, total);
-
-                            try {
-                                submitCheckOrder();
-                            } catch (CouchbaseLiteException e) {
-                                e.printStackTrace();
-                            }
+        } else if (i == R.id.action) {//活动
+            setAction();
 
 
-                        }
-                    });
+        } else if (i == R.id.ivalipay) {//支付宝支付
 
-                    wechatDialog.show();
+            if (alipayBitmap != null) {
 
-                } else {
-                    Toast.makeText(PayActivity.this, "没有添加二维码", Toast.LENGTH_SHORT).show();
-                }
+                View alipayView = getLayoutInflater().inflate(R.layout.view_alipay_dialog, null);
+                ImageView alipayIv = alipayView.findViewById(R.id.encode);
+                alipayIv.setImageBitmap(alipayBitmap);
 
-                break;
-            case R.id.cash:
-
-                //现金支付
-
-                AlertDialog.Builder cashDialog = new AlertDialog.Builder(PayActivity.this);
-                cashDialog.setTitle("现金支付");
-                cashDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(PayActivity.this);
+                alertDialog.setView(alipayView);
+                alertDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 });
-                cashDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-
-                        setPayDetail(1, total);
+                        setPayDetail(4, total);
 
                         try {
                             submitCheckOrder();
@@ -1057,30 +985,33 @@ public class PayActivity extends AppCompatActivity {
                     }
                 });
 
-                cashDialog.show();
+                alertDialog.show();
+            } else {
+                Toast.makeText(PayActivity.this, "没有添加二维码", Toast.LENGTH_SHORT).show();
+            }
 
-                break;
+        } else if (i == R.id.ivwechat) {//微信支付
 
+            if (wechatBitmap != null) {
 
-            case R.id.bankcard:
+                View wechatView = getLayoutInflater().inflate(R.layout.view_wechat_dialog, null);
+                ImageView wechatIv = wechatView.findViewById(R.id.encode);
+                wechatIv.setImageBitmap(wechatBitmap);
 
-                //银行卡支付
-
-                AlertDialog.Builder bankDialog = new AlertDialog.Builder(PayActivity.this);
-                bankDialog.setTitle("银行卡支付");
-
-                bankDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                AlertDialog.Builder wechatDialog = new AlertDialog.Builder(PayActivity.this);
+                wechatDialog.setView(wechatView);
+                wechatDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
                     }
                 });
-                bankDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
+                wechatDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
 
-                        setPayDetail(2, total);
+                        setPayDetail(3, total);
 
                         try {
                             submitCheckOrder();
@@ -1092,21 +1023,84 @@ public class PayActivity extends AppCompatActivity {
                     }
                 });
 
-                bankDialog.show();
+                wechatDialog.show();
+
+            } else {
+                Toast.makeText(PayActivity.this, "没有添加二维码", Toast.LENGTH_SHORT).show();
+            }
 
 
-                break;
+        } else if (i == R.id.cash) {//现金支付
 
-            default:
-                break;
+            AlertDialog.Builder cashDialog = new AlertDialog.Builder(PayActivity.this);
+            cashDialog.setTitle("现金支付");
+            cashDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            cashDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                    setPayDetail(1, total);
+
+                    try {
+                        submitCheckOrder();
+                    } catch (CouchbaseLiteException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+
+            cashDialog.show();
+
+
+        } else if (i == R.id.bankcard) {//银行卡支付
+
+            AlertDialog.Builder bankDialog = new AlertDialog.Builder(PayActivity.this);
+            bankDialog.setTitle("银行卡支付");
+
+            bankDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            bankDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                    setPayDetail(2, total);
+
+                    try {
+                        submitCheckOrder();
+                    } catch (CouchbaseLiteException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+
+            bankDialog.show();
+
+
+        } else {
         }
     }
 
 
-    */
-/**
+/*
+*
      * 活动扣款
-     *//*
+*/
+
 
     private void setAction() {
 
@@ -1396,13 +1390,14 @@ public class PayActivity extends AppCompatActivity {
         }
     }
 
-    */
-/**
+/*
+*
      * 支付细节设置
      *
      * @param type 支付类型
      * @param pay  支付的钱数
-     *//*
+*/
+
 
     private void setPayDetail(int type, float pay) {
 
@@ -1424,12 +1419,13 @@ public class PayActivity extends AppCompatActivity {
 //        myApplication.setTable_sel_obj(tableC);
 //    }
 
-    */
-/**
+/*
+*
      * 提交结账信息
      * <p>
      * 设置order的状态为买单
-     *//*
+*/
+
 
     public void submitCheckOrder() throws CouchbaseLiteException {
 
@@ -1532,13 +1528,14 @@ public class PayActivity extends AppCompatActivity {
 
     }
 
-    */
-/**
+/*
+*
      * 字符串生成二维码图片
      *
      * @param str 二维码字符串
      * @return Bitmap
-     *//*
+*/
+
 
 
     private Bitmap encodeAsBitmap(String str) {
@@ -1575,4 +1572,3 @@ public class PayActivity extends AppCompatActivity {
     }
 }
 
-*/

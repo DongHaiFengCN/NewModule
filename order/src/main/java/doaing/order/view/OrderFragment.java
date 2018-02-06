@@ -1,4 +1,3 @@
-/*
 package doaing.order.view;
 
 import android.app.Fragment;
@@ -31,25 +30,23 @@ import java.util.Map;
 import bean.kitchenmanage.dishes.DishesC;
 import bean.kitchenmanage.dishes.DishesKindC;
 import bean.kitchenmanage.order.GoodsC;
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.order.R;
-import doaing.order.view.adapter.MyGridAdapter;
 import doaing.order.application.CDBHelper;
 import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
+import doaing.order.view.adapter.MyGridAdapter;
 
-*/
-/**
+/*
+*
  * Created by lenovo on 2017/10/26.
- *//*
+*/
+
 
 
 public class OrderFragment extends Fragment {
 
-    @BindView(R.id.dishes_rv)
     ListView dishesRv;
-    @BindView(R.id.order_list)
     ListView orderList;
     private DishesKindAdapter leftAdapter;
     private OrderDragAdapter orderDragAdapter;
@@ -61,8 +58,6 @@ public class OrderFragment extends Fragment {
     private Map<String, float[]> dishesCollection = new HashMap<>();
     private Map<String, List<Document>> dishesObjectCollection;
     private boolean[] booleans;
-    /*/
-/*************************
     List<DishesKindC> dishesKindCList;
 
     String kindId;
@@ -81,6 +76,8 @@ public class OrderFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frame_order, null);
         ButterKnife.bind(this, view);
+        dishesRv = view.findViewById(R.id.dishes_rv);
+        orderList = view.findViewById(R.id.order_list);
         return view;
     }
 
@@ -122,11 +119,11 @@ public class OrderFragment extends Fragment {
 
                 leftAdapter.changeSelected(position);
 
-                kindId = dishesKindCList.get(position).get_id();
-
-                orderDragAdapter.setMessage(dishesObjectCollection.get(kindId)
-                        , dishesCollection.get(kindId));
-
+                if (dishesKindCList.size() != 0){
+                    kindId = dishesKindCList.get(position).get_id();
+                    orderDragAdapter.setMessage(dishesObjectCollection.get(kindId)
+                            , dishesCollection.get(kindId));
+                }
 
             }
         });
@@ -180,10 +177,11 @@ public class OrderFragment extends Fragment {
         myNotifyDataSetChanged();
     }
 
-    */
-/**
+/*
+*
      * 刷新所有展示数据
-     *//*
+*/
+
 
     private void myNotifyDataSetChanged() {
 
@@ -299,10 +297,11 @@ public class OrderFragment extends Fragment {
     }
 
 
-    */
-/**
+/*
+*
      * 菜品选择弹出框编辑模块
-     *//*
+*/
+
 
     private void showDialog(final DishesC dishesC, final int position, float number) {
 
@@ -534,4 +533,3 @@ public class OrderFragment extends Fragment {
         EventBus.getDefault().unregister(this);
     }
 }
-*/

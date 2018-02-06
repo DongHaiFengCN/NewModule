@@ -39,6 +39,7 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gprinter.aidl.GpService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ import doaing.mylibrary.MyApplication;
 
 public class CDBHelper {
     public static Database db;
+    public static GpService mGpService;
 
     //*************************对象操作********************************************************
 
@@ -633,4 +635,12 @@ public class CDBHelper {
 //        return SingletonHolder.single;
 //    }
 
+
+    public static GpService getmGpService() {
+        return mGpService;
+    }
+
+    public static void setmGpService(GpService mGpService) {
+        CDBHelper.mGpService = mGpService;
+    }
 }
