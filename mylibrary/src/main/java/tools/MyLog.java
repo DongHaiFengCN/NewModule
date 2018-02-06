@@ -13,6 +13,7 @@ import android.util.Log;
  */
 
 public class MyLog  {
+
     private static boolean isDebug = true ;
     public static void e(String info){
 

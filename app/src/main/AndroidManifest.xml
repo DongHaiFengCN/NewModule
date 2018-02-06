@@ -19,6 +19,7 @@
         android:icon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         tools:replace="android:name"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
        >
         <activity android:name="doaing.dishesmanager.DishesManagerMainActivity">
             <intent-filter>

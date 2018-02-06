@@ -7,59 +7,23 @@
 
     <include layout="@layout/common_view_toolbar" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+   <LinearLayout
+       android:orientation="horizontal"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+       <ListView
+           android:id="@+id/area_lv"
+           android:layout_weight="3"
+           android:layout_width="0dp"
+           android:layout_height="match_parent">
 
+       </ListView>
+       <ListView
+           android:id="@+id/table_lv"
+           android:layout_weight="7"
+           android:layout_width="0dp"
+           android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:src="@drawable/animroomset"
-                tools:ignore="NestedWeights"
-                android:clickable="true"
-                android:contentDescription="@string/todo"
-                android:focusable="true" />
-
-            <TextView
-                android:gravity="center"
-                android:text="房间设置"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:src="@drawable/animtableset"
-                android:clickable="true"
-
-                android:contentDescription="@string/todo"
-                tools:ignore="NestedWeights"
-                android:focusable="true" />
-
-            <TextView
-                android:gravity="center"
-                android:text="桌位设置"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"/>
-        </LinearLayout>
-    </LinearLayout>
+       </ListView>
+   </LinearLayout>
 </LinearLayout>

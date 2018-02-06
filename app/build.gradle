@@ -30,7 +30,7 @@ dependencies {
     if (!isModule.toBoolean()) {
         implementation project(':order')
         // compile 'com.tencent.bugly:crashreport:2.2.0'
-        //implementation project(':dishesmanager')
+        implementation project(':dishesmanager')
 
     }
     implementation project(':mylibrary')

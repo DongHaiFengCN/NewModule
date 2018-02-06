@@ -246,7 +246,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                     ((MyApplication) getApplication()).getDatabase().save(document);
                     ((MyApplication) getApplication()).getDatabase().save(newKind);
                     ((MyApplication) getApplication()).getDatabase().save(oldKind);
-                    EventBus.getDefault().postSticky(new Integer(kindPosition));
+                    EventBus.getDefault().postSticky(Integer.valueOf(kindPosition));
 
                     finish();
 
@@ -535,9 +535,6 @@ public class DisheEditActivity extends BaseToobarActivity {
                     .setMessage("确定删除当前菜品吗？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-
-
-
                     //移除菜类下菜品的关联
                     removeDisheIdFromDishesKindList();
 
