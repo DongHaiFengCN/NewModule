@@ -34,7 +34,6 @@
             android:textColor="@color/grey_color1"
             android:inputType="number"
             android:drawableRight="@mipmap/icon_xh"
-            android:text="1"
             />
     </LinearLayout>
 
@@ -94,7 +93,6 @@
             android:textColor="@color/grey_color1"
             android:drawableRight="@mipmap/icon_da"
             android:inputType="number"
-            android:text="1"
             />
     </LinearLayout>
     <LinearLayout
@@ -124,7 +122,6 @@
             android:textColor="@color/grey_color1"
             android:drawableRight="@mipmap/icon_shao"
             android:inputType="number"
-            android:text="1"
 
             />
     </LinearLayout>
@@ -156,7 +153,6 @@
             android:textColor="@color/grey_color1"
             android:drawableRight="@mipmap/icon_rmb"
             android:inputType="number"
-            android:text="1"
             />
     </LinearLayout>
 
