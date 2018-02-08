@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|center_horizontal"
+    android:background="@color/md_white_1000"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="序         号:" />
+
+        <EditText
+            android:id="@+id/tableid_et"
+            android:paddingLeft="12dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/shape_eidt_selector"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:inputType="number"
+            android:drawableRight="@mipmap/icon_xh"
+            android:text="1"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="名         称:" />
+
+        <EditText
+            android:id="@+id/tablename_et"
+            android:paddingLeft="12dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/shape_eidt_selector"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:drawableRight="@mipmap/icon_name"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="最少人数:" />
+
+        <EditText
+            android:id="@+id/minimun_number"
+            android:paddingLeft="12dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/shape_eidt_selector"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:drawableRight="@mipmap/icon_da"
+            android:inputType="number"
+            android:text="1"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="最大人数:" />
+
+        <EditText
+            android:id="@+id/maximum_number_et"
+            android:paddingLeft="12dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/shape_eidt_selector"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:drawableRight="@mipmap/icon_shao"
+            android:inputType="number"
+            android:text="1"
+
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textSize="12sp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:gravity="center"
+            android:text="最低消费:" />
+
+        <EditText
+            android:id="@+id/minimun_consumption_et"
+            android:paddingLeft="12dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/shape_eidt_selector"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey_color1"
+            android:drawableRight="@mipmap/icon_rmb"
+            android:inputType="number"
+            android:text="1"
+            />
+    </LinearLayout>
+
+</LinearLayout>

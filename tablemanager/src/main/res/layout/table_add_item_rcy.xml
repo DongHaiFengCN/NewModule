@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="horizontal">
+
+    <android.support.v7.widget.CardView
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground = "?attr/selectableItemBackground"
+        android:id="@+id/table_state_cardview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="12dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="8dp"
+        app:contentPaddingBottom="8dp"
+        app:contentPaddingLeft="8dp"
+        app:contentPaddingRight="8dp"
+        app:contentPaddingTop="8dp">
+
+  <ImageView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:background="@mipmap/ic_add"/>
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

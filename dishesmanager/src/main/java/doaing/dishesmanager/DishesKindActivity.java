@@ -88,13 +88,9 @@ public class DishesKindActivity extends BaseToobarActivity {
      * 加载数据库数据
      */
     private void initList() {
-
-        database = ((MyApplication) getApplicationContext()).getDatabase();
         listAdapter = new ListAdapter();
         dishesKind_lv.setAdapter(listAdapter);
-
         database = ((MyApplication) getApplicationContext()).getDatabase();
-
         LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo("DishesKindC")).toLive();

@@ -224,8 +224,6 @@ public class DishesActivity extends BaseToobarActivity {
         dishesAdapter = new DishesAdapter(dishesList);
         dishes_Lv.setAdapter(dishesAdapter);
         disheKindQuery();
-
-
         //kind的点击事件
         disheskind_Lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

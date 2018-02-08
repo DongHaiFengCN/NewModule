@@ -20,12 +20,13 @@ android {
 
 dependencies {
     implementation rootProject.ext.libSupportAppcompat
-
     if (!isModule.toBoolean()) {
-        implementation project(':order')
+        //implementation project(':order')
         // compile 'com.tencent.bugly:crashreport:2.2.0'
-        implementation project(':dishesmanager')
+       // implementation project(':dishesmanager')
+        implementation project(':tablemanager')
 
     }
     implementation project(':mylibrary')
+
 }
