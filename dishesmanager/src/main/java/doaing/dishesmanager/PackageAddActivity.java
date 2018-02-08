@@ -227,11 +227,13 @@ public class PackageAddActivity extends BaseToobarActivity {
                                     @Override
                                     public void onClick(View v) {
 
-                                        if ("".equals(packageNameEt.getText().toString()) && "".equals(packagePriceEt.getText().toString())) {
+                                        if ("".equals(packageNameEt.getText().toString())) {
 
                                             packageNameEt.setError("不能为空！");
-                                            packagePriceEt.setError("不能为空！");
 
+
+                                        }else if("".equals(packagePriceEt.getText().toString())){
+                                            packagePriceEt.setError("不能为空！");
                                         } else {
 
                                             float sum = Float.valueOf(packagePriceEt.getText().toString());

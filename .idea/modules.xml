@@ -2,13 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://D:\AndroidStudio\NewModuleCS\NewModule.iml" filepath="D:\AndroidStudio\NewModuleCS\NewModule.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NewModuleCS.iml" filepath="$PROJECT_DIR$/NewModuleCS.iml" />
-      <module fileurl="file://C:\CloudMusic\T\NewModule\NewModuleCS.iml" filepath="C:\CloudMusic\T\NewModule\NewModuleCS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NewModule.iml" filepath="$PROJECT_DIR$/NewModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/dishesmanager/dishesmanager.iml" filepath="$PROJECT_DIR$/dishesmanager/dishesmanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/mylibrary/mylibrary.iml" filepath="$PROJECT_DIR$/mylibrary/mylibrary.iml" />
-      <module fileurl="file://C:\CloudMusic\T\NewModule\new.iml" filepath="C:\CloudMusic\T\NewModule\new.iml" />
       <module fileurl="file://$PROJECT_DIR$/order/order.iml" filepath="$PROJECT_DIR$/order/order.iml" />
       <module fileurl="file://$PROJECT_DIR$/tablemanager/tablemanager.iml" filepath="$PROJECT_DIR$/tablemanager/tablemanager.iml" />
     </modules>

@@ -22,6 +22,7 @@ import com.couchbase.lite.Document;
 import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -73,18 +74,18 @@ public class PackageEditActivity extends BaseToobarActivity {
         int Length = array.count();
 
         Document temporary = null;
-
         for (int i = 0; i < Length; i++) {
-
-
             temporary = database.getDocument(array.getString(i));
-            list.add(temporary);
-
+            if(temporary.getString("dishesName")!=null){
+                list.add(temporary);
+            }
         }
 
         listAdapter.notifyDataSetChanged();
 
-        RxView.clicks(submit).throttleFirst(200, TimeUnit.MILLISECONDS).subscribe(new Action1<Void>() {
+        //提交编辑套餐编辑后的数据
+        RxView.clicks(submit).throttleFirst(200, TimeUnit.MILLISECONDS)
+                .subscribe(new Action1<Void>() {
             @Override
             public void call(Void aVoid) {
 
@@ -95,7 +96,13 @@ public class PackageEditActivity extends BaseToobarActivity {
                     secondLevel.setFloat("price", Float.valueOf(price));
                 }
                 try {
+                    Array array = new Array();
+                    int size = list.size();
+                    for(int i=0;i<size;i++){
 
+                        array.addString(list.get(i).getId());
+                    }
+                    secondLevel.setArray("dishesListId",array);
                     database.save(secondLevel);
                     finish();
 
@@ -211,21 +218,7 @@ public class PackageEditActivity extends BaseToobarActivity {
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
                                     sll_main.setStatus(MySwipeListLayout.Status.Close, true);
-                                    Array array = secondLevel.getArray("dishesListId");
-                                    int Length = array.count();
-
-                                    for (int i = 0; i < Length; i++) {
-
-                                        if (list.get(arg0).getId().equals(array.getString(i))) {
-
-                                            array.remove(i);
-                                        }
-
-                                    }
-
-
                                     list.remove(arg0);
                                     notifyDataSetChanged();
                                 }

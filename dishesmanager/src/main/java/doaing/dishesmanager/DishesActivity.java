@@ -243,6 +243,7 @@ public class DishesActivity extends BaseToobarActivity {
 
                 Document document = (Document) dishesKindList.get(position);
 
+                document = database.getDocument(document.getId());
                 Array array = document.getArray("dishesListId");
 
 
@@ -303,7 +304,7 @@ public class DishesActivity extends BaseToobarActivity {
     public void updataPosition(Integer integer) {
 
         //刷新菜品信息
-        disheKindQuery();
+       // disheKindQuery();
         disheskind_Lv.performItemClick(disheskind_Lv.getChildAt(integer), integer, disheskind_Lv
                 .getItemIdAtPosition(integer));
     }

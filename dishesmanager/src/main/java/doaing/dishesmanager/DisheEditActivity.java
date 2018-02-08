@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +49,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -494,15 +496,19 @@ public class DisheEditActivity extends BaseToobarActivity {
         tasteList = new ArrayList<>();
         if (array != null) {
 
-            List<Object> objects = array.toList();
-            for (Object s : objects) {
+         //   List<Object> objects = array.toList();
+          Iterator<Object> iterator = array.iterator();
+          while(iterator.hasNext()){
 
-                Document document = database.getDocument(s.toString());
-                if (document != null){
-                    tasteList.add(document);
-                }
+              String o = (String) iterator.next();
+              Document document = database.getDocument(o);
+              if(document.getString("tasteName") != null){
+                  tasteList.add(document);
 
-            }
+              }
+
+          }
+
         }
 
         tasteSelectAdapter = new TasteSelectAdapter(tasteList, getApplicationContext());
@@ -614,7 +620,6 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 oldArry.remove(i);
 
-              //  Log.e("删除的id", document.getId());
                 break;
 
             }
