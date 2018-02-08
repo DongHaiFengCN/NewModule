@@ -16,7 +16,7 @@ import view.BaseToobarActivity;
  * @author donghaifeng
  * @Data 2018/1/17
  */
-@Route(path = "/doaing/DishesManagerMainActivity")
+@Route(path = "/dishes/DishesManagerMainActivity")
 public class DishesManagerMainActivity extends BaseToobarActivity {
 
     @BindView(R2.id.toolbar)

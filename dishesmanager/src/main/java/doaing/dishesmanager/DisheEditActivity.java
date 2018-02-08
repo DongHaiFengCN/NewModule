@@ -404,7 +404,9 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                     String id = row.getString(0);
                     Document doc = database.getDocument(id);
-                    tasteAllList.add(doc);
+                    if (doc!= null){
+                        tasteAllList.add(doc);
+                    }
 
                 }
 
@@ -423,6 +425,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                 builder.setMultiChoiceItems(strings, new boolean[strings.length], new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
                         if (isChecked) {
                             tasteList.add(tasteList.get(which));
 
@@ -434,6 +437,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                 }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
                         tasteSelectAdapter.notifyDataSetChanged();
 
                     }
@@ -494,7 +498,9 @@ public class DisheEditActivity extends BaseToobarActivity {
             for (Object s : objects) {
 
                 Document document = database.getDocument(s.toString());
-                tasteList.add(document);
+                if (document != null){
+                    tasteList.add(document);
+                }
 
             }
         }

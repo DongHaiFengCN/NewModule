@@ -607,14 +607,17 @@ public class DeskActivity extends AppCompatActivity {
 
         } else if (i == R.id.action_dishes) {
 
-            ARouter.getInstance().build("/doaing/DishesManagerMainActivity").navigation();
+            ARouter.getInstance().build("/dishes/DishesManagerMainActivity").navigation();
 
         }else if (i == R.id.action_device) {
 
             Intent intent = new Intent(DeskActivity.this, DeviceMain.class);
             startActivity(intent);
 
+        }else if (i == R.id.action_table){
+            ARouter.getInstance().build("/table/TableManagerActivity").navigation();
         }else {
+
         }
         return true;
     }

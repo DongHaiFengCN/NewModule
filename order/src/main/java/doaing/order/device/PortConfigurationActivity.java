@@ -73,7 +73,7 @@ public class PortConfigurationActivity extends Activity {
 	class USBRaidoOnClickListener implements OnClickListener {
 		@Override
 		public void onClick(View arg0) {
-			// TODO Auto-generated method stub
+			//TODO Auto-generated method stub
 			btConnect.setVisibility(View.GONE);
 			llEthernet.setVisibility(View.GONE);
 			tvPortInfo.setVisibility(View.GONE);

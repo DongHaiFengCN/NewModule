@@ -205,7 +205,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                     EventBus.getDefault().postSticky(new Integer(position));
 
-                    finish();
+
 
                 } catch (CouchbaseLiteException e) {
 
@@ -216,7 +216,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                if (newFileUrl != null && !newFileUrl.isEmpty()) {
                     upDataPicture(new File(newFileUrl));
                 }
-
+                finish();
 
             }
         });

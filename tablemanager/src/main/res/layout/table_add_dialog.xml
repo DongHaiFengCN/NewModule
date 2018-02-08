@@ -151,7 +151,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@color/grey_color1"
-            android:drawableRight="@mipmap/icon_rmb"
+            android:drawableRight="@mipmap/icon_min_consumption"
             android:inputType="number"
             />
     </LinearLayout>

@@ -66,10 +66,10 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
     private void getKindItems() {
 
         final Database database = ((MyApplication) getContext().getApplicationContext()).getDatabase();
-
         LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesKindC")).toLive();
+                .where(Expression.property("className").equalTo("DishesKindC")
+                        .and(Expression.property("setMenu").equalTo(false))).toLive();
         query.addChangeListener(new LiveQueryChangeListener() {
             @Override
             public void changed(LiveQueryChange change) {
@@ -83,8 +83,6 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
                 ResultSet rows = change.getRows();
                 Result row = null;
                 while ((row = rows.next()) != null) {
-
-
                     String id = row.getString(0);
                     Document doc = database.getDocument(id);
                     dishesKindList.add(doc);

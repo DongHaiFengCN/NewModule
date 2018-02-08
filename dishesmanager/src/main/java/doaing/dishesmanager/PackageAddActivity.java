@@ -60,7 +60,12 @@ public class PackageAddActivity extends BaseToobarActivity {
     @Override
     public void initData(final Intent intent) {
         setToolbarName("添加二级套餐");
+        if(disheskindLv.getDishesKindList().size() ==0){
+           Toast.makeText(this,"没有菜品",Toast.LENGTH_SHORT).show();
 
+            return;
+
+        }
         database = ((MyApplication) getApplicationContext()).getDatabase();
         packageDcoument = database.getDocument(intent.getExtras().get("id").toString());
 

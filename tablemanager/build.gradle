@@ -11,6 +11,12 @@ android {
         versionName rootProject.ext.android.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //获取路由模块名称
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
 
     }
 
@@ -29,4 +35,6 @@ dependencies {
     implementation rootProject.ext.libSupportDesign
     compile 'com.android.support:cardview-v7:26.+'
     implementation project(':mylibrary')
+    //阿里路由
+    annotationProcessor libArouter_compiler
 }

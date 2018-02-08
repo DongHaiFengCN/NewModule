@@ -27,6 +27,11 @@
            app:showAsAction="never"
            android:title="菜品管理"/>
 
+       <item android:id="@+id/action_table"
+           android:icon="@drawable/animcut"
+           app:showAsAction="never"
+           android:title="桌位管理"/>
+
 
 
 </menu>

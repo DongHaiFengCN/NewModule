@@ -143,9 +143,9 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, ISha
 
     private void initView() {
 
-        name = (EditText) findViewById(R.id.loginName_edtTxt);
+        name =  findViewById(R.id.loginName_edtTxt);
 
-        password = (EditText) findViewById(R.id.loginPassword_edtTxt);
+        password = findViewById(R.id.loginPassword_edtTxt);
 
         password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -170,9 +170,9 @@ public class LoginActivity extends AppCompatActivity implements ILoginView, ISha
             }
         });
 
-        saveloginstatueChk = (CheckBox) findViewById(R.id.saveLoginStatue_chk);
+        saveloginstatueChk =  findViewById(R.id.saveLoginStatue_chk);
 
-        submit = (Button) findViewById(R.id.login_bt);
+        submit = findViewById(R.id.login_bt);
 
         final ILoginPresenter iLoginPresenter = new LoginPresentImpl(this, getApplicationContext());
 

@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
@@ -44,6 +45,7 @@ import view.BaseToobarActivity;
 /**
  * @author donghaifeng
  */
+@Route(path = "/table/TableManagerActivity")
 public class TableManagerActivity extends BaseToobarActivity {
 
     int position = 0;
@@ -218,9 +220,9 @@ public class TableManagerActivity extends BaseToobarActivity {
                                         for (int i = 0; i < count; i++) {
                                             if (id.equals(array.getString(i))) {
                                                 array.remove(i);
+                                                break;
                                             }
                                         }
-
                                         try {
                                             database.delete(document);
                                             database.save(areaDoc);

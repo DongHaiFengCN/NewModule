@@ -151,7 +151,6 @@ public class TasteActivity extends BaseToobarActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
 
                     //1.添加数据到数据库
-
                     Document document = new Document("DishesTasteC."+ ToolUtil.getUUID());
                     document.setString("channelId", "gysz");
                     document.setString("className", "DishesTasteC");
