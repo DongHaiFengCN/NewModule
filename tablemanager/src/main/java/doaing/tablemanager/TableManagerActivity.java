@@ -251,9 +251,6 @@ public class TableManagerActivity extends BaseToobarActivity {
                                             minimunConsumptionEt.setError("不能为空！");
                                         } else {
                                             document.setString("tableName", tableNameEt.getText().toString());
-                                            document.setString("tableNum", tableIdEt.getText().toString());
-
-                                            document.setString("areaId", areaDoc.getId());
                                             document.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
                                             document.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
                                             document.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
