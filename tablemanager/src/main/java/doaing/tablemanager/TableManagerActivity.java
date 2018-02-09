@@ -75,6 +75,7 @@ public class TableManagerActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent){
         database = ((MyApplication) getApplicationContext()).getDatabase();
+
         setToolbarName("房间与桌位");
         areaLv = findViewById(R.id.area_lv);
         tableRc = findViewById(R.id.table_lv);
@@ -325,7 +326,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     document.setString("tableName", tableNameEt.getText().toString());
                                     //id
                                     document.setInt("state",0);
-
+                                    document.setString("tableNum",getMaxTableNum());
                                     document.setString("areaId", areaDoc.getId());
                                     document.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
                                     document.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
@@ -341,8 +342,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     }
                                     setAreaListViewItemPosition(position);
                                     alertDialog.dismiss();
-
-                                    Log.e("DOAING","餐桌数量："+getMaxTableNum()+"");
+                                    Log.e("DOAING","餐桌号："+document.getString("tableNum"));
                                 }
                             }
                         });
@@ -363,21 +363,33 @@ public class TableManagerActivity extends BaseToobarActivity {
         return view;
     }
 
-    private int getMaxTableNum(){
-
-        int count = 0;
-        Query query= Query.select(SelectResult.all(), SelectResult.expression(Expression.meta().getId()))
-                .from(DataSource.database(database)).where( Expression.property("className")
-                .equalTo("TableC"));
+    private String getMaxTableNum(){
+        List<Document> documentList = new ArrayList<>();
+        String maxNum=null;
+        Query query= Query.select(SelectResult.expression(Expression.meta().getId()))
+                .from(DataSource.database(database)).where(Expression.property("className")
+                .equalTo("TableC")).orderBy(Ordering.property("tableNum").descending());
         try {
             ResultSet resultSet = query.run();
-            while (resultSet.next() != null) {
-                count++;
+            Result row;
+            while ((row = resultSet.next()) != null) {
+                String id = row.getString(0);
+                Document doc = database.getDocument(id);
+                documentList.add(doc);
+
             }
         } catch (CouchbaseLiteException e) {
             android.util.Log.e("getDocmentsByClass", "Exception=", e);
         }
 
-        return count;
+        if(documentList.size()>0) {
+            Document  document = documentList.get(0);
+            maxNum= document.getString("tableNum");
+            int temp = Integer.valueOf(maxNum).intValue();
+            maxNum = String.format("%3d", temp+1).replace(" ", "0");
+        } else if (documentList.size()==0){
+            maxNum="001";
+        }
+        return maxNum;
     }
 }
