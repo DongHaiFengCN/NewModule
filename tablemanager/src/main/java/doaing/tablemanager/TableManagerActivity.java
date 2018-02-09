@@ -24,18 +24,23 @@ import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.Function;
 import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.LiveQueryChange;
 import com.couchbase.lite.LiveQueryChangeListener;
 import com.couchbase.lite.Log;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.ReadOnlyDictionary;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.adapter.AreaAdapter;
@@ -196,7 +201,6 @@ public class TableManagerActivity extends BaseToobarActivity {
                     @Override
                     public void onClick(View v) {
                         View view = getView();
-                        tableIdEt.setText(document.getString("tableNum"));
                         tableNameEt.setText(document.getString("tableName"));
                         maxmunNumberEt.setText(String.valueOf(document.getInt("maxPersons")));
                         minmunNumberEt.setText(String.valueOf(document.getInt("minPersons")));
@@ -315,13 +319,11 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 } else if ("".equals(minimunConsumptionEt.getText().toString())) {
                                     minimunConsumptionEt.setError("不能为空！");
                                 } else {
-                                    Log.e("areaDoc", areaDoc.getId());
-                                    Document document = new Document("TableC" + ToolUtil.getUUID());
+                                    Document document = new Document("TableC." + ToolUtil.getUUID());
                                     document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
                                     document.setString("className", "TableC");
                                     document.setString("tableName", tableNameEt.getText().toString());
                                     //id
-                                    document.setString("tableNum", tableIdEt.getText().toString());
                                     document.setInt("state",0);
 
                                     document.setString("areaId", areaDoc.getId());
@@ -339,6 +341,8 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     }
                                     setAreaListViewItemPosition(position);
                                     alertDialog.dismiss();
+
+                                    Log.e("DOAING","餐桌数量："+getMaxTableNum()+"");
                                 }
                             }
                         });
@@ -352,11 +356,28 @@ public class TableManagerActivity extends BaseToobarActivity {
     @NonNull
     private View getView() {
         View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.table_add_dialog, null);
-      //  tableIdEt = view.findViewById(R.id.tableid_et);
         tableNameEt = view.findViewById(R.id.tablename_et);
         minmunNumberEt = view.findViewById(R.id.minimun_number);
         maxmunNumberEt = view.findViewById(R.id.maximum_number_et);
         minimunConsumptionEt = view.findViewById(R.id.minimun_consumption_et);
         return view;
+    }
+
+    private int getMaxTableNum(){
+
+        int count = 0;
+        Query query= Query.select(SelectResult.all(), SelectResult.expression(Expression.meta().getId()))
+                .from(DataSource.database(database)).where( Expression.property("className")
+                .equalTo("TableC"));
+        try {
+            ResultSet resultSet = query.run();
+            while (resultSet.next() != null) {
+                count++;
+            }
+        } catch (CouchbaseLiteException e) {
+            android.util.Log.e("getDocmentsByClass", "Exception=", e);
+        }
+
+        return count;
     }
 }
