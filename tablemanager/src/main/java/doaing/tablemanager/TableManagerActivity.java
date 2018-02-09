@@ -68,9 +68,9 @@ public class TableManagerActivity extends BaseToobarActivity {
     }
 
     @Override
-    public void initData(Intent intent) {
-        setToolbarName("房间与桌位");
+    public void initData(Intent intent){
         database = ((MyApplication) getApplicationContext()).getDatabase();
+        setToolbarName("房间与桌位");
         areaLv = findViewById(R.id.area_lv);
         tableRc = findViewById(R.id.table_lv);
         tableRc.setLayoutManager(new GridLayoutManager(this, 3));
@@ -104,8 +104,6 @@ public class TableManagerActivity extends BaseToobarActivity {
 
     public void setAreaListViewItemPosition(int position) {
 
-       // Log.e("areaList",areaList.size()+"");
-      //  Log.e("areaAdapter",areaAdapter.getCount()+"");
 
         if (areaList.size() == 0) {
             tableRecycleAdapter.setArray(null);
@@ -238,9 +236,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     public void onClick(View v) {
 
                                         //修改餐桌---------------
-                                        if ("".equals(tableIdEt.getText().toString())) {
-                                            tableIdEt.setError("不能为空！");
-                                        } else if ("".equals(tableNameEt.getText().toString())) {
+                                       if ("".equals(tableNameEt.getText().toString())) {
                                             tableNameEt.setError("不能为空！");
                                         } else if ("".equals(minmunNumberEt.getText().toString())) {
                                             minmunNumberEt.setError("不能为空！");
@@ -251,6 +247,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                         } else {
                                             document.setString("tableName", tableNameEt.getText().toString());
                                             document.setString("tableNum", tableIdEt.getText().toString());
+
                                             document.setString("areaId", areaDoc.getId());
                                             document.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
                                             document.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
@@ -309,9 +306,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                             @Override
                             public void onClick(View v) {
                                 //添加餐桌---------------
-                                if ("".equals(tableIdEt.getText().toString())) {
-                                    tableIdEt.setError("不能为空！");
-                                } else if ("".equals(tableNameEt.getText().toString())) {
+                             if ("".equals(tableNameEt.getText().toString())) {
                                     tableNameEt.setError("不能为空！");
                                 } else if ("".equals(minmunNumberEt.getText().toString())) {
                                     minmunNumberEt.setError("不能为空！");
@@ -325,13 +320,15 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
                                     document.setString("className", "TableC");
                                     document.setString("tableName", tableNameEt.getText().toString());
+                                    //id
                                     document.setString("tableNum", tableIdEt.getText().toString());
+                                    document.setInt("state",0);
+
                                     document.setString("areaId", areaDoc.getId());
                                     document.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
                                     document.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
                                     document.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
                                     areaDoc.getArray("tableIDList").addString(document.getId());
-                                    Log.e("DOAING","添加到的房间："+areaDoc.getString("areaName"));
 
                                     try {
                                         database.save(document);
@@ -355,7 +352,7 @@ public class TableManagerActivity extends BaseToobarActivity {
     @NonNull
     private View getView() {
         View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.table_add_dialog, null);
-        tableIdEt = view.findViewById(R.id.tableid_et);
+      //  tableIdEt = view.findViewById(R.id.tableid_et);
         tableNameEt = view.findViewById(R.id.tablename_et);
         minmunNumberEt = view.findViewById(R.id.minimun_number);
         maxmunNumberEt = view.findViewById(R.id.maximum_number_et);

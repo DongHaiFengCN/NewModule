@@ -173,4 +173,25 @@ public class ToolUtil {
         String uuidStr=str.replace("-", "");
         return uuidStr;
     }
+  /*  private void add26Code()
+    {
+        List<Document> documentList = CDBHelper.getDocmentsByClass(getApplicationContext(),DishesC.class);
+        for(Document doc:documentList)
+        {
+            String name26 = doc.getString("dishesNameCode26");
+            if(TextUtils.isEmpty(name26))
+            {
+
+                String name = doc.getString("dishesName");
+                Log.e("dishesName","name----->"+name);
+                name26 =    Tool.getFirstSpell(name);
+                Log.e("dishesName26","name26----->"+name26);
+                doc.setString("dishesNameCode26",name26);
+                CDBHelper.saveDocument(getApplicationContext(),doc);
+            }
+            else
+                continue;
+
+        }
+    }*/
 }

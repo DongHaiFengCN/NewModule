@@ -197,6 +197,8 @@ public class DisheEditActivity extends BaseToobarActivity {
                     String dishesNameCode9 = ToolUtil.ChangeSZ(ToolUtil.getFirstSpell(dishesName));
                     document.setString("dishesNameCode9", dishesNameCode9);
 
+                    String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
+                    document.setString("dishesNameCode26", dishesNameCode26);
 
                 }
                 String price = dishePriceEt.getText().toString();

@@ -161,8 +161,10 @@ public class DisheAddActivity extends BaseToobarActivity {
                     String dishesName = disheName.getText().toString();
                     document.setString("dishesName", dishesName);
 
-                    String dishesNameCode9 = ToolUtil.ChangeSZ(ToolUtil.getFirstSpell(dishesName));
+                    String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
+                    document.setString("dishesNameCode26", dishesNameCode26);
 
+                    String dishesNameCode9 = ToolUtil.ChangeSZ(dishesNameCode26);
                     document.setString("dishesNameCode9", dishesNameCode9);
 
                 }
