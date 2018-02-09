@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import doaing.mylibrary.MyApplication;
+import doaing.order.untils.MyLog;
 
 public class CDBHelper {
     public static Database db;
@@ -220,9 +221,10 @@ public class CDBHelper {
                 // Convert from dictionary to corresponding University object
                 map = valueMap.toMap();
                 map.put("_id", row.getString("_id"));
-                //MyLog.d("getObjByWhere","tomap"+map.toString());
+                //MyLog.e("tomap"+map.get("_id"));
                 T obj = objectMapper.convertValue(map, aClass);
                 documentList.add(obj);
+
             }
         } catch (CouchbaseLiteException e) {
             Log.e("getDocmentsByClass", "Exception=", e);
