@@ -99,8 +99,6 @@ public class TableManagerActivity extends BaseToobarActivity {
                     Array array = areaDoc.getArray("tableIDList");
                     tableRecycleAdapter.setArray(array);
                 }
-
-
             }
         });
         setAreaListViewItemPosition(position);
