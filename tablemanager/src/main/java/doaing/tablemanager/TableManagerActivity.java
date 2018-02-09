@@ -53,7 +53,7 @@ import view.BaseToobarActivity;
 @Route(path = "/table/TableManagerActivity")
 public class TableManagerActivity extends BaseToobarActivity {
 
-    int position = 0;
+    int POSITION = 0;
     private Document areaDoc;
     private Database database;
     private List<Document> areaList;
@@ -94,14 +94,14 @@ public class TableManagerActivity extends BaseToobarActivity {
                     areaAdapter.changeSelected(pos);
                     areaDoc = database.getDocument(areaList.get(pos).getId());
 
-                    position = pos;
+                    POSITION = pos;
                     //设置餐桌适配器
                     Array array = areaDoc.getArray("tableIDList");
                     tableRecycleAdapter.setArray(array);
                 }
             }
         });
-        setAreaListViewItemPosition(position);
+        setAreaListViewItemPosition(POSITION);
 
 
     }
@@ -230,7 +230,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
-                                        setAreaListViewItemPosition(position);
+                                        setAreaListViewItemPosition(POSITION);
                                     }
                                 }).show();
                         alertDialog.getButton(Dialog.BUTTON_POSITIVE)
@@ -257,7 +257,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                             } catch (CouchbaseLiteException e) {
                                                 e.printStackTrace();
                                             }
-                                            setAreaListViewItemPosition(position);
+                                            setAreaListViewItemPosition(POSITION);
                                             alertDialog.dismiss();
                                         }
                                     }
@@ -335,7 +335,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                         e.printStackTrace();
 
                                     }
-                                    setAreaListViewItemPosition(position);
+                                    setAreaListViewItemPosition(POSITION);
                                     alertDialog.dismiss();
                                     Log.e("DOAING","餐桌号："+document.getString("tableNum"));
                                 }
