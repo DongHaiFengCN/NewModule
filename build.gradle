@@ -45,7 +45,7 @@ def retrofitVersion = "2.0.0"
 def supportVersion = "26.1.0"
 def rxBindingVersion = '0.4.0'
 def constraintVersion = '1.0.2';
-
+def COUCHBASE_LITE_VERSION = "2.0.0-299"
 ext{
     //  各个组件版本号的统一管理
     android = [

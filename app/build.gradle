@@ -21,8 +21,8 @@ android {
 dependencies {
     implementation rootProject.ext.libSupportAppcompat
     if (!isModule.toBoolean()) {
-        implementation project(':order')
-        implementation project(':dishesmanager')
+     //   implementation project(':order')
+      //  implementation project(':dishesmanager')
         implementation project(':tablemanager')
     }
     implementation project(':mylibrary')

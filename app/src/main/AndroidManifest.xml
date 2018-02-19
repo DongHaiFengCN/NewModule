@@ -28,7 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>-->
-     <!--   <activity android:name="doaing.order.view.LoginActivity">
+    <!--    <activity android:name="doaing.order.view.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

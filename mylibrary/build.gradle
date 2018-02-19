@@ -41,7 +41,9 @@ dependencies {
     implementation rootProject.ext.libRxBindingDesign
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     //Database依赖
-    compile 'com.couchbase.lite:couchbase-lite-android:2.0.0-DB020'
+   compile 'com.couchbase.lite:couchbase-lite-android:2.0.0-DB022'
+    // Couchbase Lite Android v2.x
+   // compile "com.couchbase.lite:couchbase-lite-android:${COUCHBASE_LITE_VERSION}"
     //ObjectMapper依赖
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3'
     implementation files('libs/pinyin4j_android.jar')
