@@ -25,6 +25,7 @@ import com.couchbase.lite.LiveQuery;
 import com.couchbase.lite.LiveQueryChange;
 import com.couchbase.lite.LiveQueryChangeListener;
 import com.couchbase.lite.Log;
+import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
@@ -275,7 +276,8 @@ public class DishesActivity extends BaseToobarActivity {
         query = Query.select(SelectResult.expression(Expression.meta().getId()))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo("DishesKindC")
-                        .and(Expression.property("setMenu").equalTo(false))).toLive();
+                        .and(Expression.property("setMenu").equalTo(false)))
+                .toLive();
         query.addChangeListener(new LiveQueryChangeListener() {
             @Override
             public void changed(LiveQueryChange change) {

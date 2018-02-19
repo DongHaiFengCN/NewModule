@@ -47,6 +47,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
@@ -76,6 +77,7 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import bean.kitchenmanage.dishes.DishesC;
 import bean.kitchenmanage.kitchen.KitchenClientC;
 import bean.kitchenmanage.order.GoodsC;
 import bean.kitchenmanage.order.OrderC;
@@ -1196,8 +1198,17 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
             if (goodsC.getDishesTaste() != null) {
                 taste = "(" + goodsC.getDishesTaste() + ")";
             }
+            Document document = CDBHelper.getDocByID(getApplicationContext(),goodsC.getDishesId());
+            if (document.getBoolean("setMenu")){
+                Array array = document.getArray("dishesIdList");
+                for (int i = 0; i < array.count(); i++){
 
-            PrintUtils.printText(PrintUtils.printThreeData(goodsC.getDishesName()+taste, goodsC.getDishesCount() + "", allPrice + "\n"));
+                }
+                PrintUtils.printText(PrintUtils.printThreeData(goodsC.getDishesName()+taste, goodsC.getDishesCount() + "", allPrice + "\n"));
+
+            }{
+                PrintUtils.printText(PrintUtils.printThreeData(goodsC.getDishesName()+taste, goodsC.getDishesCount() + "", allPrice + "\n"));
+            }
 
         }
         if (zcGoodsList.size() > 0) {

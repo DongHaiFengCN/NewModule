@@ -405,9 +405,12 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                 , Expression.property("className").equalTo("DishesKindC")
                  .and(Expression.property("kindName").equalTo("自点菜"))
                 ,null);
-        if(zdcIdList.size()>0)
-            return  zdcIdList.get(0);
-        else return "";
+        Log.e("SeekT9",""+zdcIdList.size());
+        if(zdcIdList.size()>0) {
+            return zdcIdList.get(0);
+        }else{
+            return "";
+        }
     }
 
     public void onClick(View view) {

@@ -1299,7 +1299,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     }
 
     private void onPrint() {
-        String waiter = myapp.getUsersC().getEmployeeName();
+        String waiter = "";
+        if (myapp.getUsersC() != null){
+            waiter = myapp.getUsersC().getEmployeeName();
+        }
         List<CompanyC> companyCs = CDBHelper.getObjByClass(getApplicationContext(), CompanyC.class);
         PrintUtils.selectCommand(PrintUtils.RESET);
         PrintUtils.selectCommand(PrintUtils.LINE_SPACING_DEFAULT);
@@ -1313,6 +1316,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
         PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderCList.get(0).getSerialNum() + "\n"));
         PrintUtils.printText(PrintUtils.printTwoData("下单时间", getFormatDate() + "\n"));
+
         PrintUtils.printText(PrintUtils.printTwoData("人数：" + myapp.getTable_sel_obj().getCurrentPersions(), "收银员：" + waiter + "\n"));
         PrintUtils.printText("--------------------------------\n");
         PrintUtils.selectCommand(PrintUtils.BOLD);

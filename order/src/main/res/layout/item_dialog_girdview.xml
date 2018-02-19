@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="120dp"
     android:layout_height="match_parent"
     android:paddingBottom="12dp"
     android:paddingTop="8dp"
@@ -12,17 +12,20 @@
             android:layout_marginLeft="20dp"
             android:gravity="center"
             android:text="1111"
+            android:maxLines="3"
             android:textColor="@color/md_black_1000"
             android:textSize="15sp" />
 
         <CheckBox
             android:id="@+id/item_rc_ck"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginLeft="20dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginRight="10dp"
             android:gravity="center"
             android:background="@drawable/caipincheck"
             android:button="@null"
-            android:clickable="false" />
+            android:clickable="false"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"/>
 
-</LinearLayout>
+</RelativeLayout>
