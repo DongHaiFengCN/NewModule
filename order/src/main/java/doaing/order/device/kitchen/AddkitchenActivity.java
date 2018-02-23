@@ -321,8 +321,6 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             // 刷新listview和TextView的显示
            addKitchenAdapter.notifyDataSetChanged();
         }
-
-
     }
 
     //初始化打印机
