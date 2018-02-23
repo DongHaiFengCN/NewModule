@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#d3eff3"
+    android:orientation="vertical"
+    tools:context="smartkitchen.com.login.modifyPsw.ModifyPswActivity">
+
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
+        android:text="输入用户帐号"
+        android:textColor="@color/login_md_black_1000"
+        android:textSize="36sp"
+        android:textStyle="normal" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        app:counterMaxLength="11"
+        app:hintEnabled="true">
+
+        <AutoCompleteTextView
+            android:id="@+id/modify_mobile_tv"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@color/login_md_white_1000"
+            android:hint="@string/login_prompt_telephone"
+            android:inputType="phone"
+            android:maxLines="1"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:singleLine="true"
+            android:textSize="18sp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/modify_ok_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@color/login_colorPrimaryDark"
+        android:enabled="false"
+        android:onClick="onClickOk"
+        android:text="下一步"
+        android:textColor="@color/login_md_black_1000"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="146dp" />
+
+
+</LinearLayout>

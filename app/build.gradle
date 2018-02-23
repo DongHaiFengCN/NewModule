@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-// 添加插件
-apply plugin: 'com.mob.sdk'
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
 
@@ -18,13 +16,3 @@ android {
     }
 }
 
-dependencies {
-    implementation rootProject.ext.libSupportAppcompat
-    if (!isModule.toBoolean()) {
-        implementation project(':order')
-        implementation project(':dishesmanager')
-        implementation project(':tablemanager')
-    }
-    implementation project(':mylibrary')
-
-}

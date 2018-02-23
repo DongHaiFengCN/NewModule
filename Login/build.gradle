@@ -1,0 +1,70 @@
+
+if (!isModule.toBoolean()) {
+    apply plugin: 'com.android.application'
+
+} else {
+    apply plugin: 'com.android.library'
+}
+
+
+apply plugin: 'com.mob.sdk'
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+
+        resourcePrefix "login_"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            if (isDebug.toBoolean()) {
+                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/release/AndroidManifest.xml'
+                java {
+                    exclude 'debug/**'
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+
+    implementation rootProject.ext.libSupportConstraint
+    implementation rootProject.ext.libSupportAppcompat
+    implementation rootProject.ext.libSupportDesign
+    implementation rootProject.ext.libSupportRecyclerview
+
+    implementation rootProject.ext.okhttp3
+    implementation rootProject.ext.gson
+
+    implementation project(':mylibrary')
+    //阿里路由
+    annotationProcessor libArouter_compiler
+}
+
+// 在MobSDK的扩展中注册SMSSDK的相关信息
+MobSDK {
+    appKey "d580ad56b4b5"
+    appSecret "7fcae59a62342e7e2759e9e397c82bdd"
+    SMSSDK {}
+}
