@@ -1,9 +1,7 @@
 package doaing.order.device.kitchen;
 
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -16,15 +14,15 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.GpCom;
 import com.gprinter.io.GpDevice;
@@ -34,20 +32,14 @@ import com.gprinter.service.GpPrintService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import bean.kitchenmanage.dishes.DishesKindC;
 import bean.kitchenmanage.kitchen.KitchenClientC;
-import butterknife.BindView;
-import butterknife.OnClick;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.R2;
-import doaing.order.application.CDBHelper;
-import doaing.order.device.ListViewAdapter;
 import doaing.order.device.PortConfigurationActivity;
-import doaing.order.device.PrinterConnectDialog;
 import doaing.order.view.DeskActivity;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
 import doaing.order.device.kitchen.AddKitchenAdapter.ViewHolder;
 
@@ -242,18 +234,20 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
 
     //保存数据到数据库
     private void Updatecheckinfo(String docId) {
-        List<String> dishKindIDList=new ArrayList<String>();
+
+        MutableArray dishKindIdArray = new MutableArray();
         for(int i=0;i<listSelectedDocId.size();i++)
         {
-            dishKindIDList.add(listSelectedDocId.get(i));
+            dishKindIdArray.addString(listSelectedDocId.get(i));
         }
         Document docKitchenClient=CDBHelper.getDocByID(getApplicationContext(),docId);
         if(docKitchenClient!=null)
         {
-            docKitchenClient.setString("name",etClientname.getText().toString().trim());
-            docKitchenClient.setString("kitchenAdress",""+MAX_PRINTER_CNTMY);
-            docKitchenClient.setObject("dishesKindIDList",dishKindIDList);
-            CDBHelper.saveDocument(getApplicationContext(),docKitchenClient);
+            MutableDocument muDoc = docKitchenClient.toMutable();
+            muDoc.setString("name",etClientname.getText().toString().trim());
+            muDoc.setString("kitchenAdress",""+MAX_PRINTER_CNTMY);
+            muDoc.setValue("dishesKindIDList",dishKindIdArray);
+            CDBHelper.saveDocument(getApplicationContext(),muDoc);
         }
 
     }

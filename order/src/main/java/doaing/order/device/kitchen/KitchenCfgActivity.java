@@ -12,7 +12,7 @@ import java.util.List;
 import bean.kitchenmanage.kitchen.KitchenClientC;
 import butterknife.OnClick;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
 
 /*

@@ -27,6 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.Display;
 import android.view.Gravity;
@@ -76,14 +77,12 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import bean.kitchenmanage.dishes.DishesC;
 import bean.kitchenmanage.kitchen.KitchenClientC;
 import bean.kitchenmanage.order.GoodsC;
 import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.order.OrderNum;
 import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.user.CompanyC;
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
@@ -93,8 +92,10 @@ import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
+import tools.CDBHelper;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
+import static tools.CDBHelper.getFormatDate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -1102,7 +1103,8 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
         String orderNum = null;
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(getApplicationContext(), Expression.property("className").equalTo("OrderNum")
+        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(getApplicationContext(),
+                Expression.property("className").equalTo(Expression.string("OrderNum"))
                 , null
                 , OrderNum.class);
         if (orderNumList.size() <= 0)//第一次使用
@@ -1224,7 +1226,7 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
     {
 
         try {
-            CDBHelper.db.inBatch(new TimerTask() {
+            CDBHelper.getDatabase().inBatch(new TimerTask() {
                 @Override
                 public void run() {
                     zcGoodsList.clear();
@@ -1233,9 +1235,9 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
                     gOrderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
                     newOrderObj.set_id(gOrderId);
                     List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                            Expression.property("className").equalTo("OrderC")
-                                    .and(Expression.property("orderState").equalTo(1))
-                                    .and(Expression.property("tableNo").equalTo(myApp.getTable_sel_obj().getTableNum()))
+                            Expression.property("className").equalTo(Expression.string("OrderC"))
+                                    .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                                    .and(Expression.property("tableNo").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
                             , Ordering.property("createdTime").descending()
                             );
 

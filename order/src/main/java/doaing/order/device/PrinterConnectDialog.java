@@ -1,48 +1,26 @@
 package doaing.order.device;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.RemoteException;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gprinter.aidl.GpService;
-import com.gprinter.command.GpCom;
-import com.gprinter.io.GpDevice;
-import com.gprinter.io.PortParameters;
-import com.gprinter.save.PortParamDataBase;
-import com.gprinter.service.GpPrintService;
 import com.journeyapps.barcodescanner.CaptureActivity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import bean.kitchenmanage.qrcode.qrcodeC;
-import butterknife.BindView;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
-
-import static doaing.order.device.ListViewAdapter.MESSAGE_CONNECT;
 
 /*
 *

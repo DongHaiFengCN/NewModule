@@ -24,15 +24,14 @@ import java.util.TimerTask;
 
 import bean.kitchenmanage.dishes.DishesC;
 import bean.kitchenmanage.order.GoodsC;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.view.adapter.SeekT9DialogAdapter;
+import tools.CDBHelper;
 
-import static doaing.order.application.CDBHelper.getFormatDate;
+import static tools.CDBHelper.getFormatDate;
+
 
 
 /*
@@ -133,7 +132,7 @@ public class SeekT9Adapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 try {
-                    CDBHelper.db.inBatch(new TimerTask() {
+                    CDBHelper.getDatabase().inBatch(new TimerTask() {
                         @Override
                         public void run() {
 

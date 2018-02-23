@@ -32,10 +32,10 @@ import bean.kitchenmanage.dishes.DishesKindC;
 import bean.kitchenmanage.order.GoodsC;
 import butterknife.ButterKnife;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
 import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.view.adapter.MyGridAdapter;
+import tools.CDBHelper;
 
 /*
 *
