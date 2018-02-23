@@ -1,4 +1,4 @@
-package doaing.order.application;
+package tools;
 
 /*
  * Copyright (c) 2016 Razeware LLC
@@ -25,22 +25,35 @@ package doaing.order.application;
 import android.content.Context;
 import android.util.Log;
 
+import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
+import com.couchbase.lite.DatabaseConfiguration;
+import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Function;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
-import com.couchbase.lite.ReadOnlyDictionary;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Replicator;
+import com.couchbase.lite.ReplicatorChange;
+import com.couchbase.lite.ReplicatorChangeListener;
+import com.couchbase.lite.ReplicatorConfiguration;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
+import com.couchbase.lite.URLEndpoint;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gprinter.aidl.GpService;
 
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,13 +61,88 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import doaing.mylibrary.MyApplication;
-import doaing.order.untils.MyLog;
 
-public class CDBHelper {
-    public static Database db;
+public class CDBHelper implements ReplicatorChangeListener
+{
+    private static Database db;
+    private static CDBHelper instance = null;
+    private static String dbName="GuestDB";
+    private final static String mSyncGatewayEndpoint = "ws://123.207.174.171:4984/kitchen/";
+
+    public static CDBHelper getSharedInstance(Context context)
+    {
+        if (instance == null) {
+            instance = new CDBHelper(context);
+        }
+        return instance;
+    }
+
+    protected CDBHelper(Context context)
+    {
+
+            DatabaseConfiguration config = new DatabaseConfiguration(context);
+            File folder = new File(String.format("%s/ReserverApp", context.getFilesDir()));
+            config.setDirectory(folder.getAbsolutePath());
+            try {
+                db = new Database(dbName, config);
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+
+    }
+    public static void startPushAndPullReplicationForCurrentUser(String username, String password) {
+
+        Log.e("startReplication","channelId="+username+"-----pwd="+password);
+
+        URI url = null;
+        try {
+            url = new URI(mSyncGatewayEndpoint);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        Endpoint endpoint = new URLEndpoint(url);
+        ReplicatorConfiguration config = new ReplicatorConfiguration(db, endpoint)
+                .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL)
+                .setContinuous(true);
+
+        List<String> channels =new ArrayList<>();
+        channels.add(username);
+        config.setChannels(channels);
+
+        config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        config.setContinuous(true);
+        config.setAuthenticator(new BasicAuthenticator(username, password));
+
+        Replicator replicator = new Replicator(config);
+        replicator.start();
+    }
 
 
+
+    public static Database getDatabase() {
+        if (instance == null)
+        {
+        }
+        return db;
+    }
+
+    public static void setDatabase() {
+
+          db =null;
+    }
+    // --------------------------------------------------
+    // ReplicatorChangeListener implementation
+    // --------------------------------------------------
+    @Override
+    public void changed(ReplicatorChange change) {
+
+        if (change.getStatus().getError() != null && change.getStatus().getError().getCode() == 401)
+        {
+           //Toast.makeText(getApplicationContext(), "Authentication Error: Your username or password is not correct.", Toast.LENGTH_LONG).show();
+          //  logout();
+        }
+    }
     //*************************对象操作********************************************************
 
     /**
@@ -67,30 +155,25 @@ public class CDBHelper {
      */
     public static String createAndUpdate(Context context, Object object) {
         //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
-
         ObjectMapper m = new ObjectMapper();
         Map<String, Object> props = m.convertValue(object, Map.class);
         String id = (String) props.get("_id");
-        Document document;
+        MutableDocument mDocument;
         if (id == null || "".equals(id)) {
-            String docId = props.get("className") + "." + java.util.UUID.randomUUID().toString();
-            document = new Document(docId);
+            id = props.get("className") + "." + java.util.UUID.randomUUID().toString();
+            mDocument = new MutableDocument(id);
         } else {
-            document = db.getDocument(id);
+            mDocument = db.getDocument(id).toMutable();
         }
 
         try {
-            document.set(props);
-            db.save(document);
-            // Log.e("createOrUpdate--->","content----->"+document.toMap().toString());
+            mDocument.setData(props);
+            db.save(mDocument);
 
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-        return document.getId();
+        return id;
     }
 
     /**
@@ -103,9 +186,7 @@ public class CDBHelper {
      * @return
      */
     public static <T> T getObjById(Context context, String id, Class<T> aClass) {
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         Document document = db.getDocument(id);
         if (document == null) {
             // TODO: error handling
@@ -131,33 +212,29 @@ public class CDBHelper {
     public static <E> List<E> getObjByClass(Context context, Class<E> aClass) {
         final String classname = aClass.getSimpleName();
         List<E> objList = new ArrayList<>();
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         if (classname == null || classname.equals(""))
             return null;
         // 1
 
-        Query query = Query.select(SelectResult.all(), SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.all(), SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
-                .where(Expression.property("className").equalTo(classname));
+                .where(Expression.property("className").equalTo(Expression.string(classname)));
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
+            while ((row = resultSet.next()) != null)
+            {
 
                 ObjectMapper objectMapper = new ObjectMapper();
                 // Ignore undeclared properties
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Map<String, Object> map;
-                ReadOnlyDictionary valueMap = row.getDictionary(db.getName());
+                Dictionary valueMap = row.getDictionary(db.getName());
                 // Convert from dictionary to corresponding University object
                 map = valueMap.toMap();
                 map.put("_id", row.getString("_id"));
-                // MyLog.d("getObjByClass","tomap"+map.toString());
                 E obj = objectMapper.convertValue(map, aClass);
-
                 objList.add(obj);
 
             }
@@ -194,37 +271,31 @@ public class CDBHelper {
     public static <T> List<T> getObjByWhere(Context context, Expression where, Ordering orderBy, Class<T> aClass) {
         // 1
         List<T> documentList = new ArrayList<>();
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
-        //2
+
         Query query;
         if (where == null)
             return null;
 
         if (orderBy == null)
-            query = Query.select(SelectResult.all(), SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where);
+            query = QueryBuilder.select(SelectResult.all(), SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
         else
-            query = Query.select(SelectResult.all(), SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where).orderBy(orderBy);
+            query = QueryBuilder.select(SelectResult.all(), SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
 
 
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
                 ObjectMapper objectMapper = new ObjectMapper();
                 // Ignore undeclared properties
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Map<String, Object> map;
-                ReadOnlyDictionary valueMap = row.getDictionary(db.getName());
+                Dictionary valueMap = row.getDictionary(db.getName());
                 // Convert from dictionary to corresponding University object
                 map = valueMap.toMap();
                 map.put("_id", row.getString("_id"));
-                //MyLog.e("tomap"+map.get("_id"));
                 T obj = objectMapper.convertValue(map, aClass);
                 documentList.add(obj);
-
             }
         } catch (CouchbaseLiteException e) {
             Log.e("getDocmentsByClass", "Exception=", e);
@@ -246,24 +317,21 @@ public class CDBHelper {
     public static <T> List<T> getObjByWhere1(Context context, Expression where, Ordering orderBy, Class<T> aClass) {
         // 1
         List<T> documentList = new ArrayList<>();
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         //2
         Query query;
         if (where == null)
             return null;
 
         if (orderBy == null)
-            query = Query.select(SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where);
+            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
         else
-            query = Query.select(SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where).orderBy(orderBy);
+            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
 
 
         try {
 
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null)
             {
@@ -294,9 +362,7 @@ public class CDBHelper {
      * @return
      */
     public static boolean deleteObj(Context context, Object obj) {
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         ObjectMapper m = new ObjectMapper();
         Map<String, Object> props = m.convertValue(obj, Map.class);
         String id = (String) props.get("_id");
@@ -325,10 +391,8 @@ public class CDBHelper {
      * @param context
      * @param document
      */
-    public static void saveDocument(Context context, Document document) {
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+    public static void saveDocument(Context context, MutableDocument document) {
+
         try {
             db.save(document);
         } catch (CouchbaseLiteException e) {
@@ -345,9 +409,7 @@ public class CDBHelper {
      * @return
      */
     public static Document getDocByID(Context context, String id) {
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         return db.getDocument(id);
     }
 
@@ -363,17 +425,14 @@ public class CDBHelper {
     public static final List<Document> getDocmentsByClass(Context context, Class<?> aClass) {
         final String classname = aClass.getSimpleName();
         List<Document> documentList = new ArrayList<>();
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         if (classname == null || classname.equals(""))
             return null;
-        Query query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
-                .where(Expression.property("className").equalTo(classname));
+                .where(Expression.property("className").equalTo(Expression.string(classname)));
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
@@ -386,6 +445,9 @@ public class CDBHelper {
         return documentList;
     }
 
+
+
+
     /**
      * 2.4
      *
@@ -397,22 +459,18 @@ public class CDBHelper {
     public static List<Document> getDocmentsByWhere(Context context, Expression where, Ordering orderBy) {
         // 1
         List<Document> documentList = new ArrayList<>();
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
-        //2
+
         Query query;
         if (where == null)
             return null;
 
         if (orderBy == null)
-            query = Query.select(SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where);
+            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
         else
-            query = Query.select(SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where).orderBy(orderBy);
+            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
 
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
@@ -435,9 +493,7 @@ public class CDBHelper {
      * @param document
      */
     public static void deleDocument(Context context, Document document) {
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         try {
             db.delete(document);
         } catch (CouchbaseLiteException e) {
@@ -454,9 +510,7 @@ public class CDBHelper {
      * @param id
      */
     public static void deleDocumentById(Context context, String id) {
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         try {
             Document document = db.getDocument(id);
             db.delete(document);
@@ -480,18 +534,15 @@ public class CDBHelper {
     public static List<String> getIdsByClass(Context context, Class<?> aClass) {
         final String classname = aClass.getSimpleName();
         List<String> documentList = new ArrayList<>();
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         if (classname == null || classname.equals(""))
             return null;
         // 1
-        Query query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
-                .where(Expression.property("className").equalTo(classname));
+                .where(Expression.property("className").equalTo(Expression.string(classname)));
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
@@ -515,23 +566,19 @@ public class CDBHelper {
     public static List<String> getIdsByWhere(Context context, Expression where, Ordering orderBy) {
         // 1
         List<String> documentList = new ArrayList<>();
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         //2
         Query query;
         if (where == null)
             return null;
 
         if (orderBy == null)
-            query = Query.select(SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where);
+            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
         else
-            query = Query.select(SelectResult.expression(Expression.meta().getId())).from(DataSource.database(db)).where(where).orderBy(orderBy);
-
+            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
 
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
@@ -560,21 +607,19 @@ public class CDBHelper {
         // 1
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 
-        //1\
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
-        }
+
         //2
-        Query query = Query.select(SelectResult.expression(Function.sum(Expression.property("dishesCount"))),
-                SelectResult.expression(Expression.property("dishesName"))).from(DataSource.database(db))
-                .where(Expression.property("className").equalTo("GoodsC")
-                        .and(Expression.property("createdTime").lessThanOrEqualTo(endTime))
-                        .and(Expression.property("createdTime").greaterThanOrEqualTo(startTime)))
+        Query query = QueryBuilder.select(SelectResult.expression(Function.sum(Expression.property("dishesCount"))),
+                SelectResult.expression(Expression.property("dishesName")))
+                .from(DataSource.database(db))
+                .where(Expression.property("className").equalTo(Expression.string("GoodsC"))
+                        .and(Expression.property("createdTime").lessThanOrEqualTo(Expression.string(endTime)))
+                        .and(Expression.property("createdTime").greaterThanOrEqualTo(Expression.string(startTime))))
                 .groupBy(Expression.property("dishesName"))
                 .orderBy(Ordering.expression(Function.sum(Expression.property("dishesCount"))).descending());
 
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
 
 
@@ -600,11 +645,8 @@ public class CDBHelper {
      * @param document
      */
     public static void purge(Context context, Document document) {
-        if (db == null) {
-            db = ((MyApplication) context).getDatabase();
 
 
-        }
         try {
             db.purge(document);
         } catch (CouchbaseLiteException e) {
@@ -627,14 +669,5 @@ public class CDBHelper {
         m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         return m.convertValue(document.toMap(), aClass);
     }
-
-//
-//    private static class SingletonHolder {
-//        private final static CDBHelper single = new CDBHelper();
-//    }
-//
-//    public static CDBHelper getInstance() {
-//        return SingletonHolder.single;
-//    }
 
 }
