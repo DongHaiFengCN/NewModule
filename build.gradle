@@ -44,13 +44,15 @@ def daggerVersion = "2.0.2"
 def retrofitVersion = "2.0.0"
 def supportVersion = "26.1.0"
 def rxBindingVersion = '0.4.0'
-def constraintVersion = '1.0.2';
+def constraintVersion = '1.0.2'
+def okHttpVersion = "3.9.1"
+def gsonVersion = "2.8.0";
 
 ext{
     //  各个组件版本号的统一管理
     android = [
             compileSdkVersion: 26,
-            buildToolsVersion: "25.0.2",
+            buildToolsVersion: "26.1.1",
             minSdkVersion    : 21,
             targetSdkVersion : 26,
             versionCode      : 1,
@@ -96,6 +98,9 @@ ext{
 
     libButterknife = "com.jakewharton:butterknife:8.8.1"
     libBbutterknife_compiler = "com.jakewharton:butterknife-compiler:8.8.1"
+
+    okhttp3                   = "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+    gson                      ="com.google.code.gson:gson:${gsonVersion}"
 
 }
 
