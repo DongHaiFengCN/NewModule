@@ -53,7 +53,7 @@ import doaing.order.untils.MyLog;
 
 public class CDBHelper {
     public static Database db;
-    public static GpService mGpService;
+
 
     //*************************对象操作********************************************************
 
@@ -637,12 +637,4 @@ public class CDBHelper {
 //        return SingletonHolder.single;
 //    }
 
-
-    public static GpService getmGpService() {
-        return mGpService;
-    }
-
-    public static void setmGpService(GpService mGpService) {
-        CDBHelper.mGpService = mGpService;
-    }
 }

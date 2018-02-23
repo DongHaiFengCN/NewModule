@@ -134,11 +134,11 @@ public class MyListAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View view) {
-            Document doc = CDBHelper.getDocByID(activity, list.get(mPosition));
-            Intent intent1 = new Intent(activity, AddkitchenActivity.class);
-            intent1.putExtra("ipcontent", "" + doc.getString("kitchenAdress"));
-            intent1.putExtra("clientname", "" + doc.getString("name"));
-            intent1.putExtra("docId", list.get(mPosition));
+            Document doc=CDBHelper.getDocByID(activity,list.get(mPosition));
+            Intent intent1=new Intent(activity,AddkitchenActivity.class);
+            intent1.putExtra("ipcontent", ""+doc.getString("kitchenAdress"));
+            intent1.putExtra("clientname", ""+doc.getString("name"));
+            intent1.putExtra("docId",list.get(mPosition));
             activity.startActivityForResult(intent1, 2016);//startActivityForResult(intent1, 2016);
         }
 
