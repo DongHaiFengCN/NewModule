@@ -51,7 +51,6 @@ import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.Log;
 import com.couchbase.lite.Ordering;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.EscCommand;
@@ -89,7 +88,6 @@ import butterknife.ButterKnife;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.BluetoothUtil;
-import doaing.order.application.CDBHelper;
 import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
@@ -97,7 +95,6 @@ import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
-import static doaing.order.application.CDBHelper.getFormatDate;
 
 public class MainActivity extends AppCompatActivity {
 

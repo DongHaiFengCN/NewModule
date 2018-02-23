@@ -363,7 +363,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
 
                         //跳转界面
-                        ARouter.getInstance().build("/ui/主页2").navigation();
+                        ARouter
+                                .getInstance()
+                                .build("/order/DeskActivity")
+                                .withString("mobile",mTelView.getText().toString())
+                                .withString("channelId",userName)
+                                .navigation();
                         finish();
                     }//r
                     else {
