@@ -8,67 +8,10 @@
 
     <include layout="@layout/common_view_toolbar"></include>
     <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/page_backgroup">
-
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="打印机名称"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:textColor="@color/md_black_1000"
-
-            />
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="打印机类型"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:textColor="@color/md_black_1000"
-
-            />
-
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="打印机地址"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:textColor="@color/md_black_1000"
-
-            />
-
-        <TextView
-            android:layout_weight="1.1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="连接"
-            android:gravity="center"
-            android:textSize="18dp"
-            android:textColor="@color/md_black_1000"
-
-            />
-    </LinearLayout>
-
-    <ListView
-        android:id="@+id/activity_printer_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-    </ListView>
-    <LinearLayout
 
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="100dp"
         android:background="#ffffff"
-        android:layout_weight="2"
         android:orientation="horizontal">
 
         <LinearLayout

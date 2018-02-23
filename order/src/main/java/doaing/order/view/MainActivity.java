@@ -258,14 +258,14 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
                 {
                     MyLog.d("打印机未连接");
 
-            try {
+                    try {
 
-                mGpService.queryPrinterStatus(0, 500, MAIN_QUERY_PRINTER_STATUS);
-            } catch (RemoteException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
-                    proDialog.setMessage("分单打印失败");
+                        mGpService.queryPrinterStatus(0, 500, MAIN_QUERY_PRINTER_STATUS);
+                    } catch (RemoteException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
+                            proDialog.setMessage("分单打印失败");
 
 
                 }
@@ -1058,8 +1058,6 @@ public boolean onKeyDown(int keyCode, KeyEvent event) {
      * @Time    0104
      * @version v2  去掉实时状态判断，这个功能不准确
      */
-
-
     class PrinterServiceConnection implements ServiceConnection {
         @Override
         public void onServiceDisconnected(ComponentName name) {

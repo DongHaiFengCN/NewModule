@@ -82,9 +82,9 @@ import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
 @Route(path = "/order/DeskActivity")
 public class DeskActivity extends AppCompatActivity {
 
+    private static GpService smGpService;
     private Database db;
     private ListView listViewArea;
-    private List<AreaC> areaCList;
     private AreaAdapter areaAdapter;
     private RecyclerView listViewDesk;
     private LiveTableRecyclerAdapter tableadapter;
@@ -95,7 +95,7 @@ public class DeskActivity extends AppCompatActivity {
     private Toolbar toolbar;
     List<DishesKindC> dishesKindCList;
     private Map<String, List<Document>> dishesObjectCollection;
-    private GpService mGpService;
+    public GpService mGpService;
     private PrinterServiceConnection conn = null;
     private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
     private static final int REQUEST_PRINT_LABEL = 0xfd;
@@ -809,7 +809,7 @@ public class DeskActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mGpService = GpService.Stub.asInterface(service);
-            CDBHelper.setmGpService(mGpService);
+            setmGpService(mGpService);
         }
     }
     //打印机消息注册
@@ -875,4 +875,11 @@ public class DeskActivity extends AppCompatActivity {
             return 0;//把数据发送打印机成功
     }
 
+    public static GpService getmGpService() {
+        return smGpService;
+    }
+
+    public void setmGpService(GpService smGpService) {
+        this.smGpService = smGpService;
+    }
 }
