@@ -1,5 +1,5 @@
 package doaing.dishesmanager;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,22 +19,25 @@ import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.jakewharton.rxbinding.view.RxView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import doaing.MyApplication;
 import doaing.dishesmanager.view.MySwipeListLayout;
-import doaing.mylibrary.MyApplication;
+
 import rx.functions.Action1;
 import view.BaseToobarActivity;
 
 /**
  * @author donghaifeng
  */
+
 public class PackageEditActivity extends BaseToobarActivity {
 
     private List<Document> list = new ArrayList<>();
@@ -60,9 +63,8 @@ public class PackageEditActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent) {
         database = ((MyApplication) getApplicationContext()).getDatabase();
-        oneLevel = database.getDocument(intent.getExtras().get("kindId").toString
-                ());
-        secondLevel = database.getDocument(intent.getExtras().get("disheId").toString());
+        oneLevel = database.getDocument(String.valueOf(intent.getExtras().get("kindId")));
+        secondLevel = database.getDocument(String.valueOf(intent.getExtras().get("disheId")));
 
         setToolbarName(secondLevel.getString("dishesName") + "  总价" + secondLevel.getFloat("price"));
 
@@ -71,10 +73,9 @@ public class PackageEditActivity extends BaseToobarActivity {
         dishesLv.setAdapter(listAdapter);
         Array array = secondLevel.getArray("dishesListId");
 
-        int Length = array.count();
-
-        Document temporary = null;
-        for (int i = 0; i < Length; i++) {
+        int length = array.count();
+        Document temporary ;
+        for (int i = 0; i < length; i++) {
             temporary = database.getDocument(array.getString(i));
             if(temporary.getString("dishesName")!=null){
                 list.add(temporary);
@@ -89,21 +90,23 @@ public class PackageEditActivity extends BaseToobarActivity {
             @Override
             public void call(Void aVoid) {
 
+                MutableDocument secondLevelMuDoc = secondLevel.toMutable();
+
                 String price = revisePriceEt.getText().toString();
 
                 if (!"".equals(price)) {
 
-                    secondLevel.setFloat("price", Float.valueOf(price));
+                    secondLevelMuDoc.setFloat("price", Float.valueOf(price));
                 }
                 try {
-                    Array array = new Array();
+                    MutableArray array = new MutableArray();
                     int size = list.size();
                     for(int i=0;i<size;i++){
 
                         array.addString(list.get(i).getId());
                     }
-                    secondLevel.setArray("dishesListId",array);
-                    database.save(secondLevel);
+                    secondLevelMuDoc.setArray("dishesListId",array);
+                    database.save(secondLevelMuDoc);
                     finish();
 
                 } catch (CouchbaseLiteException e) {
@@ -140,8 +143,9 @@ public class PackageEditActivity extends BaseToobarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
+                    MutableDocument mutableDocument = oneLevel.toMutable();
 
-                    Array array = oneLevel.getArray("dishesListId");
+                    MutableArray array = mutableDocument.getArray("dishesListId");
                     int length = array.count();
 
                     for (int i = 0; i < length; i++) {
@@ -156,7 +160,7 @@ public class PackageEditActivity extends BaseToobarActivity {
 
                     try {
                         database.delete(secondLevel);
-                        database.save(oneLevel);
+                        database.save(mutableDocument);
                         finish();
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
@@ -193,32 +197,33 @@ public class PackageEditActivity extends BaseToobarActivity {
             return arg0;
         }
 
+        @SuppressLint({"SetTextI18n", "InflateParams"})
         @Override
         public View getView(final int arg0, View view, ViewGroup arg2) {
             if (view == null) {
                 view = LayoutInflater.from(PackageEditActivity.this).inflate(
                         R.layout.package_edit_list_item, null);
             }
-            final TextView tv_name = view.findViewById(R.id.tv_name);
-            tv_name.setText(list.get(arg0).getString("dishesName"));
-            final TextView tv_price = view.findViewById(R.id.tv_price);
-            tv_price.setText("¥" + list.get(arg0).getFloat("price"));
+            final TextView tvName = view.findViewById(R.id.tv_name);
+            tvName.setText(list.get(arg0).getString("dishesName"));
+            final TextView tvPrice = view.findViewById(R.id.tv_price);
+            tvPrice.setText("¥" + list.get(arg0).getFloat("price"));
 
-            final MySwipeListLayout sll_main = view.findViewById(R.id.sll_main);
+            final MySwipeListLayout sllMain = view.findViewById(R.id.sll_main);
 
-            TextView tv_delete = view.findViewById(R.id.tv_delete);
+            TextView tvDelete = view.findViewById(R.id.tv_delete);
 
-            tv_delete.setOnClickListener(new View.OnClickListener() {
+            tvDelete.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
 
                     new AlertDialog.Builder(PackageEditActivity.this).setTitle("删除套餐菜品")
-                            .setMessage(tv_name.getText().toString())
+                            .setMessage(tvName.getText().toString())
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    sll_main.setStatus(MySwipeListLayout.Status.Close, true);
+                                    sllMain.setStatus(MySwipeListLayout.Status.Close, true);
                                     list.remove(arg0);
                                     notifyDataSetChanged();
                                 }
@@ -236,3 +241,4 @@ public class PackageEditActivity extends BaseToobarActivity {
 
     }
 }
+

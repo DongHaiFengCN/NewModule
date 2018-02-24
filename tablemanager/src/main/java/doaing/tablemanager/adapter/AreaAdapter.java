@@ -3,7 +3,6 @@ package doaing.tablemanager.adapter;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,22 +51,26 @@ import tools.ToolUtil;
 
 public class AreaAdapter extends BaseAdapter {
 
-    private List<String> areaId = new ArrayList<>();
+    public List<String> getAreaId() {
+        return areaId;
+    }
+
+    private List<String> areaId;
     private int mSelect = 0; //选中项
     private EditText editText;
     private TableManagerActivity context;
     private Database database;
 
-    public AreaAdapter( TableManagerActivity context, Database database) {
+    public AreaAdapter(TableManagerActivity context, Database database) {
 
         this.context = context;
         this.database = database;
-        areaQuery();
+        areaId = areaQuery();
     }
 
     @Override
     public int getCount() {
-        return areaId.size()==0 ? 1 : areaId.size() + 1;
+        return areaId.size() + 1;
     }
 
     @Override
@@ -128,9 +131,12 @@ public class AreaAdapter extends BaseAdapter {
                                     Document document = database.getDocument(areaId.get(i));
                                     Array array = document.getArray("tableIDList");
                                     int count = array.count();
+
+                                    //删除餐桌信息
                                     for (int j = 0; j < count; j++) {
                                         try {
                                             database.delete(database.getDocument(array.getString(j)));
+
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
@@ -140,10 +146,8 @@ public class AreaAdapter extends BaseAdapter {
                                     } catch (CouchbaseLiteException e) {
                                         e.printStackTrace();
                                     }
-                                    areaId.remove(document.getId());
-                                    notifyDataSetChanged();
+                                    updata();
                                     context.setAreaListViewItemPosition(0);
-
                                 }
                             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
@@ -169,8 +173,8 @@ public class AreaAdapter extends BaseAdapter {
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
                                 }
+                                updata();
                                 alertDialog.dismiss();
-                                notifyDataSetChanged();
                             }
                         }
                     });
@@ -207,15 +211,16 @@ public class AreaAdapter extends BaseAdapter {
                                 document.setBoolean("isValid", true);
                                 document.setString("areaNum", String.valueOf(areaId == null ? 0 : areaId.size()));
                                 document.setArray("tableIDList", new MutableArray());
-                                Log.e("DOAING",document.getArray("tableIDList").count()+" 77777");
                                 document.setString("dataType", "BaseData");
                                 try {
                                     database.save(document);
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
                                 }
-                                notifyDataSetChanged();
+                                updata();
                                 alertDialog.dismiss();
+                                context.setAreaListViewItemPosition(i);
+
                             }
 
                         }
@@ -234,6 +239,10 @@ public class AreaAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void updata(){
+        areaId = areaQuery();
+        notifyDataSetChanged();
+    }
     class ListItemView {
 
         TextView tv_title;
@@ -259,28 +268,27 @@ public class AreaAdapter extends BaseAdapter {
         return ll;
     }
 
-    private void areaQuery() {
-
+    private List<String> areaQuery() {
+        ResultSet results = null;
+        final List<String> areaIdList;
         //动态监听DisheKind信息
         Query query = listsLiveQuery();
-        query.addChangeListener(new QueryChangeListener() {
-            @Override
-            public void changed(QueryChange change) {
-                if (!areaId.isEmpty()) {
-                    areaId.clear();
-                }
-                ResultSet rows = change.getResults();
-                Result row = null;
-                while ((row = rows.next()) != null) {
+        areaIdList = new ArrayList<>();
+        try {
+             results = query.execute();
 
-                    String id = row.getString(0);
-                    areaId.add(id);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
 
-                }
-                notifyDataSetChanged();
+        Result row ;
+        while ((row = results.next()) != null) {
 
-            }
-        });
+            String id = row.getString(0);
+            areaIdList.add(id);
+
+        }
+        return areaIdList;
     }
 
     private Query listsLiveQuery() {

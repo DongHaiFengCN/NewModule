@@ -2,19 +2,17 @@ package doaing.dishesmanager.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 
+import android.widget.ArrayAdapter;
+
+import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -22,8 +20,7 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.mylibrary.MyApplication;
-
+import doaing.MyApplication;
 
 /**
  * 项目名称：new
@@ -33,8 +30,9 @@ import doaing.mylibrary.MyApplication;
  * 修改人：donghaifeng
  * 修改时间：2018/1/22 14:20
  * 修改备注：
+ *
+ * @author donghaifeng
  */
-
 public class TasteSpinner extends android.support.v7.widget.AppCompatSpinner {
 
     public List<Document> getTasteList() {
@@ -42,14 +40,15 @@ public class TasteSpinner extends android.support.v7.widget.AppCompatSpinner {
     }
 
     private List<Document> tasteList = new ArrayList<>();
-    ArrayAdapter<String> Adapter;
+    ArrayAdapter tasteAdapter;
 
     public TasteSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item);
-        Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        setAdapter(Adapter);
+        tasteAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item);
+        tasteAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         getTasteItems();
+        setAdapter(tasteAdapter);
+
     }
 
     public TasteSpinner(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -66,10 +65,25 @@ public class TasteSpinner extends android.support.v7.widget.AppCompatSpinner {
 
         final Database database = ((MyApplication) getContext().getApplicationContext()).getDatabase();
 
-        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesTasteC")).toLive();
-        query.addChangeListener(new LiveQueryChangeListener() {
+                .where(Expression.property("className").equalTo(Expression.string("DishesTasteC")));
+
+        ResultSet results = null;
+        try {
+            results = query.execute();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        Result row;
+        while ((row = results.next()) != null) {
+            String id = row.getString(0);
+            Document doc = database.getDocument(id);
+            tasteList.add(doc);
+            tasteAdapter.add(doc.getString("tasteName"));
+
+
+  /*      query.addChangeListener(new LiveQueryChangeListener() {
             @Override
             public void changed(LiveQueryChange change) {
 
@@ -92,8 +106,9 @@ public class TasteSpinner extends android.support.v7.widget.AppCompatSpinner {
                 }
 
             }
-        });
-        query.run();
+        });*/
 
+
+        }
     }
 }

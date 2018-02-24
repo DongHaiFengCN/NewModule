@@ -1,5 +1,6 @@
 package doaing.dishesmanager;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,10 +26,13 @@ import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -37,22 +41,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import doaing.MyApplication;
 import doaing.dishesmanager.view.MySwipeListLayout;
-
-import doaing.mylibrary.MyApplication;
-import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
+
 
 /**
  * @author donghaifeng
  * @Data 2018/1/19
  */
+
 public class DishesKindActivity extends BaseToobarActivity {
+
 
     /**
      * 修改为Document
      */
+
     private List<Document> list = new ArrayList<>();
 
     private Database database;
@@ -62,7 +68,7 @@ public class DishesKindActivity extends BaseToobarActivity {
     @BindView(R2.id.toolbar)
     Toolbar toolbar;
     @BindView(R2.id.disheskind_lv)
-    ListView dishesKind_lv;
+    ListView dishesKindLv;
 
     @Override
     protected int setMyContentView() {
@@ -80,31 +86,32 @@ public class DishesKindActivity extends BaseToobarActivity {
         initList();
         listAdapter = new ListAdapter();
 
-        dishesKind_lv.setAdapter(listAdapter);
+        dishesKindLv.setAdapter(listAdapter);
 
     }
+
 
     /**
      * 加载数据库数据
      */
+
     private void initList() {
         listAdapter = new ListAdapter();
-        dishesKind_lv.setAdapter(listAdapter);
+        dishesKindLv.setAdapter(listAdapter);
         database = ((MyApplication) getApplicationContext()).getDatabase();
-        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("kindName")))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesKindC")).toLive();
-        query.addChangeListener(new LiveQueryChangeListener() {
+                .where(Expression.property("className").equalTo(Expression.string("DishesKindC")));
+        query.addChangeListener(new QueryChangeListener() {
             @Override
-            public void changed(LiveQueryChange change) {
+            public void changed(QueryChange change) {
 
                 if (!list.isEmpty()) {
                     list.clear();
                 }
-                ResultSet rows = change.getRows();
-                Result row = null;
+                ResultSet rows = change.getResults();
+                Result row;
                 while ((row = rows.next()) != null) {
-
 
                     String id = row.getString(0);
                     Document doc = database.getDocument(id);
@@ -116,7 +123,6 @@ public class DishesKindActivity extends BaseToobarActivity {
                 listAdapter.notifyDataSetChanged();
             }
         });
-        query.run();
 
 
     }
@@ -152,37 +158,14 @@ public class DishesKindActivity extends BaseToobarActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    Document document = new Document("DishesKindC." + ToolUtil.getUUID());
-                                    document.setString("channelId", "gysz");
-                                    document.setString("className", "DishesKindC");
-                                    document.setBoolean("setMenu", false);
-                                    document.setString("kindName", mSearchAutoComplete.getText().toString());
-                                    document.setArray("dishesListId", new Array());
-                                    try {
-                                        database.save(document);
-                                    } catch (CouchbaseLiteException e) {
-                                        e.printStackTrace();
-                                    }
-
+                                    saveall(mSearchAutoComplete.getText().toString(), false);
                                     mSearchAutoComplete.setText("");
                                 }
                             })
                             .setNegativeButton("一级套餐", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-                                    Document document = new Document("DishesKindC." + ToolUtil.getUUID());
-                                    document.setString("channelId", "gysz");
-                                    document.setString("className", "DishesKindC");
-                                    document.setBoolean("setMenu", true);
-                                    document.setString("kindName", mSearchAutoComplete.getText().toString());
-                                    document.setArray("dishesListId", new Array());
-                                    try {
-                                        database.save(document);
-                                    } catch (CouchbaseLiteException e) {
-                                        e.printStackTrace();
-                                    }
-
+                                    saveall(mSearchAutoComplete.getText().toString(), true);
                                     mSearchAutoComplete.setText("");
                                 }
                             })
@@ -202,11 +185,29 @@ public class DishesKindActivity extends BaseToobarActivity {
         return true;
     }
 
+    /**
+     * @param kindName 菜类或一级套餐名称
+     * @param flag     true 一级套餐 false 菜类
+     */
+    private void saveall(String kindName, boolean flag) {
+        MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
+        document.setString("channelId", "gysz");
+        document.setString("className", "DishesKindC");
+        document.setBoolean("setMenu", flag);
+        document.setString("kindName", kindName);
+        document.setArray("dishesListId", new MutableArray());
+        try {
+            database.save(document);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+    }
+
     class ListAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
-            return list.size() == 0 ? 0 : list.size();
+            return list.size();
         }
 
         @Override
@@ -219,19 +220,20 @@ public class DishesKindActivity extends BaseToobarActivity {
             return arg0;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public View getView(final int arg0, View view, ViewGroup arg2) {
             if (view == null) {
                 view = LayoutInflater.from(DishesKindActivity.this).inflate(
                         R.layout.slip_list_item, null);
             }
-            final TextView tv_name = view.findViewById(R.id.tv_name);
-            tv_name.setText(list.get(arg0).getString("kindName"));
-            final MySwipeListLayout sll_main = view.findViewById(R.id.sll_main);
-            TextView tv_edit = view.findViewById(R.id.tv_edit);
-            TextView tv_delete = view.findViewById(R.id.tv_delete);
+            final TextView tvName = view.findViewById(R.id.tv_name);
+            tvName.setText(list.get(arg0).getString("kindName"));
+            final MySwipeListLayout sllMain = view.findViewById(R.id.sll_main);
+            TextView tvEdit = view.findViewById(R.id.tv_edit);
+            TextView tvDelete = view.findViewById(R.id.tv_delete);
 
-            tv_edit.setOnClickListener(new View.OnClickListener() {
+            tvEdit.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
@@ -254,20 +256,19 @@ public class DishesKindActivity extends BaseToobarActivity {
                         @Override
                         public void onClick(View v) {
 
-                            if (editText.getText().toString().equals("")) {
+                            if ("".equals(editText.getText().toString())) {
 
                                 editText.setError("不能为空！");
 
-                                return;
                             } else {
 
 
-                                Document document = list.get(arg0);
+                                MutableDocument mutableDocument = list.get(arg0).toMutable();
 
-                                document.setString("kindName", editText.getText().toString());
+                                mutableDocument.setString("kindName", editText.getText().toString());
 
                                 try {
-                                    database.save(document);
+                                    database.save(mutableDocument);
                                     alertDialog.dismiss();
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
@@ -277,25 +278,25 @@ public class DishesKindActivity extends BaseToobarActivity {
 
                         }
                     });
-                    sll_main.setStatus(MySwipeListLayout.Status.Close, true);
+                    sllMain.setStatus(MySwipeListLayout.Status.Close, true);
 
 
                     notifyDataSetChanged();
 
                 }
             });
-            tv_delete.setOnClickListener(new View.OnClickListener() {
+            tvDelete.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
 
                     new AlertDialog.Builder(DishesKindActivity.this).setTitle("删除菜类以及对应的菜品")
-                            .setMessage(tv_name.getText().toString())
+                            .setMessage(tvName.getText().toString())
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    sll_main.setStatus(MySwipeListLayout.Status.Close, true);
+                                    sllMain.setStatus(MySwipeListLayout.Status.Close, true);
 
                                     try {
                                         Document document = list.get(arg0);

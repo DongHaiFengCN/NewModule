@@ -1,5 +1,6 @@
 package doaing.dishesmanager.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,9 +8,23 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import doaing.dishesmanager.DishesActivity;
@@ -23,19 +38,29 @@ import doaing.dishesmanager.R;
  * 修改人：donghaifeng
  * 修改时间：2018/1/31 13:41
  * 修改备注：
+ *
+ * @author donghaifeng
  */
 
 public class DishesKindAdapter extends BaseAdapter {
+    /**
+     * 选中的item位置
+     */
+    private int mSelect = 0;
 
-    private int mSelect = 0; //选中项
+    public List<Document> getNames() {
+        return names;
+    }
 
-    private List<Document> names;
+    private List<Document> names = new ArrayList<>();
     private Context context;
+    private Database database;
 
-    public DishesKindAdapter(List<Document> names, Context context) {
+    public DishesKindAdapter(Context context, Database database) {
 
-        this.names = names;
+        this.database = database;
         this.context = context;
+        disheKindQuery();
     }
 
     @Override
@@ -53,30 +78,33 @@ public class DishesKindAdapter extends BaseAdapter {
         return 0;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
 
         LayoutInflater listContainerLeft;
         listContainerLeft = LayoutInflater.from(context);
-        ListItemView listItemView = null;
+        ListItemView listItemView;
         if (view == null) {
             listItemView = new ListItemView();
             view = listContainerLeft.inflate(R.layout.disheskind_list_item, null);
-            listItemView.tv_title = view.findViewById(R.id.title);
+            listItemView.tvTitle = view.findViewById(R.id.title);
             listItemView.imageView = view.findViewById(R.id.imageView);
             view.setTag(listItemView);
         } else {
             listItemView = (ListItemView) view.getTag();
         }
         if (mSelect == i) {
-            view.setBackgroundResource(R.color.md_grey_50);  //选中项背景
+            //选中项背景
+            view.setBackgroundResource(R.color.md_grey_50);
             listItemView.imageView.setVisibility(View.VISIBLE);
         } else {
-            view.setBackgroundResource(R.color.md_grey_100);  //其他项背景
+            //其他项背景
+            view.setBackgroundResource(R.color.md_grey_100);
             listItemView.imageView.setVisibility(View.INVISIBLE);
         }
 
-        listItemView.tv_title.setText(names.get(i).getString("kindName"));
+        listItemView.tvTitle.setText(names.get(i).getString("kindName"));
 
         return view;
 
@@ -89,9 +117,31 @@ public class DishesKindAdapter extends BaseAdapter {
 
     class ListItemView {
 
-        TextView tv_title;
+        TextView tvTitle;
         ImageView imageView;
     }
 
+    private void disheKindQuery() {
+        //动态监听DishesKind信息
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
+                .from(DataSource.database(this.database))
+                .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false))));
+
+        try {
+            ResultSet rows = query.execute();
+            Result row;
+            while ((row = rows.next()) != null) {
+                String id = row.getString(0);
+                Document doc = this.database.getDocument(id);
+                names.add(doc);
+            }
+
+
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
 

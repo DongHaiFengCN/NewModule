@@ -1,5 +1,6 @@
 package doaing.tablemanager;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -31,8 +32,6 @@ import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
-import com.couchbase.lite.QueryChange;
-import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -50,7 +49,6 @@ import view.BaseToobarActivity;
  */
 @Route(path = "/table/TableManagerActivity")
 public class TableManagerActivity extends BaseToobarActivity {
-
     int POSITION = 0;
 
     private Database database;
@@ -78,41 +76,30 @@ public class TableManagerActivity extends BaseToobarActivity {
         tableRc.setLayoutManager(new GridLayoutManager(this, 3));
         tableRecycleAdapter = new TableRecycleAdapter();
         tableRc.setAdapter(tableRecycleAdapter);
-        areaAdapter = new AreaAdapter(TableManagerActivity.this, database);
+        areaAdapter = new AreaAdapter(TableManagerActivity.this,database);
         areaLv.setAdapter(areaAdapter);
+
         areaLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                if (pos < areaAdapter.getCount()) {
-                    areaAdapter.changeSelected(pos);
-                    POSITION = pos;
-                    //设置餐桌适配器
-                    if (areaAdapter.getItem(pos) == null) {
-                        tableRecycleAdapter.setArray(null);
-                        return;
-                    }
-                    areaDocment = database.getDocument((String) areaAdapter.getItem(pos));
 
-                    Array array = areaDocment.getArray("tableIDList");
-                    tableRecycleAdapter.setArray(array);
+                areaAdapter.changeSelected(pos);
+                POSITION = pos;
+                //设置餐桌适配器
+                if (areaAdapter.getAreaId().size() == 0) {
+                    tableRecycleAdapter.setArray(null);
+                    return;
                 }
+                areaDocment = database.getDocument(areaAdapter.getAreaId().get(pos));
+                Array array = areaDocment.getArray("tableIDList");
+                tableRecycleAdapter.setArray(array);
+                Log.e("DOAING","参数长度"+array.count());
+                Log.e("DOAING","执行了吗");
+
             }
         });
-        setAreaListViewItemPosition(POSITION);
-
-
+       setAreaListViewItemPosition(0);
     }
-
-    public void setAreaListViewItemPosition(int position) {
-
-
-        if (areaAdapter.getCount() == 1) {
-            tableRecycleAdapter.setArray(null);
-            return;
-        }
-        areaLv.performItemClick(areaLv.getChildAt(position), position, areaAdapter.getItemId(position));
-    }
-
     @Override
     protected Toolbar setToolBarInfo() {
 
@@ -131,7 +118,7 @@ public class TableManagerActivity extends BaseToobarActivity {
             return super.getItemViewType(position);
         }
 
-        public void setArray(Array array) {
+        private void setArray(Array array) {
             this.array = array;
             notifyDataSetChanged();
         }
@@ -150,19 +137,11 @@ public class TableManagerActivity extends BaseToobarActivity {
 
         }
 
-        /**
-         * 修改餐桌信息的方法
-         *
-         * @param holder
-         * @param position
-         */
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
             // 绑定数据
             if (holder instanceof ViewHolder) {
                 final Document tableDoc = database.getDocument(array.getString(position));
-            
-
                 ((ViewHolder) holder).mTv.setText(tableDoc.getString("tableName"));
                 ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -183,21 +162,24 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 }).setNeutralButton("删除餐桌", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+
+                                        MutableDocument mutableDocument = areaDocment.toMutable();
                                         //获取房间信息
-                                        MutableArray array = areaDocment.getArray("tableIDList").toMutable();
+                                        MutableArray array = mutableDocument.getArray("tableIDList");
 
                                         //获取需要删除的餐桌id
                                         String id = tableDoc.getId();
                                         int count = array.count();
                                         for (int i = 0; i < count; i++) {
                                             if (id.equals(array.getString(i))) {
+
                                                 array.remove(i);
                                                 break;
                                             }
                                         }
                                         try {
                                             database.delete(tableDoc);
-                                            database.save(areaDocment.toMutable());
+                                            database.save(mutableDocument);
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
@@ -244,21 +226,21 @@ public class TableManagerActivity extends BaseToobarActivity {
             return array == null ? 0 : array.count() + 1;
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        private class ViewHolder extends RecyclerView.ViewHolder {
             TextView mTv;
             CardView cardView;
 
-            public ViewHolder(View itemView) {
+            private ViewHolder(View itemView) {
                 super(itemView);
                 mTv = itemView.findViewById(R.id.item_tablestate_name);
                 cardView = itemView.findViewById(R.id.table_state_cardview);
             }
         }
 
-        public class Item2ViewHolder extends RecyclerView.ViewHolder {
+        private class Item2ViewHolder extends RecyclerView.ViewHolder {
             CardView cardView;
 
-            public Item2ViewHolder(View itemView) {
+            private Item2ViewHolder(View itemView) {
                 super(itemView);
                 cardView = itemView.findViewById(R.id.table_state_cardview);
                 cardView.setOnClickListener(new View.OnClickListener() {
@@ -300,10 +282,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     mutableDocument.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
                                     mutableDocument.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
 
-                                    //新版方法
                                     MutableDocument areaDoc = areaDocment.toMutable();
-                                    Log.e("DOAING", "查找：" + areaDoc.getString("areaName"));
-                                    Log.e("DOAING", "保存tableId：" + mutableDocument.getId());
 
                                     MutableArray mutableArray = areaDoc.getArray("tableIDList");
                                     mutableArray.addString(mutableDocument.getId());
@@ -325,10 +304,15 @@ public class TableManagerActivity extends BaseToobarActivity {
         }
 
     }
+    public void setAreaListViewItemPosition(int position) {
 
+        areaLv.performItemClick(areaLv.getChildAt(position), position, areaLv
+                .getItemIdAtPosition(position));
+
+    }
     @NonNull
     private View getView() {
-        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.table_add_dialog, null);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.table_add_dialog, null);
         tableNameEt = view.findViewById(R.id.tablename_et);
         minmunNumberEt = view.findViewById(R.id.minimun_number);
         maxmunNumberEt = view.findViewById(R.id.maximum_number_et);
@@ -365,4 +349,6 @@ public class TableManagerActivity extends BaseToobarActivity {
         }
         return maxNum;
     }
+
+
 }
