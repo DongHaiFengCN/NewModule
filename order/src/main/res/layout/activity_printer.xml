@@ -7,11 +7,20 @@
     tools:context=".device.PrinterConnectDialog">
 
     <include layout="@layout/common_view_toolbar"></include>
-    <LinearLayout
-
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="#ffffff"
+        android:layout_height="30dp"
+        android:background="@color/backgroud"
+        android:text="添加支付二维码"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textColor="@color/md_grey_800"
+    />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -26,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@color/d_bg"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -54,18 +63,26 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#00aaaaaa"
+                    android:background="@drawable/animkaiguan"
                     android:gravity="left|center_vertical"
                     android:text="打印到小票"
+                    android:button="@null"
+                    android:checked="false"
                     android:textColor="@color/md_black_1000" />
             </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/backgroud"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="2dp"
                 android:layout_weight="1"
-                android:background="@color/d_bg"
+                android:background="@color/white"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -93,51 +110,118 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="#00aaaaaa"
+                    android:background="@drawable/animkaiguan"
+                    android:button="@null"
                     android:gravity="left|center_vertical"
                     android:text="打印到小票"
+                    android:checked="false"
                     android:textColor="@color/md_black_1000" />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/backgroud"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="2dp"
+                android:layout_weight="1"
+                android:background="@color/white"
+                android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.4"
+                    android:scaleType="fitCenter"
+                    android:onClick="OnAddZfbQrcodepay"
+                    android:src="@mipmap/icon_dyj" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:layout_weight="0.5"
+                    android:gravity="center_vertical"
+                    android:text="打印份数:"
+                    android:textColor="@color/md_black_1000"
+                    android:textSize="18sp"
+                    android:background="@color/white" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/backgroud"
+                    android:layout_marginTop="13dp"
+                    android:layout_marginBottom="10dp"
+
+                    />
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="left|center_vertical"
+                    android:text="1"
+                    android:lines="1"
+                    android:paddingLeft="10dp"
+                    android:inputType="number"
+                    android:textColor="@color/black"
+                    android:textSize="22sp" />
+            </LinearLayout>
         </LinearLayout>
 
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:background="@color/backgroud"
+        android:text=""
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:textColor="@color/md_grey_800"
+        />
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
-            android:background="@color/d_bg"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="visible">
+            android:layout_margin="5dp"
+            android:layout_weight="0.7"
+            android:scaleType="fitCenter"
+            android:onClick="OnAddZfbQrcodepay"
+            android:src="@mipmap/icon_yao" />
 
-            <TextView
-                android:id="@+id/msgtxt1"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center_vertical|right"
-                android:text="打印份数:"
-                android:textColor="@color/md_black_1000"
-                android:textSize="18sp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="1.8"
+            android:background="#ffffff"
+            android:text="是否接收肴点点微信小程序订单"
+            android:gravity="left|center_vertical"
+            android:textColor="#020202" />
 
-            <EditText
-                android:id="@+id/edt_print_nums"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:gravity="center_vertical|center_horizontal"
-                android:inputType="number"
-                android:lines="1"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:background="#ffffff"
-                android:text="1" />
-        </LinearLayout>
+        <CheckBox
+            android:id="@+id/cbox_wx_yao"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.7"
+            android:background="@drawable/animkaiguan"
+            android:button="@null"
+            android:gravity="left|center_vertical"
+            android:checked="false"
+            android:textColor="@color/md_black_1000" />
     </LinearLayout>
+
+
 
 </LinearLayout>

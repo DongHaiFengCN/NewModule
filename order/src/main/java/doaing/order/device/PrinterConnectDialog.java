@@ -38,6 +38,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     TextView qrcodeZfbcontent;
     CheckBox ifqrcodeprint2;
     EditText printnums;
+    CheckBox cboxWxYao;
     private MyApplication myapp;
     private final static int SCANNIN_GREQUEST_CODE1 = 1;
     private final static int SCANNIN_GREQUEST_CODE2 = 2;
@@ -83,7 +84,8 @@ public class PrinterConnectDialog extends BaseToobarActivity {
         qrcodeZfbcontent = findViewById(R.id.tv_zfbqrcode_content);
         ifqrcodeprint2 = findViewById(R.id.cbox_qrcode_ifprint2);
         printnums = findViewById(R.id.edt_print_nums);
-        setToolbarName("蓝牙打印机");
+        cboxWxYao = findViewById(R.id.cbox_wx_yao);
+        setToolbarName("打印小票");
     }
     private void initQrPay()
     {
