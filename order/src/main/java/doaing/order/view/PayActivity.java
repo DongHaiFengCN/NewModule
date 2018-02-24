@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -52,22 +53,20 @@ import bean.kitchenmanage.promotion.PromotionRuleC;
 import bean.kitchenmanage.qrcode.qrcodeC;
 import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.table.TableC;
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.ProgressBarasyncTask;
 import doaing.order.view.adapter.ActionListAdapter;
 import doaing.order.view.adapter.MemberDishesListAdapter;
 import doaing.order.untils.BluetoothUtil;
-import doaing.order.application.CDBHelper;
 import doaing.order.module.DBFactory;
 import doaing.order.module.DatabaseSource;
 import doaing.order.module.IDBManager;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
+import tools.CDBHelper;
 
 /**
  * @author 董海峰
@@ -170,8 +169,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
         //获取包含桌号xx的所有订单
         List<OrderC> orderCList = CDBHelper.getObjByWhere(getApplicationContext(), Expression.property("className")
-                        .equalTo("OrderC").and(Expression.property("tableNo").equalTo(tableC.getTableNum()))
-                        .and(Expression.property("orderState").equalTo(1))
+                        .equalTo(Expression.string("OrderC"))
+                        .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
+                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").ascending()
                 , OrderC.class);
 
@@ -579,7 +579,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         }
 
         //获取会员
-        final Document members = idbManager.getMembers(tel);
+        final MutableDocument members = idbManager.getMembers(tel).toMutable();
 
         //展示享受折扣的列表
 
@@ -776,7 +776,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
         final AlertDialog alertDialog = builder.show();
 
-        final Document members = idbManager.getMembers(tel);
+        final MutableDocument members = idbManager.getMembers(tel).toMutable();
         alertDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1559,9 +1559,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
     private boolean ifChangeTable() {
         List<OrderC> orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
-                Expression.property("className").equalTo("OrderC")
-                        .and(Expression.property("orderState").equalTo(1))
-                        .and(Expression.property("tableNo").equalTo(myApplication.getTable_sel_obj().getTableNum()))
+                Expression.property("className").equalTo(Expression.string("OrderC"))
+                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                        .and(Expression.property("tableNo").equalTo(Expression.string(myApplication.getTable_sel_obj().getTableNum())))
                 , Ordering.property("createdTime").descending()
                 , OrderC.class);
 

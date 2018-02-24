@@ -11,11 +11,12 @@ import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -26,7 +27,7 @@ public class AreaAdapter extends ArrayAdapter<String> {
 	private static final String TAG = AreaAdapter.class.getSimpleName();
 
 	private Database db;
-	private LiveQuery listsLiveQuery = null;
+	private Query listsLiveQuery = null;
 	private int  selectItem=-1;
 	public AreaAdapter(Context context, Database db )
 	{
@@ -36,12 +37,12 @@ public class AreaAdapter extends ArrayAdapter<String> {
 		this.db = db;
 
 		this.listsLiveQuery = listsLiveQuery();
-		this.listsLiveQuery.addChangeListener(new LiveQueryChangeListener() {
+		this.listsLiveQuery.addChangeListener(new QueryChangeListener() {
 			@Override
-			public void changed(LiveQueryChange change)
+			public void changed(QueryChange change)
 			{
 				clear();
-				ResultSet rs = change.getRows();
+				ResultSet rs = change.getResults();
 				Result result;
 				while ((result = rs.next()) != null)
 				{
@@ -51,24 +52,23 @@ public class AreaAdapter extends ArrayAdapter<String> {
 				notifyDataSetChanged();
 			}
 		});
-		this.listsLiveQuery.run();
+
 	}
 	@Override
 	protected void finalize() throws Throwable {
 		if (listsLiveQuery != null) {
-			listsLiveQuery.stop();
 			listsLiveQuery = null;
 		}
 
 		super.finalize();
 	}
-	private LiveQuery listsLiveQuery() {
-		return Query.select(SelectResult.expression(Expression.meta().getId())
+	private Query listsLiveQuery() {
+		return QueryBuilder.select(SelectResult.expression(Meta.id)
 				, SelectResult.expression(Expression.property("areaName")))
 				.from(DataSource.database(db))
-				.where(Expression.property("className").equalTo("AreaC"))
+				.where(Expression.property("className").equalTo(Expression.string("AreaC")))
 				.orderBy(Ordering.property("areaNum").ascending())
-				.toLive();
+				 ;
 	}
 
 	@Override

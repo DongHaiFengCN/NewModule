@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#d3eff3"
+    android:orientation="vertical"
+    tools:context="smartkitchen.com.login.modifyPsw.NewPswActivity">
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="6">
+
+        <EditText
+            android:id="@+id/password1_edtTxt"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+
+            android:background="@color/login_md_white_1000"
+            android:hint="密码"
+            android:inputType="numberPassword"
+            android:paddingLeft="16dp" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        app:counterMaxLength="6">
+
+
+        <EditText
+            android:id="@+id/password2_edtTxt"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@color/login_md_white_1000"
+            android:hint="重复密码"
+            android:inputType="numberPassword"
+            android:paddingLeft="16dp" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/register_bt2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/login_colorPrimaryDark"
+
+        android:text="确定"
+        android:textColor="@color/login_md_black_1000" />
+</LinearLayout>

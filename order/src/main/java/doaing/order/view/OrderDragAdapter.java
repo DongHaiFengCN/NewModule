@@ -21,8 +21,8 @@ import java.util.List;
 import bean.kitchenmanage.dishes.DishesC;
 import bean.kitchenmanage.dishes.DishesTasteC;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
 import doaing.order.module.DishesMessage;
+import tools.CDBHelper;
 
 /*
 *

@@ -38,7 +38,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.android.arouter.facade.annotation.Route;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
@@ -70,21 +69,18 @@ import bean.kitchenmanage.order.GoodsC;
 import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.user.CompanyC;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.BluetoothUtil;
-import doaing.order.application.CDBHelper;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.ShowParticularsAdapter;
+import tools.CDBHelper;
 
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
-import static doaing.order.application.CDBHelper.getFormatDate;
+import static tools.CDBHelper.getFormatDate;
 
 /*
 *
@@ -191,7 +187,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             }
             else if (action.equals(GpCom.ACTION_RECEIPT_RESPONSE))//本地打印完成回调
             {
-                com.couchbase.lite.Log.e("Main","-----");
+                Log.e("Main","-----");
                 proDialog.setMessage("分单打印完成");
                 try {
                     Thread.sleep(500);
@@ -691,7 +687,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                     try {
 
-                        CDBHelper.db.inBatch(new TimerTask() {
+                        CDBHelper.getDatabase().inBatch(new TimerTask() {
                                                  @Override
                                                  public void run() {
 
@@ -1052,9 +1048,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 List<OrderC> orderCList2 =new ArrayList<>();//
 
                 orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
-                        Expression.property("className").equalTo("OrderC")
-                                .and(Expression.property("tableNo").equalTo(myapp.getTable_sel_obj().getTableNum()))
-                                .and(Expression.property("orderState").equalTo(1))
+                        Expression.property("className").equalTo(Expression.string("OrderC"))
+                                .and(Expression.property("tableNo").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
+                                .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                         , Ordering.property("createdTime").descending()
                         , OrderC.class);
 
@@ -1157,9 +1153,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         List<OrderC> orderCList2 =new ArrayList<>();//
 
         orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
-                Expression.property("className").equalTo("OrderC")
-                        .and(Expression.property("tableNo").equalTo(myapp.getTable_sel_obj().getTableNum()))
-                        .and(Expression.property("orderState").equalTo(1))
+                Expression.property("className").equalTo(Expression.string("OrderC"))
+                        .and(Expression.property("tableNo").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
+                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").descending()
                 , OrderC.class);
 

@@ -13,11 +13,12 @@ import android.widget.TextView;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -39,7 +40,7 @@ import doaing.order.R;
 public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecyclerAdapter.TestHolderView> {
 
     private Database db;
-    private LiveQuery listsLiveQuery = null;
+    private Query listsLiveQuery = null;
     protected Context context;
    // private List<String> documentList;
     private List<HashMap<String,Object>> hashMapList;
@@ -52,12 +53,12 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
         this.db = db;
         this.context = context;
         this.listsLiveQuery = listsLiveQuery(areaId);
-        this.listsLiveQuery.addChangeListener(new LiveQueryChangeListener() {
+        this.listsLiveQuery.addChangeListener(new QueryChangeListener() {
             @Override
-            public void changed(LiveQueryChange change)
+            public void changed(QueryChange change)
             {
                 clear();
-                ResultSet rs = change.getRows();
+                ResultSet rs = change.getResults();
                 Result row;
                 while ((row = rs.next()) != null)
                 {
@@ -73,18 +74,16 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
 
             }
         });
-        this.listsLiveQuery.run();
     }
-    private LiveQuery listsLiveQuery(String areaId)
+    private Query listsLiveQuery(String areaId)
     {
-        return Query.select(SelectResult.expression(Expression.meta().getId()),
+        return QueryBuilder.select(SelectResult.expression(Meta.id),
                 SelectResult.expression(Expression.property("state")),
                 SelectResult.expression(Expression.property("tableName")))
                 .from(DataSource.database(db))
-                .where(Expression.property("className").equalTo("TableC")
-                        .and(Expression.property("areaId").equalTo(areaId)))
-                .orderBy(Ordering.property("tableNum").ascending())
-                .toLive();
+                .where(Expression.property("className").equalTo(Expression.string("TableC"))
+                        .and(Expression.property("areaId").equalTo(Expression.string(areaId))))
+                .orderBy(Ordering.property("tableNum").ascending());
     }
     @Override
     public TestHolderView onCreateViewHolder(ViewGroup parent, int viewType)
@@ -187,7 +186,6 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
     public void StopQuery()
     {
         if (listsLiveQuery != null) {
-            listsLiveQuery.stop();
             listsLiveQuery = null;
         }
     }

@@ -41,6 +41,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -65,9 +66,9 @@ import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.qrcode.qrcodeC;
 import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.table.TableC;
+import bean.kitchenmanage.user.UsersC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
 import doaing.order.device.DeviceMain;
 import doaing.order.device.PrinterConnectDialog;
 import doaing.order.device.kitchen.KitchenCfgActivity;
@@ -75,6 +76,7 @@ import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
 import doaing.order.view.adapter.LiveTableRecyclerAdapter;
+import tools.CDBHelper;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
@@ -82,9 +84,9 @@ import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
 @Route(path = "/order/DeskActivity")
 public class DeskActivity extends AppCompatActivity {
 
+    private static GpService smGpService;
     private Database db;
     private ListView listViewArea;
-    private List<AreaC> areaCList;
     private AreaAdapter areaAdapter;
     private RecyclerView listViewDesk;
     private LiveTableRecyclerAdapter tableadapter;
@@ -95,7 +97,7 @@ public class DeskActivity extends AppCompatActivity {
     private Toolbar toolbar;
     List<DishesKindC> dishesKindCList;
     private Map<String, List<Document>> dishesObjectCollection;
-    private GpService mGpService;
+    public GpService mGpService;
     private PrinterServiceConnection conn = null;
     private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
     private static final int REQUEST_PRINT_LABEL = 0xfd;
@@ -144,12 +146,20 @@ public class DeskActivity extends AppCompatActivity {
             }
         });
         myapp= (MyApplication) getApplicationContext();
+
+        String mobile = getIntent().getStringExtra("mobile");
+        String channelId = getIntent().getStringExtra("channelId");
+        Log.e("DeskActivity","mobile = "+mobile);
+        UsersC obj = new UsersC(channelId);
+        obj.setEmployeeName("管理员");
+        myapp.setUsersC(obj);
+
         //  myapp.initDishesData();
 
         initWidget();
         dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                , Expression.property("className").equalTo("DishesKindC")
-                        .and(Expression.property("setMenu").equalTo(false))
+                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
                 ,null, DishesKindC.class);
 
         dishesObjectCollection = new HashMap<>();
@@ -170,8 +180,8 @@ public class DeskActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                , Expression.property("className").equalTo("DishesKindC")
-                        .and(Expression.property("setMenu").equalTo(false))
+                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
                 , null , DishesKindC.class);
 
         initDishesData();
@@ -180,7 +190,7 @@ public class DeskActivity extends AppCompatActivity {
     private void initWidget()
     {
 
-        db = myapp.getDatabase();
+        db = CDBHelper.getDatabase();
         if(db == null) throw new IllegalArgumentException();
         areaAdapter = new AreaAdapter(this, db);
 
@@ -309,9 +319,9 @@ public class DeskActivity extends AppCompatActivity {
 
                 }else {
                     List<String> orderCList= CDBHelper.getIdsByWhere(getApplicationContext(),
-                            Expression.property("className").equalTo("OrderC")
-                                    .and(Expression.property("tableNo").equalTo(tableC.getTableNum()))
-                                    .and(Expression.property("orderState").equalTo(1))
+                            Expression.property("className").equalTo(Expression.string("OrderC"))
+                                    .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
+                                    .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                                     ,null
                             );
 
@@ -363,7 +373,7 @@ public class DeskActivity extends AppCompatActivity {
                                 public void run() {
 
                                     try {
-                                        CDBHelper.db.inBatch(new TimerTask() {
+                                        CDBHelper.getDatabase().inBatch(new TimerTask() {
                                             @Override
                                             public void run() {
                                                 CheckOrderC checkOrderC = null;
@@ -376,8 +386,8 @@ public class DeskActivity extends AppCompatActivity {
 
                                                     //查询当日的订单
                                                     List<CheckOrderC> checkOrderCS = CDBHelper.getObjByWhere(getApplicationContext()
-                                                            , Expression.property("className").equalTo("CheckOrderC")
-                                                                    .and(Expression.property("checkTime").like(formatter.format(date)+"%"))
+                                                            , Expression.property("className").equalTo(Expression.string("CheckOrderC"))
+                                                                    .and(Expression.property("checkTime").like(Expression.string(formatter.format(date)+"%")))
                                                             , null, CheckOrderC.class);
 
                                                     Iterator<CheckOrderC> iterator = checkOrderCS.iterator();
@@ -479,10 +489,10 @@ public class DeskActivity extends AppCompatActivity {
 
                     //使用&&预定状态
                     List<String> orderCList = CDBHelper.getIdsByWhere(getApplicationContext(),
-                            Expression.property("className").equalTo("OrderC")
-                                    .and(Expression.property("tableNo").equalTo(tableC.getTableNum()))
-                                    .and(Expression.property("orderState").equalTo(1))
-                                    .and(Expression.property("orderCType").notEqualTo(1))
+                            Expression.property("className").equalTo(Expression.string("OrderC"))
+                                    .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
+                                    .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                                    .and(Expression.property("orderCType").notEqualTo(Expression.intValue(1)))
                             ,null);
 
                     if(orderCList.size()>0)//有未买单订单，可以买单
@@ -523,19 +533,21 @@ public class DeskActivity extends AppCompatActivity {
                                         public void onClick(DialogInterface dialog, int which) {
                                             String tableNum = tablesNos[pos];
                                             //1\改变所选桌位对象状态为使用
-                                            Document selectTable = freeTableList.get(pos);
+                                            MutableDocument selectTable = freeTableList.get(pos).toMutable();
                                             selectTable.setInt("state",2);
                                             CDBHelper.saveDocument(getApplicationContext(),selectTable);
                                             //2\改变原桌位对象状态为空闲
                                             changeOldTable(tableId);
                                             //3\改变原桌位下订单为该桌位下
                                             List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                                                    Expression.property("className").equalTo("OrderC").and(Expression.property("orderState").equalTo(1)
-                                                            .and(Expression.property("tableNo").equalTo(tableC.getTableNum()))),
+                                                    Expression.property("className").equalTo(Expression.string("OrderC")).and(Expression.property("orderState").equalTo(Expression.intValue(1))
+                                                            .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))),
                                                     null);
-                                            for (Document doc : documentList){
-                                                doc.setString("tableNo",tableNum);
-                                                CDBHelper.saveDocument(getApplicationContext(),doc);
+                                            for (Document doc : documentList)
+                                            {
+                                                MutableDocument mDoc = doc.toMutable();
+                                                mDoc.setString("tableNo",tableNum);
+                                                CDBHelper.saveDocument(getApplicationContext(),mDoc);
                                             }
                                             dialog.dismiss();
                                             pos = 0;
@@ -595,10 +607,12 @@ public class DeskActivity extends AppCompatActivity {
 
     }
 
-    private void changeOldTable(String tableId){
+    private void changeOldTable(String tableId)
+    {
         Document doc = CDBHelper.getDocByID(getApplicationContext(),tableId);
-        doc.setInt("state",0);
-        CDBHelper.saveDocument(getApplicationContext(),doc);
+        MutableDocument mDoc = doc.toMutable();
+        mDoc.setInt("state",0);
+        CDBHelper.saveDocument(getApplicationContext(),mDoc);
 
     }
 
@@ -607,8 +621,8 @@ public class DeskActivity extends AppCompatActivity {
         String[] freetables=null;
         freeTableList.clear();
         List<Document> tableDocList= CDBHelper.getDocmentsByWhere(getApplicationContext()
-                , Expression.property("className").equalTo("TableC")
-                        .and(Expression.property("state").equalTo(0))
+                , Expression.property("className").equalTo(Expression.string("TableC"))
+                        .and(Expression.property("state").equalTo(Expression.intValue(0)))
                 , Ordering.property("tableNum").ascending()
                 );
         Log.e("Desk","table---"+tableDocList.size());
@@ -809,7 +823,7 @@ public class DeskActivity extends AppCompatActivity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mGpService = GpService.Stub.asInterface(service);
-            CDBHelper.setmGpService(mGpService);
+            setmGpService(mGpService);
         }
     }
     //打印机消息注册
@@ -875,4 +889,11 @@ public class DeskActivity extends AppCompatActivity {
             return 0;//把数据发送打印机成功
     }
 
+    public static GpService getmGpService() {
+        return smGpService;
+    }
+
+    public void setmGpService(GpService smGpService) {
+        this.smGpService = smGpService;
+    }
 }

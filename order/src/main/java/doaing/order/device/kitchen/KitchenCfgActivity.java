@@ -12,7 +12,7 @@ import java.util.List;
 import bean.kitchenmanage.kitchen.KitchenClientC;
 import butterknife.OnClick;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
 
 /*
@@ -81,7 +81,9 @@ public class KitchenCfgActivity extends BaseToobarActivity implements View.OnCli
             finish();
 
         } else if (i == R.id.activity_kitchen_tj) {
+            Log.e("AddKitchen",""+infomations.size());
             Intent intent = new Intent(KitchenCfgActivity.this, AddkitchenActivity.class);
+            intent.putExtra("MAX_PRINTER_CNTMY",""+infomations.size());
             startActivityForResult(intent, 2015);
 
         }else{

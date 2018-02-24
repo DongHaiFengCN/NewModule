@@ -1,0 +1,32 @@
+<resources>
+
+    <style name="LoginMy_CheckBox" parent="@android:style/Widget.Material.CompoundButton.CheckBox">
+        <item name="android:colorControlActivated">@color/login_colorPrimaryDark</item>
+        <item name="android:colorControlNormal">@color/login_black_overlay</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="LoginAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/login_colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/login_colorPrimaryDark</item>
+        <item name="colorAccent">@color/login_colorAccent</item>
+    </style>
+
+    <style name="LoginAppTheme.NoActionBar">
+        <!-- 系统栏颜色. -->
+        <item name="colorPrimaryDark">@color/login_md_black_1000</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <!-- 不悬浮. -->
+        <item name="overlapAnchor">false</item>
+
+    </style>
+
+    <style name="LoginAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="LoginAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+
+</resources>

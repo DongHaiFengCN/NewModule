@@ -42,12 +42,13 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.application.CDBHelper;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
 import doaing.order.view.adapter.MyGridAdapter;
+import tools.CDBHelper;
 
-import static doaing.order.application.CDBHelper.getFormatDate;
+import static tools.CDBHelper.getFormatDate;
+
 
 
 /*
@@ -344,8 +345,8 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             @Override
             public void run() {
                 List<Document> documentList = CDBHelper.getDocmentsByWhere(getActivity().getApplicationContext()
-                        , Expression.property("className").equalTo("DishesC")
-                                .and(Expression.property("dishesNameCode9").like("%" + search + "%"))
+                        , Expression.property("className").equalTo(Expression.string("DishesC"))
+                                .and(Expression.property("dishesNameCode9").like(Expression.string("%" + search + "%")))
                         , null);
                 for (Document doc : documentList) {
                     GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
@@ -375,8 +376,8 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             public void run() {
 
                 List<Document> documentList = CDBHelper.getDocmentsByWhere(getActivity().getApplicationContext()
-                        , Expression.property("className").equalTo("DishesC")
-                                .and(Expression.property("dishesNameCode26").like("%"+search + "%"))
+                        , Expression.property("className").equalTo(Expression.string("DishesC"))
+                                .and(Expression.property("dishesNameCode26").like(Expression.string("%"+search + "%")))
                         , Ordering.property("dishesName").ascending());
 
                 for (Document doc : documentList) {
@@ -402,8 +403,8 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
     private  String findZDCKindId()
     {
         List<String> zdcIdList = CDBHelper.getIdsByWhere(getActivity().getApplicationContext()
-                , Expression.property("className").equalTo("DishesKindC")
-                 .and(Expression.property("kindName").equalTo("自点菜"))
+                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                 .and(Expression.property("kindName").equalTo(Expression.string("自点菜")))
                 ,null);
         Log.e("SeekT9",""+zdcIdList.size());
         if(zdcIdList.size()>0) {

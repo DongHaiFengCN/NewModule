@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/login_md_grey_200"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/login_textview2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center_horizontal"
+        android:text="输入手机号码"
+        android:textColor="@color/login_md_grey_900"
+        android:textSize="30sp" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:counterEnabled="true"
+        app:counterMaxLength="11"
+        app:hintEnabled="true">
+
+        <EditText
+
+            android:id="@+id/telephone_edtTxt"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@color/login_md_white_1000"
+            android:hint="+86  手机号"
+            android:inputType="number|phone"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/register_bt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/login_colorPrimaryDark"
+        android:enabled="true"
+        android:onClick="onClickNext"
+        android:text="下一步"
+        android:textColor="@color/login_md_black_1000" />
+
+</LinearLayout>
