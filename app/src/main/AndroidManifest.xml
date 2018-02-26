@@ -7,7 +7,7 @@
     tools:replace="android:name,label"
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
-    android:label="登录"
+    android:label="点餐宝"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
      >
