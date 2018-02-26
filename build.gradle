@@ -102,6 +102,7 @@ ext{
     libBbutterknife_compiler = "com.jakewharton:butterknife-compiler:8.8.1"
 
     okhttp3                   = "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+
     gson                      ="com.google.code.gson:gson:${gsonVersion}"
     Json                      ="com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3"
     couchbase                 = "com.couchbase.lite:couchbase-lite-android:2.0.0-DB022"
