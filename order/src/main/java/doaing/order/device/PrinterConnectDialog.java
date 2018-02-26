@@ -277,8 +277,6 @@ public class PrinterConnectDialog extends BaseToobarActivity {
 
     private void SaveOrUpdateQRPay( Integer nums)
     {
-
-
         {
             if(obj_qrcodepay==null)
             {
@@ -286,14 +284,11 @@ public class PrinterConnectDialog extends BaseToobarActivity {
 
             }
 
-
             obj_qrcodepay.setWxUrl(qrcodeWxcontent.getText().toString());
             obj_qrcodepay.setZfbUrl(qrcodeZfbcontent.getText().toString());
             obj_qrcodepay.setTbPrintFlag(ifqrcodeprint1.isChecked());
             obj_qrcodepay.setZfbPrintFlag(ifqrcodeprint2.isChecked());
             obj_qrcodepay.setNums(nums);
-
-
             CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);
 
         }

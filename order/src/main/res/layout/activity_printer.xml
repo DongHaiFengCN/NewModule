@@ -58,17 +58,32 @@
                     android:gravity="left|center_vertical"
                     android:textColor="#020202" />
 
-                <CheckBox
-                    android:id="@+id/cbox_qrcode_ifprint1"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/animkaiguan"
-                    android:gravity="left|center_vertical"
-                    android:text="打印到小票"
-                    android:button="@null"
-                    android:checked="false"
-                    android:textColor="@color/md_black_1000" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.4"
+                        android:text="打印到小票"
+                        android:gravity="left|center_vertical"
+                        android:textColor="@color/md_black_1000"
+                        />
+                    <CheckBox
+                        android:id="@+id/cbox_qrcode_ifprint1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/animkaiguan"
+                        android:button="@null"
+                        android:checked="false"
+                        android:layout_margin="10dp"
+                        />
+
+                </LinearLayout>
             </LinearLayout>
 
             <View
@@ -105,17 +120,33 @@
                     android:gravity="left|center_vertical"
                     android:textColor="#020202" />
 
-                <CheckBox
-                    android:id="@+id/cbox_qrcode_ifprint2"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:background="@drawable/animkaiguan"
-                    android:button="@null"
-                    android:gravity="left|center_vertical"
-                    android:text="打印到小票"
-                    android:checked="false"
-                    android:textColor="@color/md_black_1000" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1.4"
+                        android:text="打印到小票"
+                        android:gravity="left|center_vertical"
+                        android:textColor="@color/md_black_1000"
+                        />
+                    <CheckBox
+                        android:id="@+id/cbox_qrcode_ifprint2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/animkaiguan"
+                        android:button="@null"
+                        android:checked="false"
+                        android:layout_margin="10dp"
+                        />
+
+                </LinearLayout>
+
             </LinearLayout>
 
             <View
@@ -159,6 +190,7 @@
 
                     />
                 <EditText
+                    android:id="@+id/edt_print_nums"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -204,7 +236,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
-            android:layout_weight="1.8"
+            android:layout_weight="1.9"
             android:background="#ffffff"
             android:text="是否接收肴点点微信小程序订单"
             android:gravity="left|center_vertical"
@@ -214,8 +246,9 @@
             android:id="@+id/cbox_wx_yao"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.7"
+            android:layout_weight="0.5"
             android:background="@drawable/animkaiguan"
+            android:layout_margin="10dp"
             android:button="@null"
             android:gravity="left|center_vertical"
             android:checked="false"
