@@ -20,7 +20,7 @@ import bean.kitchenmanage.table.AreaC;
 import bean.kitchenmanage.user.CompanyC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.view.PayActivity;
-import doaing.order.application.CDBHelper;
+import tools.CDBHelper;
 
 /*
 *

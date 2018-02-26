@@ -21,8 +21,7 @@ import java.util.Locale;
 import bean.kitchenmanage.order.OrderNum;
 import bean.kitchenmanage.promotion.PromotionRuleC;
 import doaing.mylibrary.MyApplication;
-import doaing.order.application.CDBHelper;
-
+import tools.CDBHelper;
 
 
 /**
@@ -175,8 +174,6 @@ public class Tool {
         //返回date集合
 
         for(int i = 0; i < s.size(); i++ ){
-
-
             Date d1 = null;
             try {
                 d1 = simpleDateFormat.parse(s.get(i));
@@ -184,9 +181,6 @@ public class Tool {
                 e.printStackTrace();
             }
             list.add(d1);
-
-
-
         }
 
         Date d = list.get(0);  //0为第一个数组下标
@@ -235,7 +229,7 @@ public class Tool {
         String orderNum=null;
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
 
-        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(context.getApplicationContext(), Expression.property("className").equalTo("OrderNum")
+        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(context.getApplicationContext(), Expression.property("className").equalTo(Expression.string("OrderNum"))
                 ,null
                 ,OrderNum.class);
         if(orderNumList.size()<=0)//第一次使用

@@ -1,13 +1,20 @@
 
-if (!isModule.toBoolean()) {
+if (isModule.toBoolean()) {
     apply plugin: 'com.android.application'
 
 } else {
     apply plugin: 'com.android.library'
 }
 
-
 apply plugin: 'com.mob.sdk'
+// 在MobSDK的扩展中注册SMSSDK的相关信息
+MobSDK {
+    appKey "21efc5a881e60"
+    appSecret "db061f16515cf08d8c98c9857c4550d9"
+
+    SMSSDK {}
+}
+
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -48,24 +55,19 @@ android {
 }
 
 dependencies {
-
     implementation rootProject.ext.libSupportConstraint
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
     implementation rootProject.ext.libSupportRecyclerview
 
+    implementation rootProject.ext.libAlibaba
+    annotationProcessor libArouter_compiler
+
     implementation rootProject.ext.okhttp3
     implementation rootProject.ext.gson
-
-    implementation project(':mylibrary')
     //阿里路由
-    annotationProcessor libArouter_compiler
-}
+     implementation project(':mylibrary')
 
-// 在MobSDK的扩展中注册SMSSDK的相关信息
-MobSDK {
-    appKey "d580ad56b4b5"
-    appSecret "7fcae59a62342e7e2759e9e397c82bdd"
-    SMSSDK {}
 
 }
+

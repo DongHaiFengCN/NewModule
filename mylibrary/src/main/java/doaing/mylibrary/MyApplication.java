@@ -43,7 +43,7 @@ import bean.kitchenmanage.user.UsersC;
  * 修改备注：
  */
 
-public class MyApplication extends Application implements ISharedPreferences, ReplicatorChangeListener {
+public class MyApplication extends Application implements ISharedPreferences {
 
     private static final String TAG = Application.class.getSimpleName();
 
@@ -127,20 +127,8 @@ public class MyApplication extends Application implements ISharedPreferences, Re
         return getSharePreferences().edit().clear().commit();
     }
 
-    // --------------------------------------------------
-    // ReplicatorChangeListener implementation
-    // --------------------------------------------------
-//    @Override
-//    public void changed(Replicator replicator, Replicator.Status status, CouchbaseLiteException error)
-//    {
-//       // Log.e(TAG, "[Todo] Replicator: status -> %s, error -> %s", status, error);
-//
-//    }
-    @Override
-    public void changed(ReplicatorChange change) {
-        // Log.e(TAG, "[Todo] Replicator: status -> %s, error -> %s", status, error);
 
-    }
+
 
     public String getCompany_ID() {
         return Company_ID;

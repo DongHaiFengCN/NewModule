@@ -34,10 +34,7 @@
     <uses-permission android:name="android.hardware.usb.accessory" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <application
-
         >
-
-
 
         <activity
             android:name=".view.DeskActivity"

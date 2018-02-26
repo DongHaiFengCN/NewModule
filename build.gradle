@@ -64,6 +64,8 @@ ext{
     libSupportRecyclerview = "com.android.support:recyclerview-v7:${supportVersion}"
     libSupportV4 = "com.android.support:support-v4:${supportVersion}"
     libSupportConstraint = "com.android.support.constraint:constraint-layout:${constraintVersion}"
+
+
     libTestImplementation = 'junit:junit:4.12'
     libandroidTest = 'com.android.support.test:runner:1.0.1'
    // libandroidEspresso 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -73,7 +75,7 @@ ext{
     libEventBus = "org.greenrobot:eventbus:3.0.0"
     libJavaxAnnotation = "javax.annotation:jsr250-api:1.0"
 
-    libGson = "com.google.code.gson:gson:2.4"
+
     libRetrofit = "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     libRetrofitConverterGson = "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     libRetrofitAdapterRxJava = "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
@@ -101,6 +103,8 @@ ext{
 
     okhttp3                   = "com.squareup.okhttp3:okhttp:${okHttpVersion}"
     gson                      ="com.google.code.gson:gson:${gsonVersion}"
+    Json                      ="com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3"
+    couchbase                 = "com.couchbase.lite:couchbase-lite-android:2.0.0-DB022"
 
 }
 
