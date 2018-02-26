@@ -31,7 +31,6 @@ import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import cn.smssdk.utils.SMSLog;
 import doaing.order.R;
-import doaing.order.module.DBFactory;
 import doaing.order.module.DatabaseSource;
 import doaing.order.module.IDBManager;
 import doaing.order.untils.MyLog;
@@ -88,7 +87,6 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        idbManager = DBFactory.get(DatabaseSource.CouchBase, this);
         initView();
       //  setData();
         // 创建EventHandler对象

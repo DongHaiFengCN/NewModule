@@ -4,6 +4,7 @@ if (isModule.toBoolean()) {
 } else {
     apply plugin: 'com.android.library'
 }
+
 apply plugin: "com.mob.sdk"
 
 // 在MobSDK的扩展中注册SMSSDK的相关信息

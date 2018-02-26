@@ -60,7 +60,6 @@ import doaing.order.untils.ProgressBarasyncTask;
 import doaing.order.view.adapter.ActionListAdapter;
 import doaing.order.view.adapter.MemberDishesListAdapter;
 import doaing.order.untils.BluetoothUtil;
-import doaing.order.module.DBFactory;
 import doaing.order.module.DatabaseSource;
 import doaing.order.module.IDBManager;
 import doaing.order.untils.MyBigDecimal;
@@ -140,8 +139,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(0);
         }
-
-        idbManager = DBFactory.get(DatabaseSource.CouchBase, getApplicationContext());
 
         myApplication = (MyApplication) getApplication();
         //获取餐桌编号
