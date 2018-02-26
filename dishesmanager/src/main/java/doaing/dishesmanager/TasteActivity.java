@@ -41,8 +41,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
-import doaing.MyApplication;
 
+import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -91,7 +91,7 @@ public class TasteActivity extends BaseToobarActivity {
         listAdapter = new ListAdapter();
         tasteLv.setAdapter(listAdapter);
 
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
 
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("tasteName")))
                 .from(DataSource.database(database))

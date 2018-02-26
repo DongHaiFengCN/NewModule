@@ -5,34 +5,43 @@
     <application>
         <activity
             android:name=".DishesManagerMainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/app_name"></activity>
         <activity
             android:name=".TasteActivity"
             android:label="@string/TasteActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask" />
         <activity
             android:name=".DishesKindActivity"
             android:label="@string/DishesKindActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask" />
         <activity
             android:name=".DishesActivity"
             android:label="@string/DishesActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask" />
         <activity
             android:name=".DisheAddActivity"
             android:label="@string/DishesAddActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask" />
         <activity
             android:name=".DisheEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_dishe_edit" />
         <activity
             android:name=".PackageActivity"
             android:label="@string/taocan"
+            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask" />
         <activity
             android:name=".PackageAddActivity"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/packageadd" />
-        <activity android:name=".PackageEditActivity"></activity>
+        <activity android:name=".PackageEditActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
 
     </application>
 

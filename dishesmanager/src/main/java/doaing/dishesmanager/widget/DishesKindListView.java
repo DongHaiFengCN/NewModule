@@ -21,10 +21,8 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.MyApplication;
 import doaing.dishesmanager.adapter.DishesKindAdapter;
-
-
+import tools.CDBHelper;
 
 
 /**
@@ -53,7 +51,7 @@ public class DishesKindListView extends ListView {
     private Database database;
     public DishesKindListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        database =((MyApplication)context.getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         disheKindQuery();
         dishesKindAdapter = new DishesKindAdapter(context,database);
         setAdapter(dishesKindAdapter);

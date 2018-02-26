@@ -52,9 +52,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import doaing.MyApplication;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
+import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -65,6 +65,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.functions.Action1;
+import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -215,7 +216,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                 MutableDocument mutableKindDocument = newKindDocument.toMutable();
 
                 mutableKindDocument.getArray("dishesListId").addString(disheDocument.getId());
-                database = ((MyApplication) getApplication()).getDatabase();
+                database = CDBHelper.getDatabase();
                 try {
 
                     database.save(disheDocument);
@@ -251,7 +252,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
         //初始化适配器
         final TasteSelectAdapter oap = new TasteSelectAdapter(list, getApplicationContext());
-        final Database database = ((MyApplication) getApplicationContext()).getDatabase();
+        final Database database = CDBHelper.getDatabase();
 
         final List<Document> tasteList = new ArrayList<>();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))

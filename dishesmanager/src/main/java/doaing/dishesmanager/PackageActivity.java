@@ -35,8 +35,9 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import doaing.MyApplication;
 import doaing.dishesmanager.adapter.PackageManagerExpandableAdapter;
+import doaing.mylibrary.MyApplication;
+import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -68,7 +69,7 @@ public class PackageActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))

@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import doaing.MyApplication;
 import doaing.dishesmanager.adapter.DishesKindAdapter;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
 
 /**
@@ -78,7 +78,7 @@ public class DishesActivity extends BaseToobarActivity {
 
         EventBus.getDefault().register(this);
 
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         initkindList();
 
         dishesLv.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -205,7 +205,7 @@ public class DishesActivity extends BaseToobarActivity {
 
     private void initkindList() {
 
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
 
         //默认绑定dishesKindAdapter
         dishesKindAdapter = new DishesKindAdapter(getApplicationContext(),database);

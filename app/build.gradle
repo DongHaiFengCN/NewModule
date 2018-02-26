@@ -23,5 +23,6 @@ dependencies {
     implementation project(':mylibrary')
     implementation project(':Login')
     implementation project(':order')
-
+    implementation project(':dishesmanager')
+    implementation project(':tablemanager')
 }

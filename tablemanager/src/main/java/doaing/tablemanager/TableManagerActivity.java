@@ -39,8 +39,9 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.MyApplication;
+import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.adapter.AreaAdapter;
+import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -69,7 +70,7 @@ public class TableManagerActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         setToolbarName("房间与桌位");
         areaLv = findViewById(R.id.area_lv);
         tableRc = findViewById(R.id.table_lv);

@@ -41,8 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import doaing.MyApplication;
 import doaing.dishesmanager.view.MySwipeListLayout;
+import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -98,7 +98,7 @@ public class DishesKindActivity extends BaseToobarActivity {
     private void initList() {
         listAdapter = new ListAdapter();
         dishesKindLv.setAdapter(listAdapter);
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("kindName")))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo(Expression.string("DishesKindC")));

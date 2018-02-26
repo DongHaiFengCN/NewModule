@@ -28,10 +28,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import doaing.MyApplication;
 import doaing.dishesmanager.view.MySwipeListLayout;
 
 import rx.functions.Action1;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
 
 /**
@@ -62,7 +62,7 @@ public class PackageEditActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         oneLevel = database.getDocument(String.valueOf(intent.getExtras().get("kindId")));
         secondLevel = database.getDocument(String.valueOf(intent.getExtras().get("disheId")));
 

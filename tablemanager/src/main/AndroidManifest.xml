@@ -3,7 +3,8 @@
     package="doaing.tablemanager">
 
     <application>
-        <activity android:name=".TableManagerActivity">
+        <activity android:name=".TableManagerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
      <!--       <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

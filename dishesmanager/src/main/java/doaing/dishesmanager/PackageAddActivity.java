@@ -33,8 +33,8 @@ import java.util.Map;
 
 import butterknife.BindView;
 
-import doaing.MyApplication;
 import doaing.dishesmanager.widget.DishesKindListView;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
 
 public class PackageAddActivity extends BaseToobarActivity {
@@ -68,7 +68,7 @@ public class PackageAddActivity extends BaseToobarActivity {
            Toast.makeText(this,"没有菜品",Toast.LENGTH_SHORT).show();
             finish();
         }
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         packageDcoument = database.getDocument(intent.getExtras().get("id").toString());
 
         disheDcoument = new MutableDocument();

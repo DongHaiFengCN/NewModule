@@ -33,7 +33,7 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.MyApplication;
+import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.R;
 import doaing.tablemanager.TableManagerActivity;
 import tools.ToolUtil;

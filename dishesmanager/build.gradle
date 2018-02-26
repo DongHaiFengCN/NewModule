@@ -51,6 +51,8 @@ dependencies {
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
     //阿里路由
+
+    implementation rootProject.ext.libAlibaba
     annotationProcessor libArouter_compiler
     //Butterknife
     implementation rootProject.ext.libButterknife
@@ -67,5 +69,5 @@ dependencies {
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     implementation project(':mylibrary')
     implementation rootProject.ext.libGlide
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.0.0'
 }
