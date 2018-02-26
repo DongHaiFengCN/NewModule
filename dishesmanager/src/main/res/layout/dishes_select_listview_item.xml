@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:orientation="horizontal">
 
     <TextView
@@ -13,10 +12,10 @@
         android:text="1111"
         android:focusable="true"
         android:clickable="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:gravity="center"
         android:textColor="@color/md_blue_grey_700"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="13dp"
         android:layout_weight="4" />
     <TextView
         android:id="@+id/dishesprice_tv"

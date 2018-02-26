@@ -50,6 +50,7 @@ public class PackageActivity extends BaseToobarActivity {
     Toolbar toolbar;
     @BindView(R2.id.package_explv)
     ExpandableListView packageExplv;
+    PackageManagerExpandableAdapter expandableAdapter;
 
     @Override
     protected int setMyContentView() {
@@ -76,7 +77,8 @@ public class PackageActivity extends BaseToobarActivity {
                         .and(Expression.property("setMenu").equalTo(Expression.booleanValue(true))));
         setToolbarName("套餐管理");
         initList();
-        packageExplv.setAdapter(new PackageManagerExpandableAdapter(groupList, dataSet, PackageActivity.this));
+        expandableAdapter = new PackageManagerExpandableAdapter(groupList, dataSet, PackageActivity.this);
+        packageExplv.setAdapter(expandableAdapter);
 
     }
 
@@ -158,6 +160,8 @@ public class PackageActivity extends BaseToobarActivity {
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
+                    initList();
+                    expandableAdapter.notifyDataSetChanged();
                     mSearchAutoComplete.setText("");
                 }
 

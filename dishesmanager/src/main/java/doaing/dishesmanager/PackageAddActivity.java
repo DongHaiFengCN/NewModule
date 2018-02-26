@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -216,6 +217,7 @@ public class PackageAddActivity extends BaseToobarActivity {
                         final EditText packageNameEt = view.findViewById(R.id.packagename_et);
                         final EditText packagePriceEt = view.findViewById(R.id.packageprice_et);
                         packagePriceEt.setHint("例如：80 等于80元");
+
                         AlertDialog alertDialog = new AlertDialog.Builder(PackageAddActivity.this)
                                 .setTitle("自定总价  当前总价：" + finalSum).setView(view)
                                 .setPositiveButton("确定", null)
