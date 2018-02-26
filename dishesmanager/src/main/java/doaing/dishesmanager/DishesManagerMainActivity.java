@@ -1,7 +1,6 @@
 package doaing.dishesmanager;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -9,13 +8,14 @@ import android.widget.ImageView;
 import com.alibaba.android.arouter.facade.annotation.Route;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import view.BaseToobarActivity;
 
-/**
- * @author donghaifeng
+/*
+ *@author donghaifeng
  * @Data 2018/1/17
  */
+
+
 @Route(path = "/dishes/DishesManagerMainActivity")
 public class DishesManagerMainActivity extends BaseToobarActivity {
 
@@ -78,8 +78,6 @@ public class DishesManagerMainActivity extends BaseToobarActivity {
             }
         });
 
-
     }
-
 
 }

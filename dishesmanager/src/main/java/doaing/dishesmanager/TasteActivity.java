@@ -1,11 +1,13 @@
 package doaing.dishesmanager;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,10 +26,12 @@ import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -37,10 +41,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
+import doaing.MyApplication;
 
-
-import doaing.mylibrary.MyApplication;
-import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -61,7 +63,7 @@ public class TasteActivity extends BaseToobarActivity {
     Toolbar toolbar;
 
     @BindView(R2.id.taste_lv)
-    ListView taste_lv;
+    ListView tasteLv;
 
     @Override
     protected int setMyContentView() {
@@ -79,7 +81,6 @@ public class TasteActivity extends BaseToobarActivity {
 
         initList();
 
-
     }
 
     /**
@@ -88,43 +89,34 @@ public class TasteActivity extends BaseToobarActivity {
     private void initList() {
 
         listAdapter = new ListAdapter();
-        taste_lv.setAdapter(listAdapter);
+        tasteLv.setAdapter(listAdapter);
 
         database = ((MyApplication) getApplicationContext()).getDatabase();
 
-
-        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("tasteName")))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesTasteC")).toLive();
+                .where(Expression.property("className").equalTo(Expression.string("DishesTasteC")));
 
-        query.addChangeListener(new LiveQueryChangeListener() {
+        query.addChangeListener(new QueryChangeListener() {
             @Override
-            public void changed(LiveQueryChange change) {
+            public void changed(QueryChange change) {
+
 
                 if (!list.isEmpty()) {
                     list.clear();
                 }
-                ResultSet rows = change.getRows();
-                Result row = null;
+                ResultSet rows = change.getResults();
+                Result row;
                 while ((row = rows.next()) != null) {
-
-
                     String id = row.getString(0);
                     Document doc = database.getDocument(id);
                     list.add(doc);
-
                 }
-
-
                 listAdapter.notifyDataSetChanged();
             }
         });
 
-        query.run();
-
-
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.taste, menu);
@@ -134,9 +126,9 @@ public class TasteActivity extends BaseToobarActivity {
         final SearchView.SearchAutoComplete mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
         ImageView searchButton = mSearchView.findViewById(R.id.search_button);
         searchButton.setImageResource(R.mipmap.icon_add);
-        mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this,R.color.md_white));
+        mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.md_white));
         //设置Hint文字颜色
-        mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this,android.R.color.darker_gray));
+        mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
         mSearchView.setQueryHint("添加口味");
         //设置输入文字颜色
         mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.md_blue_grey_700));
@@ -151,7 +143,7 @@ public class TasteActivity extends BaseToobarActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
 
                     //1.添加数据到数据库
-                    Document document = new Document("DishesTasteC."+ ToolUtil.getUUID());
+                    MutableDocument document = new MutableDocument("DishesTasteC." + ToolUtil.getUUID());
                     document.setString("channelId", "gysz");
                     document.setString("className", "DishesTasteC");
                     document.setString("tasteName", mSearchAutoComplete.getText().toString());
@@ -160,10 +152,7 @@ public class TasteActivity extends BaseToobarActivity {
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
-
                     mSearchAutoComplete.setText("");
-
-
                 }
 
 
@@ -191,19 +180,21 @@ public class TasteActivity extends BaseToobarActivity {
             return arg0;
         }
 
+        @SuppressLint("InflateParams")
         @Override
         public View getView(final int arg0, View view, ViewGroup arg2) {
             if (view == null) {
                 view = LayoutInflater.from(TasteActivity.this).inflate(
                         R.layout.slip_list_item, null);
             }
-            final TextView tv_name = view.findViewById(R.id.tv_name);
-            tv_name.setText(list.get(arg0).getString("tasteName"));
-            final MySwipeListLayout sll_main = view.findViewById(R.id.sll_main);
-            TextView tv_edit = view.findViewById(R.id.tv_edit);
-            TextView tv_delete = view.findViewById(R.id.tv_delete);
+            final TextView tvName = view.findViewById(R.id.tv_name);
+            tvName.setText(list.get(arg0).getString("tasteName"));
+            final MySwipeListLayout sllMain = view.findViewById(R.id.sll_main);
+            TextView tvEdit = view.findViewById(R.id.tv_edit);
 
-            tv_edit.setOnClickListener(new View.OnClickListener() {
+            TextView tvDelete = view.findViewById(R.id.tv_delete);
+
+            tvEdit.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
@@ -216,9 +207,14 @@ public class TasteActivity extends BaseToobarActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    Document document = list.get(arg0);
+                                    MutableDocument document = list.get(arg0).toMutable();
+                                    document.setString("tasteName", editText.getText().toString());
+                                    try {
+                                        database.save(document);
 
-                                    document.setString("tasteName",editText.getText().toString());
+                                    } catch (CouchbaseLiteException ignored) {
+
+                                    }
 
                                 }
                             })
@@ -231,24 +227,24 @@ public class TasteActivity extends BaseToobarActivity {
                             .show();
 
 
-                    sll_main.setStatus(MySwipeListLayout.Status.Close, true);
+                    sllMain.setStatus(MySwipeListLayout.Status.Close, true);
 
 
                     notifyDataSetChanged();
                 }
             });
-            tv_delete.setOnClickListener(new View.OnClickListener() {
+            tvDelete.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
 
                     new AlertDialog.Builder(TasteActivity.this).setTitle("删除口味")
-                            .setMessage(tv_name.getText().toString())
+                            .setMessage(tvName.getText().toString())
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
 
-                                    sll_main.setStatus(MySwipeListLayout.Status.Close, true);
+                                    sllMain.setStatus(MySwipeListLayout.Status.Close, true);
                                     try {
                                         database.delete(list.get(arg0));
                                     } catch (CouchbaseLiteException e) {

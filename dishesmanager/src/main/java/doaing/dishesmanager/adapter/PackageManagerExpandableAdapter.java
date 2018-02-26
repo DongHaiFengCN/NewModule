@@ -1,5 +1,4 @@
 package doaing.dishesmanager.adapter;
-
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -27,6 +26,7 @@ import doaing.dishesmanager.R;
  * 修改时间：2018/1/29 11:47
  * 修改备注：
  */
+
 
 public class PackageManagerExpandableAdapter extends BaseExpandableListAdapter {
 
@@ -171,3 +171,4 @@ public class PackageManagerExpandableAdapter extends BaseExpandableListAdapter {
     }
 
 }
+

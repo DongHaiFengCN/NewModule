@@ -1,3 +1,4 @@
+
 package doaing.dishesmanager;
 
 import android.app.AlertDialog;
@@ -14,7 +15,6 @@ import android.provider.MediaStore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,10 +32,11 @@ import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -54,10 +55,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import doaing.MyApplication;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
-
-import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -71,9 +71,11 @@ import rx.functions.Action1;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
+
 /**
  * @author donghaifeng
  */
+
 public class DisheEditActivity extends BaseToobarActivity {
 
     String url = "https://www.yaodiandian.net/dishes/";
@@ -186,19 +188,21 @@ public class DisheEditActivity extends BaseToobarActivity {
             public void call(Void aVoid) {
 
                 String dishesName = disheName.getText().toString();
-                if (dishesName.equals("")) {
+
+                MutableDocument disheMuDoc = document.toMutable();
+                if ("".equals(dishesName)) {
 
                     disheName.setError("菜品名称不能为空");
                     return;
 
                 } else if (!dishesName.equals(document.getString("dishesName"))) {
 
-                    document.setString("dishesName", dishesName);
+                    disheMuDoc.setString("dishesName", dishesName);
                     String dishesNameCode9 = ToolUtil.ChangeSZ(ToolUtil.getFirstSpell(dishesName));
-                    document.setString("dishesNameCode9", dishesNameCode9);
+                    disheMuDoc.setString("dishesNameCode9", dishesNameCode9);
 
                     String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
-                    document.setString("dishesNameCode26", dishesNameCode26);
+                    disheMuDoc.setString("dishesNameCode26", dishesNameCode26);
 
                 }
                 String price = dishePriceEt.getText().toString();
@@ -212,45 +216,47 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 } else if (!price.equals(document.getFloat("price") + "")) {
 
-                    document.setFloat("price", Float.valueOf(price));
+                    disheMuDoc.setFloat("price", Float.valueOf(price));
 
                 }
 
                 //附加图片到Docment，允许图片为空
-                document = attachImage(document, bitmap);
-                document.setString("dishesKindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
+                disheMuDoc = attachImage(disheMuDoc, bitmap);
+                disheMuDoc.setString("dishesKindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
 
                 //更新添加口味
-                Array array = new Array();
+                MutableArray array = new MutableArray();
                 for (int i = 0; i < tasteList.size(); i++) {
 
                     array.addString(tasteList.get(i).getId());
                 }
-                document.setArray("tasteList", array);
+                disheMuDoc.setArray("tasteList", array);
 
                 //选择加入新的菜品中
+                MutableDocument newMukindDoc = newKind.toMutable();
                 if (!newKind.getId().equals(oldKind.getId())) {
 
-                    //1.删除oldkind list中的dishesId
+                    //1.删除oldkind list中的dishesId 并保存
                     removeDisheIdFromDishesKindList();
 
                     //2.dishes的 kindId 重新覆盖成newDocument的id
-                    document.setString("dishesKindId", newKind.getId());
+                    disheMuDoc.setString("dishesKindId", newKind.getId());
 
                     //3.dishes id 加入新的newDocument list中
-                    newKind.getArray("dishesListId").addString(document.getId());
+
+
+                    newMukindDoc.getArray("dishesListId").addString(document.getId());
 
                     //4.设置排列数
-                    document.setInt("orderId", newKind.getArray("dishesListId").count());
+                    disheMuDoc.setInt("orderId", newKind.getArray("dishesListId").count());
 
                 }
 
                 try {
 
-                    ((MyApplication) getApplication()).getDatabase().save(document);
-                    ((MyApplication) getApplication()).getDatabase().save(newKind);
-                    ((MyApplication) getApplication()).getDatabase().save(oldKind);
-                    EventBus.getDefault().postSticky(Integer.valueOf(kindPosition));
+                    ((MyApplication) getApplication()).getDatabase().save(disheMuDoc);
+                    ((MyApplication) getApplication()).getDatabase().save(newMukindDoc);
+                    EventBus.getDefault().postSticky(kindPosition);
 
                     finish();
 
@@ -268,11 +274,13 @@ public class DisheEditActivity extends BaseToobarActivity {
 
     }
 
+
     /**
      * 上传图片静态资源
      *
      * @param file
      */
+
     public boolean upDataPicture(File file) {
 
         final boolean[] flag = {false};
@@ -300,7 +308,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                 flag[0] = response.isSuccessful();
 
                 try {
-                    android.util.Log.e("DOAING",response.body().string());
+                    android.util.Log.e("DOAING", response.body().string());
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -311,7 +319,7 @@ public class DisheEditActivity extends BaseToobarActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                android.util.Log.e("DOAING",t.getMessage());
+                android.util.Log.e("DOAING", t.getMessage());
             }
         });
 
@@ -351,10 +359,12 @@ public class DisheEditActivity extends BaseToobarActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     /**
      * document附加图片上去
      */
-    private Document attachImage(Document task, Bitmap image) {
+
+    private MutableDocument attachImage(MutableDocument task, Bitmap image) {
 
         if (image != null) {
             Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
@@ -368,12 +378,14 @@ public class DisheEditActivity extends BaseToobarActivity {
         return task;
     }
 
+
     /**
      * 获取图片的绝对路径
      *
      * @param contentUri
      * @return
      */
+
 
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
@@ -384,43 +396,40 @@ public class DisheEditActivity extends BaseToobarActivity {
         return cursor.getString(column_index);
     }
 
+
     /**
      * 初始化所有口味的集合
      */
+
     private void initTasteSpinnerDate() {
 
 
+        ResultSet results = null;
         tasteAllList = new ArrayList<>();
-        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesTasteC")).toLive();
+                .where(Expression.property("className").equalTo(Expression.string("DishesTasteC")));
+        try {
+            results = query.execute();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        Result row = null;
+        while ((row = results.next()) != null) {
 
-        query.addChangeListener(new LiveQueryChangeListener() {
-            @Override
-            public void changed(LiveQueryChange change) {
-
-                if (!tasteAllList.isEmpty()) {
-                    tasteAllList.clear();
-                }
-                ResultSet rows = change.getRows();
-                Result row = null;
-                while ((row = rows.next()) != null) {
-
-                    String id = row.getString(0);
-                    Document doc = database.getDocument(id);
-                    if (doc!= null){
-                        tasteAllList.add(doc);
-                    }
-
-                }
-
-                strings = new String[tasteAllList.size()];
-                for (int i = 0; i < strings.length; i++) {
-                    strings[i] = tasteAllList.get(i).getString("tasteName");
-                }
+            String id = row.getString(0);
+            Document doc = database.getDocument(id);
+            if (doc != null) {
+                tasteAllList.add(doc);
             }
-        });
-        query.run();
+
+        }
+
+        strings = new String[tasteAllList.size()];
+        for (int i = 0; i < strings.length; i++) {
+            strings[i] = tasteAllList.get(i).getString("tasteName");
+        }
+
         tasteImBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -455,11 +464,13 @@ public class DisheEditActivity extends BaseToobarActivity {
         });
     }
 
+
     /**
      * 绑定附加Document信息到控件
      *
      * @param document
      */
+
     private void attachData(Document document) {
 
 
@@ -488,28 +499,30 @@ public class DisheEditActivity extends BaseToobarActivity {
 
     }
 
+
     /**
      * 初始化编辑菜品的口味列表
      *
      * @param array
      */
+
     private void initTasteAdapter(Array array) {
 
         tasteList = new ArrayList<>();
         if (array != null) {
 
-         //   List<Object> objects = array.toList();
-          Iterator<Object> iterator = array.iterator();
-          while(iterator.hasNext()){
+            //   List<Object> objects = array.toList();
+            Iterator<Object> iterator = array.iterator();
+            while (iterator.hasNext()) {
 
-              String o = (String) iterator.next();
-              Document document = database.getDocument(o);
-              if(document.getString("tasteName") != null){
-                  tasteList.add(document);
+                String o = (String) iterator.next();
+                Document document = database.getDocument(o);
+                if (document.getString("tasteName") != null) {
+                    tasteList.add(document);
 
-              }
+                }
 
-          }
+            }
 
         }
 
@@ -554,7 +567,7 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                     try {
 
-                        database.save(oldKind);
+                        database.save(oldKind.toMutable());
                         database.delete(document);
                         //删除服务器静态资源
                         deletePicturesFromServer();
@@ -578,9 +591,11 @@ public class DisheEditActivity extends BaseToobarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     /**
      * 从服务器删除静态图片资源
      */
+
     private void deletePicturesFromServer() {
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
@@ -594,12 +609,12 @@ public class DisheEditActivity extends BaseToobarActivity {
             @Override
             public void onResponse(Call call, Response response) {
 
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
 
-                    Toast.makeText(DisheEditActivity.this,"图片删除成功！",Toast.LENGTH_LONG).show();
+                    Toast.makeText(DisheEditActivity.this, "图片删除成功！", Toast.LENGTH_LONG).show();
 
-                }else {
-                    Toast.makeText(DisheEditActivity.this,"图片删除失败！",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(DisheEditActivity.this, "图片删除失败！", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -607,14 +622,15 @@ public class DisheEditActivity extends BaseToobarActivity {
             @Override
             public void onFailure(Call call, Throwable t) {
 
-                Toast.makeText(DisheEditActivity.this,"请求访问失败！",Toast.LENGTH_LONG).show();
+                Toast.makeText(DisheEditActivity.this, "请求访问失败！", Toast.LENGTH_LONG).show();
             }
         });
     }
 
     private void removeDisheIdFromDishesKindList() {
 
-        Array oldArry = oldKind.getArray("dishesListId");
+        MutableDocument mutableDocument = oldKind.toMutable();
+        MutableArray oldArry = mutableDocument.getArray("dishesListId");
 
         for (int i = 0; i < oldArry.count(); i++) {
 
@@ -622,9 +638,15 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 oldArry.remove(i);
 
+                try {
+                    database.save(mutableDocument);
+                } catch (CouchbaseLiteException e) {
+                    e.printStackTrace();
+                }
                 break;
 
             }
         }
     }
 }
+

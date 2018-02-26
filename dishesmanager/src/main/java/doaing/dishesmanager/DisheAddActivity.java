@@ -23,17 +23,19 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.couchbase.lite.Array;
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -45,15 +47,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import doaing.MyApplication;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
-import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -67,11 +68,20 @@ import rx.functions.Action1;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
+
+/**
+ * @author donghaifeng
+ */
+
 public class DisheAddActivity extends BaseToobarActivity {
+
+    private Document newKindDocument;
+
+
+    private Database database;
 
     private static final int THUMBNAIL_SIZE = 150;
     private Bitmap bitmap;
-    private Document kind;
     private List<Document> list;
     String url = "https://www.yaodiandian.net/dishes/";
     private String newFileUrl;
@@ -89,7 +99,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     ImageView disheIm;
     @BindView(R2.id.taste_im_bt)
     ImageView tasteImBt;
-    Document document;
+    MutableDocument disheDocument;
     String[] strings;
     private int position = 0;
 
@@ -103,7 +113,8 @@ public class DisheAddActivity extends BaseToobarActivity {
     public void initData(Intent intent) {
 
         setToolbarName("菜品添加");
-        document = new Document("DishesC."+ToolUtil.getUUID());
+
+        disheDocument = new MutableDocument("DishesC." + ToolUtil.getUUID());
         //初始化口味
         initTasteData();
 
@@ -113,15 +124,15 @@ public class DisheAddActivity extends BaseToobarActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
 
                 position = p;
+
                 //添加菜品到选择的菜类菜品集合下
-                kind = disheKindSp.getDishesKindList().get(position);
-                kind.getArray("dishesListId").addString(document.getId());
+                newKindDocument = disheKindSp.getDishesKindList().get(position);
 
-                //添加菜类id到菜品中
-                document.setString("dishesKindId", kind.getId());
+                //KindId保存到菜品中
+                disheDocument.setString("dishesKindId", newKindDocument.getId());
+
                 //默认依次添加到队尾
-                document.setInt("orderId", kind.getArray("dishesListId").count());
-
+                disheDocument.setInt("orderId", newKindDocument.getArray("dishesListId").count());
 
             }
 
@@ -147,10 +158,10 @@ public class DisheAddActivity extends BaseToobarActivity {
             @Override
             public void call(Void aVoid) {
 
-                document.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
-                document.setString("className", "DishesC");
+                disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
+                disheDocument.setString("className", "DishesC");
 
-                if (disheName.getText().toString().equals("")) {
+                if ("".equals(disheName.getText().toString())) {
 
                     disheName.setError("菜品名称不能为空");
 
@@ -159,13 +170,13 @@ public class DisheAddActivity extends BaseToobarActivity {
                 } else {
 
                     String dishesName = disheName.getText().toString();
-                    document.setString("dishesName", dishesName);
+                    disheDocument.setString("dishesName", dishesName);
 
                     String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
-                    document.setString("dishesNameCode26", dishesNameCode26);
+                    disheDocument.setString("dishesNameCode26", dishesNameCode26);
 
                     String dishesNameCode9 = ToolUtil.ChangeSZ(dishesNameCode26);
-                    document.setString("dishesNameCode9", dishesNameCode9);
+                    disheDocument.setString("dishesNameCode9", dishesNameCode9);
 
                 }
                 if ("".equals(dishePriceEt.getText().toString())) {
@@ -176,7 +187,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                 } else {
 
-                    document.setFloat("price", Float.valueOf(dishePriceEt.getText().toString()));
+                    disheDocument.setFloat("price", Float.valueOf(dishePriceEt.getText().toString()));
                 }
                 //判断菜类是否存在
                 if (disheKindSp.getDishesKindList().isEmpty()) {
@@ -187,10 +198,10 @@ public class DisheAddActivity extends BaseToobarActivity {
                 }
 
                 //附加图片到Docment，允许图片为空
-                document = attachImage(document, bitmap);
-                document.setString("dishesKindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
+                disheDocument = attachImage(disheDocument, bitmap);
+                disheDocument.setString("dishesKindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
                 //添加口味
-                Array array = new Array();
+                MutableArray array = new MutableArray();
                 if (list.size() > 0) {
 
                     for (int i = 0; i < list.size(); i++) {
@@ -199,14 +210,18 @@ public class DisheAddActivity extends BaseToobarActivity {
                     }
 
                 }
-                document.setArray("tasteList", array);
+                disheDocument.setArray("tasteList", array);
+
+                MutableDocument mutableKindDocument = newKindDocument.toMutable();
+
+                mutableKindDocument.getArray("dishesListId").addString(disheDocument.getId());
+                database = ((MyApplication) getApplication()).getDatabase();
                 try {
 
-                    ((MyApplication) getApplication()).getDatabase().save(document);
-                    ((MyApplication) getApplication()).getDatabase().save(kind);
+                    database.save(disheDocument);
+                    database.save(mutableKindDocument);
 
-                    EventBus.getDefault().postSticky(new Integer(position));
-
+                    EventBus.getDefault().postSticky(position);
 
 
                 } catch (CouchbaseLiteException e) {
@@ -215,7 +230,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                 }
 
                 //提交静态图片
-               if (newFileUrl != null && !newFileUrl.isEmpty()) {
+                if (newFileUrl != null && !newFileUrl.isEmpty()) {
                     upDataPicture(new File(newFileUrl));
                 }
                 finish();
@@ -225,9 +240,11 @@ public class DisheAddActivity extends BaseToobarActivity {
 
     }
 
-    /**
+
+/**
      * 加载口味选择器
      */
+
     private void initTasteData() {
 
         list = new ArrayList<>();
@@ -237,19 +254,19 @@ public class DisheAddActivity extends BaseToobarActivity {
         final Database database = ((MyApplication) getApplicationContext()).getDatabase();
 
         final List<Document> tasteList = new ArrayList<>();
-        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesTasteC")).toLive();
+                .where(Expression.property("className").equalTo(Expression.string("DishesTasteC")));
 
-        query.addChangeListener(new LiveQueryChangeListener() {
+        query.addChangeListener(new QueryChangeListener() {
             @Override
-            public void changed(LiveQueryChange change) {
+            public void changed(QueryChange change) {
 
                 if (!tasteList.isEmpty()) {
                     tasteList.clear();
                 }
-                ResultSet rows = change.getRows();
-                Result row = null;
+                ResultSet rows = change.getResults();
+                Result row;
 
                 while ((row = rows.next()) != null) {
 
@@ -264,7 +281,6 @@ public class DisheAddActivity extends BaseToobarActivity {
                 }
             }
         });
-        query.run();
 
         tasteImBt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,7 +294,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                             list.add(tasteList.get(which));
 
-                        } else{
+                        } else {
 
                             list.remove(tasteList.get(which));
 
@@ -331,8 +347,8 @@ public class DisheAddActivity extends BaseToobarActivity {
                 String name = getRealPathFromURI(uri);
                 newFileUrl = name;
 
-                String a[] = name.split("/");
-                name = a[a.length - 1].toString();
+                String[] a = name.split("/");
+                name = a[a.length - 1];
                 int idx = name.indexOf(".");
                 name = name.substring(0, idx);
 
@@ -342,7 +358,9 @@ public class DisheAddActivity extends BaseToobarActivity {
                 Glide.with(this).load(uri).into(disheIm);
 
                 //获取附加到Document的数据
-                bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                if (uri != null) {
+                    bitmap = BitmapFactory.decodeStream(cr.openInputStream(uri));
+                }
 
 
             } catch (FileNotFoundException e) {
@@ -354,10 +372,12 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-    /**
+
+/**
      * document附加图片上去
      */
-    private Document attachImage(Document task, Bitmap image) {
+
+    private MutableDocument attachImage(MutableDocument task, Bitmap image) {
 
         if (image != null) {
             Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
@@ -371,29 +391,33 @@ public class DisheAddActivity extends BaseToobarActivity {
         return task;
     }
 
-    /**
+
+/**
      * 获取图片的绝对路径
      *
-     * @param contentUri
-     * @return
+     * @param contentUri 文件相对路径
+     * @return 绝对路径
      */
 
+
     private String getRealPathFromURI(Uri contentUri) {
-        String[] proj = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(DisheAddActivity.this, contentUri, proj, null, null, null);
+        String[] prob = {MediaStore.Images.Media.DATA};
+        CursorLoader loader = new CursorLoader(DisheAddActivity.this, contentUri, prob, null, null, null);
         Cursor cursor = loader.loadInBackground();
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
-        return cursor.getString(column_index);
+        return cursor.getString(columnIndex);
     }
 
 
-    /**
+
+/**
      * 上传图片静态资源
      *
-     * @param file
+     * @param file 菜品图片文件
      */
-    public boolean upDataPicture(File file) {
+
+    public void upDataPicture(File file) {
 
         final boolean[] flag = {false};
         Retrofit retrofit = new Retrofit.Builder()
@@ -408,7 +432,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
         MultipartBody.Part body = MultipartBody.Part.createFormData("aFile", file.getName(), requestFile);
 
-        String descriptionString = document.getId();
+        String descriptionString = disheDocument.getId();
         RequestBody description =
                 RequestBody.create(MediaType.parse("multipart/form-data"), descriptionString);
         Call<ResponseBody> call = service.upload(description, body);
@@ -419,21 +443,22 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                 flag[0] = response.isSuccessful();
 
-                if(flag[0]){
-                    Toast.makeText(DisheAddActivity.this,"图片上传成功！",Toast.LENGTH_LONG).show();
-                }else {
-                    Toast.makeText(DisheAddActivity.this,"图片上传失败！",Toast.LENGTH_LONG).show();
+                if (flag[0]) {
+                    Toast.makeText(DisheAddActivity.this, "图片上传成功！", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(DisheAddActivity.this, "图片上传失败！", Toast.LENGTH_LONG).show();
                 }
 
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(DisheAddActivity.this,"请求访问失败！",Toast.LENGTH_LONG).show();
+                Toast.makeText(DisheAddActivity.this, "请求访问失败！", Toast.LENGTH_LONG).show();
 
             }
         });
 
-        return flag[0];
     }
 
 }
+

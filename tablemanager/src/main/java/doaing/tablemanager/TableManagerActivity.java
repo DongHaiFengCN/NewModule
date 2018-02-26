@@ -1,5 +1,6 @@
 package doaing.tablemanager;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,25 +26,20 @@ import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.Function;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
-import com.couchbase.lite.Log;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
-import com.couchbase.lite.ReadOnlyDictionary;
+import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import doaing.mylibrary.MyApplication;
+import doaing.MyApplication;
 import doaing.tablemanager.adapter.AreaAdapter;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
@@ -52,16 +49,14 @@ import view.BaseToobarActivity;
  */
 @Route(path = "/table/TableManagerActivity")
 public class TableManagerActivity extends BaseToobarActivity {
-
     int POSITION = 0;
-    private Document areaDoc;
+
     private Database database;
-    private List<Document> areaList;
     private ListView areaLv;
     private AreaAdapter areaAdapter;
     private RecyclerView tableRc;
     private TableRecycleAdapter tableRecycleAdapter;
-    EditText tableIdEt;
+    Document areaDocment;
     EditText tableNameEt;
     EditText minmunNumberEt;
     EditText maxmunNumberEt;
@@ -73,94 +68,47 @@ public class TableManagerActivity extends BaseToobarActivity {
     }
 
     @Override
-    public void initData(Intent intent){
+    public void initData(Intent intent) {
         database = ((MyApplication) getApplicationContext()).getDatabase();
-
         setToolbarName("房间与桌位");
         areaLv = findViewById(R.id.area_lv);
         tableRc = findViewById(R.id.table_lv);
         tableRc.setLayoutManager(new GridLayoutManager(this, 3));
         tableRecycleAdapter = new TableRecycleAdapter();
         tableRc.setAdapter(tableRecycleAdapter);
-        areaList = new ArrayList<>();
-        areaAdapter = new AreaAdapter(areaList, TableManagerActivity.this, database);
+        areaAdapter = new AreaAdapter(TableManagerActivity.this,database);
         areaLv.setAdapter(areaAdapter);
-        areaQuery();
 
         areaLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                if(pos<areaList.size()){
-                    areaAdapter.changeSelected(pos);
-                    areaDoc = database.getDocument(areaList.get(pos).getId());
 
-                    POSITION = pos;
-                    //设置餐桌适配器
-                    Array array = areaDoc.getArray("tableIDList");
-                    tableRecycleAdapter.setArray(array);
+                areaAdapter.changeSelected(pos);
+                POSITION = pos;
+                //设置餐桌适配器
+                if (areaAdapter.getAreaId().size() == 0) {
+                    tableRecycleAdapter.setArray(null);
+                    return;
                 }
+                areaDocment = database.getDocument(areaAdapter.getAreaId().get(pos));
+                Array array = areaDocment.getArray("tableIDList");
+                tableRecycleAdapter.setArray(array);
+                Log.e("DOAING","参数长度"+array.count());
+                Log.e("DOAING","执行了吗");
+
             }
         });
-        setAreaListViewItemPosition(POSITION);
-
-
+       setAreaListViewItemPosition(0);
     }
-
-    public void setAreaListViewItemPosition(int position) {
-
-
-        if (areaList.size() == 0) {
-            tableRecycleAdapter.setArray(null);
-            return;
-        }
-        areaLv.performItemClick(areaLv.getChildAt(position), position, areaAdapter.getItemId(position));
-    }
-
     @Override
     protected Toolbar setToolBarInfo() {
 
         return findViewById(R.id.toolbar);
     }
 
-    /**
-     * 动态监听dishesKind更新信息
-     */
-    private void areaQuery() {
-
-        //动态监听DisheKind信息
-        LiveQuery query = listsLiveQuery();
-        query.addChangeListener(new LiveQueryChangeListener() {
-            @Override
-            public void changed(LiveQueryChange change) {
-                if (!areaList.isEmpty()) {
-                    areaList.clear();
-                }
-                ResultSet rows = change.getRows();
-                Result row = null;
-                while ((row = rows.next()) != null) {
-
-                    String id = row.getString(0);
-                    Document doc = database.getDocument(id);
-                    areaList.add(doc);
-                }
-
-                areaAdapter.notifyDataSetChanged();
-            }
-        });
-        query.run();
-    }
-
-    private LiveQuery listsLiveQuery() {
-        return Query.select(SelectResult.expression(Expression.meta().getId())
-                , SelectResult.expression(Expression.property("areaName")))
-                .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("AreaC"))
-                .orderBy(Ordering.property("areaNum").ascending())
-                .toLive();
-    }
-
     public class TableRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        Array array;
+       Array array;
+
         @Override
         public int getItemViewType(int position) {
             if (position == array.count()) {
@@ -169,7 +117,8 @@ public class TableManagerActivity extends BaseToobarActivity {
             }
             return super.getItemViewType(position);
         }
-        public void setArray(Array array) {
+
+        private void setArray(Array array) {
             this.array = array;
             notifyDataSetChanged();
         }
@@ -192,18 +141,16 @@ public class TableManagerActivity extends BaseToobarActivity {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
             // 绑定数据
             if (holder instanceof ViewHolder) {
-
-                String id = array.getString(position);
-                final Document document = database.getDocument(id);
-                ((ViewHolder) holder).mTv.setText(document.getString("tableName"));
+                final Document tableDoc = database.getDocument(array.getString(position));
+                ((ViewHolder) holder).mTv.setText(tableDoc.getString("tableName"));
                 ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         View view = getView();
-                        tableNameEt.setText(document.getString("tableName"));
-                        maxmunNumberEt.setText(String.valueOf(document.getInt("maxPersons")));
-                        minmunNumberEt.setText(String.valueOf(document.getInt("minPersons")));
-                        minimunConsumptionEt.setText(String.valueOf(document.getInt("minConsum")));
+                        tableNameEt.setText(tableDoc.getString("tableName"));
+                        maxmunNumberEt.setText(String.valueOf(tableDoc.getInt("maxPersons")));
+                        minmunNumberEt.setText(String.valueOf(tableDoc.getInt("minPersons")));
+                        minimunConsumptionEt.setText(String.valueOf(tableDoc.getInt("minConsum")));
                         //查看编辑餐桌
                         final AlertDialog alertDialog = new AlertDialog.Builder(TableManagerActivity.this)
                                 .setTitle("修改餐桌信息").setView(view).setPositiveButton("确认修改", null)
@@ -215,18 +162,24 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 }).setNeutralButton("删除餐桌", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Array array = areaDoc.getArray("tableIDList");
-                                        String id = document.getId();
+
+                                        MutableDocument mutableDocument = areaDocment.toMutable();
+                                        //获取房间信息
+                                        MutableArray array = mutableDocument.getArray("tableIDList");
+
+                                        //获取需要删除的餐桌id
+                                        String id = tableDoc.getId();
                                         int count = array.count();
                                         for (int i = 0; i < count; i++) {
                                             if (id.equals(array.getString(i))) {
+
                                                 array.remove(i);
                                                 break;
                                             }
                                         }
                                         try {
-                                            database.delete(document);
-                                            database.save(areaDoc);
+                                            database.delete(tableDoc);
+                                            database.save(mutableDocument);
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
@@ -237,9 +190,9 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 .setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
+                                        MutableDocument mutableDocument = tableDoc.toMutable();
                                         //修改餐桌---------------
-                                       if ("".equals(tableNameEt.getText().toString())) {
+                                        if ("".equals(tableNameEt.getText().toString())) {
                                             tableNameEt.setError("不能为空！");
                                         } else if ("".equals(minmunNumberEt.getText().toString())) {
                                             minmunNumberEt.setError("不能为空！");
@@ -248,12 +201,12 @@ public class TableManagerActivity extends BaseToobarActivity {
                                         } else if ("".equals(minimunConsumptionEt.getText().toString())) {
                                             minimunConsumptionEt.setError("不能为空！");
                                         } else {
-                                            document.setString("tableName", tableNameEt.getText().toString());
-                                            document.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
-                                            document.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
-                                            document.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
+                                            mutableDocument.setString("tableName", tableNameEt.getText().toString());
+                                            mutableDocument.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
+                                            mutableDocument.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
+                                            mutableDocument.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
                                             try {
-                                                database.save(document);
+                                                database.save(mutableDocument);
                                             } catch (CouchbaseLiteException e) {
                                                 e.printStackTrace();
                                             }
@@ -273,21 +226,21 @@ public class TableManagerActivity extends BaseToobarActivity {
             return array == null ? 0 : array.count() + 1;
         }
 
-        public class ViewHolder extends RecyclerView.ViewHolder {
+        private class ViewHolder extends RecyclerView.ViewHolder {
             TextView mTv;
             CardView cardView;
 
-            public ViewHolder(View itemView) {
+            private ViewHolder(View itemView) {
                 super(itemView);
                 mTv = itemView.findViewById(R.id.item_tablestate_name);
                 cardView = itemView.findViewById(R.id.table_state_cardview);
             }
         }
 
-        public class Item2ViewHolder extends RecyclerView.ViewHolder {
+        private class Item2ViewHolder extends RecyclerView.ViewHolder {
             CardView cardView;
 
-            public Item2ViewHolder(View itemView) {
+            private Item2ViewHolder(View itemView) {
                 super(itemView);
                 cardView = itemView.findViewById(R.id.table_state_cardview);
                 cardView.setOnClickListener(new View.OnClickListener() {
@@ -306,7 +259,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                             @Override
                             public void onClick(View v) {
                                 //添加餐桌---------------
-                             if ("".equals(tableNameEt.getText().toString())) {
+                                if ("".equals(tableNameEt.getText().toString())) {
                                     tableNameEt.setError("不能为空！");
                                 } else if ("".equals(minmunNumberEt.getText().toString())) {
                                     minmunNumberEt.setError("不能为空！");
@@ -315,21 +268,26 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 } else if ("".equals(minimunConsumptionEt.getText().toString())) {
                                     minimunConsumptionEt.setError("不能为空！");
                                 } else {
-                                    Document document = new Document("TableC." + ToolUtil.getUUID());
-                                    document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
-                                    document.setString("className", "TableC");
-                                    document.setString("tableName", tableNameEt.getText().toString());
-                                    //id
-                                    document.setInt("state",0);
-                                    document.setString("tableNum",getMaxTableNum());
-                                    document.setString("areaId", areaDoc.getId());
-                                    document.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
-                                    document.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
-                                    document.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
-                                    areaDoc.getArray("tableIDList").addString(document.getId());
 
+                                    MutableDocument mutableDocument = new MutableDocument("TableC." + ToolUtil.getUUID());
+                                    mutableDocument.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
+                                    mutableDocument.setString("className", "TableC");
+                                    mutableDocument.setString("tableName", tableNameEt.getText().toString());
+                                    mutableDocument.setString("dataType", "BaseData");
+                                    //id
+                                    mutableDocument.setInt("state", 0);
+                                    mutableDocument.setString("tableNum", getMaxTableNum());
+                                    mutableDocument.setString("areaId", areaDocment.getId());
+                                    mutableDocument.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
+                                    mutableDocument.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
+                                    mutableDocument.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
+
+                                    MutableDocument areaDoc = areaDocment.toMutable();
+
+                                    MutableArray mutableArray = areaDoc.getArray("tableIDList");
+                                    mutableArray.addString(mutableDocument.getId());
                                     try {
-                                        database.save(document);
+                                        database.save(mutableDocument);
                                         database.save(areaDoc);
                                     } catch (CouchbaseLiteException e) {
                                         e.printStackTrace();
@@ -337,7 +295,6 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     }
                                     setAreaListViewItemPosition(POSITION);
                                     alertDialog.dismiss();
-                                    Log.e("DOAING","餐桌号："+document.getString("tableNum"));
                                 }
                             }
                         });
@@ -347,10 +304,15 @@ public class TableManagerActivity extends BaseToobarActivity {
         }
 
     }
+    public void setAreaListViewItemPosition(int position) {
 
+        areaLv.performItemClick(areaLv.getChildAt(position), position, areaLv
+                .getItemIdAtPosition(position));
+
+    }
     @NonNull
     private View getView() {
-        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.table_add_dialog, null);
+        @SuppressLint("InflateParams") View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.table_add_dialog, null);
         tableNameEt = view.findViewById(R.id.tablename_et);
         minmunNumberEt = view.findViewById(R.id.minimun_number);
         maxmunNumberEt = view.findViewById(R.id.maximum_number_et);
@@ -358,14 +320,14 @@ public class TableManagerActivity extends BaseToobarActivity {
         return view;
     }
 
-    private String getMaxTableNum(){
+    private String getMaxTableNum() {
         List<Document> documentList = new ArrayList<>();
-        String maxNum=null;
-        Query query= Query.select(SelectResult.expression(Expression.meta().getId()))
+        String maxNum = null;
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                .equalTo("TableC")).orderBy(Ordering.property("tableNum").descending());
+                        .equalTo(Expression.string("TableC"))).orderBy(Ordering.property("tableNum").descending());
         try {
-            ResultSet resultSet = query.run();
+            ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
@@ -377,14 +339,16 @@ public class TableManagerActivity extends BaseToobarActivity {
             android.util.Log.e("getDocmentsByClass", "Exception=", e);
         }
 
-        if(documentList.size()>0) {
-            Document  document = documentList.get(0);
-            maxNum= document.getString("tableNum");
+        if (documentList.size() > 0) {
+            Document document = documentList.get(0);
+            maxNum = document.getString("tableNum");
             int temp = Integer.valueOf(maxNum).intValue();
-            maxNum = String.format("%3d", temp+1).replace(" ", "0");
-        } else if (documentList.size()==0){
-            maxNum="001";
+            maxNum = String.format("%3d", temp + 1).replace(" ", "0");
+        } else if (documentList.size() == 0) {
+            maxNum = "001";
         }
         return maxNum;
     }
+
+
 }

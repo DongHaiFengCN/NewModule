@@ -1,3 +1,4 @@
+
 package doaing.dishesmanager;
 
 import android.app.AlertDialog;
@@ -22,6 +23,8 @@ import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +32,9 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+
+import doaing.MyApplication;
 import doaing.dishesmanager.widget.DishesKindListView;
-import doaing.mylibrary.MyApplication;
 import view.BaseToobarActivity;
 
 public class PackageAddActivity extends BaseToobarActivity {
@@ -38,7 +42,7 @@ public class PackageAddActivity extends BaseToobarActivity {
     private List<Document> dishesList = new ArrayList<>();
 
     private Map<Integer, boolean[]> listMap = new HashMap<>();
-    private Document disheDcoument;
+    private MutableDocument disheDcoument;
     private DishesAdapter dishesAdapter;
     @BindView(R2.id.disheskind_lv)
     DishesKindListView disheskindLv;
@@ -62,17 +66,15 @@ public class PackageAddActivity extends BaseToobarActivity {
         setToolbarName("添加二级套餐");
         if(disheskindLv.getDishesKindList().size() ==0){
            Toast.makeText(this,"没有菜品",Toast.LENGTH_SHORT).show();
-
-            return;
-
+            finish();
         }
         database = ((MyApplication) getApplicationContext()).getDatabase();
         packageDcoument = database.getDocument(intent.getExtras().get("id").toString());
 
-        disheDcoument = new Document();
-        disheDcoument.setArray("dishesListId", new Array());
+        disheDcoument = new MutableDocument();
+        disheDcoument.setArray("dishesListId", new MutableArray());
 
-        packageDcoument.getArray("dishesListId").addString(disheDcoument.getId());
+
 
         dishesAdapter = new DishesAdapter();
         dishesLv.setAdapter(dishesAdapter);
@@ -125,6 +127,7 @@ public class PackageAddActivity extends BaseToobarActivity {
                     boolean[] booleans = listMap.get(i);
                     if (booleans == null) {
                         continue;
+
                     }
                     Document document = disheskindLv.getDishesKindList().get(i);
                     int length = booleans.length;
@@ -183,9 +186,10 @@ public class PackageAddActivity extends BaseToobarActivity {
 
                                     //保存数据库,设置套餐价格
                                     disheDcoument.setFloat("price", finalSum * (sum / 100f));
-
+                                    MutableDocument mutableDocument = packageDcoument.toMutable();
+                                    mutableDocument.getArray("dishesListId").addString(disheDcoument.getId());
                                     try {
-                                        database.save(packageDcoument);
+                                        database.save(mutableDocument);
                                         database.save(disheDcoument);
                                     } catch (CouchbaseLiteException e) {
                                         e.printStackTrace();
@@ -240,9 +244,10 @@ public class PackageAddActivity extends BaseToobarActivity {
                                             disheDcoument.setString("dishesName",packageNameEt.getText().toString());
                                             //保存数据库,设置套餐价格
                                             disheDcoument.setFloat("price", sum);
-
+                                           MutableDocument mutableDocument = packageDcoument.toMutable();
+                                           mutableDocument.getArray("dishesListId").addString(disheDcoument.getId());
                                             try {
-                                                database.save(packageDcoument);
+                                                database.save(mutableDocument);
                                                 database.save(disheDcoument);
                                             } catch (CouchbaseLiteException e) {
                                                 e.printStackTrace();
@@ -335,3 +340,4 @@ public class PackageAddActivity extends BaseToobarActivity {
     }
 
 }
+

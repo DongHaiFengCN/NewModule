@@ -1,5 +1,5 @@
 package doaing.dishesmanager.widget;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +22,9 @@ import doaing.dishesmanager.R;
  * 修改人：donghaifeng
  * 修改时间：2018/1/23 16:06
  * 修改备注：
+ * @author donghaifeng
  */
+
 
 public class TasteSelectAdapter extends RecyclerView.Adapter<TasteSelectAdapter.ViewHolder> {
 
@@ -30,7 +32,7 @@ public class TasteSelectAdapter extends RecyclerView.Adapter<TasteSelectAdapter.
         return list;
     }
 
-    List<Document> list;
+    private List<Document> list;
     private LayoutInflater mInflater;
     public TasteSelectAdapter(List<Document> list, Context context){
 
@@ -41,7 +43,7 @@ public class TasteSelectAdapter extends RecyclerView.Adapter<TasteSelectAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = mInflater.inflate(R.layout.layout,
+        @SuppressLint("InflateParams") View view = mInflater.inflate(R.layout.layout,
                 null, false);
         ViewHolder viewHolder = new ViewHolder(view);
 
@@ -54,7 +56,7 @@ public class TasteSelectAdapter extends RecyclerView.Adapter<TasteSelectAdapter.
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, final int position) {
+    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
         holder.mTxt.setText(list.get(position).getString("tasteName"));
         holder.mImg.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +77,7 @@ public class TasteSelectAdapter extends RecyclerView.Adapter<TasteSelectAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder
     {
-        public ViewHolder(View arg0)
+        ViewHolder(View arg0)
         {
             super(arg0);
         }
@@ -84,3 +86,4 @@ public class TasteSelectAdapter extends RecyclerView.Adapter<TasteSelectAdapter.
         TextView mTxt;
     }
 }
+

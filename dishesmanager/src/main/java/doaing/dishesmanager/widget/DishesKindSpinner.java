@@ -1,17 +1,19 @@
+
 package doaing.dishesmanager.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -19,7 +21,7 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.mylibrary.MyApplication;
+import doaing.MyApplication;
 
 
 /**
@@ -30,7 +32,9 @@ import doaing.mylibrary.MyApplication;
  * 修改人：donghaifeng
  * 修改时间：2018/1/22 14:20
  * 修改备注：
+ * @author donghaifeng
  */
+
 
 public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinner {
 
@@ -39,13 +43,13 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
     }
 
     private List<Document> dishesKindList = new ArrayList<>();
-    ArrayAdapter<String> Adapter;
+    ArrayAdapter dishesKindAdapter;
 
     public DishesKindSpinner(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item);
-        Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        setAdapter(Adapter);
+        dishesKindAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item);
+        dishesKindAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        setAdapter(dishesKindAdapter);
         getKindItems();
     }
 
@@ -55,8 +59,6 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
 
     public DishesKindSpinner(Context context) {
         super(context);
-
-
     }
 
     @Override
@@ -66,33 +68,33 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
     private void getKindItems() {
 
         final Database database = ((MyApplication) getContext().getApplicationContext()).getDatabase();
-        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesKindC")
-                        .and(Expression.property("setMenu").equalTo(false))).toLive();
-        query.addChangeListener(new LiveQueryChangeListener() {
-            @Override
-            public void changed(LiveQueryChange change) {
+                .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                        .and(Expression.property("setMenu").equalTo(Expression. booleanValue(false))));
 
-              if (!dishesKindList.isEmpty()){
-                  dishesKindList.clear();
-              }
-              if (Adapter.getCount()>0){
-                  Adapter.clear();
-              }
-                ResultSet rows = change.getRows();
-                Result row = null;
-                while ((row = rows.next()) != null) {
-                    String id = row.getString(0);
-                    Document doc = database.getDocument(id);
-                    dishesKindList.add(doc);
-
-                    Adapter.add(doc.getString("kindName").toString());
-                }
-
+        try {
+            if (!dishesKindList.isEmpty()){
+                dishesKindList.clear();
             }
-        });
-        query.run();
+            if (dishesKindAdapter.getCount()>0){
+                dishesKindAdapter.clear();
+            }
+            ResultSet results =query.execute();
+            Result row ;
+            while ((row = results.next()) != null) {
+                String id = row.getString(0);
+                Document doc = database.getDocument(id);
+                dishesKindList.add(doc);
+                dishesKindAdapter.add(doc.getString("kindName"));
+            }
+            dishesKindAdapter.notifyDataSetChanged();
+
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
 
     }
 }
+

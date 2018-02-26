@@ -14,12 +14,26 @@ import android.widget.TextView;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Ordering;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import doaing.mylibrary.MyApplication;
+import doaing.MyApplication;
 import doaing.tablemanager.R;
 import doaing.tablemanager.TableManagerActivity;
 import tools.ToolUtil;
@@ -37,27 +51,31 @@ import tools.ToolUtil;
 
 public class AreaAdapter extends BaseAdapter {
 
+    public List<String> getAreaId() {
+        return areaId;
+    }
+
+    private List<String> areaId;
     private int mSelect = 0; //选中项
     private EditText editText;
-    private List<Document> names;
     private TableManagerActivity context;
     private Database database;
 
-    public AreaAdapter(List<Document> names, TableManagerActivity context, Database database) {
+    public AreaAdapter(TableManagerActivity context, Database database) {
 
-        this.names = names;
         this.context = context;
         this.database = database;
+        areaId = areaQuery();
     }
 
     @Override
     public int getCount() {
-        return names == null ? 1 : names.size() + 1;
+        return areaId.size() + 1;
     }
 
     @Override
     public Object getItem(int i) {
-        return names.get(i);
+        return areaId.size() == 0 ? null : areaId.get(i);
     }
 
     @Override
@@ -83,7 +101,7 @@ public class AreaAdapter extends BaseAdapter {
         } else {
             listItemView = (ListItemView) view.getTag();
         }
-        if (i < names.size()) {
+        if (i < areaId.size()) {
             listItemView.add_im.setVisibility(View.GONE);
             listItemView.tv_title.setVisibility(View.VISIBLE);
             if (mSelect == i) {
@@ -110,12 +128,15 @@ public class AreaAdapter extends BaseAdapter {
                             }).setNeutralButton("删除房间", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Document document = names.get(i);
+                                    Document document = database.getDocument(areaId.get(i));
                                     Array array = document.getArray("tableIDList");
                                     int count = array.count();
+
+                                    //删除餐桌信息
                                     for (int j = 0; j < count; j++) {
                                         try {
                                             database.delete(database.getDocument(array.getString(j)));
+
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
@@ -125,10 +146,8 @@ public class AreaAdapter extends BaseAdapter {
                                     } catch (CouchbaseLiteException e) {
                                         e.printStackTrace();
                                     }
-                                    names.remove(document);
-                                    notifyDataSetChanged();
+                                    updata();
                                     context.setAreaListViewItemPosition(0);
-
                                 }
                             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
@@ -144,7 +163,8 @@ public class AreaAdapter extends BaseAdapter {
                                 editText.setError("不能为空！");
                             } else {
                                 //修改房间名字
-                                Document document = names.get(i);
+                                MutableDocument document = database.getDocument(areaId.get(i)).toMutable();
+
                                 document.setString("areaName", editText.getText().toString());
 
                                 try {
@@ -153,15 +173,15 @@ public class AreaAdapter extends BaseAdapter {
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
                                 }
+                                updata();
                                 alertDialog.dismiss();
-                                notifyDataSetChanged();
                             }
                         }
                     });
 
                 }
             });
-            listItemView.tv_title.setText(names.get(i).getString("areaName"));
+            listItemView.tv_title.setText(database.getDocument(areaId.get(i)).getString("areaName"));
         } else {
             listItemView.tv_title.setVisibility(View.GONE);
             listItemView.imageView.setVisibility(View.GONE);
@@ -184,22 +204,23 @@ public class AreaAdapter extends BaseAdapter {
                             if ("".equals(editText.getText().toString())) {
                                 editText.setError("不能为空！");
                             } else {
-                                Document document = new Document("AreaC." + ToolUtil.getUUID());
+                                MutableDocument document = new MutableDocument("AreaC." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
                                 document.setString("className", "AreaC");
                                 document.setString("areaName", editText.getText().toString());
-                                document.setBoolean("isvalid", true);
-                                document.setString("areaNum", String.valueOf(names == null ? 0 : names.size()));
-                                document.setArray("tableIDList", new Array());
+                                document.setBoolean("isValid", true);
+                                document.setString("areaNum", String.valueOf(areaId == null ? 0 : areaId.size()));
+                                document.setArray("tableIDList", new MutableArray());
+                                document.setString("dataType", "BaseData");
                                 try {
                                     database.save(document);
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
                                 }
-                                names.add(document);
-                                notifyDataSetChanged();
-                                context.setAreaListViewItemPosition(0);
+                                updata();
                                 alertDialog.dismiss();
+                                context.setAreaListViewItemPosition(i);
+
                             }
 
                         }
@@ -207,6 +228,7 @@ public class AreaAdapter extends BaseAdapter {
                 }
             });
         }
+
 
         return view;
 
@@ -217,6 +239,10 @@ public class AreaAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void updata(){
+        areaId = areaQuery();
+        notifyDataSetChanged();
+    }
     class ListItemView {
 
         TextView tv_title;
@@ -240,6 +266,37 @@ public class AreaAdapter extends BaseAdapter {
         editText.setBackground(context.getDrawable(R.drawable.shape_eidt_selector));
         ll.addView(editText); // + 增加行
         return ll;
+    }
+
+    private List<String> areaQuery() {
+        ResultSet results = null;
+        final List<String> areaIdList;
+        //动态监听DisheKind信息
+        Query query = listsLiveQuery();
+        areaIdList = new ArrayList<>();
+        try {
+             results = query.execute();
+
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+        Result row ;
+        while ((row = results.next()) != null) {
+
+            String id = row.getString(0);
+            areaIdList.add(id);
+
+        }
+        return areaIdList;
+    }
+
+    private Query listsLiveQuery() {
+        return QueryBuilder.select(SelectResult.expression(Meta.id)
+                , SelectResult.expression(Expression.property("areaName")))
+                .from(DataSource.database(database))
+                .where(Expression.property("className").equalTo(Expression.string("AreaC")))
+                .orderBy(Ordering.property("areaNum").ascending());
     }
 
 }

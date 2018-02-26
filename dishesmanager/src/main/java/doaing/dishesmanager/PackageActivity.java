@@ -1,10 +1,10 @@
+
 package doaing.dishesmanager;
 
 import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,10 +19,11 @@ import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.LiveQuery;
-import com.couchbase.lite.LiveQueryChange;
-import com.couchbase.lite.LiveQueryChangeListener;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -33,16 +34,17 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
+
+import doaing.MyApplication;
 import doaing.dishesmanager.adapter.PackageManagerExpandableAdapter;
-import doaing.mylibrary.MyApplication;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
 public class PackageActivity extends BaseToobarActivity {
-
+    private Query query;
     private Database database;
-    private Map<String, List<Document>> dataset = new HashMap<>();
-    private List<Document> groupList = new ArrayList<Document>();
+    private Map<String, List<Document>> dataSet = new HashMap<>();
+    private List<Document> groupList = new ArrayList<>();
     @BindView(R2.id.toolbar)
     Toolbar toolbar;
     @BindView(R2.id.package_explv)
@@ -66,37 +68,35 @@ public class PackageActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
+        database = ((MyApplication) getApplicationContext()).getDatabase();
+        query = QueryBuilder.select(SelectResult.expression(Meta.id))
+                .from(DataSource.database(database))
+                .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(true))));
         setToolbarName("套餐管理");
         initList();
-
-        packageExplv.setAdapter(new PackageManagerExpandableAdapter(groupList, dataset, PackageActivity.this));
+        packageExplv.setAdapter(new PackageManagerExpandableAdapter(groupList, dataSet, PackageActivity.this));
 
     }
 
     private void initList() {
-        database = ((MyApplication) getApplicationContext()).getDatabase();
-        LiveQuery query = Query.select(SelectResult.expression(Expression.meta().getId()))
-                .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo("DishesKindC")
-                        .and(Expression.property("setMenu").equalTo(true))).toLive();
-        query.addChangeListener(new LiveQueryChangeListener() {
-            @Override
-            public void changed(LiveQueryChange change) {
+        ResultSet results = null;
 
-                if (!groupList.isEmpty()) {
-                    groupList.clear();
-                }
-                ResultSet rows = change.getRows();
-                Result row = null;
-                while ((row = rows.next()) != null) {
+        if (groupList.size() > 0) {
+            groupList.clear();
+        }
+        try {
+            results = query.execute();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
 
-                    String id = row.getString(0);
-                    Document doc = database.getDocument(id);
-                    groupList.add(doc);
-                }
-            }
-        });
-        query.run();
+        Result row;
+        while ((row = results.next()) != null) {
+            String id = row.getString(0);
+            Document doc = database.getDocument(id);
+            groupList.add(doc);
+        }
 
         for (int i = 0; i < groupList.size(); i++) {
             List<Document> childList;
@@ -104,7 +104,7 @@ public class PackageActivity extends BaseToobarActivity {
             if (array != null) {
                 childList = new ArrayList<>();
             } else {
-                dataset.put(groupList.get(i).getString("kindName"), new ArrayList<Document>());
+                dataSet.put(groupList.get(i).getString("kindName"), new ArrayList<Document>());
                 continue;
             }
 
@@ -113,7 +113,7 @@ public class PackageActivity extends BaseToobarActivity {
                 childList.add(database.getDocument(array.getString(j)));
             }
 
-            dataset.put(groupList.get(i).getString("kindName"), childList);
+            dataSet.put(groupList.get(i).getString("kindName"), childList);
         }
 
 
@@ -146,12 +146,12 @@ public class PackageActivity extends BaseToobarActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
 
                     //1.添加数据到数据库
-                    Document document = new Document("DishesKindC." + ToolUtil.getUUID());
+                    MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
                     document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
                     document.setString("className", "DishesKindC");
                     document.setString("kindName", mSearchAutoComplete.getText().toString());
                     document.setBoolean("setMenu", true);
-                    document.setArray("dishesListId", new Array());
+                    document.setArray("dishesListId", new MutableArray());
                     try {
                         database.save(document);
                     } catch (CouchbaseLiteException e) {
@@ -169,3 +169,4 @@ public class PackageActivity extends BaseToobarActivity {
 
 
 }
+
