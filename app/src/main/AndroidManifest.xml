@@ -11,7 +11,8 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
      >
-    <activity android:name="smartkitchen.com.login.LoginActivity">
+    <activity android:name="smartkitchen.com.login.LoginActivity"
+        android:theme="@style/LoginAppTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
