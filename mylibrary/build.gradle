@@ -25,30 +25,23 @@ android {
 }
 
 dependencies {
-
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
-
     // 要与compiler匹配使用，均使用最新版可以保证兼容
-
-
+    compile files('libs/pinyin4j_android.jar')
+    compile files('libs/modlelib0226.jar')
     //Butterknife
     implementation rootProject.ext.libButterknife
-
     //RxAndroid 相关库
     implementation rootProject.ext.libRxAndroid
     implementation rootProject.ext.libRxJava
     implementation rootProject.ext.libRxBinding
     implementation rootProject.ext.libRxBindingAppcompatV7
     implementation rootProject.ext.libRxBindingDesign
-
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     implementation rootProject.ext.libAlibaba
     //Database依赖
     compile rootProject.ext.couchbase
     compile rootProject.ext.Json
-
-    compile files('libs/modlelib0127.jar')
-    compile files('libs/pinyin4j_android.jar')
 
 }

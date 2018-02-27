@@ -50,6 +50,7 @@ import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.net.URI;
@@ -195,6 +196,8 @@ public class CDBHelper implements ReplicatorChangeListener
 
         ObjectMapper m = new ObjectMapper();
         m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        m.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
+
         Map<String, Object> map = document.toMap();
         map.put("_id", id);
 
@@ -233,7 +236,7 @@ public class CDBHelper implements ReplicatorChangeListener
                 Dictionary valueMap = row.getDictionary(db.getName());
                 // Convert from dictionary to corresponding University object
                 map = valueMap.toMap();
-                map.put("_id", row.getString("_id"));
+                map.put("_id", row.getString("id"));
                 E obj = objectMapper.convertValue(map, aClass);
                 objList.add(obj);
 
@@ -293,7 +296,7 @@ public class CDBHelper implements ReplicatorChangeListener
                 Dictionary valueMap = row.getDictionary(db.getName());
                 // Convert from dictionary to corresponding University object
                 map = valueMap.toMap();
-                map.put("_id", row.getString("_id"));
+                map.put("_id", row.getString("id"));
                 T obj = objectMapper.convertValue(map, aClass);
                 documentList.add(obj);
             }
@@ -304,54 +307,6 @@ public class CDBHelper implements ReplicatorChangeListener
         return documentList;
     }
 
-    /**
-     * 1.4
-     *
-     * @param context
-     * @param where
-     * @param orderBy
-     * @param aClass
-     * @param <T>
-     * @return
-     */
-    public static <T> List<T> getObjByWhere1(Context context, Expression where, Ordering orderBy, Class<T> aClass) {
-        // 1
-        List<T> documentList = new ArrayList<>();
-
-        //2
-        Query query;
-        if (where == null)
-            return null;
-
-        if (orderBy == null)
-            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
-        else
-            query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
-
-
-        try {
-
-            ResultSet resultSet = query.execute();
-            Result row;
-            while ((row = resultSet.next()) != null)
-            {
-                String id = row.getString(0);
-                Document doc = db.getDocument(id);
-                ObjectMapper objectMapper = new ObjectMapper();
-                // Ignore undeclared properties
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                Map<String, Object> map;
-                map = doc.toMap();
-                map.put("_id", id);
-                T obj = objectMapper.convertValue(map, aClass);
-                documentList.add(obj);
-            }
-        } catch (CouchbaseLiteException e) {
-            Log.e("getDocmentsByClass", "Exception=", e);
-        }
-
-        return documentList;
-    }
 
 
     /**
@@ -544,7 +499,8 @@ public class CDBHelper implements ReplicatorChangeListener
         try {
             ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
+            while ((row = resultSet.next()) != null)
+            {
                 String id = row.getString(0);
                 documentList.add(id);
             }
@@ -580,7 +536,9 @@ public class CDBHelper implements ReplicatorChangeListener
         try {
             ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
+            while ((row = resultSet.next()) != null)
+            {
+
                 String id = row.getString(0);
                 documentList.add(id);
                 Log.e("getid", "id---->" + id);
