@@ -60,13 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 
-import bean.kitchenmanage.dishes.DishesKindC;
-import bean.kitchenmanage.order.CheckOrderC;
-import bean.kitchenmanage.order.OrderC;
-import bean.kitchenmanage.qrcode.qrcodeC;
-import bean.kitchenmanage.table.AreaC;
-import bean.kitchenmanage.table.TableC;
-import bean.kitchenmanage.user.UsersC;
+
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.DeviceMain;

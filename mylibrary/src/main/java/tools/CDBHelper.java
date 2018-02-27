@@ -50,6 +50,7 @@ import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.net.URI;
@@ -195,6 +196,8 @@ public class CDBHelper implements ReplicatorChangeListener
 
         ObjectMapper m = new ObjectMapper();
         m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        m.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
+
         Map<String, Object> map = document.toMap();
         map.put("_id", id);
 

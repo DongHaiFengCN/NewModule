@@ -145,9 +145,16 @@ public class RegisterActivity extends AppCompatActivity {
                         //开始同步
                         CDBHelper.getSharedInstance(getApplicationContext());
                         CDBHelper.startPushAndPullReplicationForCurrentUser(userName,psw);
+
+
                         //跳转界面
-                        //跳转界面
-                        ARouter.getInstance().build("/ui/主页2").navigation();
+                        ARouter
+                                .getInstance()
+                                .build("/order/DeskActivity")
+                                .withString("mobile",mPointName.getText().toString())
+                                .withString("channelId",userName)
+                                .navigation();
+
 
                         finish();
                     }
