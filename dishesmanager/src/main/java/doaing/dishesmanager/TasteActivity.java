@@ -42,6 +42,7 @@ import java.util.List;
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
 
+import doaing.mylibrary.MyApplication;
 import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
@@ -144,7 +145,7 @@ public class TasteActivity extends BaseToobarActivity {
 
                     //1.添加数据到数据库
                     MutableDocument document = new MutableDocument("DishesTasteC." + ToolUtil.getUUID());
-                    document.setString("channelId", "gysz");
+                    document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
                     document.setString("className", "DishesTasteC");
                     document.setString("tasteName", mSearchAutoComplete.getText().toString());
                     try {

@@ -23,6 +23,7 @@ package tools;
  */
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import com.couchbase.lite.BasicAuthenticator;
@@ -82,7 +83,7 @@ public class CDBHelper implements ReplicatorChangeListener
     {
 
             DatabaseConfiguration config = new DatabaseConfiguration(context);
-            File folder = new File(String.format("%s/ReserverApp", context.getFilesDir()));
+            File folder = new File(String.format("%s/ReserverApp", Environment.getExternalStorageDirectory()));
             config.setDirectory(folder.getAbsolutePath());
             try {
                 db = new Database(dbName, config);

@@ -347,7 +347,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             if (mPortParam[i].getPortOpenState()== true){
                 spPrinter.setText("连接成功");
             }
-            if (selectPrinterName == null && selectPrinterName.equals("")){
+            if (selectPrinterName == null || selectPrinterName.equals("")){
                     spPrinter.setText("点击配置");
             }
 

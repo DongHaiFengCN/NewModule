@@ -61,11 +61,15 @@ import java.util.Map;
 import java.util.TimerTask;
 
 
+import bean.kitchenmanage.dishes.DishesKindC;
+import bean.kitchenmanage.order.CheckOrderC;
+import bean.kitchenmanage.order.OrderC;
+import bean.kitchenmanage.qrcode.qrcodeC;
+import bean.kitchenmanage.table.TableC;
+import bean.kitchenmanage.user.UsersC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.DeviceMain;
-import doaing.order.device.PrinterConnectDialog;
-import doaing.order.device.kitchen.KitchenCfgActivity;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
@@ -155,7 +159,7 @@ public class DeskActivity extends AppCompatActivity {
                 , Expression.property("className").equalTo(Expression.string("DishesKindC"))
                         .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
                 ,null, DishesKindC.class);
-
+        Log.e("DeskA",""+dishesKindCList.size());
         dishesObjectCollection = new HashMap<>();
         //连接打印机服务
         registerPrinterBroadcast();
@@ -510,17 +514,24 @@ public class DeskActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }else{
                                     tablesName = findFreeTable();
+                                    String[] areaTable = new String[tablesName.length];
+                                    for (int i = 0; i< freeTableList.size();i++){
+                                        Document selectTable = freeTableList.get(i);
+                                        Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
+                                        String areaName = document.getString("areaName");
+                                        areaTable[i] = areaName+" : "+tablesName[i];
+                                    }
                                     AlertDialog.Builder builder = new AlertDialog.Builder(DeskActivity.this);
                                     builder.setTitle("请点击您要换的桌位号")
-                                            .setSingleChoiceItems(tablesName, 0, new DialogInterface.OnClickListener() {
+                                            .setSingleChoiceItems(areaTable, 0, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     pos = which;
-                                                    Document selectTable = freeTableList.get(pos);
-                                                    String tableName = selectTable.getString("tableName");
-                                                    Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
-                                                    String areaName = document.getString("areaName");
-                                                    Toast.makeText(DeskActivity.this,areaName+":   "+tableName,Toast.LENGTH_SHORT).show();
+//                                                    Document selectTable = freeTableList.get(pos);
+//                                                    String tableName = selectTable.getString("tableName");
+//                                                    Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
+//                                                    String areaName = document.getString("areaName");
+//                                                    Toast.makeText(DeskActivity.this,areaName+":   "+tableName,Toast.LENGTH_SHORT).show();
                                                 }
                                             }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                         @Override

@@ -86,6 +86,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
         printnums = findViewById(R.id.edt_print_nums);
         cboxWxYao = findViewById(R.id.cbox_wx_yao);
         setToolbarName("打印小票");
+        cboxWxYao.setChecked(false);
     }
     private void initQrPay()
     {
@@ -98,7 +99,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             qrcodeZfbcontent.setText(obj_qrcodepay.getZfbUrl());//
 
 
-            if(obj_qrcodepay.isTbPrintFlag())
+            if(obj_qrcodepay.isWxPrintFlag())
                 ifqrcodeprint1.setChecked(true);
             else
                 ifqrcodeprint1.setChecked(false);
@@ -286,7 +287,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
 
             obj_qrcodepay.setWxUrl(qrcodeWxcontent.getText().toString());
             obj_qrcodepay.setZfbUrl(qrcodeZfbcontent.getText().toString());
-            obj_qrcodepay.setTbPrintFlag(ifqrcodeprint1.isChecked());
+            obj_qrcodepay.setWxPrintFlag(ifqrcodeprint1.isChecked());
             obj_qrcodepay.setZfbPrintFlag(ifqrcodeprint2.isChecked());
             obj_qrcodepay.setNums(nums);
             CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);

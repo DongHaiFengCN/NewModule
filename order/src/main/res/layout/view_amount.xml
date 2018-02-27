@@ -17,7 +17,8 @@
         android:layout_weight="1"
         android:gravity="center"
         android:background="@drawable/btn_amount"
-        android:text="-"/>
+        android:text="-"
+        android:textColor="@color/md_black_1000"/>
 
     <EditText
         android:id="@+id/etAmount"
@@ -31,7 +32,8 @@
         android:focusableInTouchMode="true"
         android:selectAllOnFocus="true"
         android:gravity="center"
-        android:text=""/>
+        android:text=""
+        android:textColor="@color/md_black_1000"/>
 
     <Button
         android:id="@+id/btnIncrease"
@@ -40,5 +42,6 @@
         android:layout_weight="1"
         android:gravity="center"
         android:background="@drawable/btn_amount"
-        android:text="+"/>
+        android:text="+"
+        android:textColor="@color/md_black_1000"/>
 </LinearLayout>

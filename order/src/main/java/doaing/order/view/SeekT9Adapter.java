@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
@@ -144,20 +145,19 @@ public class SeekT9Adapter extends BaseAdapter {
 
                             DishesC dishesC = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), DishesC.class);
 
-                            if (dishesC.getTasteList() != null) {
+                            if (dishesC.getTasteList().size() != 0) {
                                 for (int i = 0; i < dishesC.getTasteList().size(); i++) {
                                     Document document = CDBHelper.getDocByID(activity.getApplicationContext(), dishesC.getTasteList().get(i).toString());
                                     tasteList.add(document.getString("tasteName"));
                                 }
-
                                 selTasteDialog(tasteList, position, viewHolder);
                                 activity.getOrderAdapter().notifyDataSetChanged();
 
                             } else {
-
                                 setAdd(position, viewHolder);
                                 activity.getOrderAdapter().notifyDataSetChanged();
                             }
+
                         }
                     });
                 } catch (CouchbaseLiteException e) {
