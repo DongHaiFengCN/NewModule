@@ -499,7 +499,8 @@ public class CDBHelper implements ReplicatorChangeListener
         try {
             ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
+            while ((row = resultSet.next()) != null)
+            {
                 String id = row.getString(0);
                 documentList.add(id);
             }
@@ -535,7 +536,9 @@ public class CDBHelper implements ReplicatorChangeListener
         try {
             ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
+            while ((row = resultSet.next()) != null)
+            {
+
                 String id = row.getString(0);
                 documentList.add(id);
                 Log.e("getid", "id---->" + id);

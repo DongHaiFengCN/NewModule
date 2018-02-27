@@ -52,6 +52,7 @@ import java.util.List;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import cn.smssdk.gui.RegisterPage;
+import doaing.mylibrary.MyApplication;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -93,11 +94,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private SharedPreferences pRemberLogin;
 
+    private MyApplication myapp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_main);
+
+        myapp = (MyApplication)getApplicationContext();
         // Set up the login form.
         mTelView = findViewById(R.id.telephone);
         mTelView.addTextChangedListener(textWatcher);
@@ -344,6 +349,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         //开始同步
                         CDBHelper.getSharedInstance(getApplicationContext());
                         CDBHelper.startPushAndPullReplicationForCurrentUser(userName,pwd);
+
+                        myapp.setCompany_ID(userName);
+
                         //是否记住密码
                         if(saveloginstatueChk.isChecked())
                         {
