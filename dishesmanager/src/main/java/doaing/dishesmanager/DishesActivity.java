@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.couchbase.lite.Array;
@@ -50,8 +51,6 @@ public class DishesActivity extends BaseToobarActivity {
     ListView dishekindLv;
 
     private DishesKindAdapter dishesKindAdapter;
-
-    private List dishesKindList = new ArrayList<Document>();
 
     private DishesAdapter dishesAdapter;
     private List dishesList = new ArrayList<Document>();
@@ -246,7 +245,14 @@ public class DishesActivity extends BaseToobarActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void updataPosition(Integer integer) {
+    public void updataPosition(int integer) {
+        if(dishesKindAdapter.getNames().size() == 0){
+
+            Toast.makeText(DishesActivity.this,"请先添加菜品！",Toast.LENGTH_SHORT).show();
+
+            fab.hide();
+            return;
+        }
 
         //刷新菜品信息
 
