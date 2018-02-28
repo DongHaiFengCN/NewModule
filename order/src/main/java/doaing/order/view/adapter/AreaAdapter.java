@@ -1,6 +1,7 @@
 package doaing.order.view.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class AreaAdapter extends ArrayAdapter<String> {
 	private Database db;
 	private Query listsLiveQuery = null;
 	private int  selectItem=-1;
+
 	public AreaAdapter(Context context, Database db )
 	{
 		super(context, 0);
@@ -106,6 +108,11 @@ public class AreaAdapter extends ArrayAdapter<String> {
 	{
 		this.selectItem = selectItem;
 		notifyDataSetChanged();
+	}
+
+	@Override
+	public int getCount(){
+		return getCount();
 	}
 
 

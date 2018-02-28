@@ -148,6 +148,7 @@ public class TasteActivity extends BaseToobarActivity {
                     document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
                     document.setString("className", "DishesTasteC");
                     document.setString("tasteName", mSearchAutoComplete.getText().toString());
+
                     try {
                         database.save(document);
                     } catch (CouchbaseLiteException e) {

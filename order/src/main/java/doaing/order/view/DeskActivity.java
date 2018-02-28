@@ -118,7 +118,7 @@ public class DeskActivity extends AppCompatActivity {
                     showDeskListView(id);
                     break;
                 case 2: //没有订单
-                   Toast.makeText(DeskActivity.this,"没有订单！",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DeskActivity.this,"没有订单！",Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
@@ -155,6 +155,7 @@ public class DeskActivity extends AppCompatActivity {
         //  myapp.initDishesData();
 
         initWidget();
+
         dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
                 , Expression.property("className").equalTo(Expression.string("DishesKindC"))
                         .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
@@ -174,6 +175,13 @@ public class DeskActivity extends AppCompatActivity {
 
     }
 
+    public void setAreaListViewItemPosition(int position) {
+
+        listViewArea.performItemClick(listViewArea.getChildAt(position), position,
+                listViewArea.getItemIdAtPosition(position));
+
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -183,6 +191,7 @@ public class DeskActivity extends AppCompatActivity {
                 , null , DishesKindC.class);
 
         initDishesData();
+        //setAreaListViewItemPosition(0);
     }
 
     private void initWidget()
@@ -191,8 +200,7 @@ public class DeskActivity extends AppCompatActivity {
         db = CDBHelper.getDatabase();
         if(db == null) throw new IllegalArgumentException();
         areaAdapter = new AreaAdapter(this, db);
-
-        listViewArea = (ListView)findViewById(R.id.lv_area);
+        listViewArea = findViewById(R.id.lv_area);
         listViewArea.setAdapter(areaAdapter);
         listViewArea.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -208,7 +216,9 @@ public class DeskActivity extends AppCompatActivity {
                 uiHandler.sendMessage(msg);
             }
         });
-        if(areaAdapter.getCount()>0)
+        Log.e("DeskActivity","------"+areaAdapter.getCount());
+
+        if(areaAdapter.getCount() > 0)
         {
             areaAdapter.setSelectItem(0);
             showDeskListView(areaAdapter.getItem(0));
@@ -320,8 +330,8 @@ public class DeskActivity extends AppCompatActivity {
                             Expression.property("className").equalTo(Expression.string("OrderC"))
                                     .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
                                     .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                                    ,null
-                            );
+                            ,null
+                    );
 
                     if (orderCList.size() > 0 )
                     {
@@ -629,7 +639,7 @@ public class DeskActivity extends AppCompatActivity {
                 , Expression.property("className").equalTo(Expression.string("TableC"))
                         .and(Expression.property("state").equalTo(Expression.intValue(0)))
                 , Ordering.property("tableNum").ascending()
-                );
+        );
         Log.e("Desk","table---"+tableDocList.size());
         if(tableDocList.size()>0)
         {
@@ -653,7 +663,7 @@ public class DeskActivity extends AppCompatActivity {
 
     private void turnMainActivity() {
         Intent mainIntent = new Intent();
-         mainIntent.setClass(DeskActivity.this, MainActivity.class);
+        mainIntent.setClass(DeskActivity.this, MainActivity.class);
         startActivity(mainIntent);
     }
 
