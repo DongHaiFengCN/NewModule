@@ -71,6 +71,7 @@ import bean.kitchenmanage.user.UsersC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.DeviceMain;
+import doaing.order.service.NewOrderService;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
@@ -174,6 +175,9 @@ public class DeskActivity extends AppCompatActivity {
         });
         initDishesData();
 
+        Intent intent = new Intent( this,
+                NewOrderService.class);
+        startService(intent);
 
     }
 
@@ -685,6 +689,10 @@ public class DeskActivity extends AppCompatActivity {
         if (conn != null) {
             unbindService(conn); // unBindService
         }
+
+        Intent intent = new Intent( this,
+                NewOrderService.class);
+        stopService(intent);
     }
 
     @Override

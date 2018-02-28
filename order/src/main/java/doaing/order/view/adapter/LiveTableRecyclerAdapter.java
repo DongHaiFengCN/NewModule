@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +69,7 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
                     map.put("name",row.getString(2));
                     hashMapList.add(map);
                     //documentList.add(row.getString(0));
-                   // MyLog.e("liveQuery change Id="+row.getString(0));
+                   Log.e("","live change table name="+row.getString(2));
                 }
                 notifyDataSetChanged();
 

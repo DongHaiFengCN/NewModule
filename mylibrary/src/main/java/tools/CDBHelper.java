@@ -37,6 +37,7 @@ import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Function;
 import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
@@ -49,6 +50,7 @@ import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
+import com.couchbase.litecore.fleece.MValue;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -96,13 +98,16 @@ public class CDBHelper implements ReplicatorChangeListener
 
         Log.e("startReplication","channelId="+username+"-----pwd="+password);
 
+        Database.setLogLevel(Database.LogDomain.REPLICATOR, Database.LogLevel.NONE);
+
         URI url = null;
         try {
             url = new URI(mSyncGatewayEndpoint);
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e)
+        {
             e.printStackTrace();
         }
-
         Endpoint endpoint = new URLEndpoint(url);
         ReplicatorConfiguration config = new ReplicatorConfiguration(db, endpoint)
                 .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL)
@@ -161,15 +166,21 @@ public class CDBHelper implements ReplicatorChangeListener
         Map<String, Object> props = m.convertValue(object, Map.class);
         String id = (String) props.get("_id");
         MutableDocument mDocument;
+
         if (id == null || "".equals(id)) {
             id = props.get("className") + "." + java.util.UUID.randomUUID().toString();
             mDocument = new MutableDocument(id);
         } else {
             mDocument = db.getDocument(id).toMutable();
         }
-
         try {
-            mDocument.setData(props);
+//            for (Map.Entry<String, Object> entry : props.entrySet())
+//            {
+//                mDocument.setValue(entry.getKey(),  entry.getValue());
+//                Log.e("create or update ","key="+entry.getKey()+"value="+entry.getValue());
+//            }
+
+           mDocument.setData(props);
             db.save(mDocument);
 
         } catch (CouchbaseLiteException e) {
@@ -229,7 +240,6 @@ public class CDBHelper implements ReplicatorChangeListener
             Result row;
             while ((row = resultSet.next()) != null)
             {
-
                 ObjectMapper objectMapper = new ObjectMapper();
                 // Ignore undeclared properties
                 objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -240,7 +250,6 @@ public class CDBHelper implements ReplicatorChangeListener
                 map.put("_id", row.getString("id"));
                 E obj = objectMapper.convertValue(map, aClass);
                 objList.add(obj);
-
             }
 
         } catch (CouchbaseLiteException e) {

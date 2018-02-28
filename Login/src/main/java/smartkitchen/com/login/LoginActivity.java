@@ -319,7 +319,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         public void onResponse(Call call, Response response) throws IOException
         {
            setResult(response.body().string(), true);
-
         }
     };
     private void setResult (String jsonData, final boolean flag)
@@ -366,7 +365,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     .putString("pwd", null)
                                     .commit();
                         }
-
                         //跳转界面
                         ARouter
                                 .getInstance()
