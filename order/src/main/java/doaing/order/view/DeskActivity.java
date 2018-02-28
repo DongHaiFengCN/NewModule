@@ -41,6 +41,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -75,6 +76,7 @@ import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
 import doaing.order.view.adapter.LiveTableRecyclerAdapter;
 import tools.CDBHelper;
+import tools.ToolUtil;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
@@ -104,7 +106,6 @@ public class DeskActivity extends AppCompatActivity {
     //全部打印内容
     private String gPrintContentAll=null;
 
-
     private MyApplication myapp;
     private Handler uiHandler = new Handler()
     {
@@ -131,6 +132,7 @@ public class DeskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_desk);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("桌位");
@@ -182,15 +184,16 @@ public class DeskActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
-        dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
-                , null , DishesKindC.class);
-
-        initDishesData();
+//        dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
+//                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
+//                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
+//                , null , DishesKindC.class);
+//
+//        initDishesData();
         //setAreaListViewItemPosition(0);
     }
 
@@ -216,17 +219,23 @@ public class DeskActivity extends AppCompatActivity {
                 uiHandler.sendMessage(msg);
             }
         });
-        Log.e("DeskActivity","------"+areaAdapter.getCount());
+        areaAdapter.setAreaLocation(new AreaAdapter.AreaLocation() {
+            @Override
+            public void setLocation(boolean location) {
+                if (location){
+                    if(areaAdapter.getCount()>0)
+                    {
+                        areaAdapter.setSelectItem(0);
+                        showDeskListView(areaAdapter.getItem(0));
+                    }
+                }
+            }
+        });
 
-        if(areaAdapter.getCount() > 0)
-        {
-            areaAdapter.setSelectItem(0);
-            showDeskListView(areaAdapter.getItem(0));
-        }
 
     }
 
-    private void showDeskListView(String areaId)
+    public void showDeskListView(String areaId)
     {
 
         if(tableadapter!=null)

@@ -51,7 +51,10 @@ import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.EscCommand;
 import com.gprinter.command.GpCom;
@@ -88,6 +91,8 @@ import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
 import tools.CDBHelper;
+import tools.ToolUtil;
+
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 
 import static tools.CDBHelper.getFormatDate;
@@ -1086,27 +1091,13 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(View v)
 
                             {
-
                                 changeFlag = 1;
-
-
-
                                 proDialog = new ProgressDialog( MainActivity.this);
-
                                 proDialog.setTitle("提示");
-
                                 proDialog.setMessage("正在生成订单信息...");
-
                                 proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
-
                                 proDialog.show();
-
-
-
                                 uiHandler.obtainMessage(0).sendToTarget();
-
-
-
                                 dialog.dismiss();
 
 
@@ -2311,191 +2302,188 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void saveOrder1(){
+        String newId = "OrderC."+ ToolUtil.getUUID();
+        MutableDocument newOrderDoc = new MutableDocument(newId);
+        Log.e("Main",newId);
+        String zcId = "OrderC."+ ToolUtil.getUUID();
+        MutableDocument zcOrderDoc = new MutableDocument(zcId);
+        List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+                Expression.property("className").equalTo(Expression.string("OrderC"))
+                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                        .and(Expression.property("tableNo").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
+                , Ordering.property("createdTime").descending()
+
+        );
+        if (orderCList.size() > 0) {
+            newOrderDoc.setInt("orderNum",orderCList.get(0).getInt("orderNum") + 1);
+            newOrderDoc.setString("serialNum",orderCList.get(0).getString("serialNum"));
+        } else {
+            newOrderDoc.setInt("orderNum", 1);
+            newOrderDoc.setString("serialNum",getOrderSerialNum());
+        }
+
+        for (int i = 0; i < goodsList.size(); i++) {
+            GoodsC obj = goodsList.get(i);
+            if (obj.getGoodsType() == 2) {
+                zcGoodsList.add(obj);
+                goodsList.remove(i);
+                i--;
+                continue;
+            }
+            obj.setOrder(newId);
+        }
+
+        MutableArray array = new MutableArray();
+        for (int i = 0;i < goodsList.size();i++){
+            GoodsC obj = goodsList.get(i);
+            ObjectMapper m = new ObjectMapper();
+            Map<String, Object> props = m.convertValue(obj, Map.class);
+            array.addValue(props);
+        }
+        newOrderDoc.setString("className", "OrderC");
+        newOrderDoc.setString("channelId",myApp.getCompany_ID());
+        newOrderDoc.setString("dataType", "UserData");
+        newOrderDoc.setArray("goodsList",array);
+       // newOrderDoc.setValue("goodsList",goodsList);
+        newOrderDoc.setFloat("allPrice",total);
+        newOrderDoc.setInt("orderState",1);//未买单
+        newOrderDoc.setInt("orderCType",0);//正常
+        newOrderDoc.setInt("deviceType",1);//点餐宝
+        newOrderDoc.setString("createdTime",getFormatDate());
+        newOrderDoc.setString("tableNo",myApp.getTable_sel_obj().getTableNum());
+        newOrderDoc.setString("tableName",myApp.getTable_sel_obj().getTableName());
+        AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
+        newOrderDoc.setString("areaName",areaC.getAreaName());
+        try {
+            if (CDBHelper.getDatabase() != null){
+                CDBHelper.getDatabase().save(newOrderDoc);
+            }else{
+                Log.e("Main","数据库为空");
+            }
+
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        if (zcGoodsList.size() > 0) {
+            newOrderDoc.setString("className", "OrderC");
+            newOrderDoc.setString("channelId",myApp.getCompany_ID());
+            newOrderDoc.setString("dataType", "UserData");
+            zcOrderDoc.setString("serialNum",newOrderDoc.getString("serialNum"));
+            zcOrderDoc.setInt("orderState",1);//未买单
+            zcOrderDoc.setInt("orderCType",2);//赠菜
+            zcOrderDoc.setInt("deviceType",1);//点餐宝
+            zcOrderDoc.setString("createdTime",newOrderDoc.getString("createdTime"));
+            zcOrderDoc.setString("tableNo",newOrderDoc.getString("tableNo"));
+            zcOrderDoc.setString("tableName",newOrderDoc.getString("tableName"));
+            zcOrderDoc.setString("areaName",newOrderDoc.getString("areaName"));
+            MutableArray zcArray = new MutableArray();
+            for (GoodsC obj : zcGoodsList) {
+                obj.setOrder(zcId);
+                zcArray.addValue(obj);
+            }
+
+            zcOrderDoc.setArray("goodsList",zcArray);
+            try {
+                if (CDBHelper.getDatabase() != null){
+                    CDBHelper.getDatabase().save(zcOrderDoc);
+                }else{
+                    Log.e("Main","数据库为空");
+                }
+
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+        }
+        areaName = newOrderDoc.getString("areaName");
+        tableName = newOrderDoc.getString("tableName");
+        currentPersions = "" + myApp.getTable_sel_obj().getCurrentPersions();
+        if (newOrderDoc.getInt("orderNum") == 1)//第一次下单
+            serNum = newOrderDoc.getString("serialNum");//流水号
+        else //多次下单
+            serNum = newOrderDoc.getString("serialNum") + "_"
+                    + newOrderDoc.getString("orderNum");
+        proDialog.setMessage("订单已生成，真准备打印");
+    }
+
 
 
     private void saveOrder()
-
     {
 
-
-
-        try {
-
-            CDBHelper.getDatabase().inBatch(new TimerTask() {
-
-                @Override
-
-                public void run() {
-
-                    zcGoodsList.clear();
-
-                    OrderC newOrderObj = new OrderC(myApp.getCompany_ID());
-
-                    OrderC zcOrderObj = new OrderC(myApp.getCompany_ID());
-
-                    gOrderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-
-                    newOrderObj.set_id(gOrderId);
-
-                    List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-
-                            Expression.property("className").equalTo(Expression.string("OrderC"))
-
-                                    .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-
-                                    .and(Expression.property("tableNo").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
-
-                            , Ordering.property("createdTime").descending()
-
-                    );
-
-
-
-                    if (orderCList.size() > 0) {
-
-
-
-                        newOrderObj.setOrderNum(orderCList.get(0).getInt("orderNum") + 1);
-
-                        newOrderObj.setSerialNum(orderCList.get(0).getString("serialNum"));
-
-
-
-                    } else {
-
-
-
-                        newOrderObj.setOrderNum(1);
-
-                        newOrderObj.setSerialNum(getOrderSerialNum());
-
-
-
-                    }
-
-                    for (int i = 0; i < goodsList.size(); i++) {
-
-                        GoodsC obj = goodsList.get(i);
-
-                        if (obj.getGoodsType() == 2) {
-
-                            zcGoodsList.add(obj);
-
-                            goodsList.remove(i);
-
-                            i--;
-
-                            continue;
-
-                        }
-
-                        obj.setOrder(gOrderId);
-
-                    }
-
-                    newOrderObj.setGoodsList(goodsList);
-
-                    newOrderObj.setAllPrice(total);
-
-                    newOrderObj.setOrderState(1);//未买单
-
-                    newOrderObj.setOrderCType(0);//正常
-
-                    newOrderObj.setDeviceType(1);//点餐宝
-
-                    newOrderObj.setCreatedTime(getFormatDate());
-
-                    newOrderObj.setTableNo(myApp.getTable_sel_obj().getTableNum());
-
-                    newOrderObj.setTableName(myApp.getTable_sel_obj().getTableName());
-
-                    AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
-
-                    newOrderObj.setAreaName(areaC.getAreaName());
-
-
-
-                    CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-
-
-
-                    if (zcGoodsList.size() > 0) {
-
-                        zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
-
-                        zcOrderObj.setOrderState(1);//未买单
-
-                        zcOrderObj.setOrderCType(2);//赠菜
-
-                        zcOrderObj.setDeviceType(1);//点餐宝
-
-                        zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
-
-                        zcOrderObj.setTableNo(newOrderObj.getTableNo());
-
-                        zcOrderObj.setTableName(newOrderObj.getTableName());
-
-                        zcOrderObj.setAreaName(newOrderObj.getAreaName());
-
-                        String id = CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
-
-                        for (GoodsC obj : zcGoodsList) {
-
-                            obj.setOrder(id);
-
-                        }
-
-                        zcOrderObj.setGoodsList(zcGoodsList);
-
-                        zcOrderObj.set_id(id);
-
-
-
-                        CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
-
-                    }
-
-
-
-                    Log.e("id", gOrderId);
-
-
-
-                    areaName = newOrderObj.getAreaName();
-
-                    tableName = newOrderObj.getTableName();
-
-                    currentPersions = "" + myApp.getTable_sel_obj().getCurrentPersions();
-
-                    if (newOrderObj.getOrderNum() == 1)//第一次下单
-
-                        serNum = newOrderObj.getSerialNum();//流水号
-
-                    else //多次下单
-
-                        serNum = newOrderObj.getSerialNum() + "_" + newOrderObj.getOrderNum();
-
-
-
-                    proDialog.setMessage("订单已生成，真准备打印");
-
-
-
-                }
-
-            });
-
-        } catch (CouchbaseLiteException e) {
-
-
-
-            e.printStackTrace();
-
+        zcGoodsList.clear();
+
+        OrderC newOrderObj = new OrderC(myApp.getCompany_ID());
+        OrderC zcOrderObj = new OrderC(myApp.getCompany_ID());
+        gOrderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
+        newOrderObj.set_id(gOrderId);
+
+        List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+                Expression.property("className").equalTo(Expression.string("OrderC"))
+                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                        .and(Expression.property("tableNo").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
+                , Ordering.property("createdTime").descending()
+
+        );
+        if (orderCList.size() > 0) {
+            newOrderObj.setOrderNum(orderCList.get(0).getInt("orderNum") + 1);
+            newOrderObj.setSerialNum(orderCList.get(0).getString("serialNum"));
+        } else {
+            newOrderObj.setOrderNum(1);
+            newOrderObj.setSerialNum(getOrderSerialNum());
         }
+        Log.e("Main","--"+newOrderObj.getOrderNum());
 
-
-
-
+        for (int i = 0; i < goodsList.size(); i++) {
+            GoodsC obj = goodsList.get(i);
+            if (obj.getGoodsType() == 2) {
+                zcGoodsList.add(obj);
+                goodsList.remove(i);
+                i--;
+                continue;
+            }
+            obj.setOrder(gOrderId);
+        }
+        newOrderObj.setGoodsList(goodsList);
+        newOrderObj.setAllPrice(total);
+        newOrderObj.setOrderState(1);//未买单
+        newOrderObj.setOrderCType(0);//正常
+        newOrderObj.setDeviceType(1);//点餐宝
+        newOrderObj.setCreatedTime(getFormatDate());
+        newOrderObj.setCreatedYear("2018");
+        newOrderObj.setTableNo(myApp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableName(myApp.getTable_sel_obj().getTableName());
+        AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
+        newOrderObj.setAreaName(areaC.getAreaName());
+        CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
+        Document document = CDBHelper.getDocByID(getApplicationContext(),gOrderId);
+        Log.e("Main",""+document.getString("orderNum"));
+        if (zcGoodsList.size() > 0) {
+            zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
+            zcOrderObj.setOrderState(1);//未买单
+            zcOrderObj.setOrderCType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
+            zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
+            zcOrderObj.setTableNo(newOrderObj.getTableNo());
+            zcOrderObj.setTableName(newOrderObj.getTableName());
+            zcOrderObj.setAreaName(newOrderObj.getAreaName());
+            zcOrderObj.setCreatedYear("2018");
+            String id = CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
+            for (GoodsC obj : zcGoodsList) {
+                obj.setOrder(id);
+            }
+            zcOrderObj.setGoodsList(zcGoodsList);
+            zcOrderObj.set_id(id);
+            CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
+        }
+        Log.e("id", gOrderId);
+        areaName = newOrderObj.getAreaName();
+        tableName = newOrderObj.getTableName();
+        currentPersions = "" + myApp.getTable_sel_obj().getCurrentPersions();
+        if (newOrderObj.getOrderNum() == 1)//第一次下单
+            serNum = newOrderObj.getSerialNum();//流水号
+        else //多次下单
+            serNum = newOrderObj.getSerialNum() + "_" + newOrderObj.getOrderNum();
+        proDialog.setMessage("订单已生成，真准备打印");
 
     }
 
@@ -2974,13 +2962,9 @@ public class MainActivity extends AppCompatActivity {
             {
 
                 case 0:
-
                     saveOrder();
-
                     printOrderToKitchen();
-
                     break;
-
                 case 1:
                     saveOrder();
                     if (setPrintOrder().equals(""))
