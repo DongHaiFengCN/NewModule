@@ -147,6 +147,7 @@ public class TasteActivity extends BaseToobarActivity {
                     MutableDocument document = new MutableDocument("DishesTasteC." + ToolUtil.getUUID());
                     document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
                     document.setString("className", "DishesTasteC");
+                    document.setString("dataType","BaseData");
                     document.setString("tasteName", mSearchAutoComplete.getText().toString());
 
                     try {
