@@ -893,6 +893,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             TableC obj = myApplication.getTable_sel_obj();
             obj.setLastCheckOrderId(id);
             obj.setState(0);
+
             CDBHelper.createAndUpdate(getApplicationContext(), tableC);
         } else {
             Toast.makeText(getApplicationContext(), "有未买单信息，不能改变桌位状态", Toast.LENGTH_SHORT).show();
@@ -1405,6 +1406,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         p.setChannelId(myApplication.getCompany_ID());
         p.setPayTypes(type);
         p.setSubtotal(pay);
+        p.setCreatedYear("2018");
         CDBHelper.createAndUpdate(getApplicationContext(), p);
         payDetailList.add(p);
 
@@ -1459,13 +1461,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         promotionD.setDisrate(disrate);
 
         checkOrder.setPromotionDetail(promotionD);
-
+        promotionD.setCreatedYear("2018");
         CDBHelper.createAndUpdate(getApplicationContext(), promotionD);
         id = CDBHelper.createAndUpdate(getApplicationContext(), checkOrder);
 
         //设置会员消费记录的checkorder ID
         if (consumLogC != null) {
             consumLogC.setOrderNo(id);
+            consumLogC.setCreatedYear("2018");
             CDBHelper.createAndUpdate(myApplication, consumLogC);
         }
         //turnDesk();
