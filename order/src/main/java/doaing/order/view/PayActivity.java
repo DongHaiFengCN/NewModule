@@ -66,6 +66,7 @@ import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 import tools.CDBHelper;
+import tools.ToolUtil;
 
 /**
  * @author 董海峰
@@ -1425,7 +1426,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
     public void submitCheckOrder() throws CouchbaseLiteException {
-
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -1433,15 +1433,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         checkOrder.setChannelId(myApplication.getCompany_ID());
         checkOrder.setCheckTime(formatter.format(date));
         checkOrder.setClassName("CheckOrderC");
-
         checkOrder.setPay(all);
-
         checkOrder.setNeedPay(total);
-
         checkOrder.setTableNo(myApplication.getTable_sel_obj().getTableNum());
+        checkOrder.setCreatedYear("2018");
         for (OrderC orderC : checkOrder.getOrderList()) {
 
             orderC.setOrderState(0);
+
             CDBHelper.createAndUpdate(getApplicationContext(), orderC);
         }
 
@@ -1469,8 +1468,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             consumLogC.setOrderNo(id);
             CDBHelper.createAndUpdate(myApplication, consumLogC);
         }
-
-
         //turnDesk();
 
         //  show();
