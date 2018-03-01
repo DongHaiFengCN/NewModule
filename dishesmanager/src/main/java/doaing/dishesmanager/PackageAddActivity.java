@@ -74,7 +74,7 @@ public class PackageAddActivity extends BaseToobarActivity {
 
         disheDcoument = new MutableDocument();
         disheDcoument.setArray("dishesListId", new MutableArray());
-
+        disheDcoument.setString("dataType","BaseData");
 
 
         dishesAdapter = new DishesAdapter();
