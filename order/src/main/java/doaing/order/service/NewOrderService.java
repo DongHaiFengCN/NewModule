@@ -1,9 +1,11 @@
 package doaing.order.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -25,12 +27,14 @@ import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
+import com.google.zxing.qrcode.encoder.QRCode;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.EscCommand;
 import com.gprinter.command.GpCom;
 import com.gprinter.io.GpDevice;
 import com.gprinter.io.PortParameters;
 import com.gprinter.save.PortParamDataBase;
+import com.gprinter.service.GpPrintService;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -48,13 +52,16 @@ import java.util.concurrent.Executors;
 import bean.kitchenmanage.kitchen.KitchenClientC;
 import bean.kitchenmanage.order.GoodsC;
 import bean.kitchenmanage.order.OrderC;
+import bean.kitchenmanage.qrcode.qrcodeC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.untils.GlobalConstant;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.MyLog;
 import doaing.order.view.DeskActivity;
 import doaing.order.view.MainActivity;
 import tools.CDBHelper;
+import tools.MyLog;
+
+import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 
 public class NewOrderService extends Service {
 
@@ -65,8 +72,15 @@ public class NewOrderService extends Service {
     private Map<String, ArrayList<GoodsC>> allKitchenClientGoods = new HashMap<String, ArrayList<GoodsC>>();
     private Map<String, String> allKitchenClientPrintNames = new HashMap<String, String>();
     private String tableName, areaName, currentPersions, serNum,gOrderId;
+    private List<GoodsC> goodsList;
 
     private String Tag;
+
+    private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
+
+    private static final int REQUEST_PRINT_LABEL = 0xfd;
+
+    private static final int REQUEST_PRINT_RECEIPT = 0xfc;
 
     public NewOrderService()
     {
@@ -81,15 +95,15 @@ public class NewOrderService extends Service {
          ;
     }
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
 
-
+        registerPrinterBroadcast();
         Tag = getPackageName();
         Log.e(Tag,"onStartCommand");
         mGpService = DeskActivity.getmGpService();
-
        //只执行一个，后面的排队
         myExecutor   = Executors.newScheduledThreadPool(1);
 
@@ -107,7 +121,7 @@ public class NewOrderService extends Service {
                     String id=result.getString(0);
                     Log.e(Tag,"orderId="+id);
                     printNewOrder(id);
-                    }
+                }
             }
         });
 
@@ -128,7 +142,6 @@ public class NewOrderService extends Service {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
-
     private void printNewOrder(String orderId)
     {
 
@@ -137,13 +150,16 @@ public class NewOrderService extends Service {
             @Override
             public void run()
             {
+                if(goodsList==null)
+                    goodsList = new ArrayList<>();
+                else
+                    goodsList.clear();
 
                 printOrderToKitchen(orderIdStr);
-
             }
         });
-
     }
+
     private void changeTableState( String tableNo)
     {
         List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
@@ -173,8 +189,17 @@ public class NewOrderService extends Service {
     private void printOrderToKitchen(String order_id)
 
     {
+        //判断此设备是否支持接收微信点餐打印
+        List<qrcodeC> qrCodeList = CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
+        if(qrCodeList.size()>0)
+        {
+            qrcodeC qrCode = qrCodeList.get(0);
+            if(!qrCode.isWxReceiveFlag())
+                return;
+        }
+
         OrderC obj= CDBHelper.getObjById(getApplicationContext(),order_id,OrderC.class);
-        List<GoodsC> goodsList = obj.getGoodsList();
+        goodsList.addAll(obj.getGoodsList());// = obj.getGoodsList();
         areaName = obj.getAreaName();
         tableName = obj.getTableName();
         if (obj.getOrderNum() == 1)//第一次下单
@@ -235,23 +260,22 @@ public class NewOrderService extends Service {
 
                 if (!isPrinterConnected(printerId)) // 未连接
                 {
-
-                   Log.e(Tag,""+clientKtname+"厨房打印机未连接，正在连接");
-
+                    MyLog.e(Tag,""+clientKtname+"厨房打印机未连接，正在连接");
                     if (connectClientPrint(printerId) == 0)
-
                     {
                         MyLog.d("***********打印机连接命令发送成功");
 
                     } else {
 
+                        allKitchenClientPrintNames.remove(""+"" + printerId);
+                        allKitchenClientGoods.remove(""+printerId);
+
                         MyLog.d("***********打印机连接命令发送失败");
                     }
-
                 }
-
                 else//已连接
                 {
+
                     printGoodsAtRomoteByIndex(printerId);
                 }
 
@@ -259,12 +283,8 @@ public class NewOrderService extends Service {
 
             else//不分发打印，就直接跳转
             {
-
             }
-
         }//end for1
-
-
     }
 
     private void printGoodsAtRomoteByIndex(int printerId)
@@ -273,8 +293,6 @@ public class NewOrderService extends Service {
         //1、程序连接上厨房端打印机后要进行分厨房打印
 
         ArrayList<GoodsC> myshangpinlist = allKitchenClientGoods.get("" + printerId);
-
-
 
         //2、获得该打印机内容 打印机名称
 
@@ -288,30 +306,21 @@ public class NewOrderService extends Service {
 
             MyLog.d(printname + "分单打印完成");
 
-
-
         }
 
         else
 
         {
-
             MyLog.d("厨房打印失败");
-
-
         }
 
         setOrderPrintState(gOrderId);
-
+        allKitchenClientGoods.remove(""+printerId);//移除
+        allKitchenClientPrintNames.remove(""+printerId);//移除
 
 
     }
-
-
-
     private void setOrderPrintState(String orderId) {
-
-
 
         OrderC obj = CDBHelper.getObjById(getApplicationContext(), orderId, OrderC.class);
 
@@ -321,7 +330,166 @@ public class NewOrderService extends Service {
 
     }
 
+    private void registerPrinterBroadcast() {
 
+        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(ACTION_CONNECT_STATUS));
+
+        // 注册实时状态查询广播
+
+        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
+
+//*
+
+//         * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
+
+//         * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
+
+//         * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
+
+//         *
+
+        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
+
+    }
+
+    private BroadcastReceiver PrinterStatusBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+
+            //  MyLog("NavigationMain--PrinterStatusBroadcastReceiver= " + action);
+            int id = intent.getIntExtra(GpPrintService.PRINTER_ID, 0);
+
+            if (action.equals(ACTION_CONNECT_STATUS))//连接状态
+            {
+
+                int type = intent.getIntExtra(GpPrintService.CONNECT_STATUS, 0);
+
+             MyLog.d(Tag, "connect status " + type);
+
+                if (type == GpDevice.STATE_CONNECTING)//2
+
+                {
+
+                    MyLog.d(Tag,"打印机正在连接");
+
+                } else if (type == GpDevice.STATE_NONE)//0
+
+                {
+
+                    MyLog.d(Tag,"打印机未连接");
+                }
+
+                else if (type == GpDevice.STATE_VALID_PRINTER)//连接成功 5
+
+                {
+
+                    MyLog.d(Tag,"打印机连接成功");
+
+                    //1、程序连接上厨房端打印机后要进行分厨房打印
+
+                    if (goodsList == null || goodsList.size() <= 0)
+                        return;
+
+                    if(allKitchenClientGoods.get(""+id)==null)//todo 如果别的模块中连接打印机，此处也会监听到，一但上次没有清空打印内容，此处很可能再打印一次，杜绝的办法就是打印成功或失败都把该id下的内容移除掉，但连接不上打印及打印失败需要再进一步调试判断，此问题在MainActivity也会存在
+                        return;
+
+                    printGoodsAtRomoteByIndex(id);
+
+                }
+
+                else if (type == GpDevice.STATE_INVALID_PRINTER)//4
+
+                {
+
+                    MyLog.e(Tag,"打印机不能连接");
+
+                }
+
+            }
+
+            else if (action.equals(GpCom.ACTION_RECEIPT_RESPONSE))//本地打印完成回调
+
+            {
+
+                MyLog.e(Tag,"打印机打印完成回调");
+
+
+
+            } else if (action.equals(GpCom.ACTION_DEVICE_REAL_STATUS)) {
+
+
+
+                // 业务逻辑的请求码，对应哪里查询做什么操作
+
+                int requestCode = intent.getIntExtra(GpCom.EXTRA_PRINTER_REQUEST_CODE, -1);
+
+                // 判断请求码，是则进行业务操作
+
+                if (requestCode == MAIN_QUERY_PRINTER_STATUS) {
+
+
+
+                    int status = intent.getIntExtra(GpCom.EXTRA_PRINTER_REAL_STATUS, 16);
+
+                    String str;
+
+                    if (status == GpCom.STATE_NO_ERR) {
+
+                        str = "打印机正常";
+
+                        //printerSat = true;
+
+                    }
+
+                    else {
+
+                        str = "打印机 ";
+
+                        if ((byte) (status & GpCom.STATE_OFFLINE) > 0) {
+
+                            str += "脱机";
+
+                        }
+
+                        if ((byte) (status & GpCom.STATE_PAPER_ERR) > 0) {
+
+                            str += "缺纸";
+
+                        }
+
+                        if ((byte) (status & GpCom.STATE_COVER_OPEN) > 0) {
+
+                            str += "打印机开盖";
+
+                        }
+
+                        if ((byte) (status & GpCom.STATE_ERR_OCCURS) > 0) {
+
+                            str += "打印机出错";
+
+                        }
+
+                        if ((byte) (status & GpCom.STATE_TIMES_OUT) > 0) {
+
+                            str += "查询超时";
+
+                        }
+
+                      MyLog.d(Tag,"厨房打印机：" + " 状态：" + str);
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    };
 
     private int printContent(String content, int printIndex)//0发送数据到打印机 成功 其它错误
 

@@ -73,11 +73,11 @@ import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.BluetoothUtil;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.ShowParticularsAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
 
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
 import static tools.CDBHelper.getFormatDate;

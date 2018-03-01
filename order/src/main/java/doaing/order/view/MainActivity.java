@@ -87,10 +87,10 @@ import doaing.order.R;
 import doaing.order.untils.BluetoothUtil;
 import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
 import tools.CDBHelper;
+import tools.MyLog;
 import tools.ToolUtil;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
@@ -430,12 +430,9 @@ public class MainActivity extends AppCompatActivity {
 
                     MyLog.d("打印机连接成功");
 
-
-
                     //1、程序连接上厨房端打印机后要进行分厨房打印
 
                     if (goodsList == null || goodsList.size() <= 0)
-
                         return;
 
                     printGoodsAtRomoteByIndex(id);
@@ -561,9 +558,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
-
-
-
 
 
     public void setOrderItem(SparseArray<Object> sparseArray) {
@@ -1451,10 +1445,7 @@ public class MainActivity extends AppCompatActivity {
             uiHandler.obtainMessage(4).sendToTarget();
 
         }
-
         setOrderPrintState(gOrderId);
-
-
 
     }
 
@@ -1991,10 +1982,7 @@ public class MainActivity extends AppCompatActivity {
             mGpService = GpService.Stub.asInterface(service);
 
             //myapp.setmGpService(mGpService);
-
             MyLog.e("PrinterServiceConnection onServiceConnected() called");
-
-
 
 //            try {
 
@@ -2043,17 +2031,11 @@ public class MainActivity extends AppCompatActivity {
             if (seekT9Adapter.getGoodsList().size() != 0){
 
                 seekT9Adapter.getGoodsList().clear();
-
             }
-
             seekT9Adapter.notifyDataSetChanged();
-
-
-
         }
 
         EventBus.getDefault().postSticky("1");
-
     }
 
 
@@ -2134,11 +2116,7 @@ public class MainActivity extends AppCompatActivity {
 
         return orderNum;
 
-
-
     }
-
-
 
     private String setPrintOrder() {
 
@@ -2524,11 +2502,6 @@ public class MainActivity extends AppCompatActivity {
     //隐藏所有Fragment
 
     private void hidtFragment(FragmentTransaction fragmentTransaction) {
-
-
-
-
-
         if (seekT9Fragment != null) {
 
             fragmentTransaction.hide(seekT9Fragment);
@@ -2954,13 +2927,8 @@ public class MainActivity extends AppCompatActivity {
         public void handleMessage(Message msg)
 
         {
-
-
-
             switch (msg.what)
-
             {
-
                 case 0:
                     saveOrder();
                     printOrderToKitchen();

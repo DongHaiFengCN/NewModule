@@ -15,8 +15,7 @@ import android.widget.LinearLayout;
 
 import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.MyLog;
-
+import tools.MyLog;
 
 /**
  * 项目名称：Order

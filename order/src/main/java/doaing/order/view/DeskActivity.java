@@ -72,11 +72,11 @@ import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.DeviceMain;
 import doaing.order.service.NewOrderService;
-import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
 import doaing.order.view.adapter.LiveTableRecyclerAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
 import tools.ToolUtil;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
@@ -104,8 +104,7 @@ public class DeskActivity extends AppCompatActivity {
     private static final int REQUEST_PRINT_LABEL = 0xfd;
     private static final int REQUEST_PRINT_RECEIPT = 0xfc;
     private Integer printnums = 1;
-    //全部打印内容
-    private String gPrintContentAll=null;
+
 
     private MyApplication myapp;
     private Handler uiHandler = new Handler()
@@ -156,29 +155,15 @@ public class DeskActivity extends AppCompatActivity {
         myapp.setUsersC(obj);
 
         //  myapp.initDishesData();
-
         initWidget();
 
-        dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
-                ,null, DishesKindC.class);
-        Log.e("DeskA",""+dishesKindCList.size());
-        dishesObjectCollection = new HashMap<>();
-        //连接打印机服务
-        registerPrinterBroadcast();
-        myapp.mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                connectBTPrinter();
-            }
-        });
-        initDishesData();
 
+        //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
+        bindPrinterService();
+        initDishesData();
         Intent intent = new Intent( this,
                 NewOrderService.class);
         startService(intent);
-
     }
 
     public void setAreaListViewItemPosition(int position) {
@@ -684,7 +669,7 @@ public class DeskActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        unregisterReceiver(PrinterStatusBroadcastReceiver);
+
         // 注销打印消息
         if (conn != null) {
             unbindService(conn); // unBindService
@@ -808,7 +793,15 @@ public class DeskActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                //初始化菜品数量维护映射表
+                dishesObjectCollection = new HashMap<>();
+
+                dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
+                        , Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                                .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
+                        ,null, DishesKindC.class);
+                Log.e("DeskA",""+dishesKindCList.size());
+
+                //1、初始化菜品数量维护映射表
                 for (DishesKindC dishesKindC : dishesKindCList) {
 
                     int count = dishesKindC.getDishesListId().size();
@@ -830,13 +823,15 @@ public class DeskActivity extends AppCompatActivity {
                 myapp.setDishesKindCList(dishesKindCList);
                 myapp.setDishesObjectCollection(dishesObjectCollection);
 
+
+
             }
         });
 
     }
 
 
-    private void connectBTPrinter()
+    private void bindPrinterService()
     {
         conn = new PrinterServiceConnection();
         Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
@@ -857,68 +852,6 @@ public class DeskActivity extends AppCompatActivity {
             mGpService = GpService.Stub.asInterface(service);
             setmGpService(mGpService);
         }
-    }
-    //打印机消息注册
-    private void registerPrinterBroadcast() {
-        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(ACTION_CONNECT_STATUS));
-        // 注册实时状态查询广播
-        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-        /**
-         * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
-         * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
-         * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
-         **/
-        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
-    }
-
-
-    private BroadcastReceiver PrinterStatusBroadcastReceiver = new BroadcastReceiver()
-    {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            String action = intent.getAction();
-            //  MyLog("NavigationMain--PrinterStatusBroadcastReceiver= " + action);
-            if (action.equals(ACTION_CONNECT_STATUS))//连接状态
-            {
-                int type = intent.getIntExtra(GpPrintService.CONNECT_STATUS, 0);
-                int id = intent.getIntExtra(GpPrintService.PRINTER_ID, 0);
-                MyLog.e("************************connect status " + type+"---index="+id);
-            }
-            else if (action.equals(GpCom.ACTION_RECEIPT_RESPONSE))//本地打印完成回调
-            {
-
-                int count = --printnums;//打印份数
-                if (count > 0)
-                {
-                    printContentLX(gPrintContentAll, 0);
-                }
-                else if (count == 0)//本地打印完毕，置打印标志
-                {
-                }
-            }
-        }
-    };
-
-    private int printContentLX(String content, int printIndex)//0发送数据到打印机 成功 其它错误
-    {
-        int rel = 0;
-        try {
-            rel = mGpService.sendEscCommand(printIndex, content);
-        } catch (RemoteException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return -2;
-        }
-        GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
-        if (r != GpCom.ERROR_CODE.SUCCESS)
-        {
-
-            return -2;
-        }
-        else
-            return 0;//把数据发送打印机成功
     }
 
     public static GpService getmGpService() {
