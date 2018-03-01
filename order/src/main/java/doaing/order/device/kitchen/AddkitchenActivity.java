@@ -323,6 +323,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         }
     }
 
+
     //初始化打印机
     private void initPortParam() {
         boolean[] state = new boolean[MAX_PRINTER_CNTMY];
@@ -440,6 +441,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     }
 
 
+    //检查是哪个打印机
     Boolean CheckPortParamters(PortParameters param) {
         boolean rel = false;
         int type = param.getPortType();
@@ -535,6 +537,13 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                 {
                     setProgressBarIndeterminateVisibility(false);
                     mPortParam[id].setPortOpenState(true);
+                    for (int i = 0; i < mPortParam.length ; i++){
+                        if (mPortParam[i].getPortOpenState() == true){
+                            if (mPortParam[i].equals(mPortParam[id])){
+                                spPrinter.setText("连接成功");
+                            }
+                        }
+                    }
 
                 } else if (type == GpDevice.STATE_INVALID_PRINTER)//4 连接中断
                 {

@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int changeFlag = 0;
 
-    private ProgressDialog proDialog =null;
+    private ProgressDialog proDialog = null;
 
     private int printerType = 58;
     Toolbar toolbar;
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("T9andOrder", 0);
 
         isFlag = sharedPreferences.getBoolean("isFlag",true);
-
+        proDialog = new ProgressDialog( MainActivity.this);
         initView();
 
         //连接打印机服务
@@ -1067,7 +1067,6 @@ public class MainActivity extends AppCompatActivity {
 
 
                                 changeFlag = 0;
-                                proDialog = new ProgressDialog( MainActivity.this);
                                 proDialog.setTitle("提示");
                                 proDialog.setMessage("正在生成订单信息...");
                                 proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
@@ -1330,7 +1329,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                int printerId = 0;//Integer.parseInt(printId)-1;
+                int printerId = Integer.parseInt(printname)-1;
 
 
 

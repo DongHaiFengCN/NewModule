@@ -87,10 +87,11 @@ public class PrinterConnectDialog extends BaseToobarActivity {
         cboxWxYao = findViewById(R.id.cbox_wx_yao);
         setToolbarName("打印小票");
         cboxWxYao.setChecked(false);
+
     }
     private void initQrPay()
     {
-        List<qrcodeC> qrCodeDoc= CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
+        final List<qrcodeC> qrCodeDoc= CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
         if(qrCodeDoc.size()>0)
         {
             obj_qrcodepay = qrCodeDoc.get(0);
@@ -99,17 +100,22 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             qrcodeZfbcontent.setText(obj_qrcodepay.getZfbUrl());//
 
 
-            if(obj_qrcodepay.isWxPrintFlag())
+            if(obj_qrcodepay.isWxPrintFlag()){
                 ifqrcodeprint1.setChecked(true);
-            else
+            } else {
                 ifqrcodeprint1.setChecked(false);
-
-            if(obj_qrcodepay.isZfbPrintFlag())
+            }
+            if(obj_qrcodepay.isZfbPrintFlag()) {
                 ifqrcodeprint2.setChecked(true);
-            else
+            }else {
                 ifqrcodeprint2.setChecked(false);
+            }
 
-
+            if (obj_qrcodepay.isWxReceiveFlag()){
+                cboxWxYao.setChecked(true);
+            }else{
+                cboxWxYao.setChecked(false);
+            }
             printnums.setText(""+obj_qrcodepay.getNums());
         }
         else
@@ -240,6 +246,18 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             }
         });
 
+        cboxWxYao.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    obj_qrcodepay.setWxReceiveFlag(true);
+                }else{
+                    obj_qrcodepay.setWxReceiveFlag(false);
+                }
+                CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);
+            }
+        });
+
     }
 
 
@@ -282,9 +300,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             if(obj_qrcodepay==null)
             {
                 obj_qrcodepay = new qrcodeC(myapp.getCompany_ID());
-
             }
-
             obj_qrcodepay.setWxUrl(qrcodeWxcontent.getText().toString());
             obj_qrcodepay.setZfbUrl(qrcodeZfbcontent.getText().toString());
             obj_qrcodepay.setWxPrintFlag(ifqrcodeprint1.isChecked());
