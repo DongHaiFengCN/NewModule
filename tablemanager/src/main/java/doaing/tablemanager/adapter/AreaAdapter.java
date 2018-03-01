@@ -119,7 +119,7 @@ public class AreaAdapter extends BaseAdapter {
                 public void onClick(View v) {
 
                     final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                            .setTitle("房间编辑").setView(getLinearLayOfEditView())
+                            .setTitle("房间编辑").setView(getLinearLayOfEditView(i))
                             .setPositiveButton("确认修改房间名称", null).setNegativeButton("", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -191,7 +191,7 @@ public class AreaAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     final AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle("添加房间")
-                            .setView(getLinearLayOfEditView())
+                            .setView(getLinearLayOfEditView(-1))
                             .setPositiveButton("确定", null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -252,7 +252,7 @@ public class AreaAdapter extends BaseAdapter {
 
     }
 
-    public LinearLayout getLinearLayOfEditView() {
+    public LinearLayout getLinearLayOfEditView(int pos) {
         editText = new EditText(context);
         int left, top, right, bottom;
         left = top = right = bottom = 20;
@@ -261,6 +261,9 @@ public class AreaAdapter extends BaseAdapter {
         params.setMargins(left, top, right, bottom);
         editText.setLayoutParams(params);
         editText.setHint("请输入新名字");
+        if (pos > -1){
+            editText.setText(database.getDocument(areaId.get(pos)).getString("areaName"));
+        }
         LinearLayout ll = new LinearLayout(context); // + 增加行
         ll.setOrientation(LinearLayout.VERTICAL); // + 增加行
         editText.setBackground(context.getDrawable(R.drawable.shape_eidt_selector));

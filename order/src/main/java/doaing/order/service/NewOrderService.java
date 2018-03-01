@@ -170,9 +170,7 @@ public class NewOrderService extends Service {
         if(documentList.size()>0)
         {
             Document doc = documentList.get(0);
-
             currentPersions= ""+doc.getInt("currentPersions");
-
             MutableDocument mDoc = doc.toMutable();
             int state  = doc.getInt("state");
             Log.e(Tag,"this table state is"+state);

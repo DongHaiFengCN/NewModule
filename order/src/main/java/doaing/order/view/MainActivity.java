@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
         MyLog.e("Main activity onDestroy");
 
         EventBus.getDefault().unregister(this);
-
+        //注销接收器
         unregisterReceiver(PrinterStatusBroadcastReceiver);
 
         // 2、注销打印消息
@@ -339,9 +339,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
-
     private void registerPrinterBroadcast() {
 
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(ACTION_CONNECT_STATUS));
@@ -359,9 +356,6 @@ public class MainActivity extends AppCompatActivity {
 //         * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
 
 //         *
-
-
-
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
 
     }

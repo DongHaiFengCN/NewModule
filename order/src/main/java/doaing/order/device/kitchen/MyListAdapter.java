@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
 import java.util.List;
@@ -120,7 +122,13 @@ public class MyListAdapter extends BaseAdapter {
     private void deleteOneItemFromDatabase(int position) {
 
         Document doc = CDBHelper.getDocByID(activity, list.get(position));
-        CDBHelper.deleDocument(activity.getApplicationContext(), doc);
+        Log.e("MyList",doc.getId());
+        //CDBHelper.deleDocument(activity.getApplicationContext(), doc);
+        try {
+            CDBHelper.getDatabase().delete(doc);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
 
     }
 

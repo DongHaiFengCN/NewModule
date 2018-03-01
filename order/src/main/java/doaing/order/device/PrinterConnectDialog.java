@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.journeyapps.barcodescanner.CaptureActivity;
 
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.List;
 import bean.kitchenmanage.qrcode.qrcodeC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
+import doaing.order.view.DeskActivity;
 import tools.CDBHelper;
 import view.BaseToobarActivity;
 
@@ -43,7 +46,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     private final static int SCANNIN_GREQUEST_CODE1 = 1;
     private final static int SCANNIN_GREQUEST_CODE2 = 2;
     private qrcodeC obj_qrcodepay;
-
+    private int flag = 0;
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -116,7 +119,11 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             }else{
                 cboxWxYao.setChecked(false);
             }
-            printnums.setText(""+obj_qrcodepay.getNums());
+            if (obj_qrcodepay.getNums() == 0){
+                printnums.setText("1");
+            }else {
+                printnums.setText("" + obj_qrcodepay.getNums());
+            }
         }
         else
         {
@@ -264,6 +271,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     public void OnAddTbQrcodepay(View view)
     {
         Intent intent = new Intent();
+        flag = 2;
         intent.setClass(PrinterConnectDialog.this, CaptureActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(intent, SCANNIN_GREQUEST_CODE1);
@@ -272,6 +280,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     public void OnAddZfbQrcodepay(View view)
     {
         Intent intent = new Intent();
+        flag = 1;
         intent.setClass(PrinterConnectDialog.this, CaptureActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivityForResult(intent, SCANNIN_GREQUEST_CODE2);
@@ -308,6 +317,62 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             obj_qrcodepay.setNums(nums);
             CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);
 
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // 获取解析结果
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        List<qrcodeC> qrcodeCS = CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
+
+
+        if (result != null) {
+
+            String authCode = result.getContents();
+
+            //修改二维码
+            if(qrcodeCS.size()>0){
+
+
+                //支付宝
+                if(flag == 1){
+
+
+                    qrcodeCS.get(0).setZfbUrl(authCode);
+
+
+                }else if(flag == 2){ //微信
+
+                    qrcodeCS.get(0).setWxUrl(authCode);
+                }
+
+                CDBHelper.createAndUpdate(getApplicationContext(),qrcodeCS.get(0));
+
+
+            }else if(qrcodeCS.isEmpty()){//添加二维码
+
+                qrcodeC qrcodeCS1 = new qrcodeC();
+                qrcodeCS1.setChannelId(myapp.getCompany_ID());
+                qrcodeCS1.setClassName("qrcodeC");
+
+                //支付宝
+                if(flag == 1){
+
+                    qrcodeCS1.setZfbUrl(authCode);
+
+
+                }else if(flag == 2){ //微信
+
+                    qrcodeCS1.setWxUrl(authCode);
+
+                }
+                CDBHelper.createAndUpdate(getApplicationContext(),qrcodeCS1);
+            }
+        }else {
+            Toast.makeText(PrinterConnectDialog.this,"扫描失败请重试！",Toast.LENGTH_LONG).show();
         }
 
     }
