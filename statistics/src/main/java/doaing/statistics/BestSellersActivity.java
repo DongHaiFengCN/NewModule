@@ -1,8 +1,6 @@
 package doaing.statistics;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -13,20 +11,16 @@ import android.widget.ListView;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
-import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Meta;
-import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
-import doaing.mylibrary.MyApplication;
 import doaing.test.R;
 import tools.CDBHelper;
-import tools.ToolUtil;
 import view.BaseToobarActivity;
 
 public class BestSellersActivity extends BaseToobarActivity {

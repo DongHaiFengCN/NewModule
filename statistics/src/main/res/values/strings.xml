@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">test</string>
+    <string name="endtime">结束时间</string>
+    <string name="starttime">开始时间</string>
 </resources>

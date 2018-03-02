@@ -29,7 +29,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation project(':mylibrary')
 
 }

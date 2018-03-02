@@ -3,7 +3,10 @@
     package="doaing.test">
 
     <application>
-        <activity android:name="doaing.statistics.BestSellersActivity"
+        <activity
+            android:name="doaing.statistics.BestSellersActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name="doaing.statistics.StatisticsActivity"
             android:theme="@style/AppTheme.NoActionBar"
             ></activity>
     </application>
