@@ -112,6 +112,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
+        EventBus.getDefault().register(this);
 
         setToolbarName("菜品添加");
 
@@ -459,6 +460,7 @@ public class DisheAddActivity extends BaseToobarActivity {
         });
 
     }
+
 
 }
 
