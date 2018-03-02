@@ -1,6 +1,8 @@
 package doaing.order.view.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +24,24 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
 import doaing.order.R;
+import doaing.order.view.DeskActivity;
 
 public class AreaAdapter extends ArrayAdapter<String> {
 	private static final String TAG = AreaAdapter.class.getSimpleName();
-
 	private Database db;
 	private Query listsLiveQuery = null;
 	private int  selectItem=-1;
-	public AreaAdapter(Context context, Database db )
+	AreaLocation areaLocation;
+
+	public interface AreaLocation{
+		public void setLocation(boolean location);
+	}
+
+	public void setAreaLocation(AreaLocation areaLocation){
+		this.areaLocation = areaLocation;
+	}
+
+	public AreaAdapter(Context context, Database db)
 	{
 		super(context, 0);
 
@@ -50,6 +62,10 @@ public class AreaAdapter extends ArrayAdapter<String> {
 					//Log.e("areaAdapter","liveQuery change getRows ="+result.getString(0));
 				}
 				notifyDataSetChanged();
+				if (getCount() > 0 ){
+					areaLocation.setLocation(true);
+				}
+
 			}
 		});
 
@@ -107,7 +123,6 @@ public class AreaAdapter extends ArrayAdapter<String> {
 		this.selectItem = selectItem;
 		notifyDataSetChanged();
 	}
-
 
 
 }

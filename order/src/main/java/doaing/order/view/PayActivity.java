@@ -63,9 +63,10 @@ import doaing.order.untils.BluetoothUtil;
 import doaing.order.module.DatabaseSource;
 import doaing.order.module.IDBManager;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.MyLog;
 import doaing.order.untils.Tool;
 import tools.CDBHelper;
+import tools.MyLog;
+import tools.ToolUtil;
 
 /**
  * @author 董海峰
@@ -892,6 +893,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             TableC obj = myApplication.getTable_sel_obj();
             obj.setLastCheckOrderId(id);
             obj.setState(0);
+
             CDBHelper.createAndUpdate(getApplicationContext(), tableC);
         } else {
             Toast.makeText(getApplicationContext(), "有未买单信息，不能改变桌位状态", Toast.LENGTH_SHORT).show();
@@ -1404,6 +1406,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         p.setChannelId(myApplication.getCompany_ID());
         p.setPayTypes(type);
         p.setSubtotal(pay);
+        p.setCreatedYear("2018");
         CDBHelper.createAndUpdate(getApplicationContext(), p);
         payDetailList.add(p);
 
@@ -1425,7 +1428,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
     public void submitCheckOrder() throws CouchbaseLiteException {
-
         Date date = new Date();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
@@ -1433,15 +1435,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         checkOrder.setChannelId(myApplication.getCompany_ID());
         checkOrder.setCheckTime(formatter.format(date));
         checkOrder.setClassName("CheckOrderC");
-
         checkOrder.setPay(all);
-
         checkOrder.setNeedPay(total);
-
         checkOrder.setTableNo(myApplication.getTable_sel_obj().getTableNum());
+        checkOrder.setCreatedYear("2018");
         for (OrderC orderC : checkOrder.getOrderList()) {
 
             orderC.setOrderState(0);
+
             CDBHelper.createAndUpdate(getApplicationContext(), orderC);
         }
 
@@ -1460,17 +1461,16 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         promotionD.setDisrate(disrate);
 
         checkOrder.setPromotionDetail(promotionD);
-
+        promotionD.setCreatedYear("2018");
         CDBHelper.createAndUpdate(getApplicationContext(), promotionD);
         id = CDBHelper.createAndUpdate(getApplicationContext(), checkOrder);
 
         //设置会员消费记录的checkorder ID
         if (consumLogC != null) {
             consumLogC.setOrderNo(id);
+            consumLogC.setCreatedYear("2018");
             CDBHelper.createAndUpdate(myApplication, consumLogC);
         }
-
-
         //turnDesk();
 
         //  show();

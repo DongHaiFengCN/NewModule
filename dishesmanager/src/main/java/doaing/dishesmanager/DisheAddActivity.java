@@ -161,7 +161,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                 disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
                 disheDocument.setString("className", "DishesC");
-
+                disheDocument.setString("dataType","BaseData");
                 if ("".equals(disheName.getText().toString())) {
 
                     disheName.setError("菜品名称不能为空");
@@ -409,7 +409,6 @@ public class DisheAddActivity extends BaseToobarActivity {
         cursor.moveToFirst();
         return cursor.getString(columnIndex);
     }
-
 
 
 /**

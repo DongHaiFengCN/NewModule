@@ -42,6 +42,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
+import doaing.mylibrary.MyApplication;
 import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
@@ -191,7 +192,7 @@ public class DishesKindActivity extends BaseToobarActivity {
      */
     private void saveall(String kindName, boolean flag) {
         MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
-        document.setString("channelId", "gysz");
+        document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
         document.setString("className", "DishesKindC");
         document.setBoolean("setMenu", flag);
         document.setString("kindName", kindName);

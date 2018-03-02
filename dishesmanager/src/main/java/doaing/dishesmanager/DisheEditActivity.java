@@ -57,6 +57,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
+import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -190,6 +191,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                 String dishesName = disheName.getText().toString();
 
                 MutableDocument disheMuDoc = document.toMutable();
+
                 if ("".equals(dishesName)) {
 
                     disheName.setError("菜品名称不能为空");

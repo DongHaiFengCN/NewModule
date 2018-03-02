@@ -41,6 +41,7 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -61,16 +62,22 @@ import java.util.Map;
 import java.util.TimerTask;
 
 
+import bean.kitchenmanage.dishes.DishesKindC;
+import bean.kitchenmanage.order.CheckOrderC;
+import bean.kitchenmanage.order.OrderC;
+import bean.kitchenmanage.qrcode.qrcodeC;
+import bean.kitchenmanage.table.TableC;
+import bean.kitchenmanage.user.UsersC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.DeviceMain;
-import doaing.order.device.PrinterConnectDialog;
-import doaing.order.device.kitchen.KitchenCfgActivity;
-import doaing.order.untils.MyLog;
+import doaing.order.service.NewOrderService;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
 import doaing.order.view.adapter.LiveTableRecyclerAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
+import tools.ToolUtil;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
@@ -84,7 +91,6 @@ public class DeskActivity extends AppCompatActivity {
     private AreaAdapter areaAdapter;
     private RecyclerView listViewDesk;
     private LiveTableRecyclerAdapter tableadapter;
-    private int flag = 0;
     private List<Document> freeTableList = new ArrayList<>();
     private String[] tablesNos,tablesName;
     public int pos = 0,mPos = 0;
@@ -97,8 +103,6 @@ public class DeskActivity extends AppCompatActivity {
     private static final int REQUEST_PRINT_LABEL = 0xfd;
     private static final int REQUEST_PRINT_RECEIPT = 0xfc;
     private Integer printnums = 1;
-    //全部打印内容
-    private String gPrintContentAll=null;
 
 
     private MyApplication myapp;
@@ -114,7 +118,7 @@ public class DeskActivity extends AppCompatActivity {
                     showDeskListView(id);
                     break;
                 case 2: //没有订单
-                   Toast.makeText(DeskActivity.this,"没有订单！",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DeskActivity.this,"没有订单！",Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     break;
@@ -127,6 +131,7 @@ public class DeskActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_desk);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("桌位");
@@ -149,36 +154,26 @@ public class DeskActivity extends AppCompatActivity {
         myapp.setUsersC(obj);
 
         //  myapp.initDishesData();
-
         initWidget();
-        dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
-                ,null, DishesKindC.class);
 
-        dishesObjectCollection = new HashMap<>();
-        //连接打印机服务
-        registerPrinterBroadcast();
-        myapp.mExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                connectBTPrinter();
-            }
-        });
+
+        //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
+        bindPrinterService();
         initDishesData();
-
-
+        Intent intent = new Intent( this,
+                NewOrderService.class);
+        startService(intent);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
-                , null , DishesKindC.class);
-
-        initDishesData();
+//        dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
+//                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
+//                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
+//                , null , DishesKindC.class);
+//
+//        initDishesData();
     }
 
     private void initWidget()
@@ -187,8 +182,7 @@ public class DeskActivity extends AppCompatActivity {
         db = CDBHelper.getDatabase();
         if(db == null) throw new IllegalArgumentException();
         areaAdapter = new AreaAdapter(this, db);
-
-        listViewArea = (ListView)findViewById(R.id.lv_area);
+        listViewArea = findViewById(R.id.lv_area);
         listViewArea.setAdapter(areaAdapter);
         listViewArea.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -204,15 +198,23 @@ public class DeskActivity extends AppCompatActivity {
                 uiHandler.sendMessage(msg);
             }
         });
-        if(areaAdapter.getCount()>0)
-        {
-            areaAdapter.setSelectItem(0);
-            showDeskListView(areaAdapter.getItem(0));
-        }
+        areaAdapter.setAreaLocation(new AreaAdapter.AreaLocation() {
+            @Override
+            public void setLocation(boolean location) {
+                if (location){
+                    if(areaAdapter.getCount()>0)
+                    {
+                        areaAdapter.setSelectItem(0);
+                        showDeskListView(areaAdapter.getItem(0));
+                    }
+                }
+            }
+        });
+
 
     }
 
-    private void showDeskListView(String areaId)
+    public void showDeskListView(String areaId)
     {
 
         if(tableadapter!=null)
@@ -316,8 +318,8 @@ public class DeskActivity extends AppCompatActivity {
                             Expression.property("className").equalTo(Expression.string("OrderC"))
                                     .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
                                     .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                                    ,null
-                            );
+                            ,null
+                    );
 
                     if (orderCList.size() > 0 )
                     {
@@ -510,17 +512,24 @@ public class DeskActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }else{
                                     tablesName = findFreeTable();
+                                    String[] areaTable = new String[tablesName.length];
+                                    for (int i = 0; i< freeTableList.size();i++){
+                                        Document selectTable = freeTableList.get(i);
+                                        Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
+                                        String areaName = document.getString("areaName");
+                                        areaTable[i] = areaName+" : "+tablesName[i];
+                                    }
                                     AlertDialog.Builder builder = new AlertDialog.Builder(DeskActivity.this);
                                     builder.setTitle("请点击您要换的桌位号")
-                                            .setSingleChoiceItems(tablesName, 0, new DialogInterface.OnClickListener() {
+                                            .setSingleChoiceItems(areaTable, 0, new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     pos = which;
-                                                    Document selectTable = freeTableList.get(pos);
-                                                    String tableName = selectTable.getString("tableName");
-                                                    Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
-                                                    String areaName = document.getString("areaName");
-                                                    Toast.makeText(DeskActivity.this,areaName+":   "+tableName,Toast.LENGTH_SHORT).show();
+//                                                    Document selectTable = freeTableList.get(pos);
+//                                                    String tableName = selectTable.getString("tableName");
+//                                                    Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
+//                                                    String areaName = document.getString("areaName");
+//                                                    Toast.makeText(DeskActivity.this,areaName+":   "+tableName,Toast.LENGTH_SHORT).show();
                                                 }
                                             }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                         @Override
@@ -618,7 +627,7 @@ public class DeskActivity extends AppCompatActivity {
                 , Expression.property("className").equalTo(Expression.string("TableC"))
                         .and(Expression.property("state").equalTo(Expression.intValue(0)))
                 , Ordering.property("tableNum").ascending()
-                );
+        );
         Log.e("Desk","table---"+tableDocList.size());
         if(tableDocList.size()>0)
         {
@@ -642,7 +651,7 @@ public class DeskActivity extends AppCompatActivity {
 
     private void turnMainActivity() {
         Intent mainIntent = new Intent();
-         mainIntent.setClass(DeskActivity.this, MainActivity.class);
+        mainIntent.setClass(DeskActivity.this, MainActivity.class);
         startActivity(mainIntent);
     }
 
@@ -650,11 +659,15 @@ public class DeskActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        unregisterReceiver(PrinterStatusBroadcastReceiver);
+
         // 注销打印消息
         if (conn != null) {
             unbindService(conn); // unBindService
         }
+
+        Intent intent = new Intent( this,
+                NewOrderService.class);
+        stopService(intent);
     }
 
     @Override
@@ -669,16 +682,7 @@ public class DeskActivity extends AppCompatActivity {
         if (i == android.R.id.home) {
             this.finish(); // back button
 
-        } else if (i == R.id.action_alipay) {
-            flag = 1;
-            turnScan();
-
-
-        } else if (i == R.id.action_wechat) {
-            flag = 2;
-            turnScan();
-
-        } else if (i == R.id.action_dishes) {
+        }  else if (i == R.id.action_dishes) {
 
             ARouter.getInstance().build("/dishes/DishesManagerMainActivity").navigation();
 
@@ -707,70 +711,21 @@ public class DeskActivity extends AppCompatActivity {
         intentIntegrator.initiateScan(); // 初始化扫描
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        // 获取解析结果
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        List<qrcodeC> qrcodeCS = CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
-
-
-        if (result != null) {
-
-            String authCode = result.getContents();
-
-            //修改二维码
-            if(qrcodeCS.size()>0){
-
-
-                //支付宝
-                if(flag == 1){
-
-
-                    qrcodeCS.get(0).setZfbUrl(authCode);
-
-
-                }else if(flag == 2){ //微信
-
-                    qrcodeCS.get(0).setWxUrl(authCode);
-                }
-
-                CDBHelper.createAndUpdate(getApplicationContext(),qrcodeCS.get(0));
-
-
-            }else if(qrcodeCS.isEmpty()){//添加二维码
-
-                qrcodeC qrcodeCS1 = new qrcodeC();
-                qrcodeCS1.setChannelId(myapp.getCompany_ID());
-                qrcodeCS1.setClassName("qrcodeC");
-
-                //支付宝
-                if(flag == 1){
-
-                    qrcodeCS1.setZfbUrl(authCode);
-
-
-                }else if(flag == 2){ //微信
-
-                    qrcodeCS1.setWxUrl(authCode);
-
-                }
-                CDBHelper.createAndUpdate(getApplicationContext(),qrcodeCS1);
-            }
-        }else {
-            Toast.makeText(DeskActivity.this,"扫描失败请重试！",Toast.LENGTH_LONG).show();
-        }
-
-    }
-
-
     public void initDishesData() {
 
         myapp.mExecutor.execute(new Runnable() {
             @Override
             public void run() {
 
-                //初始化菜品数量维护映射表
+                dishesObjectCollection = new HashMap<>();
+
+                dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
+                        , Expression.property("className").equalTo(Expression.string("DishesKindC"))
+                                .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
+                        ,null, DishesKindC.class);
+                Log.e("DeskA",""+dishesKindCList.size());
+
+                //1、初始化菜品数量维护映射表
                 for (DishesKindC dishesKindC : dishesKindCList) {
 
                     int count = dishesKindC.getDishesListId().size();
@@ -785,12 +740,13 @@ public class DeskActivity extends AppCompatActivity {
 
                         dishesCS.add(dishesC);
                     }
-
                     //初始化disheKind对应的dishes实体类映射
                     dishesObjectCollection.put(dishesKindC.get_id(), dishesCS);
                 }
                 myapp.setDishesKindCList(dishesKindCList);
                 myapp.setDishesObjectCollection(dishesObjectCollection);
+
+
 
             }
         });
@@ -798,7 +754,7 @@ public class DeskActivity extends AppCompatActivity {
     }
 
 
-    private void connectBTPrinter()
+    private void bindPrinterService()
     {
         conn = new PrinterServiceConnection();
         Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
@@ -819,68 +775,6 @@ public class DeskActivity extends AppCompatActivity {
             mGpService = GpService.Stub.asInterface(service);
             setmGpService(mGpService);
         }
-    }
-    //打印机消息注册
-    private void registerPrinterBroadcast() {
-        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(ACTION_CONNECT_STATUS));
-        // 注册实时状态查询广播
-        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-        /**
-         * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
-         * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
-         * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
-         **/
-        registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
-    }
-
-
-    private BroadcastReceiver PrinterStatusBroadcastReceiver = new BroadcastReceiver()
-    {
-        @Override
-        public void onReceive(Context context, Intent intent)
-        {
-            String action = intent.getAction();
-            //  MyLog("NavigationMain--PrinterStatusBroadcastReceiver= " + action);
-            if (action.equals(ACTION_CONNECT_STATUS))//连接状态
-            {
-                int type = intent.getIntExtra(GpPrintService.CONNECT_STATUS, 0);
-                int id = intent.getIntExtra(GpPrintService.PRINTER_ID, 0);
-                MyLog.e("************************connect status " + type+"---index="+id);
-            }
-            else if (action.equals(GpCom.ACTION_RECEIPT_RESPONSE))//本地打印完成回调
-            {
-
-                int count = --printnums;//打印份数
-                if (count > 0)
-                {
-                    printContentLX(gPrintContentAll, 0);
-                }
-                else if (count == 0)//本地打印完毕，置打印标志
-                {
-                }
-            }
-        }
-    };
-
-    private int printContentLX(String content, int printIndex)//0发送数据到打印机 成功 其它错误
-    {
-        int rel = 0;
-        try {
-            rel = mGpService.sendEscCommand(printIndex, content);
-        } catch (RemoteException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return -2;
-        }
-        GpCom.ERROR_CODE r = GpCom.ERROR_CODE.values()[rel];
-        if (r != GpCom.ERROR_CODE.SUCCESS)
-        {
-
-            return -2;
-        }
-        else
-            return 0;//把数据发送打印机成功
     }
 
     public static GpService getmGpService() {

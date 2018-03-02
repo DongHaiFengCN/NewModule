@@ -73,11 +73,11 @@ import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.BluetoothUtil;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.MyLog;
 import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.ShowParticularsAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
 
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
 import static tools.CDBHelper.getFormatDate;
@@ -1054,6 +1054,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                         , Ordering.property("createdTime").descending()
                         , OrderC.class);
 
+
                 boolean flag = false;
                 for (OrderC orderC : orderCList) {
                     if (orderC.getOrderCType() == 0)//0，正常菜订单
@@ -1099,7 +1100,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     for (GoodsC goodsb : goodsCList1) {
                         flag = false;
                         for (GoodsC goodsC : goodsCList) {
-
                             if (goodsC.getDishesName().equals(goodsb.getDishesName())) {
                                 if (goodsb.getDishesTaste() != null) {
                                     if (goodsb.getDishesTaste().equals(goodsC.getDishesTaste())) {
@@ -1396,7 +1396,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 String clientKtname = "" + kitchenClientObj.getName()+hintDishes;//厨房名称
                 String printname = "" + kitchenClientObj.getKitchenAdress();//打印机名称
 
-                int printerId = 0;//Integer.parseInt(printId)-1;
+                int printerId = Integer.parseInt(printname)-1;
 
                 allKitchenClientGoods.put("" + printerId, oneKitchenClientGoods);
                 allKitchenClientPrintNames.put("" + printerId, clientKtname);

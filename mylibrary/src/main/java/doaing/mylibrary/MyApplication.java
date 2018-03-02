@@ -75,6 +75,7 @@ public class MyApplication extends Application implements ISharedPreferences {
     private String Company_ID = "gysz";
 
 
+
     private TableC table_sel_obj;
 
     public UsersC getUsersC() {

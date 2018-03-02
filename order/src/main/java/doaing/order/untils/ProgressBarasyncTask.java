@@ -21,6 +21,7 @@ import bean.kitchenmanage.user.CompanyC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.view.PayActivity;
 import tools.CDBHelper;
+import tools.MyLog;
 
 /*
 *

@@ -79,8 +79,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/animkaiguan"
                         android:button="@null"
-                        android:checked="false"
-                        android:layout_margin="10dp"
+                        android:layout_margin="12dp"
                         />
 
                 </LinearLayout>
@@ -141,8 +140,7 @@
                         android:layout_weight="1"
                         android:background="@drawable/animkaiguan"
                         android:button="@null"
-                        android:checked="false"
-                        android:layout_margin="10dp"
+                        android:layout_margin="12dp"
                         />
 
                 </LinearLayout>
@@ -238,7 +236,7 @@
             android:layout_margin="5dp"
             android:layout_weight="1.9"
             android:background="#ffffff"
-            android:text="是否接收肴点点微信小程序订单"
+            android:text="是否接收微信订单"
             android:gravity="left|center_vertical"
             android:textColor="#020202" />
 
@@ -248,10 +246,9 @@
             android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/animkaiguan"
-            android:layout_margin="10dp"
+            android:layout_margin="12dp"
             android:button="@null"
             android:gravity="left|center_vertical"
-            android:checked="false"
             android:textColor="@color/md_black_1000" />
     </LinearLayout>
 

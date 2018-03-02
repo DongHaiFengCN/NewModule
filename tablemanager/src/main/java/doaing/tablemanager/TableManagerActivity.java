@@ -193,19 +193,38 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     public void onClick(View v) {
                                         MutableDocument mutableDocument = tableDoc.toMutable();
                                         //修改餐桌---------------
+//                                        if ("".equals(tableNameEt.getText().toString())) {
+//                                            tableNameEt.setError("不能为空！");
+//                                        } else if ("".equals(minmunNumberEt.getText().toString())) {
+//                                            minmunNumberEt.setError("不能为空！");
+//                                        } else if ("".equals(maxmunNumberEt.getText().toString())) {
+//                                            maxmunNumberEt.setError("不能为空！");
+//                                        } else if ("".equals(minimunConsumptionEt.getText().toString())) {
+//                                            minimunConsumptionEt.setError("不能为空！");
+//                                        } else {
+//
+//                                        }
                                         if ("".equals(tableNameEt.getText().toString())) {
                                             tableNameEt.setError("不能为空！");
-                                        } else if ("".equals(minmunNumberEt.getText().toString())) {
-                                            minmunNumberEt.setError("不能为空！");
-                                        } else if ("".equals(maxmunNumberEt.getText().toString())) {
-                                            maxmunNumberEt.setError("不能为空！");
-                                        } else if ("".equals(minimunConsumptionEt.getText().toString())) {
-                                            minimunConsumptionEt.setError("不能为空！");
-                                        } else {
+                                        } else{
                                             mutableDocument.setString("tableName", tableNameEt.getText().toString());
-                                            mutableDocument.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
-                                            mutableDocument.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
-                                            mutableDocument.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
+                                            if (maxmunNumberEt.getText().toString() == null || "".equals(maxmunNumberEt.getText().toString())){
+                                                mutableDocument.setInt("maxPersons", 0);
+                                            }else{
+                                                mutableDocument.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
+                                            }
+
+                                            if (minmunNumberEt.getText().toString() == null || "".equals(minmunNumberEt.getText().toString())){
+                                                mutableDocument.setInt("maxPersons", 0);
+                                            }else{
+                                                mutableDocument.setInt("maxPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
+                                            }
+
+                                            if (minimunConsumptionEt.getText().toString() == null || "".equals(minimunConsumptionEt.getText().toString())){
+                                                mutableDocument.setInt("maxPersons", 0);
+                                            }else{
+                                                mutableDocument.setInt("maxPersons", Integer.valueOf(minimunConsumptionEt.getText().toString()));
+                                            }
                                             try {
                                                 database.save(mutableDocument);
                                             } catch (CouchbaseLiteException e) {
@@ -214,6 +233,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                             setAreaListViewItemPosition(POSITION);
                                             alertDialog.dismiss();
                                         }
+
                                     }
                                 });
 
@@ -260,16 +280,20 @@ public class TableManagerActivity extends BaseToobarActivity {
                             @Override
                             public void onClick(View v) {
                                 //添加餐桌---------------
+
+                                //else if ("".equals(minmunNumberEt.getText().toString())) {
+//                                    minmunNumberEt.setError("不能为空！");
+//                                } else if ("".equals(maxmunNumberEt.getText().toString())) {
+//                                    maxmunNumberEt.setError("不能为空！");
+//                                } else if ("".equals(minimunConsumptionEt.getText().toString())) {
+//                                    minimunConsumptionEt.setError("不能为空！");
+//                                } else {
+//
+//
+//                                }
                                 if ("".equals(tableNameEt.getText().toString())) {
                                     tableNameEt.setError("不能为空！");
-                                } else if ("".equals(minmunNumberEt.getText().toString())) {
-                                    minmunNumberEt.setError("不能为空！");
-                                } else if ("".equals(maxmunNumberEt.getText().toString())) {
-                                    maxmunNumberEt.setError("不能为空！");
-                                } else if ("".equals(minimunConsumptionEt.getText().toString())) {
-                                    minimunConsumptionEt.setError("不能为空！");
-                                } else {
-
+                                }else{
                                     MutableDocument mutableDocument = new MutableDocument("TableC." + ToolUtil.getUUID());
                                     mutableDocument.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
                                     mutableDocument.setString("className", "TableC");
@@ -279,10 +303,23 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     mutableDocument.setInt("state", 0);
                                     mutableDocument.setString("tableNum", getMaxTableNum());
                                     mutableDocument.setString("areaId", areaDocment.getId());
-                                    mutableDocument.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
-                                    mutableDocument.setInt("minPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
-                                    mutableDocument.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
+                                    if (maxmunNumberEt.getText().toString() == null || "".equals(maxmunNumberEt.getText().toString())){
+                                        mutableDocument.setInt("maxPersons", 0);
+                                    }else{
+                                        mutableDocument.setInt("maxPersons", Integer.valueOf(maxmunNumberEt.getText().toString()));
+                                    }
 
+                                    if (minmunNumberEt.getText().toString() == null || "".equals(minmunNumberEt.getText().toString())){
+                                        mutableDocument.setInt("maxPersons", 0);
+                                    }else{
+                                        mutableDocument.setInt("maxPersons", Integer.valueOf(minmunNumberEt.getText().toString()));
+                                    }
+
+                                    if (minimunConsumptionEt.getText().toString() == null || "".equals(minimunConsumptionEt.getText().toString())){
+                                        mutableDocument.setInt("maxPersons", 0);
+                                    }else{
+                                        mutableDocument.setInt("maxPersons", Integer.valueOf(minimunConsumptionEt.getText().toString()));
+                                    }
                                     MutableDocument areaDoc = areaDocment.toMutable();
 
                                     MutableArray mutableArray = areaDoc.getArray("tableIDList");
@@ -297,6 +334,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     setAreaListViewItemPosition(POSITION);
                                     alertDialog.dismiss();
                                 }
+
                             }
                         });
                     }

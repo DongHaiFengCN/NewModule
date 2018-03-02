@@ -154,6 +154,7 @@ public class PackageActivity extends BaseToobarActivity {
                     document.setString("className", "DishesKindC");
                     document.setString("kindName", mSearchAutoComplete.getText().toString());
                     document.setBoolean("setMenu", true);
+                    document.setString("dataType","BaseData");
                     document.setArray("dishesListId", new MutableArray());
                     try {
                         database.save(document);

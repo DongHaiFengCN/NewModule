@@ -14,12 +14,40 @@ import android.util.Log;
 
 public class MyLog  {
 
-    private static boolean isDebug = true ;
+    static final String TAG ="DOAING";
+
+    static boolean FLAG =true;
+
     public static void e(String info){
 
-        if(isDebug){
 
-            Log.e("DOAING",info);
+        if(FLAG){
+
+            android.util.Log.e(TAG,info);
+
+        }
+
+    }
+    public static void d(String info){
+
+
+        if(FLAG){
+
+            android.util.Log.d(TAG,info);
+
+        }
+
+    }
+    public static void e(String tag,String content)
+    {
+        if(FLAG){
+            android.util.Log.e(tag,content);
+        }
+    }
+    public static void d(String tag,String content)
+    {
+        if(FLAG){
+            android.util.Log.d(tag,content);
         }
     }
 }
