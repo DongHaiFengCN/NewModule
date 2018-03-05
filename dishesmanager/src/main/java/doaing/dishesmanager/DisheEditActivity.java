@@ -77,7 +77,8 @@ import view.BaseToobarActivity;
  * @author donghaifeng
  */
 
-public class DisheEditActivity extends BaseToobarActivity {
+public class
+DisheEditActivity extends BaseToobarActivity {
 
     String url = "https://www.yaodiandian.net/dishes/";
     private static final int THUMBNAIL_SIZE = 150;
@@ -573,7 +574,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                         database.delete(document);
                         //删除服务器静态资源
                         deletePicturesFromServer();
-                        EventBus.getDefault().postSticky(new Integer(kindPosition));
+                        EventBus.getDefault().postSticky(kindPosition);
                         finish();
 
                     } catch (CouchbaseLiteException e) {
@@ -635,6 +636,7 @@ public class DisheEditActivity extends BaseToobarActivity {
         MutableArray oldArry = mutableDocument.getArray("dishesListId");
 
         for (int i = 0; i < oldArry.count(); i++) {
+
 
             if (oldArry.getString(i).equals(document.getId())) {
 

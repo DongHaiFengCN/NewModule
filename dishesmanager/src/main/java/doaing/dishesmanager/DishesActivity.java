@@ -123,8 +123,9 @@ public class DishesActivity extends BaseToobarActivity {
             @Override
             public void onClick(View view) {
 
-
-                startActivity(new Intent(DishesActivity.this, DisheAddActivity.class));
+                Intent intent = new Intent(DishesActivity.this, DisheAddActivity.class);
+                intent.putExtra("kindPosition",kindPosition);
+                startActivity(intent);
             }
         });
     }
@@ -244,8 +245,9 @@ public class DishesActivity extends BaseToobarActivity {
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void updataPosition(int integer) {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updataPosition(Integer integer) {
+        Log.e("DOAING","主界面返回的位置："+integer);
         if(dishesKindAdapter.getNames().size() == 0){
 
             Toast.makeText(DishesActivity.this,"请先添加菜品！",Toast.LENGTH_SHORT).show();

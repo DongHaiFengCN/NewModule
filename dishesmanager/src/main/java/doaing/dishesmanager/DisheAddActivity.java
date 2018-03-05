@@ -42,6 +42,8 @@ import com.couchbase.lite.SelectResult;
 import com.jakewharton.rxbinding.view.RxView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -105,6 +107,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     String[] strings;
     private int position = 0;
 
+
     @Override
     protected int setMyContentView() {
 
@@ -113,15 +116,15 @@ public class DisheAddActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
-        EventBus.getDefault().register(this);
+
 
         setToolbarName("菜品添加");
 
         disheDocument = new MutableDocument("DishesC." + ToolUtil.getUUID());
         //初始化口味
         initTasteData();
-
-
+       ;
+        disheKindSp.setSelection(intent.getIntExtra("kindPosition",0));
         disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
@@ -164,7 +167,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                 disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
                 MyLog.e("DishesAdd","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
                 disheDocument.setString("className", "DishesC");
-                disheDocument.setString("dataType","BaseData");
+                disheDocument.setString("dataType", "BaseData");
                 if ("".equals(disheName.getText().toString())) {
 
                     disheName.setError("菜品名称不能为空");
@@ -245,7 +248,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-/**
+    /**
      * 加载口味选择器
      */
 
@@ -376,8 +379,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-
-/**
+    /**
      * document附加图片上去
      */
 
@@ -396,7 +398,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-/**
+    /**
      * 获取图片的绝对路径
      *
      * @param contentUri 文件相对路径
@@ -414,7 +416,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-/**
+    /**
      * 上传图片静态资源
      *
      * @param file 菜品图片文件
@@ -462,7 +464,6 @@ public class DisheAddActivity extends BaseToobarActivity {
         });
 
     }
-
 
 }
 
