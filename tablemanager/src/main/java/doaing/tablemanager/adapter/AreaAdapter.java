@@ -36,6 +36,7 @@ import java.util.List;
 import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.R;
 import doaing.tablemanager.TableManagerActivity;
+import tools.MyLog;
 import tools.ToolUtil;
 
 
@@ -206,6 +207,7 @@ public class AreaAdapter extends BaseAdapter {
                             } else {
                                 MutableDocument document = new MutableDocument("AreaC." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
+                                MyLog.e("AreaAdapter","channeldId="+((MyApplication) context.getApplicationContext()).getCompany_ID());
                                 document.setString("className", "AreaC");
                                 document.setString("areaName", editText.getText().toString());
                                 document.setBoolean("isValid", true);

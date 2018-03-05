@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d3eff3"
+
+    android:background="@color/login_md_grey_200"
     android:orientation="vertical"
     tools:context="smartkitchen.com.login.modifyPsw.ModifyPswActivity">
 

@@ -63,6 +63,7 @@ import smartkitchen.com.login.globle.constant;
 import smartkitchen.com.login.model.responseModle;
 import smartkitchen.com.login.register.RegisterActivity;
 import tools.CDBHelper;
+import tools.MyLog;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -347,6 +348,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         CDBHelper.startPushAndPullReplicationForCurrentUser(userName,pwd);
 
                         myapp.setCompany_ID(userName);
+                        MyLog.e("login*********","channeldId="+myapp.getCompany_ID());
 
                         //是否记住密码
                         if(saveloginstatueChk.isChecked())
@@ -420,9 +422,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         return email.length()==11;
     }
 
-    private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() == 6;
+    private boolean isPasswordValid(String password)
+    {
+
+        return password.length() >= 6;
     }
 
     /**
@@ -437,14 +440,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+//            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+//            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+//                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+//                @Override
+//                public void onAnimationEnd(Animator animation) {
+//                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+//                }
+//            });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mProgressView.animate().setDuration(shortAnimTime).alpha(

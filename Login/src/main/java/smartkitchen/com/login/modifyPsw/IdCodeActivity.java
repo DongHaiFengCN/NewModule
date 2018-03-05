@@ -1,5 +1,6 @@
 package smartkitchen.com.login.modifyPsw;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -89,7 +90,9 @@ public class IdCodeActivity extends AppCompatActivity {
                         @Override
                         public void run()
                         {
-
+                            Intent intent = new Intent(getApplicationContext(), NewPswActivity.class);
+                            intent.putExtra(IdCodeActivity.MOBILE,mobileNum);
+                            startActivity(intent);
                         }});
                 }
                 else

@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 
+import doaing.mylibrary.MyApplication;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -145,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
                         //开始同步
                         CDBHelper.getSharedInstance(getApplicationContext());
                         CDBHelper.startPushAndPullReplicationForCurrentUser(userName,psw);
-
+                        ((MyApplication)getApplicationContext()).setCompany_ID(userName);
 
                         //跳转界面
                         ARouter
@@ -161,9 +162,9 @@ public class RegisterActivity extends AppCompatActivity {
                     else
                     {
 
-                        mPsw1.setError(getString(R.string.login_error_incorrect_password));
-                        mPsw1.requestFocus();
-                        Toast.makeText(getApplicationContext(), obj.getData(), Toast.LENGTH_SHORT).show();
+                       // mPsw1.setError(getString(R.string.login_error_incorrect_password));
+                       // mPsw1.requestFocus();
+                        Toast.makeText(getApplicationContext(),""+ obj.getData(), Toast.LENGTH_SHORT).show();
                     }
 
 
