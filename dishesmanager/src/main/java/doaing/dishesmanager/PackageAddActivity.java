@@ -36,6 +36,7 @@ import butterknife.BindView;
 
 import doaing.dishesmanager.widget.DishesKindListView;
 import tools.CDBHelper;
+import tools.MyBigDecimal;
 import view.BaseToobarActivity;
 
 public class PackageAddActivity extends BaseToobarActivity {
@@ -65,16 +66,18 @@ public class PackageAddActivity extends BaseToobarActivity {
     @Override
     public void initData(final Intent intent) {
         setToolbarName("添加二级套餐");
-        if(disheskindLv.getDishesKindList().size() ==0){
-           Toast.makeText(this,"没有菜品",Toast.LENGTH_SHORT).show();
+        if (disheskindLv.getDishesKindList().size() == 0) {
+            Toast.makeText(this, "请添加菜品", Toast.LENGTH_SHORT).show();
+
             finish();
+            return;
         }
         database = CDBHelper.getDatabase();
         packageDcoument = database.getDocument(intent.getExtras().get("id").toString());
 
         disheDcoument = new MutableDocument();
         disheDcoument.setArray("dishesListId", new MutableArray());
-        disheDcoument.setString("dataType","BaseData");
+        disheDcoument.setString("dataType", "BaseData");
 
 
         dishesAdapter = new DishesAdapter();
@@ -83,8 +86,8 @@ public class PackageAddActivity extends BaseToobarActivity {
         disheskindLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                disheskindLv.getDishesKindAdapter().changeSelected(position);
 
+                disheskindLv.getDishesKindAdapter().changeSelected(position);
                 Document dishesKind = disheskindLv.getDishesKindList().get(position);
 
                 Array array = dishesKind.getArray("dishesListId");
@@ -93,10 +96,7 @@ public class PackageAddActivity extends BaseToobarActivity {
                 if (!dishesList.isEmpty()) {
                     dishesList.clear();
                 }
-                if (array == null) {
 
-                    return;
-                }
                 for (int i = 0; i < array.count(); i++) {
 
                     dishesList.add(database.getDocument(array.getString(i)));
@@ -183,10 +183,11 @@ public class PackageAddActivity extends BaseToobarActivity {
                                 } else {
                                     float sum = Float.valueOf(packagePriceEt.getText().toString());
 
-                                    disheDcoument.setString("dishesName",packageNameEt.getText().toString());
+                                    disheDcoument.setString("dishesName", packageNameEt.getText().toString());
 
                                     //保存数据库,设置套餐价格
-                                    disheDcoument.setFloat("price", finalSum * (sum / 100f));
+                                    float discount = MyBigDecimal.div(sum, 100f, 2);
+                                    disheDcoument.setFloat("price", MyBigDecimal.mul(finalSum, discount, 2));
                                     MutableDocument mutableDocument = packageDcoument.toMutable();
                                     mutableDocument.getArray("dishesListId").addString(disheDcoument.getId());
                                     try {
@@ -238,16 +239,16 @@ public class PackageAddActivity extends BaseToobarActivity {
                                             packageNameEt.setError("不能为空！");
 
 
-                                        }else if("".equals(packagePriceEt.getText().toString())){
+                                        } else if ("".equals(packagePriceEt.getText().toString())) {
                                             packagePriceEt.setError("不能为空！");
                                         } else {
 
                                             float sum = Float.valueOf(packagePriceEt.getText().toString());
-                                            disheDcoument.setString("dishesName",packageNameEt.getText().toString());
+                                            disheDcoument.setString("dishesName", packageNameEt.getText().toString());
                                             //保存数据库,设置套餐价格
                                             disheDcoument.setFloat("price", sum);
-                                           MutableDocument mutableDocument = packageDcoument.toMutable();
-                                           mutableDocument.getArray("dishesListId").addString(disheDcoument.getId());
+                                            MutableDocument mutableDocument = packageDcoument.toMutable();
+                                            mutableDocument.getArray("dishesListId").addString(disheDcoument.getId());
                                             try {
                                                 database.save(mutableDocument);
                                                 database.save(disheDcoument);
