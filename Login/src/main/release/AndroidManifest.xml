@@ -29,7 +29,7 @@
 
         <activity android:name="smartkitchen.com.login.register.RegisterActivity"
             android:theme="@style/LoginAppTheme"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             >
         </activity>
 

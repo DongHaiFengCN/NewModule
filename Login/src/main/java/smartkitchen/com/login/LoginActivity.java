@@ -524,12 +524,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 public void onClickRegister(View v)
 {
-    Intent intent = new Intent(this, RegisterActivity.class);
+    Intent intent = new Intent(this, ForgetActivity.class);
+    intent.putExtra("type","1");//用户注册
     startActivity(intent);
 }
 public void onClickForget(View v)
 {
     Intent intent = new Intent(this, ForgetActivity.class);
+    intent.putExtra("type","0");//用户忘记密码
     startActivity(intent);
 }
 

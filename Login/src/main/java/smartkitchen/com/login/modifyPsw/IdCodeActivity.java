@@ -15,16 +15,21 @@ import android.widget.Toast;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import smartkitchen.com.login.R;
+import smartkitchen.com.login.forgetPsw.ForgetActivity;
+import smartkitchen.com.login.register.RegisterActivity;
+import tools.MyLog;
 
 
 public class IdCodeActivity extends AppCompatActivity {
 
     public static  String MOBILE = "mobileNum";
+    public static  String OPENTYPE = "type";
     TextView mResend;
     EditText mIdcode;
     TextView  mInfo1,mInfo2;
     private String    mobileNum;
     private MyCountDownTimer mc;
+    private String openType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -38,7 +43,8 @@ public class IdCodeActivity extends AppCompatActivity {
         mInfo1 = findViewById(R.id.login_idcode_info1);
         mInfo2 = findViewById(R.id.login_idcode_info2);
         mobileNum = getIntent().getStringExtra(MOBILE);
-
+        openType = getIntent().getStringExtra(OPENTYPE);
+        MyLog.e(getPackageName(),"opentype="+openType);
         if(TextUtils.isEmpty(mobileNum))
         {
             return;
@@ -57,6 +63,7 @@ public class IdCodeActivity extends AppCompatActivity {
                         @Override
                         public void run()
                         {
+                            mInfo1.setText("验证码已经发送至：");
                             mInfo2.setText(mobileNum);
                             mc = new MyCountDownTimer(60000, 1000);
                             mc.start();
@@ -90,9 +97,19 @@ public class IdCodeActivity extends AppCompatActivity {
                         @Override
                         public void run()
                         {
-                            Intent intent = new Intent(getApplicationContext(), NewPswActivity.class);
-                            intent.putExtra(IdCodeActivity.MOBILE,mobileNum);
-                            startActivity(intent);
+                            if(openType.equals("0"))//忘记密码
+                            {
+                                Intent intent = new Intent(IdCodeActivity.this, NewPswActivity.class);
+                                intent.putExtra(IdCodeActivity.MOBILE,mobileNum);
+                                startActivity(intent);
+                            }
+                            else if(openType.equals("1"))//用户注册
+                            {
+                                Intent intent = new Intent(IdCodeActivity.this, RegisterActivity.class);
+                                intent.putExtra(IdCodeActivity.MOBILE,mobileNum);
+                                startActivity(intent);
+                            }
+
                         }});
                 }
                 else

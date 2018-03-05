@@ -29,7 +29,8 @@ dependencies {
     implementation rootProject.ext.libSupportDesign
     // 要与compiler匹配使用，均使用最新版可以保证兼容
     compile files('libs/pinyin4j_android.jar')
-    compile files('libs/modlelib0226.jar')
+    compile project(':DataModle')
+    //compile files('libs/modlelib0226.jar')
     //Butterknife
     implementation rootProject.ext.libButterknife
     //RxAndroid 相关库

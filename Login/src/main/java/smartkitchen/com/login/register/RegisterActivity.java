@@ -1,5 +1,6 @@
 package smartkitchen.com.login.register;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -22,21 +23,25 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import smartkitchen.com.login.LoginActivity;
 import smartkitchen.com.login.R;
+import smartkitchen.com.login.forgetPsw.ForgetActivity;
 import smartkitchen.com.login.globle.constant;
 import smartkitchen.com.login.model.responseModle;
+import smartkitchen.com.login.modifyPsw.IdCodeActivity;
 import tools.CDBHelper;
 
 public class RegisterActivity extends AppCompatActivity {
 
     private View mProgressView;
-    private EditText mTelNum,mPsw1,mPsw2,mPointName,mPointAddress;
+    private EditText mPsw1,mPsw2,mPointName,mPointAddress;
+    private String mobile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_register);
 
-        mTelNum = findViewById(R.id.telephone_edtTxt);
+        mobile = getIntent().getStringExtra(IdCodeActivity.MOBILE);
         mPsw1 = findViewById(R.id.password1_edtTxt);
         mPsw2 = findViewById(R.id.password2_edtTxt);
         mPointName = findViewById(R.id.pointName_edtTxt);
@@ -48,26 +53,14 @@ public class RegisterActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
         // Reset errors.
-        mTelNum.setError(null);
         mPsw1.setError(null);
         mPsw2.setError(null);
         //取值
-        String mobile = mTelNum.getText().toString();
         String psw1 = mPsw1.getText().toString();
         String psw2 = mPsw2.getText().toString();
         String pointName = mPointName.getText().toString();
         String pointAddress = mPointAddress.getText().toString();
         //验证数据正确性
-        // Check for a valid tel.
-        if (TextUtils.isEmpty(mobile)) {
-            mTelNum.setError(getString(R.string.login_error_field_required));
-            focusView = mTelNum;
-            cancel = true;
-        } else if (!isTelNumValid(mobile)) {
-            mTelNum.setError(getString(R.string.login_error_invalid_tel));
-            focusView = mTelNum;
-            cancel = true;
-        }
         // Check for psw.
         if (!TextUtils.isEmpty(psw1) && !isPasswordValid(psw1))
         {
@@ -144,18 +137,21 @@ public class RegisterActivity extends AppCompatActivity {
                         String userName = obj.getData();
                         String psw =  mPsw1.getText().toString();
                         //开始同步
-                        CDBHelper.getSharedInstance(getApplicationContext());
-                        CDBHelper.startPushAndPullReplicationForCurrentUser(userName,psw);
-                        ((MyApplication)getApplicationContext()).setCompany_ID(userName);
+//                        CDBHelper.getSharedInstance(getApplicationContext());
+//                        CDBHelper.startPushAndPullReplicationForCurrentUser(userName,psw);
+//                        ((MyApplication)getApplicationContext()).setCompany_ID(userName);
+//
+//                        //跳转界面
+//                        ARouter
+//                                .getInstance()
+//                                .build("/order/DeskActivity")
+//                                .withString("mobile",mPointName.getText().toString())
+//                                .withString("channelId",userName)
+//                                .navigation();
 
-                        //跳转界面
-                        ARouter
-                                .getInstance()
-                                .build("/order/DeskActivity")
-                                .withString("mobile",mPointName.getText().toString())
-                                .withString("channelId",userName)
-                                .navigation();
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
 
+                        startActivity(intent);
 
                         finish();
                     }
@@ -164,7 +160,7 @@ public class RegisterActivity extends AppCompatActivity {
 
                        // mPsw1.setError(getString(R.string.login_error_incorrect_password));
                        // mPsw1.requestFocus();
-                        Toast.makeText(getApplicationContext(),""+ obj.getData(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),""+ obj.getMessage(), Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -180,14 +176,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
-
-    private boolean isTelNumValid(String num) {
-        //TODO: Replace this with your own logic
-        return num.length()==11;
-    }
-
     private boolean isPasswordValid(String password)
     {
-        return password.length() == 6;
+        return password.length() >= 6;
     }
 }

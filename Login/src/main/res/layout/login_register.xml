@@ -9,10 +9,7 @@
     android:background="@color/login_md_grey_200"
     tools:context="smartkitchen.com.login.register.RegisterActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,30 +19,8 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 app:counterEnabled="true"
-                app:counterMaxLength="11"
-                app:hintEnabled="true">
-
-                <EditText
-                    android:id="@+id/telephone_edtTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@color/login_md_white_1000"
-                    android:hint="手机号"
-                    android:inputType="number|phone"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:counterEnabled="true"
-                app:counterMaxLength="6">
+                app:counterMaxLength="16">
 
                 <EditText
                     android:id="@+id/password1_edtTxt"
@@ -55,8 +30,9 @@
 
                     android:layout_marginRight="16dp"
                     android:background="@color/login_md_white_1000"
-                    android:hint="密码"
+                    android:hint="6~16位数字或字母"
                     android:inputType="numberPassword"
+                    android:maxLength="16"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp" />
             </android.support.design.widget.TextInputLayout>
@@ -65,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:counterEnabled="true"
-                app:counterMaxLength="6">
+                app:counterMaxLength="16">
 
 
                 <EditText
@@ -77,6 +53,7 @@
                     android:background="@color/login_md_white_1000"
                     android:hint="密码确认"
                     android:inputType="numberPassword"
+                    android:maxLength="16"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp" />
 
@@ -127,10 +104,5 @@
         </LinearLayout>
 
 
-    </ScrollView>
 
-    <TextView
-        android:id="@+id/login_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 </LinearLayout>

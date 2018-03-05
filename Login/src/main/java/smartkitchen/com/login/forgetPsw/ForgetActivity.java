@@ -13,11 +13,14 @@ import smartkitchen.com.login.modifyPsw.IdCodeActivity;
 public class ForgetActivity extends AppCompatActivity {
 
     EditText   mTelNum;
+    String openType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_forget);
         mTelNum = findViewById(R.id.telephone_edtTxt);
+        openType = getIntent().getStringExtra("type");
+
     }
     public void onClickNext(View v)
     {
@@ -45,6 +48,7 @@ public class ForgetActivity extends AppCompatActivity {
             //发送验证码
             Intent intent = new Intent(this, IdCodeActivity.class);
             intent.putExtra(IdCodeActivity.MOBILE,mobile);
+            intent.putExtra(IdCodeActivity.OPENTYPE,openType);
             startActivity(intent);
         }
     }
