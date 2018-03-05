@@ -4,7 +4,8 @@
     package="smartkitchen.com.main">
 <application
     android:name="doaing.MainApplication"
-    tools:replace="android:name,label"
+    android:theme="@style/LoginAppTheme"
+    tools:replace="android:name,label,theme"
     android:allowBackup="true"
     android:icon="@mipmap/icon"
     android:label="点餐宝"

@@ -85,7 +85,7 @@ public class CDBHelper implements ReplicatorChangeListener
     {
 
             DatabaseConfiguration config = new DatabaseConfiguration(context);
-            File folder = new File(String.format("%s/ReserverApp", Environment.getExternalStorageDirectory()));
+            File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
             config.setDirectory(folder.getAbsolutePath());
             try {
                 db = new Database(dbName, config);

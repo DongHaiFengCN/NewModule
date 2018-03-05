@@ -65,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:counterEnabled="true"
-                app:counterMaxLength="6">
+                app:counterMaxLength="16">
 
                 <EditText
                     android:id="@+id/password"
@@ -79,6 +79,7 @@
                     android:imeActionLabel="@string/login_action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
+                    android:maxLength="16"
                     android:maxLines="1"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"

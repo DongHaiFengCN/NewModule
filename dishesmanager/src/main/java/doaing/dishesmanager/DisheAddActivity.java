@@ -66,6 +66,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.functions.Action1;
 import tools.CDBHelper;
+import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -161,6 +162,7 @@ public class DisheAddActivity extends BaseToobarActivity {
             public void call(Void aVoid) {
 
                 disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
+                MyLog.e("DishesAdd","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
                 disheDocument.setString("className", "DishesC");
                 disheDocument.setString("dataType","BaseData");
                 if ("".equals(disheName.getText().toString())) {

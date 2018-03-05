@@ -102,7 +102,7 @@ public class NewOrderService extends Service {
 
         registerPrinterBroadcast();
         Tag = getPackageName();
-        Log.e(Tag,"onStartCommand");
+        Log.e(Tag,"************NewOrderService   started*********");
         mGpService = DeskActivity.getmGpService();
        //只执行一个，后面的排队
         myExecutor   = Executors.newScheduledThreadPool(1);
@@ -135,6 +135,7 @@ public class NewOrderService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(PrinterStatusBroadcastReceiver);
     }
 
     @Override

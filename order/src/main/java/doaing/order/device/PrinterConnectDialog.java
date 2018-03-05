@@ -128,6 +128,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
         else
         {
             Log.e("test","find null");
+            obj_qrcodepay = new qrcodeC(myapp.getCompany_ID());
         }
 
 

@@ -231,7 +231,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         myApp = (MyApplication) getApplicationContext();
-
         SharedPreferences sharedPreferences = getSharedPreferences("T9andOrder", 0);
 
         isFlag = sharedPreferences.getBoolean("isFlag",true);

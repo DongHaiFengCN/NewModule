@@ -42,6 +42,7 @@ import java.util.List;
 import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.adapter.AreaAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -296,6 +297,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 }else{
                                     MutableDocument mutableDocument = new MutableDocument("TableC." + ToolUtil.getUUID());
                                     mutableDocument.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
+                                    MyLog.e("AreaAdapter","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
                                     mutableDocument.setString("className", "TableC");
                                     mutableDocument.setString("tableName", tableNameEt.getText().toString());
                                     mutableDocument.setString("dataType", "BaseData");
@@ -378,12 +380,16 @@ public class TableManagerActivity extends BaseToobarActivity {
             android.util.Log.e("getDocmentsByClass", "Exception=", e);
         }
 
-        if (documentList.size() > 0) {
+        if (documentList.size() > 0)
+        {
+
             Document document = documentList.get(0);
+            MyLog.e("*******_____","size="+documentList.size()+"---"+document.toMap().toString());
             maxNum = document.getString("tableNum");
             int temp = Integer.valueOf(maxNum).intValue();
             maxNum = String.format("%3d", temp + 1).replace(" ", "0");
-        } else if (documentList.size() == 0) {
+        } else if (documentList.size() == 0)
+        {
             maxNum = "001";
         }
         return maxNum;
