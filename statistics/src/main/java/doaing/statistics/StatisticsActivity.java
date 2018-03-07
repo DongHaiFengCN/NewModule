@@ -1,4 +1,5 @@
 package doaing.statistics;
+
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -6,19 +7,39 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.Ordering;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
+
 import java.util.Calendar;
+
 import doaing.test.R;
+import tools.CDBHelper;
 import view.BaseToobarActivity;
+
 /**
  * @author donghaifeng
  */
 public class StatisticsActivity extends BaseToobarActivity {
 
+    private Database database;
     @Override
     protected int setMyContentView() {
         return (R.layout.activity_statistics);
@@ -26,8 +47,11 @@ public class StatisticsActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
+
         setToolbarName("统计");
+        database = CDBHelper.getDatabase();
     }
+
     @Override
     protected Toolbar setToolBarInfo() {
         return findViewById(R.id.toolbar);
@@ -57,13 +81,11 @@ public class StatisticsActivity extends BaseToobarActivity {
                 @Override
                 public void onClick(View v) {
                     createDatePickerDialog(year, month, day, startTv, 0);
-
                 }
             });
             endTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     createDatePickerDialog(year, month, day, endTv, 1);
                 }
             });
@@ -73,6 +95,40 @@ public class StatisticsActivity extends BaseToobarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
+                    if (startTv.getText().length() > 0 && endTv.getText().length() > 0) {
+
+
+                        Log.e("DOAING","全有");
+
+                    } else if (startTv.getText().length() > 0 && endTv.getText().length() == 0) {
+                        Log.e("DOAING","有开始时间");
+
+                    } else if (startTv.getText().length() == 0 && endTv.getText().length() > 0) {
+                        Log.e("DOAING","有结束时间");
+
+                    }else {
+
+                        Database database = CDBHelper.getDatabase();
+
+                        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
+                                .from(DataSource.database(database)).where(Expression.property("className")
+                                        .equalTo(Expression.string("CheckOrderC")));
+                        try {
+                            ResultSet resultSet = query.execute();
+                            Result row;
+                            while ((row = resultSet.next()) != null) {
+                                String id = row.getString(0);
+
+                                Log.e("DOAING",id);
+
+
+                            }
+                        } catch (CouchbaseLiteException e) {
+                            android.util.Log.e("getDocmentsByClass", "Exception=", e);
+                        }
+
+
+                    }
 
                 }
             });
@@ -81,6 +137,7 @@ public class StatisticsActivity extends BaseToobarActivity {
         }
         return true;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void createDatePickerDialog(int year, int month, int day, final TextView textView, int position) {
         //日历控件
@@ -88,7 +145,9 @@ public class StatisticsActivity extends BaseToobarActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-                textView.setText(year + "/" + (month + 1) + "/" + dayOfMonth);
+                String Month=String.format("%02d",(month + 1));
+                String Day=String.format("%02d", dayOfMonth);
+                textView.setText(year + "-" + Month + "-" + Day);
 
             }
         }, year, month, day);

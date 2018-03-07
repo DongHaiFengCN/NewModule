@@ -3,35 +3,20 @@ package doaing.mylibrary;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Environment;
 
 import com.alibaba.android.arouter.launcher.ARouter;
-import com.couchbase.lite.BasicAuthenticator;
-import com.couchbase.lite.Conflict;
-import com.couchbase.lite.ConflictResolver;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
-import com.couchbase.lite.DatabaseConfiguration;
 import com.couchbase.lite.Document;
-import com.couchbase.lite.Replicator;
-import com.couchbase.lite.ReplicatorChange;
-import com.couchbase.lite.ReplicatorChangeListener;
-import com.couchbase.lite.ReplicatorConfiguration;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import bean.kitchenmanage.dishes.DishesKindC;
 import bean.kitchenmanage.table.TableC;
 import bean.kitchenmanage.user.UsersC;
+import tools.CDBHelper;
 
 /**
  * 项目名称：Order
@@ -101,8 +86,13 @@ public class MyApplication extends Application implements ISharedPreferences {
         mExecutor = Executors.newCachedThreadPool();
         //初始化阿里路由
         ARouter.openDebug();
-        ARouter.init(this); // 尽可能早，推荐在Application中初始化
+        // 尽可能早，推荐在Application中初始化
+        ARouter.init(this);
 
+        //---------------------------------------
+        //测试开发模式下初始化数据，发布版本时注释掉
+        //---------------------------------------
+        CDBHelper.getSharedInstance(this);
     }
 
 

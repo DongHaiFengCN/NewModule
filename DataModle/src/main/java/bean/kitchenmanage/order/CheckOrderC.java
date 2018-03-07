@@ -38,7 +38,7 @@ public class CheckOrderC {
 	/**
 	 * 包含的订单
 	 */
-	private List<OrderC> orderList;
+	private List<String> orderList;
 	/**
 	 * 结账日期
 	 *  yyyy-MM-dd HH:mm:ss
@@ -127,16 +127,16 @@ public class CheckOrderC {
 		this._id = _id;
 	}
 
-	public List<OrderC> getOrderList() {
+	public List<String> getOrderList() {
 		return orderList;
 	}
-	public void addOrder(OrderC obj)
+	public void addOrder(String obj)
 	{
 		if(orderList==null)
-			orderList=new ArrayList<OrderC>();
+			orderList=new ArrayList<String>();
 		orderList.add(obj);
 	}
-	public void setOrderList(List<OrderC> orderList) {
+	public void setOrderList(List<String> orderList) {
 		this.orderList = orderList;
 	}
 

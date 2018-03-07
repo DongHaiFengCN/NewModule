@@ -16,13 +16,12 @@ android {
         }
     }
 }
-
-
-
 dependencies {
     implementation project(':mylibrary')
-    implementation project(':Login')
-    implementation project(':order')
-    implementation project(':dishesmanager')
-    implementation project(':tablemanager')
+    releaseCompile project(':Login')
+    releaseCompile  project(':order')
+    releaseCompile  project(':dishesmanager')
+    releaseCompile  project(':tablemanager')
+    debugCompile project(':statistics')
+
 }
