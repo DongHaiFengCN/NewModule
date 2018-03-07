@@ -23,7 +23,7 @@ import doaing.test.R;
 import tools.CDBHelper;
 import view.BaseToobarActivity;
 
-public class BestSellersActivity extends BaseToobarActivity {
+public class  BestSellersActivity extends BaseToobarActivity {
     private Database database;
 
 

@@ -38,7 +38,7 @@ import view.BaseToobarActivity;
 /**
  * @author donghaifeng
  */
-@Route(path = "/dishes/StatisticsActivity")
+@Route(path = "/statistics/StatisticsActivity")
 public class StatisticsActivity extends BaseToobarActivity {
 
     private Database database;

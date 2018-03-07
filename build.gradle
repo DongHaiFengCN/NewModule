@@ -62,7 +62,7 @@ ext{
     libSupportAppcompat = "com.android.support:appcompat-v7:${supportVersion}"
     libSupportDesign = "com.android.support:design:${supportVersion}"
     libSupportRecyclerview = "com.android.support:recyclerview-v7:${supportVersion}"
-    libSupportV4 = "com.android.support:support-v4:${supportVersion}"
+    libSupportV4 = "com.android.support:support-v4:23.0.0"
     libSupportConstraint = "com.android.support.constraint:constraint-layout:${constraintVersion}"
 
 

@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -49,7 +50,7 @@ import view.BaseToobarActivity;
 /**
  * @author donghaifeng
  */
-@Route(path = "/table/TableManagerActivity")
+@Route(path = "/tablemanager/TableManagerActivity")
 public class TableManagerActivity extends BaseToobarActivity {
     int POSITION = 0;
 

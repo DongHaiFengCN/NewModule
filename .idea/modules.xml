@@ -2,15 +2,20 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/DataModle/DataModle.iml" filepath="$PROJECT_DIR$/DataModle/DataModle.iml" />
       <module fileurl="file://$PROJECT_DIR$/Login/Login.iml" filepath="$PROJECT_DIR$/Login/Login.iml" />
       <module fileurl="file://D:\AndroidStudio\NewModuleCS\Login\Login.iml" filepath="D:\AndroidStudio\NewModuleCS\Login\Login.iml" />
       <module fileurl="file://D:\AndroidStudio\NewModuleCS\NewModule.iml" filepath="D:\AndroidStudio\NewModuleCS\NewModule.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NewModuleCS.iml" filepath="$PROJECT_DIR$/NewModuleCS.iml" />
+      <module fileurl="file://C:\CloudMusic\T\NewModule_2\NewModuleCS.iml" filepath="C:\CloudMusic\T\NewModule_2\NewModuleCS.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/NewModule_2.iml" filepath="$PROJECT_DIR$/.idea/NewModule_2.iml" />
       <module fileurl="file://D:\AndroidStudio\NewModuleCS\PadModule.iml" filepath="D:\AndroidStudio\NewModuleCS\PadModule.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/dishesmanager/dishesmanager.iml" filepath="$PROJECT_DIR$/dishesmanager/dishesmanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/mylibrary/mylibrary.iml" filepath="$PROJECT_DIR$/mylibrary/mylibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/order/order.iml" filepath="$PROJECT_DIR$/order/order.iml" />
+      <module fileurl="file://$PROJECT_DIR$/statistics/statistics.iml" filepath="$PROJECT_DIR$/statistics/statistics.iml" />
       <module fileurl="file://$PROJECT_DIR$/tablemanager/tablemanager.iml" filepath="$PROJECT_DIR$/tablemanager/tablemanager.iml" />
+      <module fileurl="file://C:\CloudMusic\T\NewModule_2\statistics\test.iml" filepath="C:\CloudMusic\T\NewModule_2\statistics\test.iml" />
     </modules>
   </component>
 </project>

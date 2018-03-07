@@ -685,7 +685,7 @@ public class DeskActivity extends AppCompatActivity {
 
         }  else if (i == R.id.action_dishes) {
 
-            ARouter.getInstance().build("/dishes/DishesManagerMainActivity").navigation();
+            ARouter.getInstance().build("/dishesmanager/DishesManagerMainActivity").navigation();
 
         }else if (i == R.id.action_device) {
 
@@ -693,9 +693,9 @@ public class DeskActivity extends AppCompatActivity {
             startActivity(intent);
 
         }else if (i == R.id.action_table){
-            ARouter.getInstance().build("/table/TableManagerActivity").navigation();
+            ARouter.getInstance().build("/tablemanager/TableManagerActivity").navigation();
         }else if (i == R.id.action_tj){
-            ARouter.getInstance().build("/dishes/StatisticsActivity").navigation();
+            ARouter.getInstance().build("/statistics/StatisticsActivity").navigation();
         }
         return true;
     }
