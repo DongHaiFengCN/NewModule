@@ -32,6 +32,11 @@
            app:showAsAction="never"
            android:title="桌位管理"/>
 
+       <item android:id="@+id/action_tj"
+           android:icon="@drawable/animcut"
+           app:showAsAction="never"
+           android:title="统计管理"/>
+
 
 
 </menu>

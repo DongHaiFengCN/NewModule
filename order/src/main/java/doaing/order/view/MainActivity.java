@@ -188,9 +188,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PRINT_RECEIPT = 0xfc;
 
     //private boolean printerSat = false;
-
     private int changeFlag = 0;
-
     private ProgressDialog proDialog = null;
 
     private int printerType = 58;
@@ -304,8 +302,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
 
     }
-
-
 
     @Override
 
@@ -1030,139 +1026,127 @@ public class MainActivity extends AppCompatActivity {
                 } else {
 
 
-
                     if (getGoodsList().size() > 0) {
 
 
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-
-                        View view1 = getLayoutInflater().inflate(R.layout.view_pay_dialog, null);
-
-                        builder.setView(view1);
-
-                        builder.setCancelable(true);
-
-                        final AlertDialog dialog = builder.create();
-
-                        Button shi = view1.findViewById(R.id.view_pay_shi);
-
-                        Button fou = view1.findViewById(R.id.view_pay_fou);
-
-                        shi.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-
-                            public void onClick(View v)
-
-                            {
-
-
-
-                                changeFlag = 0;
-                                proDialog.setTitle("提示");
-                                proDialog.setMessage("正在生成订单信息...");
-                                proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
-                                proDialog.show();
-                                uiHandler.obtainMessage(0).sendToTarget();
-                                dialog.dismiss();
-                            }
-
-                        });
-
-                        fou.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-
-                            public void onClick(View v)
-
-                            {
-                                changeFlag = 1;
-                                proDialog = new ProgressDialog( MainActivity.this);
-                                proDialog.setTitle("提示");
-                                proDialog.setMessage("正在生成订单信息...");
-                                proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
-                                proDialog.show();
-                                uiHandler.obtainMessage(0).sendToTarget();
-                                dialog.dismiss();
-
-
-
-
-
-                            }
-
-                        });
-
-
-
-                        Button dy = view1.findViewById(R.id.view_pay_dy);
-
-                        dy.setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-
-                            public void onClick(View v)
-
-                            {
-
-                                changeFlag = 2;
-
-                                proDialog = new ProgressDialog( MainActivity.this);
-
-                                proDialog.setTitle("提示");
-
-                                proDialog.setMessage("正在生成订单信息...");
-
-                                proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
-
-                                proDialog.show();
-
-
-
-                                uiHandler.obtainMessage(1).sendToTarget();//
-
-
-
-                                dialog.dismiss();
-
-
-
-                            }
-
-                        });
-
-
-
-                        dialog.show();
-
-
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//
+//                        View view1 = getLayoutInflater().inflate(R.layout.view_pay_dialog, null);
+//
+//                        builder.setView(view1);
+//
+//                        builder.setCancelable(true);
+//
+//                        final AlertDialog dialog = builder.create();
+//
+//                        Button shi = view1.findViewById(R.id.view_pay_shi);
+//
+//                        Button fou = view1.findViewById(R.id.view_pay_fou);
+//
+//                        shi.setOnClickListener(new View.OnClickListener() {
+//
+//                            @Override
+//
+//                            public void onClick(View v)
+//
+//                            {
+//
+//
+//
+//                                changeFlag = 0;
+//                                proDialog.setTitle("提示");
+//                                proDialog.setMessage("正在生成订单信息...");
+//                                proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+//                                proDialog.show();
+//                                uiHandler.obtainMessage(0).sendToTarget();
+//                                dialog.dismiss();
+//                            }
+//
+//                        });
+//
+//                        fou.setOnClickListener(new View.OnClickListener() {
+//
+//                            @Override
+//
+//                            public void onClick(View v)
+//
+//                            {
+//                                changeFlag = 1;
+//                                proDialog = new ProgressDialog( MainActivity.this);
+//                                proDialog.setTitle("提示");
+//                                proDialog.setMessage("正在生成订单信息...");
+//                                proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+//                                proDialog.show();
+//                                uiHandler.obtainMessage(0).sendToTarget();
+//                                dialog.dismiss();
+//
+//
+//
+//
+//
+//                            }
+//
+//                        });
+//
+//
+//
+//                        Button dy = view1.findViewById(R.id.view_pay_dy);
+//
+//                        dy.setOnClickListener(new View.OnClickListener() {
+//
+//                            @Override
+//
+//                            public void onClick(View v)
+//
+//                            {
+//
+//                                changeFlag = 2;
+//
+//                                proDialog = new ProgressDialog( MainActivity.this);
+//
+//                                proDialog.setTitle("提示");
+//
+//                                proDialog.setMessage("正在生成订单信息...");
+//
+//                                proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+//
+//                                proDialog.show();
+//
+//
+//
+//                                uiHandler.obtainMessage(1).sendToTarget();//
+//
+//
+//
+//                                dialog.dismiss();
+//
+//
+//
+//                            }
+//
+//                        });
+//
+//
+//
+//                        dialog.show();
+                        changeFlag = 1;
+                        proDialog = new ProgressDialog(MainActivity.this);
+                        proDialog.setTitle("提示");
+                        proDialog.setMessage("正在生成订单信息...");
+                        proDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+                        proDialog.show();
+                        uiHandler.obtainMessage(0).sendToTarget();
 
                     } else {
 
 
-
                         Toast.makeText(MainActivity.this, "订单为空！", Toast.LENGTH_SHORT).show();
-
                     }
-
-
-
-
-
                 }
-
-
-
             }
 
         });
-
     }
-
-
-
-
 
     private void setOrderDialog() {
 
@@ -2938,25 +2922,31 @@ public class MainActivity extends AppCompatActivity {
                     uiHandler.obtainMessage(5).sendToTarget();//跳转界面
                     break;
                 case 5:
-                    if(changeFlag==0)
-                    {
-                        Intent intent = new Intent(MainActivity.this, PayActivity.class);
-                        startActivityForResult(intent, 1);
-                        finish();
-                    }
-                    else if(changeFlag ==1)
-                    {
-                        Intent intent = new Intent(MainActivity.this, DeskActivity.class);
+
+                    if (changeFlag != 0){
+                        Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
                         startActivity(intent);
                         finish();
                     }
-                    else if(changeFlag ==2)
-                    {
-                        Intent intent = new Intent(MainActivity.this, DeskActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                    break;
+//                    if(changeFlag==0)
+//                    {
+//                        Intent intent = new Intent(MainActivity.this, PayActivity.class);
+//                        startActivityForResult(intent, 1);
+//                        finish();
+//                    }
+//                    else if(changeFlag ==1)
+//                    {
+//                        Intent intent = new Intent(MainActivity.this, DeskActivity.class);
+//                        startActivity(intent);
+//                        finish();
+//                    }
+//                    else if(changeFlag ==2)
+//                    {
+//                        Intent intent = new Intent(MainActivity.this, DeskActivity.class);
+//                        startActivity(intent);
+//                        finish();
+//                    }
+//                    break;
                 default:
                     break;
             }

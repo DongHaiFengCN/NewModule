@@ -128,7 +128,9 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.printText(areaCs.getAreaName()+"/"+m.getTable_sel_obj().getTableName()+"\n\n");
             PrintUtils.selectCommand(PrintUtils.NORMAL);
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
-            PrintUtils.printText(PrintUtils.printTwoData("订单编号", checkOrderC.getOrderList().get(0).getSerialNum()+"\n"));
+            //TODO(通过OrderID 获取Oroder对象)
+            OrderC orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),checkOrderC.getOrderList().get(0),OrderC.class);
+            PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getOrderNum()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("下单时间", checkOrderC.getCheckTime()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getCurrentPersions(), "收银员："+waiter+"\n"));
             PrintUtils.printText("--------------------------------\n");
@@ -256,8 +258,8 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
     private void setAll() {
         boolean flag = false;
 
-
-        for (OrderC orderC : checkOrderC.getOrderList()) {
+        for (String orderCId: checkOrderC.getOrderList()) {
+            OrderC orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),orderCId,OrderC.class);
 
             for (GoodsC goodsb : orderC.getGoodsList()) {
                 flag = false;

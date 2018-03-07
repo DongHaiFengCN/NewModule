@@ -178,7 +178,7 @@ public class DeskActivity extends AppCompatActivity {
 
     private void initWidget()
     {
-
+        CDBHelper.getSharedInstance(getApplicationContext());
         db = CDBHelper.getDatabase();
         if(db == null) throw new IllegalArgumentException();
         areaAdapter = new AreaAdapter(this, db);
@@ -407,7 +407,7 @@ public class DeskActivity extends AppCompatActivity {
                                                         checkOrderC = checkOrderCS.get(f);
                                                         for (int i = 0; i < checkOrderC.getOrderList().size(); i++) {
 
-                                                            OrderC orderC = checkOrderC.getOrderList().get(i);
+                                                            OrderC orderC = CDBHelper.getObjById(getApplicationContext(),checkOrderC.getOrderList().get(i),OrderC.class);
                                                             orderC.setOrderState(1);
                                                             CDBHelper.createAndUpdate(getApplicationContext(), orderC);
                                                         }
@@ -437,9 +437,10 @@ public class DeskActivity extends AppCompatActivity {
 
                                                     for (int i = 0; i < checkOrderC.getOrderList().size(); i++) {
 
-                                                        OrderC orderC = checkOrderC.getOrderList().get(i);
+                                                        OrderC orderC = CDBHelper.getObjById(getApplicationContext(),checkOrderC.getOrderList().get(i),OrderC.class);
                                                         orderC.setOrderState(1);
                                                         CDBHelper.createAndUpdate(getApplicationContext(), orderC);
+
                                                     }
 
                                                     //删除之前的checkorder记录
@@ -693,8 +694,8 @@ public class DeskActivity extends AppCompatActivity {
 
         }else if (i == R.id.action_table){
             ARouter.getInstance().build("/table/TableManagerActivity").navigation();
-        }else {
-
+        }else if (i == R.id.action_tj){
+            ARouter.getInstance().build("/dishes/StatisticsActivity").navigation();
         }
         return true;
     }

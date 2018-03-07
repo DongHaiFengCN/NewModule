@@ -13,7 +13,11 @@ android {
         versionName rootProject.ext.android.versionName
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
     }
 
     buildTypes {
@@ -29,6 +33,9 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
+    //阿里路由
+    implementation rootProject.ext.libAlibaba
+    annotationProcessor libArouter_compiler
     implementation project(':mylibrary')
 
 }

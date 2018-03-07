@@ -18,10 +18,10 @@ android {
 }
 dependencies {
     implementation project(':mylibrary')
-    releaseCompile project(':Login')
-    releaseCompile  project(':order')
-    releaseCompile  project(':dishesmanager')
-    releaseCompile  project(':tablemanager')
+    debugCompile project(':Login')
+    debugCompile  project(':order')
+    debugCompile  project(':dishesmanager')
+    debugCompile  project(':tablemanager')
     debugCompile project(':statistics')
 
 }

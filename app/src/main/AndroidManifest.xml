@@ -4,16 +4,18 @@
     package="smartkitchen.com.main">
 <application
     android:name="doaing.MainApplication"
+    tools:replace="android:name"
     android:icon="@mipmap/icon"
      >
-<!--    <activity android:name="smartkitchen.com.login.LoginActivity"
-        android:theme="@style/LoginAppTheme">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>-->
-    <activity android:name="doaing.statistics.StatisticsActivity"
+    <!--<activity android:name="smartkitchen.com.login.LoginActivity"-->
+        <!--android:theme="@style/LoginAppTheme">-->
+        <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.MAIN" />-->
+            <!--<category android:name="android.intent.category.LAUNCHER" />-->
+        <!--</intent-filter>-->
+    <!--</activity>-->
+
+    <activity android:name="doaing.order.view.DeskActivity"
         >
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />

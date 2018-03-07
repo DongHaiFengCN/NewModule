@@ -15,6 +15,7 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.android.arouter.facade.annotation.Route;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
@@ -37,6 +38,7 @@ import view.BaseToobarActivity;
 /**
  * @author donghaifeng
  */
+@Route(path = "/dishes/StatisticsActivity")
 public class StatisticsActivity extends BaseToobarActivity {
 
     private Database database;
