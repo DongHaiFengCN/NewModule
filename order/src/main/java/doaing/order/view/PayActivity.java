@@ -172,12 +172,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").ascending()
                 , OrderC.class);
-
+        Log.e("DOAING","订单个数："+orderCList.size()+"");
         for (OrderC orderC : orderCList) {
-            if (orderC.getOrderCType() == 0)//正常订单
-            {
-                total = MyBigDecimal.add(total, orderC.getAllPrice(), 1);
-            }
+            Log.e("DOAING","订单价格："+orderC.getAllPrice()+"");
+            total = MyBigDecimal.add(total, orderC.getAllPrice(), 1);
             checkOrder.addOrder(orderC.get_id());
             //获取当前订单下goods集合下所有的菜品
             for (GoodsC o : orderC.getGoodsList()) {
@@ -215,82 +213,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    //测试提交数据～～～～～～～～～～～～
 
-    /*public void show() {
-
-        List<CheckOrderC> l = CDBHelper.getObjByClass(getApplicationContext(), CheckOrderC.class);
-
-        Iterator i = l.iterator();
-
-        CheckOrderC checkOrderC = null;
-
-        while (i.hasNext()) {
-
-            checkOrderC = (CheckOrderC) i.next();
-
-            if (checkOrderC.getTableNo().equals(myApplication.getTable_sel_obj().getTableNum())) {
-
-                //订单提交时间
-                MyLog.e("订单提交时间: " + checkOrderC.getCheckTime());
-                //桌号
-                MyLog.e("桌号: " + checkOrderC.getTableNo());
-                //实收
-                MyLog.e("实收: " + checkOrderC.getNeedPay());
-                //应收
-                MyLog.e("应收: " + checkOrderC.getPay());
-
-                //菜
-                List<String> f = checkOrderC.getOrderList();
-
-                if (f != null) {
-                    int i1 = 0;
-
-                    for (String orderCid : f) {
-                      Document document =  CDBHelper.getDatabase().getDocument(orderCid);
-
-
-                        i1++;
-                        MyLog.e("订单~~~~~~" + i1);
-
-                        for (GoodsC goodsC : orderC.getGoodsList()) {
-
-                            MyLog.e(goodsC.getDishesName());
-                        }
-
-
-                    }
-                }
-
-
-                //支付详情
-                MyLog.e(" PromotionDetailC 支付详情~~~~~~~~~~~ ");
-                PromotionDetailC promotionDetail = checkOrderC.getPromotionDetail();
-                MyLog.e("优惠金额： " + promotionDetail.getDiscounts());
-                MyLog.e("折扣率： " + promotionDetail.getDisrate());
-
-                MyLog.e("PayDetailC 支付细节~~~~~~~~~~~ ");
-
-                List<PayDetailC> payDetailList = promotionDetail.getPayDetailList();
-
-                for (int j = 0; j < payDetailList.size(); j++) {
-
-                    MyLog.e("第 " + j + " 支付方式");
-
-                    PayDetailC p = payDetailList.get(j);
-
-                    MyLog.e("支付类型 " + p.getPayTypes());
-
-                    MyLog.e("支付钱数 " + p.getSubtotal());
-
-                }
-
-            }
-
-        }
-
-    }
-*/
 /*
 *
      * 准备所有的数据
@@ -1425,11 +1348,15 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         Database database = CDBHelper.getDatabase();
         for (String orderC : checkOrder.getOrderList()) {
 
+            Log.e("DOAING","修改的order id"+orderC);
             Document document = database.getDocument(orderC);
+            Log.e("DOAING","修改的前"+ document.getInt("orderState"));
 
             MutableDocument mutableDocument = document.toMutable();
-            mutableDocument.setInt("orderCType", 0);
+            mutableDocument.setInt("orderState", 0);
             database.save(mutableDocument);
+            Log.e("DOAING","修改的后"+ database.getDocument(orderC).getInt("orderState"));
+
         }
 
         //营销细节
