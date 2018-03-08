@@ -47,6 +47,7 @@ import com.gprinter.command.EscCommand;
 import com.gprinter.command.GpCom;
 import com.gprinter.io.GpDevice;
 import com.gprinter.io.PortParameters;
+import com.gprinter.save.PortParamDataBase;
 import com.gprinter.service.GpPrintService;
 
 import org.apache.commons.lang.ArrayUtils;
@@ -125,6 +126,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     private EditText editText;
     private List<GoodsC> tmpList;
     private String hintDishes = "";
+    PortParameters mPortParam;
 
     private boolean printerToKitchen(GoodsC obj, int type, String areaName, String TableName) {
 
@@ -1351,7 +1353,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
      * 厨房分单打印
 
 */
-
     private void printOrderToKitchen()
     {
         //1\ 查询出所有厨房,并分配菜品
@@ -1395,11 +1396,12 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                 String clientKtname = "" + kitchenClientObj.getName()+hintDishes;//厨房名称
                 String printname = "" + kitchenClientObj.getKitchenAdress();//打印机名称
-
+                Log.e("Port",""+printname);
                 int printerId = Integer.parseInt(printname)-1;
 
                 allKitchenClientGoods.put("" + printerId, oneKitchenClientGoods);
                 allKitchenClientPrintNames.put("" + printerId, clientKtname);
+
                 if (!isPrinterConnected(printerId)) // 未连接
                 {
                     proDialog.setMessage(""+clientKtname+"厨房打印机未连接，正在连接");
@@ -1416,8 +1418,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 }
                 else//已连接
                 {
+
                     proDialog.setMessage(""+clientKtname+"厨房打印机已连接");
                     printGoodsAtRomoteByIndex(printerId);
+
                 }
             }
             else//不分发打印，就直接跳转
@@ -1437,11 +1441,12 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     private int connectClientPrint(int index) {
         if (mGpService != null) {
             try {
-                //PortParamDataBase database = new PortParamDataBase(this);
-                PortParameters mPortParam = new PortParameters();
-                mPortParam.setPortType(PortParameters.ETHERNET);
-                mPortParam.setIpAddr(pIp);
-                mPortParam.setPortNumber(pPortNum);
+                PortParamDataBase database = new PortParamDataBase(this);
+                mPortParam = new PortParameters();
+                mPortParam = database.queryPortParamDataBase(""+index);
+//                mPortParam.setPortType(PortParameters.ETHERNET);
+//                mPortParam.setIpAddr(pIp);
+//                mPortParam.setPortNumber(pPortNum);
                 int rel = -1;
 
                 if (CheckPortParamters(mPortParam)) {
