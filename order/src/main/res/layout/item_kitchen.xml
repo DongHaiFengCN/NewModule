@@ -12,18 +12,6 @@
         android:background="@color/backgroud">
 
         <TextView
-            android:id="@+id/item_kitchen_num"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:singleLine="true"
-            android:text="序号"
-            android:textColor="@color/title_font"
-            android:textSize="18sp"
-            />
-
-        <TextView
             android:id="@+id/item_kitchen_kname"
             android:layout_width="0dp"
             android:layout_height="match_parent"

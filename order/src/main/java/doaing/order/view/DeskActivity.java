@@ -176,6 +176,12 @@ public class DeskActivity extends AppCompatActivity {
 //        initDishesData();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        initDishesData();
+    }
+
     private void initWidget()
     {
         CDBHelper.getSharedInstance(getApplicationContext());

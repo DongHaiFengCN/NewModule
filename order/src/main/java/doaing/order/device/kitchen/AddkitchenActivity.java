@@ -40,11 +40,12 @@ import doaing.order.R;
 import doaing.order.device.PortConfigurationActivity;
 import doaing.order.view.DeskActivity;
 import tools.CDBHelper;
+import tools.MyLog;
 import view.BaseToobarActivity;
 import doaing.order.device.kitchen.AddKitchenAdapter.ViewHolder;
 
 import static doaing.order.device.ListViewAdapter.MESSAGE_CONNECT;
-
+import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 /*
 *
  * Created by lenovo on 2018/2/1.
@@ -58,15 +59,16 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     Button spPrinter;
     ListView listViewCk;
     Toolbar toolbar;
+    private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
 
     private List<String> allDishKindIdList;
     private List<String> listSelectedDocId;
     private MyApplication myapp;
     private int position = 0;
     private AddKitchenAdapter addKitchenAdapter;
-    private String selectPrinterName,selectDocId;
+    private String selectPrinterName,selectDocId ;
     private static int MAX_PRINTER_CNTMY = 1;//默认为1台
-    private PortParameters mPortParam[] ;
+    private PortParameters mPortParam[];
     private int mPrinterId = 0;
     private GpService mGpService = null;
     private static final int INTENT_PORT_SETTINGS = 0;
@@ -88,10 +90,11 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         if (mGpService == null){
             mGpService = DeskActivity.getmGpService();
         }
-        initViewData();
-        initView();
         mPortParam = new PortParameters[MAX_PRINTER_CNTMY];
         initPortParam();
+        initViewData();
+        initView();
+
     }
 
     private void initViewData() {
@@ -245,7 +248,12 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         {
             MutableDocument muDoc = docKitchenClient.toMutable();
             muDoc.setString("name",etClientname.getText().toString().trim());
-            muDoc.setString("kitchenAdress",""+MAX_PRINTER_CNTMY);
+            if(selectPrinterName==null||"".equals(selectPrinterName)) {
+                muDoc.setString("kitchenAdress",""+MAX_PRINTER_CNTMY);
+            }else{
+                muDoc.setString("kitchenAdress",""+selectPrinterName);
+            }
+
             muDoc.setValue("dishesKindIDList",dishKindIdArray);
             CDBHelper.saveDocument(getApplicationContext(),muDoc);
         }
@@ -283,7 +291,12 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         else
         {
             etClientname.setText(strname);
-            MAX_PRINTER_CNTMY = Integer.parseInt(selectPrinterName);
+            int id = Integer.parseInt(selectPrinterName);
+            if (mPortParam[id-1].getPortOpenState()){
+                spPrinter.setText("连接成功");
+            }else {
+                spPrinter.setText("点击配置");
+            }
         }
         //初始化 选中的数据
         if (selectDocId == null || "".equals(selectDocId)) {
@@ -345,13 +358,6 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             mPortParam[i] = new PortParameters();
             mPortParam[i] = database.queryPortParamDataBase("" + i);
             mPortParam[i].setPortOpenState(state[i]);
-            if (mPortParam[i].getPortOpenState()== true){
-                spPrinter.setText("连接成功");
-            }
-            if (selectPrinterName == null || selectPrinterName.equals("")){
-                    spPrinter.setText("点击配置");
-            }
-
         }
     }
     public Handler mHandler = new Handler(new Handler.Callback() {
@@ -528,11 +534,25 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                 {
                     setProgressBarIndeterminateVisibility(true);
                     mPortParam[id].setPortOpenState(false);
-
+                    spPrinter.setText("正在连接");
+//                    for (int i = 0; i < mPortParam.length ; i++){
+//                        if (mPortParam[i].getPortOpenState() == true){
+//                            if (mPortParam[i].equals(mPortParam[id])){
+//                                spPrinter.setText("正在连接");
+//                            }
+//                        }
+//                    }
                 } else if (type == GpDevice.STATE_NONE)//0 没有连接
                 {
                     setProgressBarIndeterminateVisibility(false);
                     mPortParam[id].setPortOpenState(false);
+                    for (int i = 0; i < mPortParam.length ; i++){
+                        if (mPortParam[i].getPortOpenState() == true){
+                            if (mPortParam[i].equals(mPortParam[id])){
+                                spPrinter.setText("没有连接");
+                            }
+                        }
+                    }
                 } else if (type == GpDevice.STATE_VALID_PRINTER)//5 连接成功
                 {
                     setProgressBarIndeterminateVisibility(false);
@@ -549,8 +569,69 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                 {
                     setProgressBarIndeterminateVisibility(false);
                     messageBox("Please use Gprinter!");
+                    spPrinter.setText("连接中断");
+                }else if ((intent.getAction()).equals(GpCom.ACTION_DEVICE_REAL_STATUS)) {
+
+                    // 业务逻辑的请求码，对应哪里查询做什么操作
+
+                    int requestCode = intent.getIntExtra(GpCom.EXTRA_PRINTER_REQUEST_CODE, -1);
+
+                    // 判断请求码，是则进行业务操作
+
+                    if (requestCode == MAIN_QUERY_PRINTER_STATUS) {
+
+
+                        int status = intent.getIntExtra(GpCom.EXTRA_PRINTER_REAL_STATUS, 16);
+
+                        String str;
+
+                        if (status == GpCom.STATE_NO_ERR) {
+
+                            str = "打印机正常";
+
+                            //printerSat = true;
+
+                        } else {
+
+                            str = "打印机 ";
+
+                            if ((byte) (status & GpCom.STATE_OFFLINE) > 0) {
+
+                                str += "脱机";
+
+                            }
+
+                            if ((byte) (status & GpCom.STATE_PAPER_ERR) > 0) {
+
+                                str += "缺纸";
+
+                            }
+
+                            if ((byte) (status & GpCom.STATE_COVER_OPEN) > 0) {
+
+                                str += "打印机开盖";
+
+                            }
+
+                            if ((byte) (status & GpCom.STATE_ERR_OCCURS) > 0) {
+
+                                str += "打印机出错";
+
+                            }
+
+                            if ((byte) (status & GpCom.STATE_TIMES_OUT) > 0) {
+
+                                str += "查询超时";
+
+                            }
+                            spPrinter.setText(str);
+                        }
+                    }
+
                 }
             }
+
         }
     };
+
 }
