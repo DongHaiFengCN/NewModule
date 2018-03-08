@@ -341,13 +341,17 @@
             android:paddingBottom="8dp"
             tools:ignore="Suspicious0dp" />
 
+
         <ImageView
-            android:layout_width="0.5dp"
+            android:id="@+id/gz"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:padding="16dp"
+            android:src="@mipmap/icon_guazhang"
             android:layout_height="match_parent"
-            android:src="@drawable/divider"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            tools:ignore="Suspicious0dp" />
+            android:background="@drawable/background_pay_select"
+            />
 
 
     </LinearLayout>

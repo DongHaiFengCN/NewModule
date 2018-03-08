@@ -520,8 +520,9 @@ DisheEditActivity extends BaseToobarActivity {
 
                 String o = (String) iterator.next();
                 Document document = database.getDocument(o);
-                if (document.getString("tasteName") != null) {
+                if (document!= null) {
                     tasteList.add(document);
+                }else{
 
                 }
 

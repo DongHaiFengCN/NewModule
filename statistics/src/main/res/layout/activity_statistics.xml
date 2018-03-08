@@ -66,7 +66,7 @@
             android:gravity="left|center"
             android:typeface="monospace"
             android:paddingLeft="16dp"
-            android:text="消费金额：" />
+            android:text="销售金额：" />
 
         <TextView
             android:id="@+id/satistics_monetary_tv"
@@ -76,7 +76,7 @@
             android:gravity="right|center"
             android:textSize="20sp"
             android:text=""
-            android:paddingRight="8dp"
+            android:paddingRight="16dp"
             android:textColor="@color/black"
             />
 
@@ -108,7 +108,7 @@
             android:layout_weight="1"
             android:gravity="right|center"
             android:textSize="20sp"
-            android:paddingRight="8dp"
+            android:paddingRight="16dp"
             android:textColor="@color/black"
             android:layout_height="match_parent" />
     </LinearLayout>
@@ -138,7 +138,7 @@
             android:layout_weight="1"
             android:gravity="right|center"
             android:textSize="20sp"
-            android:paddingRight="8dp"
+            android:paddingRight="16dp"
             android:textColor="@color/black"
 
             android:layout_height="match_parent" />
@@ -171,7 +171,7 @@
             android:layout_weight="1"
             android:gravity="right|center"
             android:textSize="20sp"
-            android:paddingRight="8dp"
+            android:paddingRight="16dp"
             android:textColor="@color/black"
 
             android:layout_height="match_parent" />
@@ -187,7 +187,7 @@
     <LinearLayout
         android:id="@+id/action"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="35dp"
         android:background="@drawable/background_pay_select"
         android:orientation="horizontal">
 
@@ -196,17 +196,17 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="left|center"
+            android:textSize="18sp"
             android:paddingLeft="16dp"
-            android:text="实          收："
+            android:text="实    收："
             android:typeface="monospace" />
         <TextView
             android:id="@+id/satistics_real_income_tv"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:gravity="right|center"
-            android:textSize="20sp"
-            android:text=""
-            android:paddingRight="8dp"
+            android:textSize="22sp"
+            android:paddingRight="16dp"
             android:textColor="@color/black"
 
             android:layout_height="match_parent" />

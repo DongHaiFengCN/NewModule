@@ -57,17 +57,15 @@ import bean.kitchenmanage.table.TableC;
 import butterknife.ButterKnife;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
+import doaing.order.module.IDBManager;
+import doaing.order.untils.BluetoothUtil;
+import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.ProgressBarasyncTask;
+import doaing.order.untils.Tool;
 import doaing.order.view.adapter.ActionListAdapter;
 import doaing.order.view.adapter.MemberDishesListAdapter;
-import doaing.order.untils.BluetoothUtil;
-import doaing.order.module.DatabaseSource;
-import doaing.order.module.IDBManager;
-import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.Tool;
 import tools.CDBHelper;
 import tools.MyLog;
-import tools.ToolUtil;
 
 /**
  * @author 董海峰
@@ -89,8 +87,11 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     ImageView ivalipay;
     ImageView ivwechat;
     ImageView cash;
+    ImageView gzIm;
     TextView tableNumber;
 
+    EditText nameEt;
+    EditText contactWayEt;
     List<PromotionRuleC> promotionRuleCList;
     private float copy;
     private AlertDialog.Builder dialog;
@@ -127,8 +128,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_pay);
-
-        ButterKnife.bind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -172,9 +171,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").ascending()
                 , OrderC.class);
-        Log.e("DOAING","订单个数："+orderCList.size()+"");
+        Log.e("DOAING", "订单个数：" + orderCList.size() + "");
         for (OrderC orderC : orderCList) {
-            Log.e("DOAING","订单价格："+orderC.getAllPrice()+"");
+            Log.e("DOAING", "订单价格：" + orderC.getAllPrice() + "");
             total = MyBigDecimal.add(total, orderC.getAllPrice(), 1);
             checkOrder.addOrder(orderC.get_id());
             //获取当前订单下goods集合下所有的菜品
@@ -203,6 +202,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         ivwechat = findViewById(R.id.ivwechat);
         cash = findViewById(R.id.cash);
         tableNumber = findViewById(R.id.table_number);
+        findViewById(R.id.gz).setOnClickListener(this);
         associator.setOnClickListener(this);
         discount.setOnClickListener(this);
         action.setOnClickListener(this);
@@ -210,6 +210,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         ivwechat.setOnClickListener(this);
         cash.setOnClickListener(this);
         findViewById(R.id.bankcard).setOnClickListener(this);
+
     }
 
 
@@ -1012,7 +1013,47 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             bankDialog.show();
 
 
-        } else {
+        } else if (i == R.id.gz) {
+            View view1 = getLayoutInflater().inflate(R.layout.view_gz_dialog, null);
+            nameEt = view1.findViewById(R.id.order_name_tv);
+            contactWayEt = view1.findViewById(R.id.order_contactway_tv);
+
+            AlertDialog.Builder gzDialog = new AlertDialog.Builder(PayActivity.this);
+            gzDialog.setView(view1);
+            gzDialog.setTitle("挂帐");
+            gzDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            gzDialog.setNegativeButton("确定支付", null);
+
+            final AlertDialog alertDialog = gzDialog.show();
+            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (nameEt.getText().length() == 0) {
+                        nameEt.setError("名字能为空！");
+                    } else if (contactWayEt.getText().length() == 0) {
+                        contactWayEt.setError("联系方式不能为空！");
+
+                    } else {
+                        setPayDetail(10, total);
+
+                        try {
+                            submitCheckOrder();
+                        } catch (CouchbaseLiteException e) {
+                            e.printStackTrace();
+                        }
+                        alertDialog.dismiss();
+
+                    }
+
+                }
+            });
+
         }
     }
 
@@ -1147,7 +1188,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                                 //获取订单下goods的菜品名称
                                 GoodsC h = orderDishesList.get(j);
 
-                               // String name = h.getDishesName();
+                                // String name = h.getDishesName();
                                 //遍历所活动菜品找匹配的打折菜品
 
                                 for (int i = 0; i < allDishes.size(); i++) {
@@ -1253,6 +1294,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
                                 promtionEt.setError("不能为空");
 
+
                             } else {
 
 
@@ -1321,6 +1363,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         p.setPayTypes(type);
         p.setSubtotal(pay);
         p.setCreatedYear("2018");
+        if (type == 10) {
+            p.setName(nameEt.getText().toString());
+            p.setContactWay(contactWayEt.getText().toString());
+        }
         payDetailList.add(p);
 
     }
@@ -1348,14 +1394,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         Database database = CDBHelper.getDatabase();
         for (String orderC : checkOrder.getOrderList()) {
 
-            Log.e("DOAING","修改的order id"+orderC);
+            //  Log.e("DOAING","修改的order id"+orderC);
             Document document = database.getDocument(orderC);
-            Log.e("DOAING","修改的前"+ document.getInt("orderState"));
+            // Log.e("DOAING","修改的前"+ document.getInt("orderState"));
 
             MutableDocument mutableDocument = document.toMutable();
             mutableDocument.setInt("orderState", 0);
             database.save(mutableDocument);
-            Log.e("DOAING","修改的后"+ database.getDocument(orderC).getInt("orderState"));
+            // Log.e("DOAING","修改的后"+ database.getDocument(orderC).getInt("orderState"));
 
         }
 

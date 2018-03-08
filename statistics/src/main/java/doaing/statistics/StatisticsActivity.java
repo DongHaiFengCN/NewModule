@@ -56,6 +56,7 @@ public class StatisticsActivity extends BaseToobarActivity {
     private float member;
     private float elm;
     private float mt;
+    private float gz;
 
 
     private TextView dateTv;
@@ -69,6 +70,7 @@ public class StatisticsActivity extends BaseToobarActivity {
     private TextView memberTv;
     private TextView elmTv;
     private TextView mtTv;
+    private TextView gzTv;
 
 
     @Override
@@ -92,6 +94,7 @@ public class StatisticsActivity extends BaseToobarActivity {
         elmTv = findViewById(R.id.statistics_elm_tv);
         mtTv = findViewById(R.id.statistics_mt_tv);
         memberTv = findViewById(R.id.statistics_member_tv);
+        gzTv = findViewById(R.id.statistics_gz_tv);
     }
 
     @Override
@@ -144,6 +147,7 @@ public class StatisticsActivity extends BaseToobarActivity {
                         alipay = 0f;
                         wechat = 0f;
                         ml = 0f;
+                        gz = 0f;
 
                     }
 
@@ -173,7 +177,7 @@ public class StatisticsActivity extends BaseToobarActivity {
      * 起始日期都设置进行搜索账单
      *
      * @param start 开始日期
-     * @param end 结束日期
+     * @param end   结束日期
      */
     private void getDoubleDateInfo(String start, String end) {
         dateTv.setText((new StringBuilder()).append(start).append("----").append(end));
@@ -241,33 +245,36 @@ public class StatisticsActivity extends BaseToobarActivity {
                     Dictionary paydetailc = payDetailList.getDictionary(i);
                     int payType = paydetailc.getInt("payTypes");
                     float subtotal = paydetailc.getFloat("subtotal");
-                    //  支付方式 支付类型名称 1\现金、2\银行卡、3\微信、4\支付宝、5\美团、6\会员卡 7\抹零 8\赠卷\9\饿了吗
+                    //  支付方式 支付类型名称 1\现金、2\银行卡、3\微信、4\支付宝、5\美团、6\会员卡 7\抹零 8\赠卷\9\饿了吗 10\挂账
                     switch (payType) {
                         case 1:
                             cash = MyBigDecimal.add(cash, subtotal, 2);
                             break;
                         case 2:
-                            bank = MyBigDecimal.add(bank,subtotal, 2);
+                            bank = MyBigDecimal.add(bank, subtotal, 2);
                             break;
                         case 3:
-                            wechat = MyBigDecimal.add(wechat,subtotal, 2);
+                            wechat = MyBigDecimal.add(wechat, subtotal, 2);
                             break;
                         case 4:
-                            alipay = MyBigDecimal.add(alipay,subtotal, 2);
+                            alipay = MyBigDecimal.add(alipay, subtotal, 2);
                             break;
                         case 5:
-                            mt = MyBigDecimal.add(mt,subtotal, 2);
+                            mt = MyBigDecimal.add(mt, subtotal, 2);
                             break;
                         case 6:
-                            member = MyBigDecimal.add(member,subtotal, 2);
+                            member = MyBigDecimal.add(member, subtotal, 2);
                             break;
                         case 7:
-                            ml = MyBigDecimal.add(ml,subtotal, 2);
+                            ml = MyBigDecimal.add(ml, subtotal, 2);
                             break;
                         case 8:
                             break;
                         case 9:
-                            elm = MyBigDecimal.add(elm,subtotal, 2);
+                            elm = MyBigDecimal.add(elm, subtotal, 2);
+                            break;
+                        case 10:
+                            gz = MyBigDecimal.add(gz, subtotal, 2);
                             break;
                         default:
                             break;
@@ -290,6 +297,7 @@ public class StatisticsActivity extends BaseToobarActivity {
         elmTv.setText(String.valueOf(elm));
         mtTv.setText(String.valueOf(mt));
         bankTv.setText(String.valueOf(bank));
+        gzTv.setText(String.valueOf(gz));
     }
 
 
