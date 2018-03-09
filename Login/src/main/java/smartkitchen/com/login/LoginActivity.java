@@ -10,21 +10,18 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
@@ -42,7 +39,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,10 +54,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import smartkitchen.com.login.forgetPsw.ForgetActivity;
 import smartkitchen.com.login.globle.constant;
 import smartkitchen.com.login.model.responseModle;
-import smartkitchen.com.login.register.RegisterActivity;
 import tools.CDBHelper;
 import tools.MyLog;
 
@@ -70,7 +64,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity  {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -93,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private SharedPreferences pRemberLogin;
 
     private MyApplication myapp;
-
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +95,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.login_main);
 
         myapp = (MyApplication)getApplicationContext();
+        toolbar = findViewById(R.id.toolbar1);
+        toolbar.setTitle("肴点点");
+        setSupportActionBar(toolbar);
+        //关键下面两句话，设置了回退按钮，及点击事件的效果
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         // Set up the login form.
         mTelView = findViewById(R.id.telephone);
         mTelView.addTextChangedListener(textWatcher);
@@ -125,11 +131,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         drawable2.setBounds(0,0,45,45);
         mPasswordView.setCompoundDrawables(drawable2,null,null,null);
 
-
         pRemberLogin   = getSharedPreferences("kitchenlogin",MODE_PRIVATE);
-
-
-
         saveloginstatueChk = findViewById(R.id.saveLoginStatue_chk);
         saveloginstatueChk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
@@ -160,8 +162,38 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
+        String mobile = getIntent().getStringExtra("mobile");
+        if(TextUtils.isEmpty(mobile))
         getShareData();
+        else
+        {
+            mTelView.setText(mobile);
+        }
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.login_menu_users, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int i = item.getItemId();
+        if (i == R.id.action_modify)
+        {
+            Intent intent = new Intent(this, MobCheckActivity.class);
+            intent.putExtra("type",2);//密码修改
+            startActivity(intent);
+        }
+        else if (i == R.id.action_rebind)
+        {
+            Intent intent = new Intent(this, MobCheckActivity.class);
+            intent.putExtra("type",3);//重绑手机号
+            startActivity(intent);
+        }
+        return true;
     }
 
     private void getShareData()
@@ -177,9 +209,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                        mTelView.setText(mobile);
                        mPasswordView.setText(pwd);
                        saveloginstatueChk.setChecked(true);
-
                    }
-
             }
         }
     }
@@ -333,12 +363,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             public void run()
             {
                 showProgress(false);
-
                 if(flag)
                 {
                     Gson gson = new Gson();
                     responseModle obj = gson.fromJson(data, new TypeToken<responseModle>() {}.getType());
-                    if(TextUtils.isEmpty(obj.getStatusCode()))//
+                    if(!TextUtils.isEmpty(obj.getData()))//
                     {
 
                         String userName = obj.getData();
@@ -380,11 +409,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                         mPasswordView.setError(getString(R.string.login_error_incorrect_password));
                         mPasswordView.requestFocus();
-                        Toast.makeText(getApplicationContext(), obj.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), obj.getMsg(), Toast.LENGTH_SHORT).show();
                     }
-
-
-
                 }
                 else
                 {
@@ -464,42 +490,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
            // mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI, ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
-                ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Phone
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Log.e("tag","num="+ProfileQuery.num);
-            emails.add(cursor.getString(ProfileQuery.num));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
@@ -524,14 +514,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 public void onClickRegister(View v)
 {
-    Intent intent = new Intent(this, ForgetActivity.class);
-    intent.putExtra("type","1");//用户注册
+    Intent intent = new Intent(this, MobCheckActivity.class);
+    intent.putExtra("type",1);//用户注册
     startActivity(intent);
 }
 public void onClickForget(View v)
 {
-    Intent intent = new Intent(this, ForgetActivity.class);
-    intent.putExtra("type","0");//用户忘记密码
+    Intent intent = new Intent(this, MobCheckActivity.class);
+    intent.putExtra("type",0);//用户忘记密码
     startActivity(intent);
 }
 

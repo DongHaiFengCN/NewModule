@@ -11,4 +11,11 @@ package smartkitchen.com.login.globle;
 public class constant {
     public static String loginUrl = "https://www.yaodiandian.net/auth/login";
     public static String registerUrl = "https://www.yaodiandian.net/register";
+    public static String forgetPswUrl = "https://www.yaodiandian.net/forgetpsw";
+    public static String modifyPswUrl = "https://www.yaodiandian.net/modifypwd";
+    public static String rebindUrl = "https://www.yaodiandian.net/rebindtel";
+
+    /////variable
+    public static  String MOBILE = "mobileNum";
+    public static  String OPENTYPE = "type";
 }

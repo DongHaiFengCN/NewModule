@@ -104,7 +104,7 @@ public class DeskActivity extends AppCompatActivity {
     private static final int REQUEST_PRINT_RECEIPT = 0xfc;
     private Integer printnums = 1;
 
-
+    private String TAG = getCallingPackage();
     private MyApplication myapp;
     private Handler uiHandler = new Handler()
     {
@@ -155,7 +155,6 @@ public class DeskActivity extends AppCompatActivity {
 
         //  myapp.initDishesData();
         initWidget();
-
 
         //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
         bindPrinterService();
@@ -248,7 +247,6 @@ public class DeskActivity extends AppCompatActivity {
                     //设置子控件在线性布局下的参数设置对象（什么布局就用什么的）
 
                     LinearLayout.LayoutParams params =new LinearLayout.LayoutParams(
-
                             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
                     //设置margins属性
 
@@ -264,7 +262,6 @@ public class DeskActivity extends AppCompatActivity {
                     linearLayout.addView(editText);
 
                     editText.setHint("最多人数："+tableC.getMaxPersons()+"最小人数 : "+tableC.getMinConsum());
-
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(DeskActivity.this);
 
@@ -384,8 +381,6 @@ public class DeskActivity extends AppCompatActivity {
 
                                                     Date date = new Date();
                                                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-
-
                                                     //查询当日的订单
                                                     List<CheckOrderC> checkOrderCS = CDBHelper.getObjByWhere(getApplicationContext()
                                                             , Expression.property("className").equalTo(Expression.string("CheckOrderC"))
@@ -435,7 +430,6 @@ public class DeskActivity extends AppCompatActivity {
 
                                                     //新数据查询
 
-
                                                     checkOrderC = CDBHelper.getObjById(getApplicationContext(),tableC.getLastCheckOrderId(),CheckOrderC.class);
                                                     if (checkOrderC == null&&checkOrderC.getOrderList().size()==0){
                                                         return;
@@ -451,7 +445,6 @@ public class DeskActivity extends AppCompatActivity {
 
                                                     //删除之前的checkorder记录
                                                     CDBHelper.deleDocumentById(getApplicationContext(),checkOrderC.get_id());
-
                                                     tableC.setState(2);
                                                     CDBHelper.createAndUpdate(getApplicationContext(), tableC);
 
@@ -468,11 +461,7 @@ public class DeskActivity extends AppCompatActivity {
                             });
 
                             //获取今天日期
-
                             alertDialog.dismiss();
-
-
-
 
                         }
                     }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -488,10 +477,11 @@ public class DeskActivity extends AppCompatActivity {
                     }).show();
 
 
-                }else {
-
+                }
+                else if(tableC.getState()==2)//开台中
+                {
                     //使用&&预定状态
-                    List<String> orderCList = CDBHelper.getIdsByWhere(getApplicationContext(),
+                 final   List<String> orderCList = CDBHelper.getIdsByWhere(getApplicationContext(),
                             Expression.property("className").equalTo(Expression.string("OrderC"))
                                     .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
                                     .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
@@ -500,10 +490,11 @@ public class DeskActivity extends AppCompatActivity {
 
                     if(orderCList.size()>0)//有未买单订单，可以买单
                     {
-                        final String[] an = new  String[2];
-                        an[0] = "是否买单";
-                        an[1] = "是否换桌";
-                        alertLog.setTitle("请选择买单或换桌");
+                        final String[] an = new  String[3];
+                        an[0] = "是否消台";
+                        an[1] = "是否换台";
+                        an[2] = "是否合台";
+                        alertLog.setTitle("请选择操作");
                         alertLog.setSingleChoiceItems(an, 0, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -512,12 +503,14 @@ public class DeskActivity extends AppCompatActivity {
                         }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                if (an[mPos].equals("是否买单")){
-                                    Intent mainIntent = new Intent();
-                                    mainIntent.setClass(DeskActivity.this, PayActivity.class);
-                                    startActivity(mainIntent);
+                                if (an[mPos].equals("是否消台"))
+                                {
+
+                                     cancelTableOrder(tableId,orderCList);
+                                    //3、取消对话框
                                     dialog.dismiss();
-                                }else{
+                                }
+                                else if(an[mPos].equals("是否换台")){
                                     tablesName = findFreeTable();
                                     String[] areaTable = new String[tablesName.length];
                                     for (int i = 0; i< freeTableList.size();i++){
@@ -571,6 +564,10 @@ public class DeskActivity extends AppCompatActivity {
 
                                     dialog.dismiss();
                                 }
+                                else if(an[mPos].equals("是否合台"))
+                                {
+
+                                }
                                 mPos = 0;
 
                             }
@@ -612,7 +609,7 @@ public class DeskActivity extends AppCompatActivity {
 
         listViewDesk = (RecyclerView)findViewById(R.id.lv_desk);
         listViewDesk.setItemAnimator(new DefaultItemAnimator());
-        listViewDesk.setLayoutManager(new GridLayoutManager(this,3));
+        listViewDesk.setLayoutManager(new GridLayoutManager(this,2));
         listViewDesk.setAdapter(tableadapter);
 
     }
@@ -625,7 +622,62 @@ public class DeskActivity extends AppCompatActivity {
         CDBHelper.saveDocument(getApplicationContext(),mDoc);
 
     }
+private void cancelTableOrder(String Id,List<String> orderList)
+{
+    final String tableId = Id;
+    final List<String> orderCList = orderList;
 
+    final EditText  reason = new EditText(this);
+    final AlertDialog.Builder alertDlg = new AlertDialog.Builder(DeskActivity.this);
+    alertDlg.setView(reason);
+    alertDlg.setTitle("请输入消台原因");
+    alertDlg.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+        @Override
+        public void onClick(DialogInterface dialog1, int which)
+        {
+            final String input = reason.getText().toString();
+            //1|
+            try {
+                CDBHelper.getDatabase().inBatch(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        for(String  docId:orderCList)
+                        {
+                            Document doc = CDBHelper.getDocByID(null,docId);
+                            if(doc!=null)
+                            {
+                                MutableDocument mDoc= doc.toMutable();
+                                if(!TextUtils.isEmpty(input))
+                                    mDoc.setString("cancelReason",input);
+
+                                mDoc.setInt("orderState",2);
+                                CDBHelper.saveDocument(null,mDoc);
+                            }
+                        }
+
+                        Document tabDoc = CDBHelper.getDocByID(null,tableId);
+                        MutableDocument tabmDoc = tabDoc.toMutable();
+                        tabmDoc.setInt("state",0);
+                        CDBHelper.saveDocument(null,tabmDoc);
+                    }
+                });
+            } catch (CouchbaseLiteException e)
+            {
+                Log.e(TAG, e.toString());
+            }
+            dialog1.dismiss();
+        }})
+            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog1, int which)
+                {
+                    dialog1.dismiss();
+                }
+            }).show();
+
+
+}
     private   String [] findFreeTable()
     {
         String[] freetables=null;

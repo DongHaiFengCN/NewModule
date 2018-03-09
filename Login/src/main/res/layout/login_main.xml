@@ -1,13 +1,17 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/login_md_grey_200"
-
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context="smartkitchen.com.login.LoginActivity">
+    <include
+        layout="@layout/login_common_view_toolbar">
+    </include>
 
     <!-- Login progress -->
     <ProgressBar
@@ -54,6 +58,7 @@
                     android:drawablePadding="16dp"
                     android:hint="@string/login_prompt_telephone"
                     android:inputType="phone"
+                    android:maxLength="11"
                     android:maxLines="1"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
@@ -106,6 +111,7 @@
                     android:layout_marginLeft="8dp"
                     android:gravity="center|left"
                     android:text="记住密码"
+                    android:textColor="@color/black90"
                     android:typeface="monospace" />
             </LinearLayout>
 
