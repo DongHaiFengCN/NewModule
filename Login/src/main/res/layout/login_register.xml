@@ -1,63 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/login_md_grey_200"
-    tools:context="smartkitchen.com.login.register.RegisterActivity">
-
-
-
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/login_md_grey_200"
+        >
+    <include
+        layout="@layout/login_common_view_toolbar">
+    </include>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
+
+            <EditText
+                android:id="@+id/password1_edtTxt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:counterEnabled="true"
-                app:counterMaxLength="16">
+                android:layout_height="45dp"
 
-                <EditText
-                    android:id="@+id/password1_edtTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/login_md_white_1000"
+                android:hint="密码  6~16位数字或字母"
+                android:inputType="numberPassword"
+                android:maxLength="16"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
 
-                    android:layout_marginRight="16dp"
-                    android:background="@color/login_md_white_1000"
-                    android:hint="6~16位数字或字母"
-                    android:inputType="numberPassword"
-                    android:maxLength="16"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp" />
-            </android.support.design.widget.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <EditText
+                android:id="@+id/password2_edtTxt"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:counterEnabled="true"
-                app:counterMaxLength="16">
-
-
-                <EditText
-                    android:id="@+id/password2_edtTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-                    android:background="@color/login_md_white_1000"
-                    android:hint="密码确认"
-                    android:inputType="numberPassword"
-                    android:maxLength="16"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp" />
-
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="45dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/login_md_white_1000"
+                android:hint="密码确认"
+                android:inputType="numberPassword"
+                android:maxLength="16"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
 
 
             <EditText
@@ -65,11 +52,10 @@
                 android:id="@+id/pointName_edtTxt"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginBottom="16dp"
 
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@color/login_md_white_1000"
                 android:hint="商户名称"
                 android:inputType="text"
@@ -82,8 +68,10 @@
                 android:layout_height="45dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@color/login_md_white_1000"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:hint="商户地址（选填）"
                 android:inputType="text"
                 android:paddingLeft="16dp" />
@@ -100,9 +88,7 @@
                 android:onClick="onClickRegister"
                 android:text="确定"
                 android:textColor="@color/login_md_black_1000" />
-
         </LinearLayout>
+</ScrollView>
 
 
-
-</LinearLayout>

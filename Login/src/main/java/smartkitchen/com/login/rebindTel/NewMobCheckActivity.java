@@ -1,55 +1,74 @@
-package smartkitchen.com.login.modifyPsw;
+package smartkitchen.com.login.rebindTel;
 
 import android.content.Intent;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import smartkitchen.com.login.R;
-import smartkitchen.com.login.forgetPsw.ForgetActivity;
+import smartkitchen.com.login.forgetPsw.NewPswActivity;
+import smartkitchen.com.login.modifyPsw.ModifyPwdActivity;
 import smartkitchen.com.login.register.RegisterActivity;
 import tools.MyLog;
 
+import static smartkitchen.com.login.globle.constant.MOBILE;
+import static smartkitchen.com.login.globle.constant.OPENTYPE;
 
-public class IdCodeActivity extends AppCompatActivity {
 
-    public static  String MOBILE = "mobileNum";
-    public static  String OPENTYPE = "type";
+public class NewMobCheckActivity extends AppCompatActivity {
+
+
+
+    TextView mTitle;
+    EditText   mTelNum;
     TextView mResend;
     EditText mIdcode;
     TextView  mInfo1,mInfo2;
-    private String    mobileNum;
-    private MyCountDownTimer mc;
-    private String openType;
 
+    private String    mobileNum;
+    private String oldMobileNum;
+    private MyCountDownTimer mc;
+    private int openType;
+
+    private Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_id_code);
+        setContentView(R.layout.login_mobcheck);
+        toolbar = findViewById(R.id.toolbar1);
+        toolbar.setTitle("新手机号短信验证");
+        setSupportActionBar(toolbar);
+        //关键下面两句话，设置了回退按钮，及点击事件的效果
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mTitle = findViewById(R.id.login_tv_title);
+        mTelNum = findViewById(R.id.telephone_edtTxt);
 
         mResend = findViewById(R.id.login_resendcode);
-        mResend.setText("重新发送");
+
         mIdcode = findViewById(R.id.login_idcode_et);
+
         mInfo1 = findViewById(R.id.login_idcode_info1);
         mInfo2 = findViewById(R.id.login_idcode_info2);
-        mobileNum = getIntent().getStringExtra(MOBILE);
-        openType = getIntent().getStringExtra(OPENTYPE);
-        MyLog.e(getPackageName(),"opentype="+openType);
-        if(TextUtils.isEmpty(mobileNum))
-        {
-            return;
-        }
-        sendCode("86",mobileNum);
+
+        oldMobileNum = getIntent().getStringExtra(MOBILE);
+
+        mTitle.setText("输入新手机号码");
+
+
     }
     // 请求验证码，其中country表示国家代码，如“86”；phone表示手机号码，如“13800138000”
     public void sendCode(String country, String phone) {
@@ -97,18 +116,13 @@ public class IdCodeActivity extends AppCompatActivity {
                         @Override
                         public void run()
                         {
-                            if(openType.equals("0"))//忘记密码
-                            {
-                                Intent intent = new Intent(IdCodeActivity.this, NewPswActivity.class);
-                                intent.putExtra(IdCodeActivity.MOBILE,mobileNum);
-                                startActivity(intent);
-                            }
-                            else if(openType.equals("1"))//用户注册
-                            {
-                                Intent intent = new Intent(IdCodeActivity.this, RegisterActivity.class);
-                                intent.putExtra(IdCodeActivity.MOBILE,mobileNum);
-                                startActivity(intent);
-                            }
+
+
+                                 Intent intent = new Intent(NewMobCheckActivity.this, RebindTelActivity.class);
+                                 intent.putExtra("newMobileNum",mobileNum);
+                                 intent.putExtra("oldMobileNum",oldMobileNum);
+                                 startActivity(intent);
+
 
                         }});
                 }
@@ -131,18 +145,79 @@ public class IdCodeActivity extends AppCompatActivity {
 
    public void onClickResend(View v)
    {
-       mIdcode.setError(null);
-       mIdcode.setText("");
-       mResend.setText("重新发送");
-       sendCode("86",mobileNum);
+       if(mc!=null)
+       {
+           mc.onFinish();
+           mc.cancel();
+           MyLog.e("mc!=null","not null");
+       }
+
+       boolean cancel = false;
+       View focusView = null;
+
+       mTelNum.setError(null);
+
+       mInfo1.setText("");
+       mInfo2.setText("");
+
+       mobileNum = mTelNum.getText().toString();
+       // Check for a valid tel.
+       if (TextUtils.isEmpty(mobileNum))
+       {
+           mTelNum.setError(getString(R.string.login_error_field_required));
+           focusView = mTelNum;
+           cancel = true;
+       } else if (!isTelNumValid(mobileNum)) {
+           mTelNum.setError(getString(R.string.login_error_invalid_tel));
+           focusView = mTelNum;
+           cancel = true;
+       }
+       if (cancel)
+       {
+           focusView.requestFocus();
+       }
+       else
+       {
+           mIdcode.setError(null);
+           mIdcode.setText("");
+
+           mResend.setText("获取验证码");
+           sendCode("86",mobileNum);
+       }
    }
     public void onClickNext(View v)
     {
+        boolean cancel = false;
+        View focusView = null;
+
+        mTelNum.setError(null);
+        mIdcode.setError(null);
+
+        mobileNum = mTelNum.getText().toString();
+        // Check for a valid tel.
+        if (TextUtils.isEmpty(mobileNum))
+        {
+            mTelNum.setError(getString(R.string.login_error_field_required));
+            focusView = mTelNum;
+            cancel = true;
+        } else if (!isTelNumValid(mobileNum)) {
+            mTelNum.setError(getString(R.string.login_error_invalid_tel));
+            focusView = mTelNum;
+            cancel = true;
+        }
         if(TextUtils.isEmpty(mIdcode.getText().toString()))
         {
             mIdcode.setError("验证码不能为空");
-            return;
+            focusView = mIdcode;
+            cancel = true;
+
         }
+
+        if (cancel)
+        {
+            focusView.requestFocus();
+        }
+        else
         submitCode("86",mobileNum,mIdcode.getText().toString());
     }
     @Override
@@ -150,10 +225,22 @@ public class IdCodeActivity extends AppCompatActivity {
         super.onDestroy();
         //用完回调要注销掉，否则可能会出现内存泄露
         SMSSDK.unregisterAllEventHandler();
-        mc.cancel();
+        try
+        {
+            if(mc!=null)
+                mc.cancel();
+        }
+        catch ( Exception e)
+        {
+           e.printStackTrace();
+        }
+
     }
 
-
+    private boolean isTelNumValid(String num) {
+        //TODO: Replace this with your own logic
+        return num.length()==11;
+    }
     /**
      * 继承 CountDownTimer 防范
      *
@@ -181,13 +268,13 @@ public class IdCodeActivity extends AppCompatActivity {
         @Override
         public void onFinish()
         {
-            mResend.setText("重新发送");
+            mResend.setText("获取验证码");
         }
         @Override
         public void onTick(long millisUntilFinished)
         {
 
-            mResend.setText("" + millisUntilFinished / 1000 + "秒...");
+            mResend.setText("获取验证码" + "（"+millisUntilFinished / 1000+"）");
         }
     }
 }

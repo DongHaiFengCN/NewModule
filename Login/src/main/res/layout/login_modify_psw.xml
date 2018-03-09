@@ -4,58 +4,93 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d3eff3"
+    android:background="@color/login_md_grey_200"
     android:orientation="vertical"
-    tools:context="smartkitchen.com.login.modifyPsw.ModifyPswActivity">
+    tools:context="smartkitchen.com.login.modifyPsw.ModifyPwdActivity">
 
-
-    <TextView
-        android:id="@+id/textView9"
+    <include
+        layout="@layout/login_common_view_toolbar">
+    </include>
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:gravity="center_horizontal"
-        android:text="输入用户帐号"
-        android:textColor="@color/login_md_black_1000"
-        android:textSize="36sp"
-        android:textStyle="normal" />
+
+        app:counterEnabled="true"
+        app:counterMaxLength="16">
+
+        <EditText
+            android:id="@+id/password_old"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+
+            android:background="@color/login_md_white_1000"
+            android:hint="旧密码"
+            android:inputType="numberPassword"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+
+    </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         app:counterEnabled="true"
-        app:counterMaxLength="11"
-        app:hintEnabled="true">
+        app:counterMaxLength="16">
 
-        <AutoCompleteTextView
-            android:id="@+id/modify_mobile_tv"
+        <EditText
+            android:id="@+id/password_new_1"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+
+            android:background="@color/login_md_white_1000"
+            android:hint="新密码 6~16位数字或字母"
+            android:inputType="numberPassword"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+
+        app:counterEnabled="true"
+        app:counterMaxLength="16">
+
+
+        <EditText
+            android:id="@+id/password_new_2"
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:background="@color/login_md_white_1000"
-            android:hint="@string/login_prompt_telephone"
-            android:inputType="phone"
-            android:maxLines="1"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:singleLine="true"
-            android:textSize="18sp" />
+            android:inputType="numberPassword"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+
 
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/modify_ok_btn"
+        android:id="@+id/modify_ok"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:background="@color/login_colorPrimaryDark"
-        android:enabled="false"
-        android:onClick="onClickOk"
-        android:text="下一步"
-        android:textColor="@color/login_md_black_1000"
-        android:textStyle="bold"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="146dp" />
 
-
+        android:onClick="onClickChange"
+        android:text="确定"
+        android:textColor="@color/login_md_black_1000" />
 </LinearLayout>

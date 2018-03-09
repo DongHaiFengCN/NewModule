@@ -92,7 +92,6 @@ public class CheckOrderC {
 		this.createdYear = createdYear;
 	}
 
-
 	public CheckOrderC()
 	{
 

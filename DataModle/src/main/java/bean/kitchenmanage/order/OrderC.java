@@ -120,9 +120,13 @@ public class OrderC implements Serializable{
 	 */
 	private String dataType = "UserData";
 	/**
-	 * 商品备注
+	 * 订单备注
 	 */
 	private String desc;
+	/**
+	 * 消台原因
+	 */
+	private String cancelReason;
 
 	public String getDataType() {
 		return dataType;
@@ -345,5 +349,13 @@ public class OrderC implements Serializable{
 
 	public void setDesc(String desc) {
 		this.desc = desc;
+	}
+
+	public String getCancelReason() {
+		return cancelReason;
+	}
+
+	public void setCancelReason(String cancelReason) {
+		this.cancelReason = cancelReason;
 	}
 }

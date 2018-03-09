@@ -106,6 +106,10 @@ public class DishesC implements Serializable {
 	 * 数据分两大类，一个是基础数据 basic，一个业务实时数据 business
 	 */
 	private String dataType = "BaseData";//basi,代表basic数据,busi,代表业务数据
+	/**
+	 * 菜品状态，0为正常，1为估清
+	 */
+	private int state;
 
 	public String getDataType() {
 		return dataType;
@@ -248,8 +252,13 @@ public class DishesC implements Serializable {
 		this.dishesKindId = dishesKindId;
 	}
 
+	public int getState() {
+		return state;
+	}
 
-
+	public void setState(int state) {
+		this.state = state;
+	}
 
 	public boolean isHaveSupDishes() {
 		return haveSupDishes;

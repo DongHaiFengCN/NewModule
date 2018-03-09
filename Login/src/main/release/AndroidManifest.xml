@@ -15,21 +15,23 @@
     <application
          >
         <activity android:name="smartkitchen.com.login.LoginActivity"
+            android:theme="@style/LoginAppTheme"
             android:windowSoftInputMode="adjustPan">
-
         </activity>
-        <activity android:name=".forgetPsw.ForgetActivity"
+
+        <activity android:name=".MobCheckActivity"
             android:theme="@style/LoginAppTheme"></activity>
-        <activity android:name=".modifyPsw.IdCodeActivity"
+        <activity android:name=".modifyPsw.ModifyPwdActivity"
             android:theme="@style/LoginAppTheme"></activity>
-        <activity android:name=".modifyPsw.ModifyPswActivity"
+        <activity android:name=".forgetPsw.NewPswActivity"
             android:theme="@style/LoginAppTheme"></activity>
-        <activity android:name=".modifyPsw.NewPswActivity"
+        <activity android:name=".rebindTel.NewMobCheckActivity"
+            android:theme="@style/LoginAppTheme"></activity>
+        <activity android:name=".rebindTel.RebindTelActivity"
             android:theme="@style/LoginAppTheme"></activity>
 
         <activity android:name="smartkitchen.com.login.register.RegisterActivity"
             android:theme="@style/LoginAppTheme"
-            android:windowSoftInputMode="adjustResize|stateHidden"
             >
         </activity>
 
