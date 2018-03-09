@@ -85,11 +85,13 @@ public class CDBHelper implements ReplicatorChangeListener
     {
 
             DatabaseConfiguration config = new DatabaseConfiguration(context);
-            File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
-            config.setDirectory(folder.getAbsolutePath());
+            //File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
+           // config.setDirectory(folder.getAbsolutePath());
             try {
                 db = new Database(dbName, config);
-            } catch (CouchbaseLiteException e) {
+            } catch (CouchbaseLiteException e)
+            {
+                MyLog.e("CDBHelper","dbinit exception="+e.toString());
                 e.printStackTrace();
             }
 
@@ -97,8 +99,13 @@ public class CDBHelper implements ReplicatorChangeListener
     public static void startPushAndPullReplicationForCurrentUser(String username, String password) {
 
         Log.e("startReplication","channelId="+username+"-----pwd="+password);
+        if(db==null)
+        {
+            Log.e("startReplication","db=null");
+            return;
+        }
 
-        Database.setLogLevel(Database.LogDomain.REPLICATOR, Database.LogLevel.NONE);
+        db.setLogLevel(Database.LogDomain.REPLICATOR, Database.LogLevel.NONE);
 
         URI url = null;
         try {
