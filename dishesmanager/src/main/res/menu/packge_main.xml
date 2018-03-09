@@ -7,7 +7,7 @@
         android:id="@+id/action_add"
         android:title=""
         app:showAsAction="always"
-        android:icon="@mipmap/icon_add_big"
+        android:icon="@mipmap/icon_menu_add_big"
        />
 
 

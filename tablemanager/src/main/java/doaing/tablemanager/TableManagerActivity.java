@@ -96,8 +96,8 @@ public class TableManagerActivity extends BaseToobarActivity {
                 areaDocment = database.getDocument(areaAdapter.getAreaId().get(pos));
                 Array array = areaDocment.getArray("tableIDList");
                 tableRecycleAdapter.setArray(array);
-                Log.e("DOAING","参数长度"+array.count());
-                Log.e("DOAING","执行了吗");
+        /*        Log.e("DOAING","参数长度"+array.count());
+                Log.e("DOAING","执行了吗");*/
 
             }
         });

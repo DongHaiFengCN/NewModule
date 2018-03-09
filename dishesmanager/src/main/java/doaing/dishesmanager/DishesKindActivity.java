@@ -71,6 +71,7 @@ public class DishesKindActivity extends BaseToobarActivity {
     Toolbar toolbar;
     @BindView(R2.id.disheskind_lv)
     ListView dishesKindLv;
+    SearchView.SearchAutoComplete mSearchAutoComplete;
 
     @Override
     protected int setMyContentView() {
@@ -101,7 +102,7 @@ public class DishesKindActivity extends BaseToobarActivity {
         listAdapter = new ListAdapter();
         dishesKindLv.setAdapter(listAdapter);
         database = CDBHelper.getDatabase();
-        Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("kindName")))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id), SelectResult.expression(Expression.property("kindName")))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo(Expression.string("DishesKindC")));
         query.addChangeListener(new QueryChangeListener() {
@@ -131,11 +132,25 @@ public class DishesKindActivity extends BaseToobarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.taste, menu);
-
+        getMenuInflater().inflate(R.menu.toobar_add, menu);
+        final MenuItem addhItem = menu.findItem(R.id.action_add);
+        addhItem.setVisible(false);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView mSearchView = (SearchView) searchItem.getActionView();
-        final SearchView.SearchAutoComplete mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addhItem.setVisible(true);
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                addhItem.setVisible(false);
+                return false;
+            }
+        });
+        mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
         ImageView searchButton = mSearchView.findViewById(R.id.search_button);
         searchButton.setImageResource(R.mipmap.icon_add);
         mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.md_white));
@@ -154,29 +169,7 @@ public class DishesKindActivity extends BaseToobarActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
 
-                    new AlertDialog.Builder(DishesKindActivity.this)
-                            .setTitle("选择添加类型")
-                            .setPositiveButton("菜类", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                    saveall(mSearchAutoComplete.getText().toString(), false);
-                                    mSearchAutoComplete.setText("");
-                                }
-                            })
-                            .setNegativeButton("一级套餐", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    saveall(mSearchAutoComplete.getText().toString(), true);
-                                    mSearchAutoComplete.setText("");
-                                }
-                            })
-                            .setNeutralButton("取消", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-
-                                }
-                            }).show();
+                    addDisheKindInfo(mSearchAutoComplete);
 
                 }
 
@@ -187,14 +180,48 @@ public class DishesKindActivity extends BaseToobarActivity {
         return true;
     }
 
+    private void addDisheKindInfo(final SearchView.SearchAutoComplete mSearchAutoComplete) {
+        new AlertDialog.Builder(DishesKindActivity.this)
+                .setTitle("选择添加类型")
+                .setPositiveButton("菜类", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        saveall(mSearchAutoComplete.getText().toString(), false);
+                        mSearchAutoComplete.setText("");
+                    }
+                })
+                .setNegativeButton("一级套餐", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveall(mSearchAutoComplete.getText().toString(), true);
+                        mSearchAutoComplete.setText("");
+                    }
+                })
+                .setNeutralButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_add) {
+            addDisheKindInfo(mSearchAutoComplete);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * @param kindName 菜类或一级套餐名称
      * @param flag     true 一级套餐 false 菜类
      */
     private void saveall(String kindName, boolean flag) {
         MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
-        document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
-        MyLog.e("DishesKind","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
+        document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
+        MyLog.e("DishesKind", "channeldId=" + ((MyApplication) getApplicationContext()).getCompany_ID());
         document.setString("className", "DishesKindC");
         document.setBoolean("setMenu", flag);
         document.setString("kindName", kindName);
