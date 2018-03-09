@@ -124,7 +124,7 @@ public class PackageActivity extends BaseToobarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.taste, menu);
+        getMenuInflater().inflate(R.menu.toobar_add, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView mSearchView = (SearchView) searchItem.getActionView();

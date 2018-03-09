@@ -257,8 +257,8 @@ DisheEditActivity extends BaseToobarActivity {
 
                 try {
 
-                   CDBHelper.getDatabase().save(disheMuDoc);
-                  CDBHelper.getDatabase().save(newMukindDoc);
+                    CDBHelper.getDatabase().save(disheMuDoc);
+                    CDBHelper.getDatabase().save(newMukindDoc);
                     EventBus.getDefault().postSticky(kindPosition);
 
                     finish();
@@ -291,7 +291,6 @@ DisheEditActivity extends BaseToobarActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(url)
                 .build();
-
 
         FileAddService service = retrofit.create(FileAddService.class);
         RequestBody requestFile =
@@ -332,6 +331,7 @@ DisheEditActivity extends BaseToobarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
+
             Uri uri = data.getData();
             ContentResolver cr = this.getContentResolver();
             try {
@@ -514,19 +514,19 @@ DisheEditActivity extends BaseToobarActivity {
         tasteList = new ArrayList<>();
         if (array != null) {
 
-            //   List<Object> objects = array.toList();
-            Iterator<Object> iterator = array.iterator();
+            MutableArray mutableArray = array.toMutable();
+            Iterator<Object> iterator = mutableArray.iterator();
+
             while (iterator.hasNext()) {
 
                 String o = (String) iterator.next();
                 Document document = database.getDocument(o);
-                if (document!= null) {
+                if (document != null) {
                     tasteList.add(document);
-                }else{
-
                 }
 
             }
+
 
         }
 
