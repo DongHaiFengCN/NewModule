@@ -43,7 +43,6 @@ import tools.CDBHelper;
 */
 
 
-
 public class OrderFragment extends Fragment {
 
     ListView dishesRv;
@@ -75,7 +74,6 @@ public class OrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frame_order, null);
-        ButterKnife.bind(this, view);
         dishesRv = view.findViewById(R.id.dishes_rv);
         orderList = view.findViewById(R.id.order_list);
         return view;
@@ -119,7 +117,7 @@ public class OrderFragment extends Fragment {
 
                 leftAdapter.changeSelected(position);
 
-                if (dishesKindCList.size() != 0){
+                if (dishesKindCList.size() != 0) {
                     kindId = dishesKindCList.get(position).get_id();
                     orderDragAdapter.setMessage(dishesObjectCollection.get(kindId)
                             , dishesCollection.get(kindId));
@@ -210,11 +208,11 @@ public class OrderFragment extends Fragment {
 
                     //找到对应的位置
                     if (dishesCList.get(i).getString("dishesName").equals(goodsC.getDishesName())) {
-                     //   Log.e("DOAING", "修改前的数据：" + floats[i]);
+                        //   Log.e("DOAING", "修改前的数据：" + floats[i]);
 
-                     //   Log.e("DOAING", "添加的数据：" + goodsC.getDishesCount());
+                        //   Log.e("DOAING", "添加的数据：" + goodsC.getDishesCount());
                         floats[i] = goodsC.getDishesCount() + floats[i];
-                      //  Log.e("DOAING", "修改完成的数据：" + floats[i]);
+                        //  Log.e("DOAING", "修改完成的数据：" + floats[i]);
                         dishesCollection.put(goodsC.getDishesKindId(), floats);
 
 
@@ -308,14 +306,23 @@ public class OrderFragment extends Fragment {
         final DishesMessage dishesMessage = new DishesMessage();
 
         final List<String> tasteList = new ArrayList<>();
-        if (dishesC.getTasteList() != null&&!dishesC.getTasteList().isEmpty()) {
+        if (dishesC.getTasteList() != null && !dishesC.getTasteList().isEmpty()) {
 
             for (int i = 0; i < dishesC.getTasteList().size(); i++) {
                 Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishesC.getTasteList().get(i).toString());
+                if (document == null || document.getString("tasteName") == null) {
+                    continue;
+                }
                 tasteList.add(document.getString("tasteName"));
             }
 
-            dishesMessage.setDishesTaste(tasteList.get(0));
+            if (tasteList.size() > 0) {
+                dishesMessage.setDishesTaste(tasteList.get(0));
+            } else if (tasteList.size() == 0) {
+
+                return;
+            }
+
 
         }
 
@@ -324,7 +331,6 @@ public class OrderFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.view_dialog_recycler);
 
         final GridLayoutManager manager = new GridLayoutManager(getActivity(), 3);
-
 
 
         recyclerView.setLayoutManager(manager);
@@ -347,7 +353,6 @@ public class OrderFragment extends Fragment {
         String all = MyBigDecimal.mul(amountView.getAmount() + "", dishesC.getPrice() + "", 2);
 
         price_tv.setText("总计 " + all + " 元");
-
 
 
         dishesMessage.setDishKindId(dishesC.getDishesKindId());

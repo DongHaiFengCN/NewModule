@@ -20,6 +20,7 @@
         android:paddingLeft="4dp"
         android:layout_height="45dp"
         android:hint="联系电话"
+        android:inputType="number"
         android:background="@drawable/animselect"
         android:layout_margin="@dimen/fab_margin"
         />

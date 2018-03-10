@@ -76,7 +76,7 @@ public class TableManagerActivity extends BaseToobarActivity {
         setToolbarName("房间与桌位");
         areaLv = findViewById(R.id.area_lv);
         tableRc = findViewById(R.id.table_lv);
-        tableRc.setLayoutManager(new GridLayoutManager(this, 3));
+        tableRc.setLayoutManager(new GridLayoutManager(this, 2));
         tableRecycleAdapter = new TableRecycleAdapter();
         tableRc.setAdapter(tableRecycleAdapter);
         areaAdapter = new AreaAdapter(TableManagerActivity.this,database);
@@ -96,8 +96,6 @@ public class TableManagerActivity extends BaseToobarActivity {
                 areaDocment = database.getDocument(areaAdapter.getAreaId().get(pos));
                 Array array = areaDocment.getArray("tableIDList");
                 tableRecycleAdapter.setArray(array);
-        /*        Log.e("DOAING","参数长度"+array.count());
-                Log.e("DOAING","执行了吗");*/
 
             }
         });
