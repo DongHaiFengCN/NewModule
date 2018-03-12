@@ -1053,6 +1053,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         onOrderC.setNeedPay(total);
                         onOrderC.setTableNo(myApplication.getTable_sel_obj().getTableNum());
                         onOrderC.setCreatedYear("2018");
+                        onOrderC.setOnName(nameEt.getText().toString());
+                        onOrderC.setOnTel(contactWayEt.getText().toString());
                         Database database = CDBHelper.getDatabase();
                         for (String id : checkOrder.getOrderList()) {
                             onOrderC.addOrder(id);
@@ -1065,16 +1067,65 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                                 e.printStackTrace();
                             }
                         }
-                        alertDialog.dismiss();
-
+                        isGuaZ = true;
+                        submitOnOrder(onOrderC);
                     }
-
                 }
             });
-
         }
     }
 
+
+    private void submitOnOrder(final OnOrderC onOrderC){
+        BluetoothAdapter btAdapter = BluetoothUtil.getBTAdapter();
+        if (!btAdapter.isEnabled()) {
+
+            btAdapter.enable();
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        BluetoothDevice device = BluetoothUtil.getDevice(btAdapter);
+
+
+        if (device != null) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("打印总账单");
+            builder.setPositiveButton("打印", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                    ProgressBarasyncTask progressBarasyncTask = new ProgressBarasyncTask(PayActivity.this);
+                    progressBarasyncTask.setOnDate(onOrderC);
+                    progressBarasyncTask.execute();
+                }
+            });
+            builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                    //跳转主界面
+                    turnDesk();
+
+                }
+            });
+            builder.show();
+
+        } else {
+
+
+            turnDesk();
+
+
+        }
+    }
 
 /*
 *
