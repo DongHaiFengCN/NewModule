@@ -156,7 +156,6 @@ public class OrderDragAdapter extends BaseAdapter {
             public void onClick(View v) {
 
                 DishesC dishesC = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), DishesC.class);
-
                 setMessage(dishesC, false, position);
 
             }
@@ -173,9 +172,8 @@ public class OrderDragAdapter extends BaseAdapter {
 
     /**
      * 初始化需要发送的数据，并发送到 MainActivity
-     *
      * @param dishesC 获取的菜品实体类
-     * @param flag    true+  false-
+     * @param flag    true+  false
      * @return 是否发送成功
      */
 
