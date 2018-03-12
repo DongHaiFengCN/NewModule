@@ -44,6 +44,7 @@ import java.util.List;
 import bean.kitchenmanage.member.ConsumLogC;
 import bean.kitchenmanage.order.CheckOrderC;
 import bean.kitchenmanage.order.GoodsC;
+import bean.kitchenmanage.order.OnOrderC;
 import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.order.PayDetailC;
 import bean.kitchenmanage.order.PromotionDetailC;
@@ -256,7 +257,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
         //营销方式
-
         promotionCList = CDBHelper.getObjByClass(getApplicationContext(), PromotionC.class);
 
         Iterator iterator = promotionCList.iterator();
@@ -337,7 +337,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             turnDiscount(data);
 
 
-        } else if (requestCode == SALE && resultCode == RESULT_OK) {//会员账单返回
+        }
+        //会员账单返回
+        else if (requestCode == SALE && resultCode == RESULT_OK) {
 
             int flag = data.getIntExtra("CardTypeFlag", 3);
 
@@ -1014,6 +1016,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
         } else if (i == R.id.gz) {
+            //TODO 挂账信息
             View view1 = getLayoutInflater().inflate(R.layout.view_gz_dialog, null);
             nameEt = view1.findViewById(R.id.order_name_tv);
             contactWayEt = view1.findViewById(R.id.order_contactway_tv);
@@ -1040,13 +1043,30 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         contactWayEt.setError("联系方式不能为空！");
 
                     } else {
-                        setPayDetail(10, total);
-
-                        try {
-                            submitCheckOrder();
-                        } catch (CouchbaseLiteException e) {
-                            e.printStackTrace();
+                        Date date = new Date();
+                        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        OnOrderC onOrderC = new OnOrderC();
+                        onOrderC.setOnTime(formatter.format(date));
+                        onOrderC.setChannelId(myApplication.getCompany_ID());
+                        onOrderC.setClassName("OnOrderC");
+                        onOrderC.setNeedPay(total);
+                        onOrderC.setTableNo(myApplication.getTable_sel_obj().getTableNum());
+                        onOrderC.setCreatedYear("2018");
+                        Database database = CDBHelper.getDatabase();
+                        for (String id : checkOrder.getOrderList()) {
+                            onOrderC.addOrder(id);
+                            Document document = database.getDocument(id);
+                            MutableDocument mutableDocument = document.toMutable();
+                            mutableDocument.setInt("orderState", 0);
+                            try {
+                                database.save(mutableDocument);
+                            } catch (CouchbaseLiteException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        onOrderC.setNeedPay(total);
+                        onOrderC.setOnTel(contactWayEt.getText().toString());
+                        CDBHelper.createAndUpdate(getApplicationContext(), onOrderC);
                         alertDialog.dismiss();
 
                     }
@@ -1214,15 +1234,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                             }
 
                             //计算折扣
-                            //   MyLog.e("规则长度 " + promotionRuleCList.size());
 
-                            //  MyLog.e("当前总价 " + total);
-
-                            // MyLog.e("符合减免部分的总价 " + copy);
 
                             for (int i = 0; i < promotionRuleCList.size(); i++) {
 
-                                // MyLog.e("满 " + promotionRuleCList.get(i).getCounts());
 
                                 if (total >= promotionRuleCList.get(i).getCounts()) {
 
@@ -1230,9 +1245,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                                     disrate = promotionRuleCList.get(i).getDiscounts();
 
                                     //计算减免
-
-                                    // MyLog.e("减免的标准 " + disrate);
-
 
                                     //减去的价格
                                     String f1;
@@ -1394,15 +1406,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         Database database = CDBHelper.getDatabase();
         for (String orderC : checkOrder.getOrderList()) {
 
-            //  Log.e("DOAING","修改的order id"+orderC);
             Document document = database.getDocument(orderC);
-            // Log.e("DOAING","修改的前"+ document.getInt("orderState"));
-
             MutableDocument mutableDocument = document.toMutable();
             mutableDocument.setInt("orderState", 0);
             database.save(mutableDocument);
-            // Log.e("DOAING","修改的后"+ database.getDocument(orderC).getInt("orderState"));
-
         }
 
         //营销细节

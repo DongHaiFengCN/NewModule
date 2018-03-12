@@ -218,74 +218,12 @@ public class OrderDragAdapter extends BaseAdapter {
                 tasteSelectDialog(flag, position, dishesMessage, strings);
 
             }else {
-                Refresh(flag, position, dishesMessage);
+                Refresh(flag, dishesMessage);
             }
-
-           /* if (flag) {
-
-                //初始化一个缓存口味的数组
-                final String[] strings = new String[dishesC.getTasteList().size()];
-
-                for (int i = 0; i < dishesC.getTasteList().size(); i++) {
-
-                    DishesTasteC dishesTasteC = CDBHelper.getObjById(context, dishesC.getTasteList().get(i), DishesTasteC.class);
-
-                    if (dishesTasteC != null) {
-
-                        strings[i] = dishesTasteC.getTasteName();
-                    }
-
-                }
-
-                if (strings[0] != null) {
-
-                    dishesMessage.setDishesTaste(strings[0]);
-                    tasteSelectDialog(flag, position, dishesMessage, strings);
-
-                }
-
-            } else {
-
-                touchListener.setSubtractionTouchListener(dishesC.get_id());
-                //获取这个当前菜品的id 找到goodsList中相同的，加载口味
-
-                final String[] arr = tastetList.toArray(new String[tastetList.size()]);
-                dishesMessage.setDishesTaste(arr[0]);
-                new AlertDialog.Builder(context).setTitle("已选择口味")
-
-
-                        .setSingleChoiceItems(arr, 0, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                //得到口味
-
-                                dishesMessage.setDishesTaste(arr[i]);
-
-                            }
-                        })
-                        .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                Refresh(flag, position, dishesMessage);
-
-
-                            }
-                        })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).show();
-
-            }*/
-
 
         }else {
 
-            Refresh(flag, position, dishesMessage);
+            Refresh(flag, dishesMessage);
         }
 
 
@@ -309,7 +247,7 @@ public class OrderDragAdapter extends BaseAdapter {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
-                        Refresh(flag, position, dishesMessage);
+                        Refresh(flag, dishesMessage);
 
 
                     }
@@ -323,7 +261,7 @@ public class OrderDragAdapter extends BaseAdapter {
     }
 
 
-    private void Refresh(boolean flag, int position, DishesMessage dishesMessage) {
+    private void Refresh(boolean flag, DishesMessage dishesMessage) {
 
         dishesMessage.setOperation(flag);
 

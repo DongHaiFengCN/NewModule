@@ -30,7 +30,7 @@ public class OnOrderC {
     /**
      * 包含的订单
      */
-    private List<OrderC> orderList;
+    private List<String> orderList;
     /**
      * 结账日期
      *  yyyy-MM-dd HH:mm:ss
@@ -120,11 +120,11 @@ public class OnOrderC {
         this._id = _id;
     }
 
-    public List<OrderC> getOrderList() {
+    public List<String> getOrderList() {
         return orderList;
     }
 
-    public void setOrderList(List<OrderC> orderList) {
+    public void setOrderList(List<String> orderList) {
         this.orderList = orderList;
     }
 
@@ -175,10 +175,10 @@ public class OnOrderC {
     public void setOnTel(String onTel) {
         this.onTel = onTel;
     }
-    public void addOrder(OrderC obj)
+    public void addOrder(String obj)
     {
         if(orderList==null)
-            orderList=new ArrayList<OrderC>();
+            orderList=new ArrayList<>();
         orderList.add(obj);
     }
 }

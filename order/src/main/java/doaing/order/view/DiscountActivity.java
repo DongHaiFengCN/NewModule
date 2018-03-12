@@ -1,5 +1,6 @@
 package doaing.order.view;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,9 +26,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import doaing.order.R;
+import doaing.order.untils.MyBigDecimal;
 import doaing.order.untils.Tool;
 
 
+/**
+ * @author donghaifeng
+ */
 public class DiscountActivity extends AppCompatActivity implements View.OnClickListener {
 
     RadioButton unitTen;
@@ -37,46 +42,43 @@ public class DiscountActivity extends AppCompatActivity implements View.OnClickL
     Button submitArea;
     TextView totalTv;
     EditText discountEt;
+    private EditText disEt;
     private float stashTotal;
     private CharSequence c;
     private InputMethodManager inputMethodManager;
     private  float total ;
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discount);
-        ButterKnife.bind(this);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         initView();
-
         inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
-
-
         stashTotal = getIntent().getFloatExtra("Total", 0);
-
-        totalTv.setText(stashTotal+"");
-
-        //discountEt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(totalTv.length()-2)});
-
+        totalTv.setText(String.valueOf(stashTotal));
         discountEt.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
+                reset();
                 if (MotionEvent.ACTION_DOWN == motionEvent.getAction()) {
-
-                    reset();
-
+                    discountEt.setCursorVisible(true);
                 }
 
                 return false;
             }
         });
-
-
+        disEt.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                reset();
+                disEt.setCursorVisible(true);
+                return false;
+            }
+        });
 
         discountEt.addTextChangedListener(new TextWatcher() {
 
@@ -121,6 +123,45 @@ public class DiscountActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        disEt.addTextChangedListener(new TextWatcher() {
+
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+                if(!TextUtils.isEmpty(disEt.getText().toString())){
+
+                    if(!".".equals(editable.charAt(editable.length()-1)+"")){
+
+                        if(100f >= Float.valueOf(disEt.getText().toString())){
+
+                            totalTv.setText(MyBigDecimal.mul(stashTotal+"",MyBigDecimal.div(disEt.getText().toString(),"100",2),2));
+
+                        }
+
+                    }
+
+
+                }else {
+
+                    if(discountEt.isCursorVisible()){
+
+                        totalTv.setText(stashTotal+"");
+                    }
+                }
+            }
+        });
+
     }
 
     private void initView() {
@@ -131,6 +172,7 @@ public class DiscountActivity extends AppCompatActivity implements View.OnClickL
         submitArea = findViewById(R.id.submit_area);
         totalTv = findViewById(R.id.total_tv);
         discountEt = findViewById(R.id.discount_et);
+        disEt = findViewById(R.id.dis_et);
         unitTen.setOnClickListener(this);
         unitElement.setOnClickListener(this);
         unitHorn.setOnClickListener(this);
@@ -151,13 +193,16 @@ public class DiscountActivity extends AppCompatActivity implements View.OnClickL
 
             unitHorn.setChecked(false);
         }
-        if(!discountEt.isCursorVisible()){
+        if(discountEt.isCursorVisible()){
 
-            discountEt.setCursorVisible(true);
+            discountEt.setCursorVisible(false);
         }
         if(getTextTotal() != stashTotal){
 
-            totalTv.setText(stashTotal+"");
+            totalTv.setText(String.valueOf(stashTotal));
+        }
+        if(disEt.isCursorVisible()){
+            discountEt.setCursorVisible(false);
         }
 
     }
@@ -179,23 +224,13 @@ public class DiscountActivity extends AppCompatActivity implements View.OnClickL
             finish();
 
         } else if (i == R.id.reset) {
-            reset();
-
-            if (!TextUtils.isEmpty(discountEt.getText().toString())) {
-
-                discountEt.setText("");
-            }
-            if (discountEt.isCursorVisible()) {
-
-                discountEt.setCursorVisible(false);
-            }
 
 
-        } else {
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
     public void onClick(View view) {
 
         if(discountEt.isCursorVisible()){
@@ -228,15 +263,17 @@ public class DiscountActivity extends AppCompatActivity implements View.OnClickL
 
         } else if (i == R.id.submit_area) {
             Intent intent = new Intent();
-            intent.putExtra("Total", getTextTotal());
             intent.putExtra("Margin", Tool.substrct(stashTotal, getTextTotal()));
-            // MyLog.e(getTextTotal()+"");
             setResult(RESULT_OK, intent);
             finish();
 
 
-        } else {
         }
+
+
+
+
+
     }
 
 /*
