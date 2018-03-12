@@ -18,6 +18,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -41,6 +42,7 @@ import android.widget.Toast;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.EscCommand;
@@ -92,12 +94,12 @@ import static tools.CDBHelper.getFormatDate;
 public class ShowParticularsActivity extends Activity implements View.OnClickListener{
 
     ListView showListView;
-    LinearLayout showButDc;
+    LinearLayout showButDc,showAllLin;
     LinearLayout showButMd;
     TextView showTvSl;
     TextView showTvArea;
     ImageView showImg;
-
+    EditText showEdBz;
     ShowParticularsAdapter adatper;
     private List<GoodsC> goodsCList;
     private MyApplication myapp;
@@ -312,6 +314,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
+        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
+            newOrderObj.setDesc(showEdBz.getText().toString());
+        }
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
         newOrderObj.setGoodsList(tmpList);
@@ -350,7 +355,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
-
+        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
+            newOrderObj.setDesc(showEdBz.getText().toString());
+        }
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(退)");
@@ -392,7 +399,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
-
+        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
+            newOrderObj.setDesc(showEdBz.getText().toString());
+        }
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(2);//置成赠菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(赠)");
@@ -433,7 +442,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
-
+        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
+            newOrderObj.setDesc(showEdBz.getText().toString());
+        }
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(0);
 
@@ -479,7 +490,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
-
+        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
+            newOrderObj.setDesc(showEdBz.getText().toString());
+        }
         String dishesName = oldGoods.getDishesName();
         dishesName = dishesName.substring(0, dishesName.length() - 3);
         newGoods.setDishesName(dishesName + "(退)");
@@ -585,8 +598,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
      *
      * @param pos
  **/
-
-
     private void normalDishesDialog(final int pos) {
         final int position = pos;
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(ShowParticularsActivity.this);
@@ -625,6 +636,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     editText.setText(1.0 + "");
                     dialog_count.setText("追加数量");
                 }else if (selActionId == R.id.dialog_delete_tc){
+
                     editText.setText(1.0 + "");
                     dialog_count.setText("退菜数量");
                 }else if (selActionId == R.id.dialog_give_zc){
@@ -756,7 +768,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                     uiHandler.obtainMessage(1).sendToTarget();
 
-                } else {
+                } else if (selActionId == R.id.dialog_give_zc){
 
                     if (tmpCount <= 0) {
                         Toast.makeText(getApplicationContext(), "数量要求大于0", Toast.LENGTH_SHORT).show();
@@ -771,11 +783,8 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                     setAll();
                 }
-
-
-
                 dialog.dismiss();
-
+                showEdBz.setText("");
                 adatper.notifyDataSetChanged();
 
             }
@@ -789,7 +798,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
             public void onClick(View v) {
                 dialog.dismiss();
-
+                showEdBz.setText("");
             }
 
         });
@@ -904,7 +913,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     proDialog.show();
 
                     uiHandler.obtainMessage(1).sendToTarget();
-
+                    showEdBz.setText("");
                 }
 
                 dialog.dismiss();
@@ -918,7 +927,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             public void onClick(View v) {
 
                 dialog.dismiss();
-
+                showEdBz.setText("");
             }
         });
         dialog.show();
@@ -986,7 +995,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         tableName = myapp.getTable_sel_obj().getTableName();
         AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myapp.getTable_sel_obj().getAreaId(), AreaC.class);
         areaName = areaC.getAreaName();
-       initView();
+        initView();
         goodsCList = new ArrayList<>();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         adatper = new ShowParticularsAdapter(this, goodsCList);
@@ -998,7 +1007,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         showListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
-
+                showEdBz.setFocusable(false);
                 //点击订单OrderC
                 GoodsC obj = goodsCList.get(position);
                 switch (obj.getGoodsType()) {
@@ -1019,6 +1028,36 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
             }
         });
+
+        showEdBz.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                Log.e("ShowPart",""+hasFocus);
+                if (hasFocus){
+
+                }else{
+                    if (TextUtils.isEmpty(showEdBz.getText().toString())){
+                        return ;
+                    }
+                    for (OrderC orderC : orderCList){
+                        orderC.setDesc(showEdBz.getText().toString());
+                        CDBHelper.createAndUpdate(getApplicationContext(),orderC);
+                    }
+                }
+            }
+        });
+        showEdBz.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    showEdBz.setFocusable(true);
+                    showEdBz.setFocusableInTouchMode(true);
+                    showEdBz.requestFocus();
+                }
+
+                return false;
+            }
+        });
     }
 
     private void initView() {
@@ -1028,10 +1067,13 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
          showTvSl = findViewById(R.id.show_tv_sl);
          showTvArea = findViewById(R.id.show_tv_area);
          showImg = findViewById(R.id.show_img);
+        showEdBz = findViewById(R.id.show_ed_bz);
         showImg.setOnClickListener(this);
         showButMd.setOnClickListener(this);
         showButDc.setOnClickListener(this);
         findViewById(R.id.show_but_dy).setOnClickListener(this);
+        findViewById(R.id.show_but_sddy).setOnClickListener(this);
+        findViewById(R.id.show_list_lin).setOnClickListener(this);
     }
 
     private void initData()
@@ -1059,6 +1101,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                 boolean flag = false;
                 for (OrderC orderC : orderCList) {
+                    Log.e("Show",""+orderC.getDesc());
                     if (orderC.getOrderCType() == 0)//0，正常菜订单
                     {
                         all = MyBigDecimal.add(all, orderC.getAllPrice(), 1);
@@ -1246,11 +1289,13 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         Intent intent;
         int i = view.getId();
         if (i == R.id.show_but_dc) {
+            showEdBz.setFocusable(false);
             intent = new Intent(ShowParticularsActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
 
         } else if (i == R.id.show_but_md) {
+            showEdBz.setFocusable(false);
             intent = new Intent(ShowParticularsActivity.this, PayActivity.class);
             startActivity(intent);
             finish();
@@ -1259,6 +1304,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             finish();
 
         } else if (i == R.id.show_but_dy) {
+            showEdBz.setFocusable(false);
             if (Tool.isFastDoubleClick()) {
                 Toast.makeText(ShowParticularsActivity.this, "点击太快，请稍候", Toast.LENGTH_LONG).show();
                 return;
@@ -1266,8 +1312,19 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 setPrintOrder();
             }
 
+        }else if (i == R.id.show_but_sddy){
+            showEdBz.setFocusable(false);
+            if (Tool.isFastDoubleClick()) {
+                Toast.makeText(ShowParticularsActivity.this, "点击太快，请稍候", Toast.LENGTH_LONG).show();
+                return;
+            } else {
+                printOrderToKitchen(goodsCList);
+            }
 
-        } else {
+        }else{
+            showEdBz.setFocusable(false);
+        }if (i == R.id.show_list_lin){
+            showEdBz.setFocusable(false);
         }
     }
 
@@ -1353,7 +1410,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
      * 厨房分单打印
 
 */
-    private void printOrderToKitchen()
+    private void printOrderToKitchen(List<GoodsC> list)
     {
         //1\ 查询出所有厨房,并分配菜品
         List<KitchenClientC> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClientC.class);
@@ -1375,16 +1432,16 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             for (String dishKindId : kitchenClientObj.getDishesKindIDList())//2 for 遍历厨房下所含菜系
             {
 
-                //3 for 该厨房下所应得商品
-                for (GoodsC goodsC : tmpList){
+                    //3 for 该厨房下所应得商品
+                    for (GoodsC goodsC : list) {
 
-                    if (dishKindId.equals(goodsC.getDishesKindId())) {
-                        findflag = true;
-                        // g_printGoodsList.remove(goodsC);
-                        // 为了降低循环次数，因为菜品只可能在一个厨房打印分发，故分发完后移除掉。
-                        oneKitchenClientGoods.add(goodsC);
-                    }
-                } //end for 3
+                        if (dishKindId.equals(goodsC.getDishesKindId())) {
+                            findflag = true;
+                            // g_printGoodsList.remove(goodsC);
+                            // 为了降低循环次数，因为菜品只可能在一个厨房打印分发，故分发完后移除掉。
+                            oneKitchenClientGoods.add(goodsC);
+                        }
+                    } //end for 3
 
             }//end for 2
 
@@ -1611,6 +1668,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         // 设置字体宽高增倍
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.ON, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF); // 设置为倍高倍宽
         esc.addText(clientname + "\n");// 打印文字
+        Log.e("ShowPart",""+clientname);
         //打印并换行
         esc.addPrintAndLineFeed();
         // 打印文字
@@ -1709,12 +1767,19 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 esc.addPrintAndLineFeed();
 
             }
-            esc.addText("--------------------------------------------\n");
+            esc.addText("--------------------------------\n");
             esc.addPrintAndLineFeed();
-
+            for (OrderC orderC : orderCList) {
+                if (orderC.getDesc() != null) {
+                    esc.addText("备注信息：             " + orderC.getDesc() + "\n");
+                    esc.addPrintAndLineFeed();
+                    break;
+                }
+            }
         }
 
-
+        esc.addText("--------------------------------------------\n");
+        esc.addPrintAndLineFeed();
         // 加入查询打印机状态，打印完成后，此时会接收到GpCom.ACTION_DEVICE_STATUS广播
         esc.addQueryPrinterStatus();
 
@@ -1739,7 +1804,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         }
     }
 
-
     private Handler uiHandler = new Handler()
     {
 
@@ -1757,7 +1821,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     break;
 
                 case 1:
-                    printOrderToKitchen();
+                    printOrderToKitchen(tmpList);
 
                     break;
 
@@ -1771,7 +1835,5 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             super.handleMessage(msg);
         }
     };
-
-
 
 }

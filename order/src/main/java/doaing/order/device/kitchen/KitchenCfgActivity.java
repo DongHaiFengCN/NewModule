@@ -1,11 +1,13 @@
 package doaing.order.device.kitchen;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,10 +83,11 @@ public class KitchenCfgActivity extends BaseToobarActivity implements View.OnCli
             finish();
 
         } else if (i == R.id.activity_kitchen_tj) {
+            Bundle bundle = new Bundle();
             infomations = CDBHelper.getIdsByClass(getApplicationContext(), KitchenClientC.class);
             Intent intent = new Intent(KitchenCfgActivity.this, AddkitchenActivity.class);
-            Log.e("Addkitchen",""+infomations.size());
-            intent.putExtra("MAX_PRINTER_CNTMY",""+infomations.size());
+            bundle.putSerializable("infomations", (Serializable) infomations);
+            intent.putExtras(bundle);
             startActivityForResult(intent, 2015);
 
         }else{

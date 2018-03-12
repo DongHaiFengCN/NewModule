@@ -90,7 +90,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     ImageView cash;
     ImageView gzIm;
     TextView tableNumber;
-
+    public static boolean isGuaZ = false;
     EditText nameEt;
     EditText contactWayEt;
     List<PromotionRuleC> promotionRuleCList;
@@ -257,6 +257,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
         //营销方式
+
         promotionCList = CDBHelper.getObjByClass(getApplicationContext(), PromotionC.class);
 
         Iterator iterator = promotionCList.iterator();
@@ -1064,9 +1065,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                                 e.printStackTrace();
                             }
                         }
-                        onOrderC.setNeedPay(total);
-                        onOrderC.setOnTel(contactWayEt.getText().toString());
-                        CDBHelper.createAndUpdate(getApplicationContext(), onOrderC);
                         alertDialog.dismiss();
 
                     }
@@ -1234,10 +1232,15 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                             }
 
                             //计算折扣
+                            //   MyLog.e("规则长度 " + promotionRuleCList.size());
 
+                            //  MyLog.e("当前总价 " + total);
+
+                            // MyLog.e("符合减免部分的总价 " + copy);
 
                             for (int i = 0; i < promotionRuleCList.size(); i++) {
 
+                                // MyLog.e("满 " + promotionRuleCList.get(i).getCounts());
 
                                 if (total >= promotionRuleCList.get(i).getCounts()) {
 
@@ -1245,6 +1248,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                                     disrate = promotionRuleCList.get(i).getDiscounts();
 
                                     //计算减免
+
+                                    // MyLog.e("减免的标准 " + disrate);
+
 
                                     //减去的价格
                                     String f1;
@@ -1406,10 +1412,15 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         Database database = CDBHelper.getDatabase();
         for (String orderC : checkOrder.getOrderList()) {
 
+            //  Log.e("DOAING","修改的order id"+orderC);
             Document document = database.getDocument(orderC);
+            // Log.e("DOAING","修改的前"+ document.getInt("orderState"));
+
             MutableDocument mutableDocument = document.toMutable();
             mutableDocument.setInt("orderState", 0);
             database.save(mutableDocument);
+            // Log.e("DOAING","修改的后"+ database.getDocument(orderC).getInt("orderState"));
+
         }
 
         //营销细节

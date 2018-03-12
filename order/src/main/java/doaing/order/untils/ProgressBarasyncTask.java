@@ -160,7 +160,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.printText(PrintUtils.printTwoData("合计", total+"\n"));
             PrintUtils.printText("--------------------------------\n");
             PrintUtils.printText(PrintUtils.printTwoData("实收", checkOrderC.getNeedPay()+"\n"));
-            PrintUtils.printText("--------------------------------\n");
+            PrintUtils.printText("--------------------------------\n\n");
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
 
             List<PayDetailC> payDetailCList = checkOrderC.getPromotionDetail().getPayDetailList();
@@ -202,15 +202,17 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
 
                         default:
                             break;
-
                     }
-
                 }
-
             }
             PrintUtils.printText("支付方式："+stringBuffer.toString());
-            PrintUtils.printText("\n\n\n\n\n");
-            PrintUtils.printText("\n\n\n\n");
+            PrintUtils.printText("\n\n");
+            if (payActivity.isGuaZ) {
+
+                PrintUtils.printText("挂账签名：" + stringBuffer.toString());
+                PrintUtils.printText("\n\n\n\n\n");
+                PrintUtils.printText("\n\n\n\n");
+            }
             PrintUtils.closeOutputStream();
 
             try {
@@ -218,6 +220,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         };
 
 
@@ -239,9 +242,6 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
 
         payActivity.turnDesk();
 
-
-
-
     }
     /*
 *
@@ -249,14 +249,13 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
      * @param checkOrderC 需要打印的参数
 
 */
-
     public void setDate(CheckOrderC checkOrderC){
 
         this.checkOrderC = checkOrderC;
     }
 
     private void setAll() {
-        boolean flag = false;
+        boolean flag ;
 
         for (String orderCId: checkOrderC.getOrderList()) {
             OrderC orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),orderCId,OrderC.class);

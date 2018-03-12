@@ -72,7 +72,8 @@ public class MyListAdapter extends BaseAdapter {
         }
         Document document = CDBHelper.getDocByID(activity.getApplicationContext(), list.get(position));
         viewHolder.itemKitchenKname.setText(document.getString("name"));
-        viewHolder.itemKitchenPname.setText(""+document.getString("kitchenAdress"));
+        //viewHolder.itemKitchenPname.setText(""+document.getString("kitchenAdress"));
+        Log.e("Port","---"+document.getString("kitchenAdress"));
         viewHolder.itemKitchenDelete.setOnClickListener(new OnDeleteButtonClick(position));
 
         viewHolder.itemKitchenBianji.setOnClickListener(new OnEditorButtonClick(position));
@@ -101,13 +102,13 @@ public class MyListAdapter extends BaseAdapter {
                                     @Override
                                     public void onClick(DialogInterface dialog,
                                                         int which) {
-                                        //list中就一个时，不去执行转换位置
-                                        if (list.size() > 1 ){
-                                            //点击最后一个时，不去执行转换位置
-                                            if (mPosition != (list.size()-1)){
-                                                setKitchenCfg(mPosition);
-                                            }
-                                        }
+//                                        //list中就一个时，不去执行转换位置
+//                                        if (list.size() > 1 ){
+//                                            //点击最后一个时，不去执行转换位置
+//                                            if (mPosition != (list.size()-1)){
+//                                                setKitchenCfg(mPosition);
+//                                            }
+//                                        }
                                         deleteOneItemFromDatabase(mPosition);
                                         list.remove(mPosition);
                                         notifyDataSetChanged();
@@ -140,8 +141,9 @@ public class MyListAdapter extends BaseAdapter {
 
                 Log.e("PortType", "" + j + "------" + database.queryPortParamDataBase("" + 0).getPortType());
                 mPortParam = database.queryPortParamDataBase("" + (j + 1));
-                database.modifyPortParam(""+j, mPortParam);
-                database.deleteDataBase(""+(j+1));
+                database.deleteDataBase(""+j);
+                database.insertPortParam(j, mPortParam);
+
                 Log.e("PortType", "" + (j) + "------" + database.queryPortParamDataBase("" + (1 + j)).getPortType());
                 kitchen = CDBHelper.getObjById(activity.getApplicationContext(), list.get(j + 1), KitchenClientC.class);
                 if (kitchen != null) {
@@ -149,13 +151,17 @@ public class MyListAdapter extends BaseAdapter {
                     CDBHelper.createAndUpdate(activity.getApplicationContext(), kitchen);
                 }
             }
-
+            database.close();
 
         //list = CDBHelper.getIdsByClass(activity.getApplicationContext(),KitchenClientC.class);
     }
 
     private void deleteOneItemFromDatabase(int position) {
-
+        PortParamDataBase database = new PortParamDataBase(activity);
+        mPortParam = new PortParameters();
+        //删除打印机
+        database.deleteDataBase(""+position);
+        database.close();
         Document doc = CDBHelper.getDocByID(activity, list.get(position));
         Log.e("MyList",doc.getId());
         //CDBHelper.deleDocument(activity.getApplicationContext(), doc);
@@ -189,13 +195,13 @@ public class MyListAdapter extends BaseAdapter {
 
     class ViewHolder {
         TextView itemKitchenKname;
-        TextView itemKitchenPname;
+        //TextView itemKitchenPname;
         ImageView itemKitchenBianji;
         ImageView itemKitchenDelete;
 
         ViewHolder(View view) {
             itemKitchenKname = view.findViewById(R.id.item_kitchen_kname);
-            itemKitchenPname= view.findViewById(R.id.item_kitchen_pname);
+            //itemKitchenPname= view.findViewById(R.id.item_kitchen_pname);
             itemKitchenBianji = view.findViewById(R.id.item_kitchen_bianji);
             itemKitchenDelete = view.findViewById(R.id.item_kitchen_delete);
         }

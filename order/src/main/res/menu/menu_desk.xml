@@ -37,6 +37,11 @@
            app:showAsAction="never"
            android:title="统计管理"/>
 
+       <item android:id="@+id/action_gq"
+           android:icon="@drawable/animcut"
+           app:showAsAction="never"
+           android:title="估清管理"/>
+
 
 
 </menu>

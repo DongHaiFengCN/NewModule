@@ -22,6 +22,7 @@ import bean.kitchenmanage.qrcode.qrcodeC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.view.DeskActivity;
+import doaing.order.view.ScanActivity;
 import tools.CDBHelper;
 import view.BaseToobarActivity;
 
@@ -273,18 +274,30 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     {
         Intent intent = new Intent();
         flag = 2;
-        intent.setClass(PrinterConnectDialog.this, CaptureActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivityForResult(intent, SCANNIN_GREQUEST_CODE1);
+//        intent.setClass(PrinterConnectDialog.this, CaptureActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivityForResult(intent, SCANNIN_GREQUEST_CODE1);
+        turnScan();
     }
 
     public void OnAddZfbQrcodepay(View view)
     {
         Intent intent = new Intent();
         flag = 1;
-        intent.setClass(PrinterConnectDialog.this, CaptureActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivityForResult(intent, SCANNIN_GREQUEST_CODE2);
+//        intent.setClass(PrinterConnectDialog.this, CaptureActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        startActivityForResult(intent, SCANNIN_GREQUEST_CODE2);
+        turnScan();
+    }
+
+    private void turnScan() {
+
+        IntentIntegrator intentIntegrator =  new IntentIntegrator(this);
+
+        intentIntegrator.setOrientationLocked(false);
+        intentIntegrator.setPrompt("请扫描二维码");
+        intentIntegrator.setCaptureActivity(ScanActivity.class); // 设置自定义的activity是ScanActivity
+        intentIntegrator.initiateScan(); // 初始化扫描
     }
 
     private void  SaveQrcodepay()

@@ -754,6 +754,9 @@ private void cancelTableOrder(String Id,List<String> orderList)
             ARouter.getInstance().build("/tablemanager/TableManagerActivity").navigation();
         }else if (i == R.id.action_tj){
             ARouter.getInstance().build("/statistics/StatisticsActivity").navigation();
+        }else if (i == R.id.action_gq){
+
+
         }
         return true;
     }

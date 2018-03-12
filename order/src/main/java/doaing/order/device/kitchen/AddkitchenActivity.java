@@ -30,6 +30,7 @@ import com.gprinter.io.PortParameters;
 import com.gprinter.save.PortParamDataBase;
 import com.gprinter.service.GpPrintService;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +73,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     private int mPrinterId = 0;
     private GpService mGpService = null;
     private static final int INTENT_PORT_SETTINGS = 0;
+    List<String> infomations;
     @Override
     protected int setMyContentView() {
         return R.layout.activity_addkitchen;
@@ -79,11 +81,18 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
 
     @Override
     public void initData(Intent intent) {
-        String dysl = intent.getStringExtra("MAX_PRINTER_CNTMY");//获取连接厨房打印机的数量
-        if (dysl != null && !dysl.equals("")){
-            MAX_PRINTER_CNTMY = Integer.parseInt(dysl)+1;
-            mPrinterId = Integer.parseInt(dysl);
-            Log.e("Addkitchen",dysl);
+
+        infomations = (List<String>) getIntent().getSerializableExtra("infomations");
+        if (infomations != null){
+            if (infomations.size() == 0){
+                MAX_PRINTER_CNTMY = 1;
+                mPrinterId = 0;
+            }else {
+                Document doc = CDBHelper.getDocByID(getApplicationContext(),infomations.get(infomations.size()-1));
+                int pos = Integer.parseInt(doc.getString("kitchenAdress"));
+                MAX_PRINTER_CNTMY = Integer.parseInt(doc.getString("kitchenAdress"))+1;
+                mPrinterId = pos;
+            }
         }
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         myapp = (MyApplication) getApplication();
@@ -180,9 +189,17 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     private void savecheckinfo() {
 
         KitchenClientC obj=new KitchenClientC(myapp.getCompany_ID());
-
+        int pos;
         obj.setName(etClientname.getText().toString().trim());
-        obj.setKitchenAdress(""+MAX_PRINTER_CNTMY);
+        if (infomations.size() == 0){
+            pos = 1;
+        }else{
+            Document document = CDBHelper.getDocByID(getApplicationContext(),infomations.get((infomations.size()-1)));
+            pos = (Integer.parseInt(document.getString("kitchenAdress"))+1);
+            Log.e("Port","-"+pos+"=="+document.getString("kitchenAdress"));
+        }
+
+        obj.setKitchenAdress(""+pos);
 
         List<String> dishKindIDList=new ArrayList<String>();
         for(int i=0;i<listSelectedDocId.size();i++)
@@ -248,12 +265,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         {
             MutableDocument muDoc = docKitchenClient.toMutable();
             muDoc.setString("name",etClientname.getText().toString().trim());
-            if(selectPrinterName==null||"".equals(selectPrinterName)) {
-                muDoc.setString("kitchenAdress",""+MAX_PRINTER_CNTMY);
-            }else{
-                muDoc.setString("kitchenAdress",""+selectPrinterName);
-            }
-
+            muDoc.setString("kitchenAdress",""+selectPrinterName);
             muDoc.setValue("dishesKindIDList",dishKindIdArray);
             CDBHelper.saveDocument(getApplicationContext(),muDoc);
         }
@@ -340,11 +352,13 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     //初始化打印机
     private void initPortParam() {
         boolean[] state = new boolean[MAX_PRINTER_CNTMY];
+
         for (int i = 0; i < MAX_PRINTER_CNTMY; i++) {
             state[i] = false;
         }
         for (int i = 0; i < MAX_PRINTER_CNTMY; i++) {
             try {
+
                 if (mGpService.getPrinterConnectStatus(i) == GpDevice.STATE_CONNECTED) {
                     state[i] = true;
                 }
@@ -356,7 +370,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         for (int i = 0; i < MAX_PRINTER_CNTMY; i++) {
             PortParamDataBase database = new PortParamDataBase(this);
             mPortParam[i] = new PortParameters();
-            mPortParam[i] = database.queryPortParamDataBase("" + i);
+            mPortParam[i] = database.queryPortParamDataBase("" +i);
             mPortParam[i].setPortOpenState(state[i]);
         }
     }
@@ -374,7 +388,8 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     void connectOrDisConnectToDevice(int PrinterId) {
         mPrinterId = PrinterId;
         int rel = 0;
-        if (mPortParam[PrinterId].getPortOpenState() == false) {
+        if (mPortParam[PrinterId].getPortOpenState() == false)
+        {
             if (CheckPortParamters(mPortParam[PrinterId]))
             {
                 try {
