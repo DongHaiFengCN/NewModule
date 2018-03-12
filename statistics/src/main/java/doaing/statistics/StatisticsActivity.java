@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+import bean.kitchenmanage.order.OnOrderC;
 import doaing.test.R;
 import tools.CDBHelper;
 import tools.MyBigDecimal;
@@ -181,13 +182,20 @@ public class StatisticsActivity extends BaseToobarActivity {
      */
     private void getDoubleDateInfo(String start, String end) {
         dateTv.setText((new StringBuilder()).append(start).append("----").append(end));
-        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
+        Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
                         .equalTo(Expression.string("CheckOrderC"))
                         .and(Expression.property("checkTime")
                                 .greaterThanOrEqualTo(Expression.string(start).lessThanOrEqualTo(Expression.string(end))))
                 );
-        queryBody(query);
+
+        Query query2 = QueryBuilder.select(SelectResult.expression(Meta.id))
+                .from(DataSource.database(database)).where(Expression.property("className")
+                        .equalTo(Expression.string("OnOrderC"))
+                        .and(Expression.property("onTime")
+                                .greaterThanOrEqualTo(Expression.string(start).lessThanOrEqualTo(Expression.string(end))))
+                );
+        queryBody(query1, query2);
 
     }
 
@@ -199,14 +207,20 @@ public class StatisticsActivity extends BaseToobarActivity {
     private void getStartSingleDateInfo(String date) {
         dateTv.setText((new StringBuilder()).append(date).append("---").append("今日"));
 
-        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
+        Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
                         .equalTo(Expression.string("CheckOrderC"))
                         .and(Expression.property("checkTime")
                                 .greaterThanOrEqualTo(Expression.string(date)))
                 );
+        Query query2 = QueryBuilder.select(SelectResult.expression(Meta.id))
+                .from(DataSource.database(database)).where(Expression.property("className")
+                        .equalTo(Expression.string("OnOrderC"))
+                        .and(Expression.property("onTime")
+                                .greaterThanOrEqualTo(Expression.string(date)))
+                );
 
-        queryBody(query);
+        queryBody(query1, query2);
     }
 
     /**
@@ -216,30 +230,38 @@ public class StatisticsActivity extends BaseToobarActivity {
      */
     private void getEndSingleDateInfo(String date) {
         dateTv.setText(date);
-        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
+        Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
                         .equalTo(Expression.string("CheckOrderC"))
                         .and(Expression.property("checkTime")
                                 .like(Expression.string(date + "%")))
                 );
-        queryBody(query);
+        Query query2 = QueryBuilder.select(SelectResult.expression(Meta.id))
+                .from(DataSource.database(database)).where(Expression.property("className")
+                        .equalTo(Expression.string("CheckOrderC"))
+                        .and(Expression.property("onTime")
+                                .like(Expression.string(date + "%")))
+                );
+        queryBody(query1, query2);
     }
 
     /**
      * 获取账单数据处理并展示
      *
-     * @param query
+     * @param checkOrderQuery 正常订单信息
+     * @param onOrderQuery    挂账订单信息
      */
-    private void queryBody(Query query) {
+    private void queryBody(Query checkOrderQuery, Query onOrderQuery) {
+
         try {
-            ResultSet resultSet = query.execute();
+            ResultSet resultSet = checkOrderQuery.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
-                Document document = database.getDocument(id);
-                monetary = MyBigDecimal.add(monetary, document.getFloat("pay"), 2);
-                realIncome = MyBigDecimal.add(realIncome, document.getFloat("needPay"), 2);
-                Dictionary promotionDetail = document.getDictionary("promotionDetail");
+                Document document1 = database.getDocument(id);
+                monetary = MyBigDecimal.add(monetary, document1.getFloat("pay"), 2);
+                realIncome = MyBigDecimal.add(realIncome, document1.getFloat("needPay"), 2);
+                Dictionary promotionDetail = document1.getDictionary("promotionDetail");
                 Array payDetailList = promotionDetail.getArray("payDetailList");
                 for (int i = 0; i < payDetailList.count(); i++) {
                     Dictionary paydetailc = payDetailList.getDictionary(i);
@@ -273,9 +295,6 @@ public class StatisticsActivity extends BaseToobarActivity {
                         case 9:
                             elm = MyBigDecimal.add(elm, subtotal, 2);
                             break;
-                        case 10:
-                            gz = MyBigDecimal.add(gz, subtotal, 2);
-                            break;
                         default:
                             break;
 
@@ -287,6 +306,19 @@ public class StatisticsActivity extends BaseToobarActivity {
             Log.e("getDocmentsByClass", "Exception=", e);
         }
 
+        ResultSet resultSet = null;
+        try {
+            resultSet = onOrderQuery.execute();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        Result row;
+        while ((row = resultSet.next()) != null) {
+            String id = row.getString(0);
+            Document document2 = database.getDocument(id);
+            gz = MyBigDecimal.add(document2.getFloat("needPay"), gz, 2);
+
+        }
         mlTv.setText(String.valueOf(ml));
         monetaryTv.setText(String.valueOf(monetary));
         realIncomeTv.setText(String.valueOf(realIncome));

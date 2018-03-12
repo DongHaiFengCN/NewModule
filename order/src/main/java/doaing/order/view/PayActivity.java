@@ -1065,6 +1065,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                                 e.printStackTrace();
                             }
                         }
+                        CDBHelper.createAndUpdate(getApplication(),onOrderC);
                         alertDialog.dismiss();
 
                     }
