@@ -25,7 +25,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [ moduleName : project.getName() ]
+                arguments = [moduleName: project.getName()]
             }
         }
 
@@ -55,8 +55,8 @@ android {
 }
 
 
-repositories{
-    flatDir{
+repositories {
+    flatDir {
         dirs 'libs' //就是你放aar的目录地址
     }
 }
@@ -68,9 +68,12 @@ dependencies {
     implementation rootProject.ext.libSupportDesign
     //阿里路由
     implementation rootProject.ext.libAlibaba
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
     annotationProcessor libArouter_compiler
     //Butterknife
-    implementation     rootProject.ext.libButterknife
+    implementation rootProject.ext.libButterknife
     annotationProcessor rootProject.ext.libBbutterknife_compiler
     //RxAndroid 相关库
     implementation rootProject.ext.libRxAndroid

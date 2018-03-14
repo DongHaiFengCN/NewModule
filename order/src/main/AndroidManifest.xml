@@ -78,15 +78,15 @@
                 <action android:name="com.gprinter.aidl.GpPrintService" />
             </intent-filter>
         </service>
-        <service android:name="com.gprinter.service.AllService"></service>
+        <service android:name="com.gprinter.service.AllService" />
 
         <activity
             android:name=".device.PortConfigurationActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".device.PrinterConnectDialog"
             android:label=""
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".device.BluetoothDeviceList"
             android:theme="@style/AppTheme.NoActionBar" />
@@ -106,7 +106,11 @@
         <service
             android:name=".service.NewOrderService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".view.AssessmentActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            ></activity>
     </application>
 
 </manifest>

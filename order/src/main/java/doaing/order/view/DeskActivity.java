@@ -755,6 +755,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
         }else if (i == R.id.action_tj){
             ARouter.getInstance().build("/statistics/StatisticsActivity").navigation();
         }else if (i == R.id.action_gq){
+            startActivity(new Intent(this,AssessmentActivity.class));
 
 
         }

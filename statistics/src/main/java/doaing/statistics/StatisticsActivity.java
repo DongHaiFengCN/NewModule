@@ -1,5 +1,6 @@
 package doaing.statistics;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.couchbase.lite.Array;
@@ -30,6 +32,7 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -113,11 +116,47 @@ public class StatisticsActivity extends BaseToobarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
-        if (i == R.id.action_statistics) {
-            Calendar calendar = Calendar.getInstance();
-            final int year = calendar.get(Calendar.YEAR);
-            final int month = calendar.get(Calendar.MONTH);
-            final int day = calendar.get(Calendar.DAY_OF_MONTH);
+        Calendar calendar;
+        final int year ;
+        final int month ;
+        final int day ;
+        @SuppressLint("DefaultLocale") String month1 ;
+        @SuppressLint("DefaultLocale") String day1 ;
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        month1 = String.format("%02d", (month + 1));
+        day1 = String.format("%02d", day);
+        if (monetary != 0 && realIncome != 0) {
+            monetary = 0f;
+            realIncome = 0f;
+            cash = 0f;
+            alipay = 0f;
+            wechat = 0f;
+            ml = 0f;
+            gz = 0f;
+
+        }
+
+        if (i == R.id.action_today) {
+            StringBuilder stringBuilder = new StringBuilder();
+            getStartSingleDateInfo(stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
+
+        } else if (i == R.id.action_week) {
+            StringBuilder stringBuilder = new StringBuilder();
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            getDoubleDateInfo(formatter.format(calendar.getTime()), stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
+
+        } else if (i == R.id.action_month) {
+
+            StringBuilder stringBuilder1 = new StringBuilder();
+            StringBuilder stringBuilder2 = new StringBuilder();
+            getDoubleDateInfo(stringBuilder1.append(year).append("-").append(month1).append("-").append("01").toString(), stringBuilder2.append(year).append("-").append(month1).append("-").append(day1).toString());
+
+
+        } else if (i == R.id.action_consum) {
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
             View view = getLayoutInflater().inflate(R.layout.statistics_selectdate_dialog, null);
             final TextView startTv = view.findViewById(R.id.statistics_startdate_tv);
@@ -125,13 +164,14 @@ public class StatisticsActivity extends BaseToobarActivity {
             startTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    createDatePickerDialog(year, month, day, startTv, 0);
+                   createDatePickerDialog(year, month, day, startTv, 0);
                 }
             });
+            final int finalYear = year;
             endTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    createDatePickerDialog(year, month, day, endTv, 1);
+                   createDatePickerDialog(finalYear, month, day, endTv, 1);
                 }
             });
             alertDialog.setView(view);
@@ -140,17 +180,6 @@ public class StatisticsActivity extends BaseToobarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     database = CDBHelper.getDatabase();
-
-                    if (monetary != 0 && realIncome != 0) {
-                        monetary = 0f;
-                        realIncome = 0f;
-                        cash = 0f;
-                        alipay = 0f;
-                        wechat = 0f;
-                        ml = 0f;
-                        gz = 0f;
-
-                    }
 
                     if (startTv.getText().length() > 0 && endTv.getText().length() > 0) {
 
@@ -200,13 +229,12 @@ public class StatisticsActivity extends BaseToobarActivity {
     }
 
     /**
-     * 只设置初始日期进行搜索账单
+     * 只设置当日日期进行搜索账单
      *
      * @param date 开始日期
      */
     private void getStartSingleDateInfo(String date) {
-        dateTv.setText((new StringBuilder()).append(date).append("---").append("今日"));
-
+        dateTv.setText((new StringBuilder()).append(date));
         Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
                         .equalTo(Expression.string("CheckOrderC"))
@@ -349,5 +377,6 @@ public class StatisticsActivity extends BaseToobarActivity {
 
         dp.show();
     }
+
 
 }
