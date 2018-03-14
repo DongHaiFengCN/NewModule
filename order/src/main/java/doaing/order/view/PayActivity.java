@@ -1077,6 +1077,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
     private void submitOnOrder(final OnOrderC onOrderC){
+        CDBHelper.createAndUpdate(getApplicationContext(),onOrderC);
         BluetoothAdapter btAdapter = BluetoothUtil.getBTAdapter();
         if (!btAdapter.isEnabled()) {
 
