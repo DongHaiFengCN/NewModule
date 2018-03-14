@@ -91,6 +91,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     ImageView gzIm;
     TextView tableNumber;
     public static boolean isGuaZ = false;
+    public static String Margin = "";
     EditText nameEt;
     EditText contactWayEt;
     List<PromotionRuleC> promotionRuleCList;
@@ -175,7 +176,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         Log.e("DOAING", "订单个数：" + orderCList.size() + "");
         for (OrderC orderC : orderCList) {
             Log.e("DOAING", "订单价格：" + orderC.getAllPrice() + "");
-            total = MyBigDecimal.add(total, orderC.getAllPrice(), 1);
+            if (orderC.getOrderCType() == 0){
+                total = MyBigDecimal.add(total, orderC.getAllPrice(), 1);
+            }
             checkOrder.addOrder(orderC.get_id());
             //获取当前订单下goods集合下所有的菜品
             for (GoodsC o : orderC.getGoodsList()) {
@@ -211,19 +214,13 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         ivwechat.setOnClickListener(this);
         cash.setOnClickListener(this);
         findViewById(R.id.bankcard).setOnClickListener(this);
-
     }
-
-
-
 /*
 *
      * 准备所有的数据
      *
      * @param
 */
-
-
     private void getAll() {
 
         //支付宝收款码,网络获取**********
@@ -285,15 +282,11 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
             }
         }
-
-
     }
-
     public void showDialog() {
 
         dg = dialog.show();
     }
-
     public void closeDialog() {
 
         dg.dismiss();
@@ -371,20 +364,17 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
      *
      * @param data
 */
-
-
     private void turnDiscount(Intent data) {
 
 
         //处理完成的总价
         total = data.getFloatExtra("Total", 0);
-
+        Log.e("moling",""+total);
         //展示差额
         discountTv.setText("- " + data.getFloatExtra("Margin", 0) + "元");
-
         //设置抹零支付细节
         setPayDetail(7, data.getFloatExtra("Margin", 0));
-
+        Margin = ""+data.getFloatExtra("Margin", 0);
         //界面展示实际处理后的价格
         factTv.setText("实际支付：" + total + "元");
 
@@ -820,22 +810,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             Toast.makeText(getApplicationContext(), "有未买单信息，不能改变桌位状态", Toast.LENGTH_SHORT).show();
             return;
         }
-
-
         Intent intent = new Intent(PayActivity.this, DeskActivity.class);
         startActivity(intent);
         finish();
-
-
     }
-
-
-/*
-*
-     * 跳转抹零功能界面
-*/
-
-
+    /*
+    *
+         * 跳转抹零功能界面
+    */
     private void turnDiscount() {
 
         Intent discount = new Intent();
@@ -904,7 +886,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         } catch (CouchbaseLiteException e) {
                             e.printStackTrace();
                         }
-
+                        isGuaZ = false;
 
                     }
                 });
@@ -942,7 +924,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         } catch (CouchbaseLiteException e) {
                             e.printStackTrace();
                         }
-
+                        isGuaZ = false;
 
                     }
                 });
@@ -977,7 +959,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
-
+                    isGuaZ = false;
 
                 }
             });
@@ -1008,7 +990,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
-
+                    isGuaZ = false;
 
                 }
             });

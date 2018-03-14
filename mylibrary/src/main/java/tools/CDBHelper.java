@@ -60,6 +60,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -276,6 +277,16 @@ public class CDBHelper implements ReplicatorChangeListener
         }
 
         return null;
+    }
+    /**
+     * @return 时间格式 yyyy-MM-dd HH:mm:ss
+     */
+    public static String getNianDate() {
+        final Calendar c = Calendar.getInstance();
+        if (c == null){
+            return "";
+        }
+        return ""+c.get(Calendar.YEAR);
     }
 
     /**

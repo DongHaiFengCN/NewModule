@@ -8,24 +8,14 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
@@ -38,7 +28,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -55,47 +44,31 @@ import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gprinter.aidl.GpService;
-import com.gprinter.command.EscCommand;
-import com.gprinter.command.GpCom;
-import com.gprinter.io.GpDevice;
-import com.gprinter.io.PortParameters;
-import com.gprinter.save.PortParamDataBase;
-import com.gprinter.service.GpPrintService;
-import org.apache.commons.lang.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
-import java.util.Vector;
-import bean.kitchenmanage.kitchen.KitchenClientC;
 import bean.kitchenmanage.order.GoodsC;
 import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.order.OrderNum;
 import bean.kitchenmanage.table.AreaC;
-import bean.kitchenmanage.user.CompanyC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.untils.BluetoothUtil;
 import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.PrintUtils;
 import doaing.order.untils.Tool;
 import tools.CDBHelper;
 import tools.MyLog;
 import tools.ToolUtil;
 
-import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 
 import static tools.CDBHelper.getFormatDate;
+import static tools.CDBHelper.getNianDate;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -123,12 +96,6 @@ public class MainActivity extends AppCompatActivity {
 
     public OrderAdapter orderAdapter;
 
-    private BluetoothAdapter btAdapter;
-
-    private BluetoothDevice device;
-
-    private BluetoothSocket socket;
-
     private int point = 0;
 
     private TextView point_tv;
@@ -150,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFlag = true;
 
 
-
+    private MenuItem menuItem;
     private List<GoodsC> goodsList = new ArrayList<>();
 
     private List<GoodsC> zcGoodsList = new ArrayList<>();
@@ -173,8 +140,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main1);
         EventBus.getDefault().register(this);
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("点餐");
         activityFrame = findViewById(R.id.activity_main_frame);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         hideNavigationBar();
         //关键下面两句话，设置了回退按钮，及点击事件的效果
@@ -190,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
         myApp = (MyApplication) getApplicationContext();
         SharedPreferences sharedPreferences = getSharedPreferences("T9andOrder", 0);
 
@@ -201,15 +169,9 @@ public class MainActivity extends AppCompatActivity {
         MyLog.d("onCreate");
 
     }
-
-
-
     private void hideNavigationBar() {
 
         int systemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
-
-
-
         // Navigation bar hiding:  Backwards compatible to ICS.
 
         if (Build.VERSION.SDK_INT >= 14) {
@@ -217,8 +179,6 @@ public class MainActivity extends AppCompatActivity {
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
 
         }
-
-
 
         // 全屏展示
 
@@ -228,23 +188,14 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
-
-
-
         if (Build.VERSION.SDK_INT >= 18) {
 
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
 
         }
-
-
-
         getWindow().getDecorView().setSystemUiVisibility(systemUiVisibility);
 
     }
-
-
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
@@ -436,16 +387,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     public float getTotal() {
-
         return total;
-
     }
-
-
-
     public void setPoint(int point) {
 
         this.point = point;
@@ -787,8 +731,6 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-
-
         List<OrderNum> orderNumList = CDBHelper.getObjByWhere(getApplicationContext(),
 
                 Expression.property("className").equalTo(Expression.string("OrderNum"))
@@ -1007,7 +949,7 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setOrderCType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setCreatedYear("2018");
+        newOrderObj.setCreatedYear(getNianDate());
         newOrderObj.setTableNo(myApp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(myApp.getTable_sel_obj().getTableName());
         AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
@@ -1122,7 +1064,6 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
-
             isFlag = false;
 
         } else if (isTrue == false) {
@@ -1138,7 +1079,7 @@ public class MainActivity extends AppCompatActivity {
                 ft.show(orderFragment);
 
             }
-
+            //menuItem.setTitle("搜索点餐");
             isFlag = true;
 
         }
@@ -1170,15 +1111,6 @@ public class MainActivity extends AppCompatActivity {
 //     *
 
 //     * @return
-
-
-
-
-
-
-
-
-
     @Override
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1186,15 +1118,16 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        return true;
+        menuItem = menu.findItem(R.id.action_n);
+        if (isFlag){
+            menuItem.setTitle("搜索点餐");
+        }else{
+            menuItem.setTitle("分类点餐");
+        }
+        return super.onCreateOptionsMenu(menu);
 
     }
-
-
-
     @Override
-
     public boolean onOptionsItemSelected(MenuItem item) {
 
         // Handle action bar item clicks here. The action bar will
@@ -1205,16 +1138,16 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-
-
         //noinspection SimplifiableIfStatement
 
         if (id == R.id.action_search) {
 
             select(isFlag);
-
-
-
+            if (isFlag){
+                menuItem.setTitle("搜索点餐");
+            }else{
+                menuItem.setTitle("分类点餐");
+            }
         }
 
         return super.onOptionsItemSelected(item);

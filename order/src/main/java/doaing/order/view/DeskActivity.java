@@ -162,6 +162,7 @@ public class DeskActivity extends AppCompatActivity {
         Intent intent = new Intent( this,
                 NewOrderService.class);
         startService(intent);
+
     }
 
     @Override

@@ -84,6 +84,7 @@ import tools.MyLog;
 
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
 import static tools.CDBHelper.getFormatDate;
+import static tools.CDBHelper.getNianDate;
 
 /*
 *
@@ -314,6 +315,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
+        newOrderObj.setCreatedYear("2018");
         if (!TextUtils.isEmpty(showEdBz.getText().toString())){
             newOrderObj.setDesc(showEdBz.getText().toString());
         }
@@ -355,6 +357,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
+        newOrderObj.setCreatedYear(getNianDate());
         if (!TextUtils.isEmpty(showEdBz.getText().toString())){
             newOrderObj.setDesc(showEdBz.getText().toString());
         }
@@ -399,6 +402,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
+        newOrderObj.setCreatedYear(getNianDate());
         if (!TextUtils.isEmpty(showEdBz.getText().toString())){
             newOrderObj.setDesc(showEdBz.getText().toString());
         }
@@ -442,6 +446,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
+        newOrderObj.setCreatedYear(getNianDate());
         if (!TextUtils.isEmpty(showEdBz.getText().toString())){
             newOrderObj.setDesc(showEdBz.getText().toString());
         }
@@ -487,7 +492,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
-
+        newOrderObj.setCreatedYear(getNianDate());
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
         if (!TextUtils.isEmpty(showEdBz.getText().toString())){
@@ -1618,7 +1623,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         if (printContent(printcontent, printerId) == 0)//打印成功，使用打印完成回调
         {
             MyLog.d(printname + "分单打印完成");
-
+            Toast.makeText(ShowParticularsActivity.this,"分单打印完成",Toast.LENGTH_SHORT).show();
+            proDialog.setMessage("厨房打印失败");
+            uiHandler.obtainMessage(4).sendToTarget();
         }
         else
         {
