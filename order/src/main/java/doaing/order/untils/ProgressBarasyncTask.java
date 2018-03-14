@@ -14,6 +14,7 @@ import java.util.List;
 
 import bean.kitchenmanage.order.CheckOrderC;
 import bean.kitchenmanage.order.GoodsC;
+import bean.kitchenmanage.order.OnOrderC;
 import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.order.PayDetailC;
 import bean.kitchenmanage.table.AreaC;
@@ -46,6 +47,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
     private BluetoothSocket socket;
     private PayActivity payActivity;
     private CheckOrderC checkOrderC;
+    private OnOrderC onOrderC;
     private String str; //临时变量
     private float total;
     private List<GoodsC> goodsCList = new ArrayList<>();
@@ -92,11 +94,18 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        total = checkOrderC.getPay();
-        str = String.valueOf(total);
-        MyLog.e(str);
 
-        onPrint();
+        if (payActivity.isGuaZ){
+            onPrint1();
+            total = onOrderC.getNeedPay();
+            str = String.valueOf(total);
+            MyLog.e(str);
+        }else {
+            onPrint();
+            total = checkOrderC.getPay();
+            str = String.valueOf(total);
+            MyLog.e(str);
+        }
 
         return flag;
     }
@@ -128,7 +137,6 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.printText(areaCs.getAreaName()+"/"+m.getTable_sel_obj().getTableName()+"\n\n");
             PrintUtils.selectCommand(PrintUtils.NORMAL);
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
-            //TODO(通过OrderID 获取Oroder对象)
             OrderC orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),checkOrderC.getOrderList().get(0),OrderC.class);
             PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getOrderNum()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("下单时间", checkOrderC.getCheckTime()+"\n"));
@@ -207,14 +215,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             }
             PrintUtils.printText("支付方式："+stringBuffer.toString());
             PrintUtils.printText("\n\n");
-            if (payActivity.isGuaZ) {
-
-                PrintUtils.printText("挂账签名：" + stringBuffer.toString());
-                PrintUtils.printText("\n\n\n\n\n");
-                PrintUtils.printText("\n\n\n\n");
-            }
             PrintUtils.closeOutputStream();
-
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -224,6 +225,85 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
         };
 
 
+    }
+
+    private void onPrint1() {
+
+        if(true){ //支付成功
+
+            String waiter = "默认";
+            MyApplication m = (MyApplication) payActivity.getApplicationContext();
+
+            if(m.getUsersC() != null &&m.getUsersC().getEmployeeName() != null && !m.getUsersC().getEmployeeName().isEmpty()){
+
+                waiter =m.getUsersC().getEmployeeName();
+            }
+
+
+            setOnAll();
+            //List<OrderC> list = checkOrderC.getOrderList();
+            List<CompanyC> companyCs = CDBHelper.getObjByClass(payActivity.getApplicationContext(),CompanyC.class);
+            AreaC areaCs = CDBHelper.getObjById(payActivity.getApplicationContext(),m.getTable_sel_obj().getAreaId(),AreaC.class);
+            PrintUtils.selectCommand(PrintUtils.RESET);
+            PrintUtils.selectCommand(PrintUtils.LINE_SPACING_DEFAULT);
+            PrintUtils.selectCommand(PrintUtils.ALIGN_CENTER);
+            if (companyCs.size() != 0){
+                PrintUtils.printText(companyCs.get(0).getPointName()+"\n\n");
+            }
+            PrintUtils.selectCommand(PrintUtils.DOUBLE_HEIGHT_WIDTH);
+            PrintUtils.printText(areaCs.getAreaName()+"/"+m.getTable_sel_obj().getTableName()+"\n\n");
+            PrintUtils.selectCommand(PrintUtils.NORMAL);
+            PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
+            OrderC orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),onOrderC.getOrderList().get(0),OrderC.class);
+            PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getOrderNum()+"\n"));
+            PrintUtils.printText(PrintUtils.printTwoData("下单时间", onOrderC.getOnTime()+"\n"));
+            PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getCurrentPersions(), "收银员："+waiter+"\n"));
+            PrintUtils.printText("--------------------------------\n");
+            PrintUtils.selectCommand(PrintUtils.BOLD);
+            PrintUtils.printText(PrintUtils.printThreeData("项目", "数量", "金额\n"));
+            PrintUtils.printText("--------------------------------\n");
+            PrintUtils.selectCommand(PrintUtils.BOLD_CANCEL);
+
+            //for (int i = 0; i < list.size(); i++) {
+
+
+            for (int j = 0; j < goodsCList.size(); j++) {
+
+                GoodsC goodsC = goodsCList.get(j);
+                String taste = "";
+                if (goodsC.getDishesTaste() != null) {
+                    taste = "(" + goodsC.getDishesTaste() + ")";
+                }
+
+                PrintUtils.printText(PrintUtils.printThreeData(goodsC.getDishesName()+taste,goodsC.getDishesCount()+"", MyBigDecimal.mul(goodsC.getPrice(),goodsC.getDishesCount(),1)+"\n"));
+
+
+            }
+
+            //}
+            PrintUtils.printText("--------------------------------\n");
+            PrintUtils.printText(PrintUtils.printTwoData("合计", total+"\n"));
+            PrintUtils.printText("--------------------------------\n");
+            PrintUtils.printText(PrintUtils.printTwoData("实收", onOrderC.getNeedPay()+"\n"));
+            PrintUtils.printText("--------------------------------\n\n");
+            PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
+            PrintUtils.printText("支付方式："+"挂账");
+            PrintUtils.printText("\n\n");
+            if (payActivity.isGuaZ) {
+                PrintUtils.printText("联系方式："+onOrderC.getOnTel()+"\n");
+                PrintUtils.printText("单位或姓名："+onOrderC.getOnName()+"\n");
+                PrintUtils.printText("挂账签名：");
+                PrintUtils.printText("\n\n\n\n\n");
+                PrintUtils.printText("\n\n\n\n");
+            }
+            PrintUtils.closeOutputStream();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        };
     }
 
 
@@ -254,12 +334,60 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
         this.checkOrderC = checkOrderC;
     }
 
+    public void setOnDate(OnOrderC onOrderC){
+
+        this.onOrderC = onOrderC;
+    }
+
+    private void setOnAll() {
+        boolean flag ;
+
+        for (String orderCId: onOrderC.getOrderList()) {
+            OrderC orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),orderCId,OrderC.class);
+            for (GoodsC goodsb : orderC.getGoodsList()) {
+                flag = false;
+                for (GoodsC goodsC : goodsCList) {
+
+                    if (goodsC.getDishesName().equals(goodsb.getDishesName())) {
+                        if (goodsb.getDishesTaste() != null) {
+                            if (goodsb.getDishesTaste().equals(goodsC.getDishesTaste())) {
+                                float count = MyBigDecimal.add(goodsC.getDishesCount(), goodsb.getDishesCount(), 1);
+                                goodsC.setDishesCount(count);
+                                flag = true;
+                            }
+
+                        } else {
+
+                            float count = MyBigDecimal.add(goodsC.getDishesCount(), goodsb.getDishesCount(), 1);
+                            goodsC.setDishesCount(count);
+
+                            flag = true;
+                        }
+
+                        break;
+                    }
+
+
+                }
+                if (!flag) {
+                    GoodsC objClone = null;
+                    try {
+                        objClone = (GoodsC) goodsb.clone();
+                    } catch (CloneNotSupportedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    goodsCList.add(objClone);
+
+                }
+            }
+        }
+    }
     private void setAll() {
         boolean flag ;
 
         for (String orderCId: checkOrderC.getOrderList()) {
             OrderC orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),orderCId,OrderC.class);
-
             for (GoodsC goodsb : orderC.getGoodsList()) {
                 flag = false;
                 for (GoodsC goodsC : goodsCList) {
