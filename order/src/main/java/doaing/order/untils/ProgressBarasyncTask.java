@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.AsyncTask;
+import android.util.Log;
 
 
 import java.io.IOException;
@@ -95,17 +96,22 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             e.printStackTrace();
         }
 
-        if (payActivity.isGuaZ){
-            onPrint1();
+        if (onOrderC != null){
+
             total = onOrderC.getNeedPay();
             str = String.valueOf(total);
             MyLog.e(str);
-        }else {
-            onPrint();
+            onPrint1();
+        }
+
+
+        if (checkOrderC != null) {
             total = checkOrderC.getPay();
             str = String.valueOf(total);
             MyLog.e(str);
+            onPrint();
         }
+
 
         return flag;
     }
@@ -167,6 +173,11 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.printText("--------------------------------\n");
             PrintUtils.printText(PrintUtils.printTwoData("合计", total+"\n"));
             PrintUtils.printText("--------------------------------\n");
+            if (!payActivity.Margin.equals("")){
+                PrintUtils.printText(PrintUtils.printTwoData("抹零", payActivity.Margin+"\n"));
+                PrintUtils.printText("--------------------------------\n");
+                payActivity.Margin = "";
+            }
             PrintUtils.printText(PrintUtils.printTwoData("实收", checkOrderC.getNeedPay()+"\n"));
             PrintUtils.printText("--------------------------------\n\n");
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
@@ -214,7 +225,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
                 }
             }
             PrintUtils.printText("支付方式："+stringBuffer.toString());
-            PrintUtils.printText("\n\n");
+            PrintUtils.printText("\n\n\n\n\n");
             PrintUtils.closeOutputStream();
             try {
                 Thread.sleep(2000);
@@ -284,6 +295,11 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.printText("--------------------------------\n");
             PrintUtils.printText(PrintUtils.printTwoData("合计", total+"\n"));
             PrintUtils.printText("--------------------------------\n");
+            if (!payActivity.Margin.equals("")){
+                PrintUtils.printText(PrintUtils.printTwoData("抹零", payActivity.Margin+"\n"));
+                PrintUtils.printText("--------------------------------\n");
+                payActivity.Margin = "";
+            }
             PrintUtils.printText(PrintUtils.printTwoData("实收", onOrderC.getNeedPay()+"\n"));
             PrintUtils.printText("--------------------------------\n\n");
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
@@ -295,6 +311,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
                 PrintUtils.printText("挂账签名：");
                 PrintUtils.printText("\n\n\n\n\n");
                 PrintUtils.printText("\n\n\n\n");
+                payActivity.isGuaZ = false;
             }
             PrintUtils.closeOutputStream();
             try {

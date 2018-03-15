@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -264,6 +265,7 @@ public class DiscountActivity extends AppCompatActivity implements View.OnClickL
         } else if (i == R.id.submit_area) {
             Intent intent = new Intent();
             intent.putExtra("Margin", Tool.substrct(stashTotal, getTextTotal()));
+            intent.putExtra("Total", getTextTotal());
             setResult(RESULT_OK, intent);
             finish();
 
