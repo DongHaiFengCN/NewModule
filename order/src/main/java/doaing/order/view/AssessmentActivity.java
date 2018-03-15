@@ -26,6 +26,7 @@ import view.BaseToobarActivity;
  */
 public class AssessmentActivity extends BaseToobarActivity implements OnListenerDataBase {
 
+    private boolean flag = false;
     public SearchView.SearchAutoComplete mSearchAutoComplete;
     private android.support.v4.app.FragmentTransaction transaction;
     private AssessmentedItemFragment assessmentedItemFragment;
@@ -110,7 +111,15 @@ public class AssessmentActivity extends BaseToobarActivity implements OnListener
      */
     private void initializationFirst() {
         transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+
+        if(flag){
+
+            transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+
+        }else {
+            flag = true;
+        }
+
         transaction.replace(R.id.assessment_fragment, assessmentedItemFragment).commit();
     }
     /**

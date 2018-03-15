@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,7 @@ public class AssessmentSelectItemRecyclerViewAdapter extends RecyclerView.Adapte
         } else if (state == 1) {
             holder.mContentView.setText("已估清");
         }
-        holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     MutableDocument mutableDocument = mDocument.toMutable();
@@ -78,14 +79,12 @@ public class AssessmentSelectItemRecyclerViewAdapter extends RecyclerView.Adapte
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-         final View mView;
          final TextView mIdView;
-         final TextView mContentView;
+         final Button mContentView;
          String mItem;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
             mIdView = view.findViewById(R.id.id);
             mContentView = view.findViewById(R.id.content);
         }

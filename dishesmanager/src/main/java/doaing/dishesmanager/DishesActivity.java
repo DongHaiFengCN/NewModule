@@ -247,7 +247,7 @@ public class DishesActivity extends BaseToobarActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updataPosition(Integer integer) {
-        Log.e("DOAING","主界面返回的位置："+integer);
+       // Log.e("DOAING","主界面返回的位置："+integer);
         if(dishesKindAdapter.getNames().size() == 0){
 
             Toast.makeText(DishesActivity.this,"请先添加菜品！",Toast.LENGTH_SHORT).show();

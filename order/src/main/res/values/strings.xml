@@ -121,6 +121,6 @@
 
     <string name="none_usb_device">未连接USB打印机</string>
     <string name="copy_right_cn">xxxx 版权所有</string>
-    <string name="dishename">菜品名称</string>
+    <string name="dishename">已估清</string>
     <string name="dishestate">估清状态</string>
 </resources>

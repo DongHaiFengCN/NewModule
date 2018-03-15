@@ -7,15 +7,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.MutableDocument;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 
 import doaing.order.R;
 import tools.CDBHelper;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,51 +35,80 @@ import java.util.List;
  */
 public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<AssessmentedItemRecyclerViewAdapter.ViewHolder> {
 
-    private List<String> mValues = null;
+    private List<String> mValues = new ArrayList<>();
 
     private Database database;
-    private Context context;
+    private boolean[] flag;
+    private int size;
 
-    private boolean[] checkedStates;
-    public void setContext(Context context) {
-        this.context = context;
+    public boolean[] getFlag() {
+        return flag;
     }
 
-    public void setDatabase(Database database) {
+    public void setFlag(boolean[] flag) {
+        this.flag = flag;
+    }
+
+    public AssessmentedItemRecyclerViewAdapter(Database database) {
         this.database = database;
-    }
+        ResultSet results = null;
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
+                .from(DataSource.database(database)).where(Expression.property("className")
+                        .equalTo(Expression.string("DishesC")).and(Expression.property("state").equalTo(Expression.intValue(1))));
+        try {
+            results = query.execute();
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
 
-    public AssessmentedItemRecyclerViewAdapter(List<String> mValues) {
-        this.mValues =mValues;
-         checkedStates = new boolean[mValues.size()];
+        Result row;
+        while ((row = results.next()) != null) {
+            String id = row.getString(0);
+            mValues.add(id);
+        }
+
+        size = mValues.size();
+        flag = new boolean[mValues.size()];
+        for (int i = 0; i < size; i++) {
+            flag[i] = true;
+        }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_item, parent, false);
+
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        Document document = database.getDocument(mValues.get(position));
+        final Document document = database.getDocument(mValues.get(position));
         holder.mIdView.setText(document.getString("dishesName"));
-        if(!checkedStates[position]){
-            holder.mContentCk.setChecked(true);
-        }
+
+        holder.mContentCk.setChecked(flag[position]);
+
+        holder.mContentCk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                flag[position] = isChecked;
+
+            }
+        });
 
     }
 
     @Override
     public int getItemCount() {
-        return mValues == null ? 0 : mValues.size();
+        return mValues.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-         TextView mIdView;
-         CheckBox mContentCk;
+        TextView mIdView;
+        CheckBox mContentCk;
 
         public ViewHolder(View view) {
             super(view);
@@ -81,4 +122,72 @@ public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<As
         }
     }
 
+    /**
+     * check all unselected items
+     */
+    public void checkAll() {
+
+
+        for (int i = 0; i < size; i++) {
+            if (!flag[i]) {
+
+                flag[i] = true;
+
+            }
+        }
+
+        notifyDataSetChanged();
+
+    }
+
+    /**
+     * check all items in reverse
+     */
+    public void invert() {
+
+
+        for (int i = 0; i < size; i++) {
+
+            if (flag[i]) {
+
+                flag[i] = false;
+
+            } else {
+
+                flag[i] = true;
+            }
+
+        }
+
+        notifyDataSetChanged();
+
+    }
+
+    /**
+     * save settings
+     */
+    public void save()  {
+
+        for (int i = 0; i < size; i++) {
+            MutableDocument document = database.getDocument(mValues.get(i)).toMutable();
+
+            if(flag[i]){
+
+                document.setInt("state",1);
+
+            }else {
+
+                document.setInt("state",0);
+            }
+
+            try {
+                database.save(document);
+            } catch (CouchbaseLiteException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+    }
 }

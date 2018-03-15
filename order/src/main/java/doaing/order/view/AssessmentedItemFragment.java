@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
@@ -74,7 +75,7 @@ public class AssessmentedItemFragment extends Fragment {
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-            getetQueryData();
+
 
         }
     }
@@ -84,15 +85,33 @@ public class AssessmentedItemFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         // Set the adapter
-        if (view !=null) {
+        if (view != null) {
             Context context = view.getContext();
+
             RecyclerView recyclerView = view.findViewById(R.id.list);
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+            assessmentedItemRecyclerViewAdapter = new AssessmentedItemRecyclerViewAdapter(mListener.getDataBase());
             recyclerView.setAdapter(assessmentedItemRecyclerViewAdapter);
+
+            Button checkAllBt = view.findViewById(R.id.checkall_bt);
+            checkAllBt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    assessmentedItemRecyclerViewAdapter.checkAll();
+                }
+            });
+
+            Button inverBt = view.findViewById(R.id.invert_bt);
+            inverBt.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    assessmentedItemRecyclerViewAdapter.invert();
+                }
+            });
 
         }
         return view;
@@ -102,33 +121,10 @@ public class AssessmentedItemFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
 
-    /**
-     * This method is used to initialization results of the database to
-     * bind to the adapter
-     */
-    public void getetQueryData() {
-        List<String> mDocumentList = new ArrayList<>();
-        Database database = mListener.getDataBase();
-        ResultSet results = null;
-        Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
-                .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("DishesC")).add(Expression.property("state").equalTo(Expression.intValue(1))));
-        try {
-            results = query.execute();
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
+        assessmentedItemRecyclerViewAdapter.save();
 
-        Result row;
-        while ((row = results.next()) != null) {
-            String id = row.getString(0);
-            mDocumentList.add(id);
-        }
-        assessmentedItemRecyclerViewAdapter = new AssessmentedItemRecyclerViewAdapter(mDocumentList);
-        assessmentedItemRecyclerViewAdapter.setDatabase(mListener.getDataBase());
-        assessmentedItemRecyclerViewAdapter.setContext(getActivity().getApplication());
+
     }
 
 

@@ -136,7 +136,10 @@ public class StatisticsActivity extends BaseToobarActivity {
             wechat = 0f;
             ml = 0f;
             gz = 0f;
-
+            bank=0f;
+            member = 0f;
+            elm =0f;
+            mt = 0f;
         }
 
         if (i == R.id.action_today) {
