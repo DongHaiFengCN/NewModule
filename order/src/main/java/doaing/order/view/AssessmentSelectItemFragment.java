@@ -123,7 +123,7 @@ public class AssessmentSelectItemFragment extends Fragment {
                     .from(DataSource.database(database)).where(Expression.property("className")
                             .equalTo(Expression.string("DishesC"))
                             .and(Expression.property("dishesName")
-                                    .like(Expression.string(queryData +"%"))));
+                                    .like(Expression.string("%"+queryData +"%"))));
             try {
                 results = query.execute();
             } catch (CouchbaseLiteException e) {
