@@ -72,7 +72,8 @@ public class CDBHelper implements ReplicatorChangeListener
     private static Database db;
     private static CDBHelper instance = null;
     private static String dbName="GuestDB";
-    private final static String mSyncGatewayEndpoint = "ws://123.207.174.171:4984/kitchen/";
+    private final static String mSyncGatewayEndpoint
+            = "ws://123.207.174.171:4984/kitchen/";
 
     public static CDBHelper getSharedInstance(Context context)
     {
@@ -86,8 +87,8 @@ public class CDBHelper implements ReplicatorChangeListener
     {
 
             DatabaseConfiguration config = new DatabaseConfiguration(context);
-            //File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
-           // config.setDirectory(folder.getAbsolutePath());
+            File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
+            config.setDirectory(folder.getAbsolutePath());
             try {
                 db = new Database(dbName, config);
             } catch (CouchbaseLiteException e)

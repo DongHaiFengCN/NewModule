@@ -299,8 +299,6 @@ public class OrderFragment extends Fragment {
 *
      * 菜品选择弹出框编辑模块
 */
-
-
     private void showDialog(final DishesC dishesC, final int position, float number) {
 
         final DishesMessage dishesMessage = new DishesMessage();

@@ -9,13 +9,13 @@
          />-->
        <item
            android:id="@+id/action_modify"
-           android:icon="@drawable/animcut"
+           android:icon="@mipmap/icon_xiu"
            android:title="修改密码"
            app:showAsAction="never" />
 
        <item
            android:id="@+id/action_rebind"
-           android:icon="@drawable/animcut"
+           android:icon="@mipmap/icon_chong"
            android:title="重绑手机"
            app:showAsAction="never" />
 

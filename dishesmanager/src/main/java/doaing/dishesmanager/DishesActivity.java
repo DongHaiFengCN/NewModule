@@ -233,7 +233,9 @@ public class DishesActivity extends BaseToobarActivity {
 
                 for (int i = 0; i < array.count(); i++) {
 
-                    dishesList.add(database.getDocument(array.getString(i)));
+                    if (database.getDocument(array.getString(i)) != null) {
+                        dishesList.add(database.getDocument(array.getString(i)));
+                    }
                 }
 
                 dishesAdapter.notifyDataSetChanged();

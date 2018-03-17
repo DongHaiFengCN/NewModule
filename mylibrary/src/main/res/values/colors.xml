@@ -14,7 +14,8 @@
     <!--透明-->
     <color name="lucency">#00000000</color>
 
-
+    <color name="qzws">#FF439953</color>
+    <color name="zws">#56d16d</color>
     <color name="cyan">#00b8d4</color>
     <color name="link">#3366FF</color>
     <color name="white">#ffffff</color>
@@ -25,6 +26,7 @@
     <color name="grey_color1">#333333</color>
     <color name="grey_color2">#666666</color>
     <color name="grey_color3">#999999</color>
+    <color name="grey_color4">#00c4df</color>
     <!-- 橙色 -->
     <color name="orange_color">#de6838</color>
     <color name="orange_color_600">#FB8C00</color>

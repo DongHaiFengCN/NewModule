@@ -2,6 +2,7 @@ package smartkitchen.com.login;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -35,10 +37,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.android.arouter.launcher.ARouter;
+import com.couchbase.lite.ArrayFunction;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 
@@ -169,13 +173,28 @@ public class LoginActivity extends AppCompatActivity  {
         {
             mTelView.setText(mobile);
         }
-
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.login_menu_users, menu);
         return true;
+    }
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+
+        if (menu != null) {
+            if (menu.getClass() == MenuBuilder.class) {
+
+                try { Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    m.setAccessible(true); m.invoke(menu, true);
+                } catch (Exception e) {
+
+                }
+            }
+        }
+        return super.onPrepareOptionsPanel(view, menu);
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item)

@@ -1,6 +1,7 @@
 
 package doaing.order.view;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -16,6 +17,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +54,7 @@ import com.gprinter.service.GpPrintService;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,7 +106,6 @@ public class DeskActivity extends AppCompatActivity {
     private static final int REQUEST_PRINT_LABEL = 0xfd;
     private static final int REQUEST_PRINT_RECEIPT = 0xfc;
     private Integer printnums = 1;
-
     private String TAG = getCallingPackage();
     private MyApplication myapp;
     private Handler uiHandler = new Handler()
@@ -145,14 +147,12 @@ public class DeskActivity extends AppCompatActivity {
             }
         });
         myapp= (MyApplication) getApplicationContext();
-
         String mobile = getIntent().getStringExtra("mobile");
         String channelId = getIntent().getStringExtra("channelId");
         Log.e("DeskActivity","mobile = "+mobile);
         UsersC obj = new UsersC(channelId);
         obj.setEmployeeName("管理员");
         myapp.setUsersC(obj);
-
         //  myapp.initDishesData();
         initWidget();
 
@@ -232,6 +232,7 @@ public class DeskActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view,Object data)
             {
+
 
                 String tableId= (String)data;
                 final TableC tableC =  CDBHelper.getObjById(getApplicationContext(),tableId,TableC.class);
@@ -736,6 +737,26 @@ private void cancelTableOrder(String Id,List<String> orderList)
         getMenuInflater().inflate(R.menu.menu_desk, menu);
         return true;
     }
+
+    @SuppressLint("RestrictedApi")
+    @Override
+    protected boolean onPrepareOptionsPanel(View view, Menu menu) {
+
+        if (menu != null) {
+            if (menu.getClass() == MenuBuilder.class) {
+
+                try {
+                    Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    m.setAccessible(true);
+                    m.invoke(menu, true);
+                } catch (Exception e) {
+
+                }
+            }
+        }
+        return super.onPrepareOptionsPanel(view, menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
@@ -762,8 +783,6 @@ private void cancelTableOrder(String Id,List<String> orderList)
         }
         return true;
     }
-
-
 
     private void turnScan() {
 
@@ -801,11 +820,15 @@ private void cancelTableOrder(String Id,List<String> orderList)
                     for (int i = 0; i < count; i++) {
 
                         Document dishesC = CDBHelper.getDocByID(getApplicationContext(), disheList.get(i));
+                        if (dishesC != null){
+                            dishesCS.add(dishesC);
+                        }
 
-                        dishesCS.add(dishesC);
                     }
-                    //初始化disheKind对应的dishes实体类映射
-                    dishesObjectCollection.put(dishesKindC.get_id(), dishesCS);
+                    if (dishesCS != null && disheList.size() != 0) {
+                        //初始化disheKind对应的dishes实体类映射
+                        dishesObjectCollection.put(dishesKindC.get_id(), dishesCS);
+                    }
                 }
                 myapp.setDishesKindCList(dishesKindCList);
                 myapp.setDishesObjectCollection(dishesObjectCollection);

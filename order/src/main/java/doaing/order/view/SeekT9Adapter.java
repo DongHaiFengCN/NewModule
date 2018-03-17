@@ -92,7 +92,7 @@ public class SeekT9Adapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final ViewHolder viewHolder;
-
+        final DishesC dishesC;
         if (convertView == null) {
 
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_item_seek, parent, false);
@@ -102,8 +102,10 @@ public class SeekT9Adapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
-
+        dishesC = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), DishesC.class);
+        if (dishesC.getState() == 1){
+            viewHolder.viewTj.setVisibility(View.INVISIBLE);
+        }
         viewHolder.itemSeekInfo.setText(mGoodsList.get(position).getDishesName());
         viewHolder.itemSeekTv.setText(mGoodsList.get(position).getPrice() + "");
         viewHolder.viewShu.setText("" + mGoodsList.get(position).getDishesCount());
@@ -129,6 +131,7 @@ public class SeekT9Adapter extends BaseAdapter {
             viewHolder.viewJian.setVisibility(View.VISIBLE);
         }
 
+
         viewHolder.viewTj.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,7 +146,7 @@ public class SeekT9Adapter extends BaseAdapter {
                             else
                                 tasteList.clear();
 
-                            DishesC dishesC = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), DishesC.class);
+
 
                             if (dishesC.getTasteList().size() != 0) {
                                 for (int i = 0; i < dishesC.getTasteList().size(); i++) {
