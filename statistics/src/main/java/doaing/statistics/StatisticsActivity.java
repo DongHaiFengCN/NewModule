@@ -221,14 +221,14 @@ public class StatisticsActivity extends BaseToobarActivity {
                 .from(DataSource.database(database)).where(Expression.property("className")
                         .equalTo(Expression.string("CheckOrderC"))
                         .and(Expression.property("checkTime")
-                                .greaterThanOrEqualTo(Expression.string(start).lessThanOrEqualTo(Expression.string(end))))
+                                .greaterThanOrEqualTo(Expression.string(start)))
                 );
 
         Query query2 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
                         .equalTo(Expression.string("OnOrderC"))
                         .and(Expression.property("onTime")
-                                .greaterThanOrEqualTo(Expression.string(start).lessThanOrEqualTo(Expression.string(end))))
+                                .greaterThanOrEqualTo(Expression.string(start)))
                 );
         queryBody(query1, query2);
 
