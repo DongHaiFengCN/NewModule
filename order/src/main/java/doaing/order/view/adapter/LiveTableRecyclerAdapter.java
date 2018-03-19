@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,6 +68,8 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
                     map.put("id",row.getString(0));
                     map.put("state",row.getInt(1));
                     map.put("name",row.getString(2));
+                    map.put("maxPersons",row.getInt("maxPersons"));
+                    map.put("currentPersions", row.getInt("currentPersions"));
                     hashMapList.add(map);
                     //documentList.add(row.getString(0));
                    Log.e("","live change table name="+row.getString(2));
@@ -80,7 +83,9 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
     {
         return QueryBuilder.select(SelectResult.expression(Meta.id),
                 SelectResult.expression(Expression.property("state")),
-                SelectResult.expression(Expression.property("tableName")))
+                SelectResult.expression(Expression.property("tableName")),
+                SelectResult.expression(Expression.property("maxPersons")),
+                SelectResult.expression(Expression.property("currentPersions")))
                 .from(DataSource.database(db))
                 .where(Expression.property("className").equalTo(Expression.string("TableC"))
                         .and(Expression.property("areaId").equalTo(Expression.string(areaId))))
@@ -116,6 +121,7 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
         });
 
         TestHolderView testHolderView = new TestHolderView(view);
+        view.setTag("1");
         return testHolderView;
     }
 
@@ -133,7 +139,9 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
         String docId=map.get("id").toString();
         int state = (int)map.get("state");
         String name = map.get("name").toString();
-
+        int maxPersons,currentPersions;
+        maxPersons = (int)map.get("maxPersons");
+        currentPersions = (int)map.get("currentPersions");
         switch (state)
         {
             case 0:
@@ -141,6 +149,7 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
                 break;
             case 1:
                 holder.cardView.setCardBackgroundColor(Color.rgb(255,193,17));
+
                 break;
             case  2:
                 holder.cardView.setCardBackgroundColor(Color.rgb(253,117,80));
@@ -148,9 +157,14 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
             default:
                 break;
         }
-
         holder.tv.setText(name);
         holder.itemView.setTag(docId);
+        if (state == 0){
+            holder.num.setText(0 + "/" + maxPersons);
+        }else {
+            holder.num.setText(currentPersions + "/" + maxPersons);
+        }
+
 
     }
 
@@ -164,12 +178,14 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
         protected ImageView img;
         protected TextView tv;
         protected CardView cardView;
+        private  TextView num;
 
         public TestHolderView(View itemView)
         {
             super(itemView);
             tv = itemView.findViewById(R.id.item_tablestate_name);
             cardView= itemView.findViewById(R.id.table_state_cardview);
+            num = itemView.findViewById(R.id.item_tablestate_num);
         }
     }
 

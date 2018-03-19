@@ -350,7 +350,11 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                         , null);
                 for (Document doc : documentList) {
                     GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
-                    goodsObj.setDishesName(doc.getString("dishesName"));
+                    if (doc.getInt("state") == 1){
+                        goodsObj.setDishesName(doc.getString("dishesName")+"*(估清)*");
+                    }else {
+                        goodsObj.setDishesName(doc.getString("dishesName"));
+                    }
                     goodsObj.setDishesCount(0);
                     goodsObj.setPrice(doc.getFloat("price"));
                     goodsObj.setDishesId(doc.getId());
@@ -382,7 +386,11 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
                 for (Document doc : documentList) {
                     GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
-                    goodsObj.setDishesName(doc.getString("dishesName"));
+                    if (doc.getInt("state") == 1){
+                        goodsObj.setDishesName(doc.getString("dishesName")+"*(估清)*");
+                    }else {
+                        goodsObj.setDishesName(doc.getString("dishesName"));
+                    }
                     goodsObj.setDishesCount(0);
                     goodsObj.setPrice(doc.getFloat("price"));
                     goodsObj.setDishesId(doc.getId());

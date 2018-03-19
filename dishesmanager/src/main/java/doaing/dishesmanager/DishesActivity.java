@@ -1,7 +1,6 @@
 package doaing.dishesmanager;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
@@ -125,7 +124,7 @@ public class DishesActivity extends BaseToobarActivity {
             public void onClick(View view) {
 
                 Intent intent = new Intent(DishesActivity.this, DisheAddActivity.class);
-                intent.putExtra("kindPosition", kindPosition);
+                intent.putExtra("kindPosition",kindPosition);
                 startActivity(intent);
             }
         });
@@ -209,7 +208,7 @@ public class DishesActivity extends BaseToobarActivity {
         database = CDBHelper.getDatabase();
 
         //默认绑定dishesKindAdapter
-        dishesKindAdapter = new DishesKindAdapter(this, database);
+        dishesKindAdapter = new DishesKindAdapter(getApplicationContext(),database);
         dishekindLv.setAdapter(dishesKindAdapter);
 
         //默认绑定dishes
@@ -219,36 +218,25 @@ public class DishesActivity extends BaseToobarActivity {
         dishekindLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                dishesKindAdapter.changeSelected(position);
+                kindPosition = position;
 
-                if (dishesKindAdapter.getNames().size() > 0 && position < dishesKindAdapter.getNames().size()) {
-                    dishesKindAdapter.changeSelected(position);
-                    kindPosition = position;
-
-                    Document document = database.getDocument(dishesKindAdapter.getNames().get(position));
-                    document = database.getDocument(document.getId());
-                    Array array = document.getArray("dishesListId");
-                    if (array == null) {
-                        return;
-                    }
-                    if (dishesList.size() > 0) {
-                        dishesList.clear();
-                    }
-
-                    for (int i = 0; i < array.count(); i++) {
-
-                        dishesList.add(database.getDocument(array.getString(i)));
-                    }
-
-                    dishesAdapter.notifyDataSetChanged();
-
-                } else if (dishesKindAdapter.getNames().size() == 0) {
-
-
-
+                Document document = dishesKindAdapter.getNames().get(position);
+                document = database.getDocument(document.getId());
+                Array array = document.getArray("dishesListId");
+                if (array == null) {
+                    return;
+                }
+                if (dishesList.size() > 0) {
                     dishesList.clear();
-                    dishesAdapter.notifyDataSetChanged();
                 }
 
+                for (int i = 0; i < array.count(); i++) {
+
+                    dishesList.add(database.getDocument(array.getString(i)));
+                }
+
+                dishesAdapter.notifyDataSetChanged();
             }
         });
 
@@ -259,18 +247,14 @@ public class DishesActivity extends BaseToobarActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updataPosition(Integer integer) {
-        // Log.e("DOAING","主界面返回的位置："+integer);
-        if (dishesKindAdapter.getNames().size() == 0) {
+       // Log.e("DOAING","主界面返回的位置："+integer);
+        if(dishesKindAdapter.getNames().size() == 0){
 
-            Toast.makeText(DishesActivity.this, "请添加菜类！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DishesActivity.this,"请先添加菜品！",Toast.LENGTH_SHORT).show();
 
             fab.hide();
             return;
         }
-        if (!fab.isShown()) {
-            fab.show();
-        }
-
 
         //刷新菜品信息
 

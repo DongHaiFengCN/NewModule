@@ -2,7 +2,6 @@ package doaing.order.view.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
 import doaing.order.R;
-import doaing.order.view.DeskActivity;
 
 public class AreaAdapter extends ArrayAdapter<String> {
 	private static final String TAG = AreaAdapter.class.getSimpleName();
@@ -32,6 +30,7 @@ public class AreaAdapter extends ArrayAdapter<String> {
 	private Query listsLiveQuery = null;
 	private int  selectItem=-1;
 	AreaLocation areaLocation;
+	private Context context;
 
 	public interface AreaLocation{
 		public void setLocation(boolean location);
@@ -44,7 +43,7 @@ public class AreaAdapter extends ArrayAdapter<String> {
 	public AreaAdapter(Context context, Database db)
 	{
 		super(context, 0);
-
+		this.context = context;
 		if(db == null) throw new IllegalArgumentException();
 		this.db = db;
 
@@ -104,11 +103,14 @@ public class AreaAdapter extends ArrayAdapter<String> {
 		}
 
 		if (position == selectItem) {
-			convertView.setBackgroundResource(R.color.item_select);
+
+			convertView.setBackgroundResource(R.drawable.animtableclick);
+			viewHolder.areaname.setTextColor(context.getResources().getColor(R.color.white));
 		}
 		else
 		{
-			convertView.setBackgroundResource(R.color.item_normal);
+			convertView.setBackgroundResource(R.drawable.animtablenoclick);
+			viewHolder.areaname.setTextColor(context.getResources().getColor(R.color.md_black_1000));
 		}
 		viewHolder.areaname.setText(doc.getString("areaName"));
 
@@ -123,6 +125,5 @@ public class AreaAdapter extends ArrayAdapter<String> {
 		this.selectItem = selectItem;
 		notifyDataSetChanged();
 	}
-
 
 }

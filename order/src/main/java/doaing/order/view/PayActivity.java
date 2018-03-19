@@ -1057,12 +1057,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-
     private void submitOnOrder(final OnOrderC onOrderC){
         CDBHelper.createAndUpdate(getApplicationContext(),onOrderC);
         BluetoothAdapter btAdapter = BluetoothUtil.getBTAdapter();
         if (!btAdapter.isEnabled()) {
-
             btAdapter.enable();
 
             try {
@@ -1087,6 +1085,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                     ProgressBarasyncTask progressBarasyncTask = new ProgressBarasyncTask(PayActivity.this);
                     progressBarasyncTask.setOnDate(onOrderC);
                     progressBarasyncTask.execute();
+
                 }
             });
             builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
