@@ -265,7 +265,6 @@ public class DishesActivity extends BaseToobarActivity {
             Toast.makeText(DishesActivity.this, "请添加菜类！", Toast.LENGTH_SHORT).show();
 
             fab.hide();
-            return;
         }
         if (!fab.isShown()) {
             fab.show();
