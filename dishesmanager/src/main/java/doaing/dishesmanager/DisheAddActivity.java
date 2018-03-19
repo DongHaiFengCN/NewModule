@@ -123,7 +123,7 @@ public class DisheAddActivity extends BaseToobarActivity {
         disheDocument = new MutableDocument("DishesC." + ToolUtil.getUUID());
         //初始化口味
         initTasteData();
-       ;
+
         disheKindSp.setSelection(intent.getIntExtra("kindPosition",0));
         disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -165,7 +165,7 @@ public class DisheAddActivity extends BaseToobarActivity {
             public void call(Void aVoid) {
 
                 disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
-                MyLog.e("DishesAdd","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
+               // MyLog.e("DishesAdd","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
                 disheDocument.setString("className", "DishesC");
                 disheDocument.setString("dataType", "BaseData");
                 if ("".equals(disheName.getText().toString())) {

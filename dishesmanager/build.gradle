@@ -53,6 +53,7 @@ dependencies {
     //阿里路由
 
     implementation rootProject.ext.libAlibaba
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     annotationProcessor libArouter_compiler
     //Butterknife
     implementation rootProject.ext.libButterknife

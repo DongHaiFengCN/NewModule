@@ -570,17 +570,16 @@ DisheEditActivity extends BaseToobarActivity {
                     removeDisheIdFromDishesKindList();
 
                     try {
-
-                        database.save(oldKind.toMutable());
                         database.delete(document);
-                        //删除服务器静态资源
+                    } catch (CouchbaseLiteException e) {
+                        e.printStackTrace();
+                    }
+                    //删除服务器静态资源
                         deletePicturesFromServer();
                         EventBus.getDefault().postSticky(kindPosition);
                         finish();
 
-                    } catch (CouchbaseLiteException e) {
-                        e.printStackTrace();
-                    }
+
                 }
             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                 @Override

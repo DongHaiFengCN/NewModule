@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <EditText
+        android:id="@+id/kindname_et"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/shape_eidt_selector"
+        android:hint="输入菜类的名称"
+        android:textColorHint="@color/black_overlay"
+        android:textColor="@color/md_blue_grey_700"
+        android:paddingLeft="4dp"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        />
+
+
+</LinearLayout>

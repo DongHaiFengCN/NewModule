@@ -164,11 +164,12 @@ public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<As
     }
 
     /**
-     * save settings
+     * fragment save settings when detach
      */
     public void save()  {
 
         for (int i = 0; i < size; i++) {
+
             MutableDocument document = database.getDocument(mValues.get(i)).toMutable();
 
             if(flag[i]){
@@ -181,7 +182,9 @@ public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<As
             }
 
             try {
+
                 database.save(document);
+
             } catch (CouchbaseLiteException e) {
                 e.printStackTrace();
             }

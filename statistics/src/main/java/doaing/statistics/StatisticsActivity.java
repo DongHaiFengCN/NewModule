@@ -117,11 +117,11 @@ public class StatisticsActivity extends BaseToobarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         Calendar calendar;
-        final int year ;
-        final int month ;
-        final int day ;
-        @SuppressLint("DefaultLocale") String month1 ;
-        @SuppressLint("DefaultLocale") String day1 ;
+        final int year;
+        final int month;
+        final int day;
+        @SuppressLint("DefaultLocale") String month1;
+        @SuppressLint("DefaultLocale") String day1;
         calendar = Calendar.getInstance();
         year = calendar.get(Calendar.YEAR);
         month = calendar.get(Calendar.MONTH);
@@ -136,9 +136,9 @@ public class StatisticsActivity extends BaseToobarActivity {
             wechat = 0f;
             ml = 0f;
             gz = 0f;
-            bank=0f;
+            bank = 0f;
             member = 0f;
-            elm =0f;
+            elm = 0f;
             mt = 0f;
         }
 
@@ -167,14 +167,14 @@ public class StatisticsActivity extends BaseToobarActivity {
             startTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   createDatePickerDialog(year, month, day, startTv, 0);
+                    createDatePickerDialog(year, month, day, startTv, 0);
                 }
             });
             final int finalYear = year;
             endTv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   createDatePickerDialog(finalYear, month, day, endTv, 1);
+                    createDatePickerDialog(finalYear, month, day, endTv, 1);
                 }
             });
             alertDialog.setView(view);
@@ -201,6 +201,9 @@ public class StatisticsActivity extends BaseToobarActivity {
                 }
             });
             alertDialog.show();
+
+        } else if (i == R.id.action_bestsellers) {
+            startActivity(new Intent(StatisticsActivity.this,BestSellersActivity.class));
 
         }
         return true;

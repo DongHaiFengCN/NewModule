@@ -12,11 +12,5 @@
        <item android:id="@+id/action_month"
            app:showAsAction="never"
            android:title="本月"/>
-       <item android:id="@+id/action_consum"
-           app:showAsAction="never"
-           android:title="自定义"/>
-       <item android:id="@+id/action_bestsellers"
-           app:showAsAction="never"
-           android:title="热卖排行"/>
 
 </menu>

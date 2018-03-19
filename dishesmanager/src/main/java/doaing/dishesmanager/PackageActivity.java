@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
@@ -34,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
-
 import doaing.dishesmanager.adapter.PackageManagerExpandableAdapter;
 import doaing.mylibrary.MyApplication;
 import tools.CDBHelper;
@@ -46,6 +46,7 @@ public class PackageActivity extends BaseToobarActivity {
     private Database database;
     private Map<String, List<Document>> dataSet = new HashMap<>();
     private List<Document> groupList = new ArrayList<>();
+    private SearchView.SearchAutoComplete mSearchAutoComplete;
     @BindView(R2.id.toolbar)
     Toolbar toolbar;
     @BindView(R2.id.package_explv)
@@ -125,12 +126,27 @@ public class PackageActivity extends BaseToobarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toobar_add, menu);
-
+        final MenuItem addhItem = menu.findItem(R.id.action_add);
+        addhItem.setVisible(false);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView mSearchView = (SearchView) searchItem.getActionView();
-        final SearchView.SearchAutoComplete mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
+        mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
         ImageView searchButton = mSearchView.findViewById(R.id.search_button);
         searchButton.setImageResource(R.mipmap.icon_add);
+
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addhItem.setVisible(true);
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                addhItem.setVisible(false);
+                return false;
+            }
+        });
         //设置背景颜色
         mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.md_white));
         //设置Hint文字颜色
@@ -147,23 +163,9 @@ public class PackageActivity extends BaseToobarActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    addPackageInfo(mSearchAutoComplete);
 
-                    //1.添加数据到数据库
-                    MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
-                    document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
-                    document.setString("className", "DishesKindC");
-                    document.setString("kindName", mSearchAutoComplete.getText().toString());
-                    document.setBoolean("setMenu", true);
-                    document.setString("dataType","BaseData");
-                    document.setArray("dishesListId", new MutableArray());
-                    try {
-                        database.save(document);
-                    } catch (CouchbaseLiteException e) {
-                        e.printStackTrace();
-                    }
-                    initList();
-                    expandableAdapter.notifyDataSetChanged();
-                    mSearchAutoComplete.setText("");
+
                 }
 
                 return false;
@@ -173,6 +175,32 @@ public class PackageActivity extends BaseToobarActivity {
 
     }
 
+    private void addPackageInfo(SearchView.SearchAutoComplete mSearchAutoComplete) {
+        //1.添加数据到数据库
+        MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
+        document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
+        document.setString("className", "DishesKindC");
+        document.setString("kindName", mSearchAutoComplete.getText().toString());
+        document.setBoolean("setMenu", true);
+        document.setString("dataType","BaseData");
+        document.setArray("dishesListId", new MutableArray());
+        try {
+            database.save(document);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        initList();
+        expandableAdapter.notifyDataSetChanged();
+        mSearchAutoComplete.setText("");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_add){
+            addPackageInfo(mSearchAutoComplete);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }
 

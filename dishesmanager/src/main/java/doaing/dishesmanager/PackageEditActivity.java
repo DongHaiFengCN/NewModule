@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import bean.kitchenmanage.dishes.DishesC;
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
 
@@ -89,7 +90,7 @@ public class PackageEditActivity extends BaseToobarActivity {
         listAdapter = new ListAdapter();
 
         dishesLv.setAdapter(listAdapter);
-        Array array = secondLevel.getArray("dishesListId");
+        Array array = secondLevel.getArray("dishesIdList");
 
         int length = array.count();
         Document temporary;
@@ -154,7 +155,7 @@ public class PackageEditActivity extends BaseToobarActivity {
 
                                 array.addString(list.get(i).getId());
                             }
-                            secondLevelMuDoc.setArray("dishesListId", array);
+                            secondLevelMuDoc.setArray("dishesIdList", array);
                             database.save(secondLevelMuDoc);
                             finish();
                             Toast.makeText(PackageEditActivity.this,"修改成功！",Toast.LENGTH_SHORT).show();

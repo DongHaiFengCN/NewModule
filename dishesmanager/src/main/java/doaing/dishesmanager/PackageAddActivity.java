@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bean.kitchenmanage.dishes.DishesC;
+import bean.kitchenmanage.dishes.DishesKindC;
 import butterknife.BindView;
 
 import doaing.dishesmanager.widget.DishesKindListView;
@@ -44,7 +46,7 @@ public class PackageAddActivity extends BaseToobarActivity {
     private List<Document> dishesList = new ArrayList<>();
 
     private Map<Integer, boolean[]> listMap = new HashMap<>();
-    private MutableDocument disheDcoument;
+    private MutableDocument secondDocment;
     private DishesAdapter dishesAdapter;
     @BindView(R2.id.disheskind_lv)
     DishesKindListView disheskindLv;
@@ -57,6 +59,7 @@ public class PackageAddActivity extends BaseToobarActivity {
     @BindView(R2.id.toolbar)
     Toolbar toolbar;
 
+    String firstId;
 
     @Override
     protected int setMyContentView() {
@@ -66,6 +69,9 @@ public class PackageAddActivity extends BaseToobarActivity {
     @Override
     public void initData(final Intent intent) {
         setToolbarName("添加二级套餐");
+
+        firstId = intent.getExtras().get("id").toString();
+
         if (disheskindLv.getDishesKindList().size() == 0) {
             Toast.makeText(this, "请添加菜品", Toast.LENGTH_SHORT).show();
 
@@ -73,11 +79,11 @@ public class PackageAddActivity extends BaseToobarActivity {
             return;
         }
         database = CDBHelper.getDatabase();
-        packageDcoument = database.getDocument(intent.getExtras().get("id").toString());
+        packageDcoument = database.getDocument(firstId);
 
-        disheDcoument = new MutableDocument();
-        disheDcoument.setArray("dishesListId", new MutableArray());
-        disheDcoument.setString("dataType", "BaseData");
+        secondDocment = new MutableDocument();
+        secondDocment.setArray("dishesIdList", new MutableArray());
+        secondDocment.setString("dataType", "BaseData");
 
 
         dishesAdapter = new DishesAdapter();
@@ -134,11 +140,13 @@ public class PackageAddActivity extends BaseToobarActivity {
                     int length = booleans.length;
                     for (int j = 0; j < length; j++) {
 
+
                         if (booleans[j]) {
                             Document dishe = database.getDocument(document.getArray("dishesListId").getString(j));
                             sum += dishe.getFloat("price");
 
-                            disheDcoument.getArray("dishesListId").addString(dishe.getId());
+
+                            secondDocment.getArray("dishesIdList").addString(dishe.getId());
 
 
                         }
@@ -183,21 +191,23 @@ public class PackageAddActivity extends BaseToobarActivity {
                                 } else {
                                     float sum = Float.valueOf(packagePriceEt.getText().toString());
 
-                                    disheDcoument.setString("dishesName", packageNameEt.getText().toString());
+                                    secondDocment.setString("dishesName", packageNameEt.getText().toString());
 
                                     //保存数据库,设置套餐价格
                                     float discount = MyBigDecimal.div(sum, 100f, 2);
-                                    disheDcoument.setFloat("price", MyBigDecimal.mul(finalSum, discount, 2));
+                                    secondDocment.setFloat("price", MyBigDecimal.mul(finalSum, discount, 2));
                                     MutableDocument mutableDocument = packageDcoument.toMutable();
-                                    mutableDocument.getArray("dishesListId").addString(disheDcoument.getId());
+                                    mutableDocument.getArray("dishesListId").addString(secondDocment.getId());
                                     try {
                                         database.save(mutableDocument);
-                                        database.save(disheDcoument);
+                                        database.save(secondDocment);
                                     } catch (CouchbaseLiteException e) {
                                         e.printStackTrace();
                                     }
                                     dialog.dismiss();
                                     PackageAddActivity.this.finish();
+
+
 
                                 }
 
@@ -244,14 +254,18 @@ public class PackageAddActivity extends BaseToobarActivity {
                                         } else {
 
                                             float sum = Float.valueOf(packagePriceEt.getText().toString());
-                                            disheDcoument.setString("dishesName", packageNameEt.getText().toString());
+                                            secondDocment.setString("dishesName", packageNameEt.getText().toString());
                                             //保存数据库,设置套餐价格
-                                            disheDcoument.setFloat("price", sum);
+                                            secondDocment.setFloat("price", sum);
                                             MutableDocument mutableDocument = packageDcoument.toMutable();
-                                            mutableDocument.getArray("dishesListId").addString(disheDcoument.getId());
+
+                                            mutableDocument.getArray("dishesListId").addString(secondDocment.getId());
+
+
+
                                             try {
                                                 database.save(mutableDocument);
-                                                database.save(disheDcoument);
+                                                database.save(secondDocment);
                                             } catch (CouchbaseLiteException e) {
                                                 e.printStackTrace();
                                             }
