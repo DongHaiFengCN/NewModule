@@ -150,7 +150,7 @@ public class StatisticsActivity extends BaseToobarActivity {
             StringBuilder stringBuilder = new StringBuilder();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-            getDoubleDateInfo(formatter.format(calendar.getTime()), stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
+            getDoubleDateInfo(stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString(),formatter.format(calendar.getTime()));
 
         } else if (i == R.id.action_month) {
 
