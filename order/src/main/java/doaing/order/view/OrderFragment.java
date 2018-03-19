@@ -135,8 +135,9 @@ public class OrderFragment extends Fragment {
 
                 DishesC dishesC = CDBHelper.getObjById(getActivity().getApplication(), document.getId()
                         , DishesC.class);
-
+            if (dishesC.getState() != 1){
                 showDialog(dishesC, position, orderDragAdapter.getNumbers()[position]);
+            }
             }
         });
         orderList.performItemClick(orderList.getChildAt(0), 0, orderList
@@ -381,7 +382,6 @@ public class OrderFragment extends Fragment {
 
         dishesMessage.setDishesC(dishesC);
 
-
         AlertDialog.Builder builder = new AlertDialog
                 .Builder(getActivity());
         builder.setTitle(dishesC.getDishesName());
@@ -480,18 +480,18 @@ public class OrderFragment extends Fragment {
                 listItemView = new ListItemView();
                 view = listContainerLeft.inflate(R.layout.view_kindname_lv, null);
                 listItemView.tv_title = view.findViewById(R.id.title);
-                listItemView.imageView = view.findViewById(R.id.imageView);
+                //listItemView.imageView = view.findViewById(R.id.imageView);
                 listItemView.imagePoint = view.findViewById(R.id.imagePoint);
                 view.setTag(listItemView);
             } else {
                 listItemView = (ListItemView) view.getTag();
             }
             if (mSelect == i) {
-                view.setBackgroundResource(R.color.md_grey_50);  //选中项背景
-                listItemView.imageView.setVisibility(View.VISIBLE);
+                view.setBackgroundResource(R.drawable.animtableclick);
+                listItemView.tv_title.setTextColor(getActivity().getResources().getColor(R.color.white));
             } else {
-                view.setBackgroundResource(R.color.md_grey_100);  //其他项背景
-                listItemView.imageView.setVisibility(View.INVISIBLE);
+                view.setBackgroundResource(R.drawable.animtablenoclick);
+                listItemView.tv_title.setTextColor(getActivity().getResources().getColor(R.color.md_black_1000));
             }
 
             if (aBoolean[i]) {
@@ -516,7 +516,7 @@ public class OrderFragment extends Fragment {
         class ListItemView {
 
             TextView tv_title;
-            ImageView imageView;
+            //ImageView imageView;
             ImageView imagePoint;
         }
 

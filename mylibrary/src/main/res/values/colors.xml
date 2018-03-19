@@ -26,7 +26,7 @@
     <color name="grey_color1">#333333</color>
     <color name="grey_color2">#666666</color>
     <color name="grey_color3">#999999</color>
-    <color name="grey_color4">#00c4df</color>
+    <color name="grey_color4">#9d9e9e</color>
     <!-- 橙色 -->
     <color name="orange_color">#de6838</color>
     <color name="orange_color_600">#FB8C00</color>
@@ -806,7 +806,7 @@
     <color name="background">#FFFFFF</color>
     <color name="split_line">#11112233</color>
     <color name="text1">#59B29C</color>
-    <color name="text2">#333333</color>
+    <color name="text2">#33</color>
 
     <color name="color1">#F0F0F0</color>
     <color name="color2">#FFFFFF</color>

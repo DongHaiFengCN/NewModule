@@ -119,7 +119,7 @@ public class OrderDragAdapter extends BaseAdapter {
 
         if (mlistDishes.get(position).getInt("state") == 1){
             view.addtion.setVisibility(View.INVISIBLE);
-            view.name.setText(mlistDishes.get(position).getString("dishesName")+"*(估清)*");
+            view.name.setText(mlistDishes.get(position).getString("dishesName")+"(估清)");
         }else{
             view.name.setText(mlistDishes.get(position).getString("dishesName"));
         }
@@ -166,9 +166,6 @@ public class OrderDragAdapter extends BaseAdapter {
 
             }
         });
-
-
-        view.name.setText(mlistDishes.get(position).getString("dishesName"));
 
         view.price.setText(mlistDishes.get(position).getFloat("price") + " 元/份");
 

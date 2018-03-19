@@ -57,6 +57,7 @@ public class SeekT9Adapter extends BaseAdapter {
 
     private MyApplication myapp;
     private EditText editText;
+    private boolean isState = false;
 
     public SeekT9Adapter(MainActivity context, EditText editText, List<GoodsC> mData) {
         this.activity = context;
@@ -105,6 +106,9 @@ public class SeekT9Adapter extends BaseAdapter {
         dishesC = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), DishesC.class);
         if (dishesC.getState() == 1){
             viewHolder.viewTj.setVisibility(View.INVISIBLE);
+            isState = true;
+        }else{
+            isState = false;
         }
         viewHolder.itemSeekInfo.setText(mGoodsList.get(position).getDishesName());
         viewHolder.itemSeekTv.setText(mGoodsList.get(position).getPrice() + "");
@@ -116,7 +120,7 @@ public class SeekT9Adapter extends BaseAdapter {
                 Log.e("item click", "position = " + position);
                 v.setBackgroundResource(R.color.lucency);
                 if (listener != null) {
-                    listener.OnClickListener(v, mGoodsList.get(position).getDishesName(), mGoodsList.get(position).getPrice(), position);
+                    listener.OnClickListener(v, mGoodsList.get(position).getDishesName(), mGoodsList.get(position).getPrice(), position,isState);
                 }
             }
         });
@@ -402,7 +406,7 @@ public class SeekT9Adapter extends BaseAdapter {
 
 
     interface SeekT9OnClickListener {
-        void OnClickListener(View view, String name, float price, int pos);
+        void OnClickListener(View view, String name, float price, int pos,boolean isState);
     }
 
     public class ViewHolder {

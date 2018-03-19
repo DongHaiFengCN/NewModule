@@ -11,7 +11,7 @@
         android:layout_width="100dp"
         android:layout_height="80dp"
         android:layout_margin="12dp"
-        app:cardBackgroundColor="@android:color/holo_green_dark"
+        app:cardBackgroundColor="@color/zws"
         app:cardCornerRadius="10dp"
         app:cardElevation="8dp"
         app:contentPaddingBottom="8dp"
