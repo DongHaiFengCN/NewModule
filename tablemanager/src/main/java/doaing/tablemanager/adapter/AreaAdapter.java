@@ -107,10 +107,12 @@ public class AreaAdapter extends BaseAdapter {
             if (mSelect == i) {
                 listItemView.list_area_layout.setBackgroundResource(R.drawable.tableclick);  //选中项背景
                 listItemView.edit_im.setVisibility(View.VISIBLE);
+                listItemView.tv_title.setTextColor(context.getResources().getColor(R.color.white));
 
             } else {
                 listItemView.list_area_layout.setBackgroundResource(R.drawable.tablenoclick);  //其他项背景
                 listItemView.edit_im.setVisibility(View.INVISIBLE);
+                listItemView.tv_title.setTextColor(context.getResources().getColor(R.color.md_black_1000));
             }
             listItemView.edit_im.setOnClickListener(new View.OnClickListener() {
                 @Override
