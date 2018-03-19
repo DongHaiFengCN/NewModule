@@ -63,6 +63,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.UUID;
 
 
 import bean.kitchenmanage.dishes.DishesKindC;
@@ -108,6 +109,7 @@ public class DeskActivity extends AppCompatActivity {
     private Integer printnums = 1;
     private String TAG = getCallingPackage();
     private MyApplication myapp;
+    private long mExitTime = 0;
     private Handler uiHandler = new Handler()
     {
         @Override
@@ -143,7 +145,12 @@ public class DeskActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if((System.currentTimeMillis() - mExitTime) > 2000) {
+                    Toast.makeText(DeskActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                    mExitTime = System.currentTimeMillis();
+                } else {
+                    finish();
+                }
             }
         });
         myapp= (MyApplication) getApplicationContext();
@@ -162,7 +169,8 @@ public class DeskActivity extends AppCompatActivity {
         Intent intent = new Intent( this,
                 NewOrderService.class);
         startService(intent);
-
+        Log.e("DeskUUID",""+ToolUtil.getUUID());
+        Log.e("DeskUUID",""+UUID.randomUUID().toString());
     }
 
     @Override
@@ -174,6 +182,18 @@ public class DeskActivity extends AppCompatActivity {
 //                , null , DishesKindC.class);
 //
 //        initDishesData();
+    }
+
+    //点击返回键
+    @Override
+    public void onBackPressed() {
+        if((System.currentTimeMillis() - mExitTime) > 2000) {
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            mExitTime = System.currentTimeMillis();
+        } else {
+            finish();
+        }
+
     }
 
     @Override

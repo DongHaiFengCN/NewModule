@@ -24,8 +24,6 @@ import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
-import com.couchbase.lite.QueryChange;
-import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -97,6 +95,7 @@ public class AreaAdapter extends BaseAdapter {
             listItemView.imageView = view.findViewById(R.id.imageView);
             listItemView.edit_im = view.findViewById(R.id.edit_im);
             listItemView.add_im = view.findViewById(R.id.area_add_im);
+            listItemView.list_area_layout = view.findViewById(R.id.list_area_layout);
 
             view.setTag(listItemView);
         } else {
@@ -106,13 +105,11 @@ public class AreaAdapter extends BaseAdapter {
             listItemView.add_im.setVisibility(View.GONE);
             listItemView.tv_title.setVisibility(View.VISIBLE);
             if (mSelect == i) {
-                view.setBackgroundResource(R.color.md_grey_50);  //选中项背景
-                listItemView.imageView.setVisibility(View.VISIBLE);
+                listItemView.list_area_layout.setBackgroundResource(R.drawable.tableclick);  //选中项背景
                 listItemView.edit_im.setVisibility(View.VISIBLE);
 
             } else {
-                view.setBackgroundResource(R.color.md_grey_100);  //其他项背景
-                listItemView.imageView.setVisibility(View.INVISIBLE);
+                listItemView.list_area_layout.setBackgroundResource(R.drawable.tablenoclick);  //其他项背景
                 listItemView.edit_im.setVisibility(View.INVISIBLE);
             }
             listItemView.edit_im.setOnClickListener(new View.OnClickListener() {
@@ -185,9 +182,9 @@ public class AreaAdapter extends BaseAdapter {
             listItemView.tv_title.setText(database.getDocument(areaId.get(i)).getString("areaName"));
         } else {
             listItemView.tv_title.setVisibility(View.GONE);
-            listItemView.imageView.setVisibility(View.GONE);
             listItemView.edit_im.setVisibility(View.GONE);
             listItemView.add_im.setVisibility(View.VISIBLE);
+            final ListItemView finalListItemView = listItemView;
             listItemView.add_im.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -205,6 +202,7 @@ public class AreaAdapter extends BaseAdapter {
                             if ("".equals(editText.getText().toString())) {
                                 editText.setError("不能为空！");
                             } else {
+                                finalListItemView.list_area_layout.setBackgroundResource(R.drawable.tablenoclick);
                                 MutableDocument document = new MutableDocument("AreaC." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
                                 MyLog.e("AreaAdapter","channeldId="+((MyApplication) context.getApplicationContext()).getCompany_ID());
@@ -251,7 +249,7 @@ public class AreaAdapter extends BaseAdapter {
         ImageView imageView;
         ImageView edit_im;
         ImageView add_im;
-
+        LinearLayout list_area_layout;
     }
 
     public LinearLayout getLinearLayOfEditView(int pos) {

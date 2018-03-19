@@ -13,7 +13,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1.2"
-            android:background="#ffffff">
+            android:background="#ffffff"
+            >
             <ListView
                 android:layout_marginTop="10dp"
                 android:id="@+id/lv_area"
@@ -22,6 +23,7 @@
                 android:divider="#00000000"
                 android:dividerHeight="10dp"
                 android:layout_marginLeft="5dp"
+                android:layout_marginRight="8dp"
                 />
         </LinearLayout>
 
@@ -32,7 +34,8 @@
             android:layout_height="match_parent"
             android:layout_weight="3"
             android:orientation="vertical"
-            android:background="@color/grey_color4">
+            android:layout_marginLeft="5dp"
+            >
 
             <LinearLayout
 

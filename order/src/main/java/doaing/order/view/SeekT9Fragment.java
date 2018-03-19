@@ -173,9 +173,11 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
         seekT9Adapter.setListener(new SeekT9Adapter.SeekT9OnClickListener() {
             @Override
-            public void OnClickListener(View view, String name, float price, int pos) {
-                view.setBackgroundResource(R.color.lucency);
-                showDialog(name, price, pos);
+            public void OnClickListener(View view, String name, float price, int pos,boolean isState) {
+                if (!isState){
+                    view.setBackgroundResource(R.color.lucency);
+                    showDialog(name, price, pos);
+                }
             }
 
         });
@@ -351,7 +353,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                 for (Document doc : documentList) {
                     GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
                     if (doc.getInt("state") == 1){
-                        goodsObj.setDishesName(doc.getString("dishesName")+"*(估清)*");
+                        goodsObj.setDishesName(doc.getString("dishesName")+"(估清)");
                     }else {
                         goodsObj.setDishesName(doc.getString("dishesName"));
                     }
@@ -387,7 +389,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                 for (Document doc : documentList) {
                     GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
                     if (doc.getInt("state") == 1){
-                        goodsObj.setDishesName(doc.getString("dishesName")+"*(估清)*");
+                        goodsObj.setDishesName(doc.getString("dishesName")+"(估清)");
                     }else {
                         goodsObj.setDishesName(doc.getString("dishesName"));
                     }

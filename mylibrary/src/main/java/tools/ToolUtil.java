@@ -169,8 +169,7 @@ public class ToolUtil {
 
     public static String getUUID(){
         UUID uuid=UUID.randomUUID();
-        String str = uuid.toString();
-        String uuidStr=str.replace("-", "");
+        String uuidStr = uuid.toString();
         return uuidStr;
     }
   /*  private void add26Code()
