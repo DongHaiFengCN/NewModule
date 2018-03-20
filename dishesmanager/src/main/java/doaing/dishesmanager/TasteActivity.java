@@ -35,8 +35,13 @@ import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
@@ -180,7 +185,11 @@ public class TasteActivity extends BaseToobarActivity {
         document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
         document.setString("className", "DishesTasteC");
         document.setString("dataType","BaseData");
-        document.setString("tasteName", mSearchAutoComplete.getText().toString());
+        try {
+            document.setString("tasteName",ToolUtil.emojiConvert1(mSearchAutoComplete.getText().toString()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
         try {
             database.save(document);
@@ -214,7 +223,14 @@ public class TasteActivity extends BaseToobarActivity {
                         R.layout.slip_list_item, null);
             }
             final TextView tvName = view.findViewById(R.id.tv_name);
-            tvName.setText(list.get(arg0).getString("tasteName"));
+
+
+            try {
+                tvName.setText(ToolUtil.emojiRecovery2(list.get(arg0).getString("tasteName")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
             final MySwipeListLayout sllMain = view.findViewById(R.id.sll_main);
             TextView tvEdit = view.findViewById(R.id.tv_edit);
 
@@ -234,7 +250,11 @@ public class TasteActivity extends BaseToobarActivity {
                                 public void onClick(DialogInterface dialog, int which) {
 
                                     MutableDocument document = list.get(arg0).toMutable();
-                                    document.setString("tasteName", editText.getText().toString());
+
+
+                                    String a = editText.getText().toString();
+                                    document.setString("tasteName",a);
+
                                     try {
                                         database.save(document);
 
@@ -291,6 +311,9 @@ public class TasteActivity extends BaseToobarActivity {
         }
 
     }
+
+
+
 
 
 }
