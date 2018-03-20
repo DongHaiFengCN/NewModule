@@ -98,7 +98,6 @@ public class NewOrderService extends Service {
          ;
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
@@ -415,7 +414,6 @@ public class NewOrderService extends Service {
             if (action.equals(ACTION_CONNECT_STATUS))//连接状态
             {
 
-                KitchenClientC kitchenObj = kitchenClientMap.get(id);
                 int type = intent.getIntExtra(GpPrintService.CONNECT_STATUS, 0);
 
              MyLog.e(Tag, id+"-connect status " + type);
@@ -426,19 +424,44 @@ public class NewOrderService extends Service {
 
                     MyLog.e(Tag,id+"-打印机正在连接");
 
+
                 } else if (type == GpDevice.STATE_NONE)//0
 
                 {
-                    kitchenObj.setStatePrinter(false);
 
-                    MyLog.d(Tag,id+"-打印机未连接");
+
+                   List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                             Expression.property("className").equalTo(Expression.string("KitchenClientC"))
+                                     .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                    null);
+
+                   if(docList.size()>0)
+                   {
+                       Document doc  = docList.get(0);
+                       MutableDocument mutableDocument = doc.toMutable();
+                       mutableDocument.setBoolean("statePrinter",false);
+                       CDBHelper.saveDocument(null,mutableDocument);
+                   }
+
+                    MyLog.e(Tag,id+"-打印机未连接");
                 }
 
                 else if (type == GpDevice.STATE_VALID_PRINTER)//连接成功 5
                 {
-                    MyLog.d(Tag,id+"-打印机连接成功");
+                    MyLog.e(Tag,id+"-打印机连接成功");
 
-                    kitchenObj.setStatePrinter(true);
+                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                            Expression.property("className").equalTo(Expression.string("KitchenClientC"))
+                                    .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                            null);
+
+                    if(docList.size()>0)
+                    {
+                        Document doc  = docList.get(0);
+                        MutableDocument mutableDocument = doc.toMutable();
+                        mutableDocument.setBoolean("statePrinter",true);
+                        CDBHelper.saveDocument(null,mutableDocument);
+                    }
                     //1、程序连接上厨房端打印机后要进行分厨房打印
 
                     if (goodsList == null || goodsList.size() <= 0)
@@ -457,12 +480,12 @@ public class NewOrderService extends Service {
                 else if (type == GpDevice.STATE_INVALID_PRINTER)//4
 
                 {
-                    kitchenObj.setStatePrinter(false);
-                    MyLog.e(Tag,id+"-打印机不能连接");
+                   // kitchenObj.setStatePrinter(false);
+                    MyLog.e(Tag,id+"-打印机无效");
 
                 }
 
-                CDBHelper.createAndUpdate(null,kitchenObj);
+
             }
 
             else if (action.equals(GpCom.ACTION_RECEIPT_RESPONSE))//本地打印完成回调

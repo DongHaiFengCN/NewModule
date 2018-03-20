@@ -78,6 +78,7 @@ import java.util.UUID;
 
 
 import bean.kitchenmanage.dishes.DishesKindC;
+import bean.kitchenmanage.kitchen.KitchenClientC;
 import bean.kitchenmanage.order.CheckOrderC;
 import bean.kitchenmanage.order.OrderC;
 import bean.kitchenmanage.qrcode.qrcodeC;
@@ -244,6 +245,13 @@ public class DeskActivity extends AppCompatActivity {
 //                , null , DishesKindC.class);
 //
 //        initDishesData();
+
+        List<String> kitchenClientIds = CDBHelper.getIdsByClass(null, KitchenClientC.class);
+        if(kitchenClientIds.size()>0)
+            msg_printer.setVisibility(View.VISIBLE);
+        else
+            msg_printer.setVisibility(View.INVISIBLE);
+
     }
 
     //点击返回键

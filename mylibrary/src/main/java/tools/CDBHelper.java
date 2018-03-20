@@ -169,18 +169,18 @@ public class CDBHelper implements ReplicatorChangeListener
                 if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.IDLE))
                 {
 
-                    Intent intent = new Intent();
-                    intent.setAction("sync_complete");
-                    mcontext.sendBroadcast(intent);
+//                    Intent intent = new Intent();
+//                    intent.setAction("sync_complete");
+//                    mcontext.sendBroadcast(intent);
                     Log.e("Replication Comp Log", "Schedular Completed");
 
                 }
                 if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.STOPPED) || change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.OFFLINE)) {
                     // stopReplication();
 
-                    Intent intent = new Intent();
-                    intent.setAction("sync_complete");
-                    mcontext.sendBroadcast(intent);
+//                    Intent intent = new Intent();
+//                    intent.setAction("sync_complete");
+//                    mcontext.sendBroadcast(intent);
 
                     Log.e("Rep schedular  Log", "ReplicationTag Stopped");
 
