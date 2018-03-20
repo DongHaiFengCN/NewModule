@@ -147,10 +147,12 @@ public class StatisticsActivity extends BaseToobarActivity {
             getStartSingleDateInfo(stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
 
         } else if (i == R.id.action_week) {
+
             StringBuilder stringBuilder = new StringBuilder();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
-            getDoubleDateInfo(stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString(),formatter.format(calendar.getTime()));
+
+            getDoubleDateInfo(formatter.format(calendar.getTime()),stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
 
         } else if (i == R.id.action_month) {
 
@@ -215,8 +217,11 @@ public class StatisticsActivity extends BaseToobarActivity {
      * @param start 开始日期
      * @param end   结束日期
      */
+
+
     private void getDoubleDateInfo(String start, String end) {
         dateTv.setText((new StringBuilder()).append(start).append("----").append(end));
+
         Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
                         .equalTo(Expression.string("CheckOrderC"))
