@@ -272,16 +272,15 @@ public class OrderFragment extends Fragment {
 
 
             float[] floats = dishesCollection.get(id);
-
-
             float count = 0f;
+            if(floats != null) {
 
-            for (float f : floats) {
+                for (float f : floats) {
 
-                count += f;
+                    count += f;
 
+                }
             }
-
             if (count == 0f && booleans[j]) {
 
                 booleans[j] = false;

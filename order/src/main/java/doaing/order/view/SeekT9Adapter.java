@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
@@ -30,6 +31,7 @@ import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.view.adapter.SeekT9DialogAdapter;
 import tools.CDBHelper;
+import tools.ToolUtil;
 
 import static tools.CDBHelper.getFormatDate;
 
@@ -110,7 +112,11 @@ public class SeekT9Adapter extends BaseAdapter {
         }else{
             isState = false;
         }
-        viewHolder.itemSeekInfo.setText(mGoodsList.get(position).getDishesName());
+        try {
+            viewHolder.itemSeekInfo.setText(ToolUtil.emojiRecovery2(mGoodsList.get(position).getDishesName()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         viewHolder.itemSeekTv.setText(mGoodsList.get(position).getPrice() + "");
         viewHolder.viewShu.setText("" + mGoodsList.get(position).getDishesCount());
 
@@ -155,7 +161,11 @@ public class SeekT9Adapter extends BaseAdapter {
                             if (dishesC.getTasteList().size() != 0) {
                                 for (int i = 0; i < dishesC.getTasteList().size(); i++) {
                                     Document document = CDBHelper.getDocByID(activity.getApplicationContext(), dishesC.getTasteList().get(i).toString());
-                                    tasteList.add(document.getString("tasteName"));
+                                    try {
+                                        tasteList.add(ToolUtil.emojiRecovery2(document.getString("tasteName")));
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                                 selTasteDialog(tasteList, position, viewHolder);
                                 activity.getOrderAdapter().notifyDataSetChanged();
@@ -261,7 +271,11 @@ public class SeekT9Adapter extends BaseAdapter {
         viewHolder.viewShu.setText(mGoodsList.get(position).getDishesCount() + "");
 
         GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
-        goodsObj.setDishesName(mGoodsList.get(position).getDishesName());
+        try {
+            goodsObj.setDishesName(ToolUtil.emojiConvert1(mGoodsList.get(position).getDishesName()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         goodsObj.setDishesTaste(m_taste);
         goodsObj.setDishesCount(1);
         goodsObj.setPrice(mGoodsList.get(position).getPrice());

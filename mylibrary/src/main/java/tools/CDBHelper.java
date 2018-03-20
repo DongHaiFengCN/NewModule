@@ -58,6 +58,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -335,8 +336,6 @@ public class CDBHelper implements ReplicatorChangeListener
 
         return documentList;
     }
-
-
 
     /**
      * 1.5
