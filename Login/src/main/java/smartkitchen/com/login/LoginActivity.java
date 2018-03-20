@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -87,11 +89,13 @@ public class LoginActivity extends AppCompatActivity  {
     private Button mBtnLogin;
 
     private View mProgressView;
+    private TextView progressInfo;
     private View mLoginFormView;
     private SharedPreferences pRemberLogin;
 
     private MyApplication myapp;
     private Toolbar toolbar;
+    private mBroadcastReceiver mBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +123,7 @@ public class LoginActivity extends AppCompatActivity  {
         mTelView.setCompoundDrawables(drawable1,null,null,null);
 
        // populateAutoComplete();
+
 
         mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -163,8 +168,10 @@ public class LoginActivity extends AppCompatActivity  {
                 attemptLogin();
             }
         });
+
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        progressInfo= findViewById(R.id.login_sync_info);
 
         String mobile = getIntent().getStringExtra("mobile");
         if(TextUtils.isEmpty(mobile))
@@ -381,7 +388,7 @@ public class LoginActivity extends AppCompatActivity  {
             @Override
             public void run()
             {
-                showProgress(false);
+
                 if(flag)
                 {
                     Gson gson = new Gson();
@@ -396,6 +403,8 @@ public class LoginActivity extends AppCompatActivity  {
                         CDBHelper.startPushAndPullReplicationForCurrentUser(userName,pwd);
 
                         myapp.setCompany_ID(userName);
+
+                        progressInfo.setText("数据更新中...");
                         MyLog.e("login*********","channeldId="+myapp.getCompany_ID());
 
                         //是否记住密码
@@ -416,16 +425,17 @@ public class LoginActivity extends AppCompatActivity  {
                                     .commit();
                         }
                         //跳转界面
-                        ARouter
-                                .getInstance()
-                                .build("/order/DeskActivity")
-                                .withString("mobile",mTelView.getText().toString())
-                                .withString("channelId",userName)
-                                .navigation();
-                        finish();
+//                        ARouter
+//                                .getInstance()
+//                                .build("/order/DeskActivity")
+//                                .withString("mobile",mTelView.getText().toString())
+//                                .withString("channelId",userName)
+//                                .navigation();
+                       // finish();
                     }//r
                     else {
 
+                        showProgress(false);
                         mPasswordView.setError(getString(R.string.login_error_incorrect_password));
                         mPasswordView.requestFocus();
                         Toast.makeText(getApplicationContext(), obj.getMsg(), Toast.LENGTH_SHORT).show();
@@ -433,6 +443,7 @@ public class LoginActivity extends AppCompatActivity  {
                 }
                 else
                 {
+                    showProgress(false);
                     Toast.makeText(getApplicationContext(),"接口无法访问",Toast.LENGTH_SHORT).show();
                 }
 
@@ -442,6 +453,56 @@ public class LoginActivity extends AppCompatActivity  {
 
 
     }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        // 1. 实例化BroadcastReceiver子类 &  IntentFilter
+         mBroadcastReceiver = new mBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+
+        // 2. 设置接收广播的类型
+        intentFilter.addAction("sync_complete");
+
+        // 3. 动态注册：调用Context的registerReceiver（）方法
+        registerReceiver(mBroadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //销毁在onResume()方法中的广播
+        unregisterReceiver(mBroadcastReceiver);
+        MyLog.e("LoginActivity","onPause");
+    }
+
+
+
+    // 继承BroadcastReceivre基类
+    public class mBroadcastReceiver extends BroadcastReceiver {
+
+        // 复写onReceive()方法
+        // 接收到广播后，则自动调用该方法
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            //写入接收广播后的操作
+            String action = intent.getAction();
+            if(action.equals("sync_complete"))
+            {
+                showProgress(false);
+                  ARouter
+                                .getInstance()
+                                .build("/order/DeskActivity")
+                                .withString("mobile",mTelView.getText().toString())
+                                .withString("channelId",myapp.getCompany_ID())
+                                .navigation();
+                 finish();
+            }
+        }
+    }
+
 
     public void sendCode(Context context)
     {
@@ -495,6 +556,8 @@ public class LoginActivity extends AppCompatActivity  {
 //            });
 
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            progressInfo.setVisibility(show?View.VISIBLE : View.GONE);
+
             mProgressView.animate().setDuration(shortAnimTime).alpha(
                     show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
                 @Override

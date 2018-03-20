@@ -8,8 +8,8 @@ if (isModule.toBoolean()) {
 apply plugin: 'com.mob.sdk'
 // 在MobSDK的扩展中注册SMSSDK的相关信息
 MobSDK {
-    appKey "21efc5a881e60"
-    appSecret "db061f16515cf08d8c98c9857c4550d9"
+    appKey "11534d36cd080"
+    appSecret "f498b1f609a79683545625dfab9a7917"
 
     SMSSDK {}
 }

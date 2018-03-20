@@ -20,7 +20,6 @@ android {
 }
 dependencies {
     implementation project(':mylibrary')
-//    releaseCompile project(':Login')
     compile project(':Login')
     compile project(':order')
     compile project(':dishesmanager')

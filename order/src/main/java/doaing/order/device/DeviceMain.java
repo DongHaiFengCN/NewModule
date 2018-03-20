@@ -40,7 +40,6 @@ public class DeviceMain extends BaseToobarActivity implements View.OnClickListen
             startActivity(intent);
         }else if(i == R.id.activity_device_kitchen){
             intent = new Intent(DeviceMain.this,PrinterConnectDialog.class);
-
             startActivity(intent);
 
         }else{

@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -73,6 +74,8 @@ public class NewOrderService extends Service {
     private Map<String, String> allKitchenClientPrintNames = new HashMap<String, String>();
     private String tableName, areaName, currentPersions, serNum,gOrderId;
     private List<GoodsC> goodsList;
+    private List<KitchenClientC> kitchenClientList;
+    private Map<Integer ,KitchenClientC> kitchenClientMap=new HashMap<>();
 
     private String Tag;
 
@@ -101,14 +104,18 @@ public class NewOrderService extends Service {
     {
 
         registerPrinterBroadcast();
-        Tag = getPackageName();
-        Log.e(Tag,"************NewOrderService   started*********");
+
+        registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_pause));
+        registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_resum));
+
+        Tag = "NewOrderService";
+        MyLog.e(Tag,"************NewOrderService   started*********");
         mGpService = DeskActivity.getmGpService();
        //只执行一个，后面的排队
         myExecutor   = Executors.newScheduledThreadPool(1);
 
         db = CDBHelper.getDatabase();
-        Log.e(Tag,"CDBHelper.getDatabase");
+
         Query myquery = listsLiveQuery();
         myquery.addChangeListener(new QueryChangeListener() {
             @Override
@@ -125,6 +132,7 @@ public class NewOrderService extends Service {
             }
         });
 
+        connectAllPrinter();
         return super.onStartCommand(intent, flags, startId);
     }
     @Override
@@ -133,9 +141,15 @@ public class NewOrderService extends Service {
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         super.onDestroy();
-        unregisterReceiver(PrinterStatusBroadcastReceiver);
+        if(PrinterStatusBroadcastReceiver!=null)
+        {
+            unregisterReceiver(PrinterStatusBroadcastReceiver);
+        }
+        unregisterReceiver(CmdBroadcastReceiver);
+        MyLog.e(Tag,"NewOderServer Destroy");
     }
 
     @Override
@@ -160,7 +174,41 @@ public class NewOrderService extends Service {
             }
         });
     }
+    private void connectAllPrinter()
+    {
 
+         kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClientC.class);
+
+        if (kitchenClientList.size() <= 0)
+        {
+            MyLog.e(Tag,"未配置厨房数据");
+            return;
+        }
+        for (KitchenClientC kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
+        {
+            String clientKtname = "" + kitchenClientObj.getName();//厨房名称
+
+            int printerId = kitchenClientObj.getIndexPrinter();
+            kitchenClientMap.put(printerId,kitchenClientObj);
+            if (!isPrinterConnected(printerId)) // 未连接
+            {
+                MyLog.e(Tag,""+clientKtname+"厨房打印机未连接，正在连接");
+                if (connectClientPrint(printerId) == 0)
+                {
+                    MyLog.e("printCMD","***********打印机连接命令发送成功");
+
+                } else {
+                    MyLog.e("printCMD","***********打印机连接命令发送失败");
+                    kitchenClientObj.setStatePrinter(false);
+                    CDBHelper.createAndUpdate(null,kitchenClientObj);
+                }
+            }
+            else
+            {
+                MyLog.e(Tag,""+clientKtname+"厨房打印机已连接");
+            }
+        }
+    }
     private void changeTableState( String tableNo)
     {
         List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
@@ -264,7 +312,9 @@ public class NewOrderService extends Service {
                     {
                         MyLog.d("***********打印机连接命令发送成功");
 
-                    } else {
+                    }
+                    else
+                     {
 
                         allKitchenClientPrintNames.remove(""+"" + printerId);
                         allKitchenClientGoods.remove(""+printerId);
@@ -310,7 +360,7 @@ public class NewOrderService extends Service {
         else
 
         {
-            MyLog.d("厨房打印失败");
+            MyLog.e("厨房打印失败");
         }
 
         setOrderPrintState(gOrderId);
@@ -359,64 +409,66 @@ public class NewOrderService extends Service {
 
             String action = intent.getAction();
 
-            //  MyLog("NavigationMain--PrinterStatusBroadcastReceiver= " + action);
+             MyLog.e("NewOrderService","PrinterStatus= " + action);
             int id = intent.getIntExtra(GpPrintService.PRINTER_ID, 0);
 
             if (action.equals(ACTION_CONNECT_STATUS))//连接状态
             {
 
+                KitchenClientC kitchenObj = kitchenClientMap.get(id);
                 int type = intent.getIntExtra(GpPrintService.CONNECT_STATUS, 0);
 
-             MyLog.d(Tag, "connect status " + type);
+             MyLog.e(Tag, id+"-connect status " + type);
 
                 if (type == GpDevice.STATE_CONNECTING)//2
 
                 {
 
-                    MyLog.d(Tag,"打印机正在连接");
+                    MyLog.e(Tag,id+"-打印机正在连接");
 
                 } else if (type == GpDevice.STATE_NONE)//0
 
                 {
+                    kitchenObj.setStatePrinter(false);
 
-                    MyLog.d(Tag,"打印机未连接");
+                    MyLog.d(Tag,id+"-打印机未连接");
                 }
 
                 else if (type == GpDevice.STATE_VALID_PRINTER)//连接成功 5
-
                 {
+                    MyLog.d(Tag,id+"-打印机连接成功");
 
-                    MyLog.d(Tag,"打印机连接成功");
-
+                    kitchenObj.setStatePrinter(true);
                     //1、程序连接上厨房端打印机后要进行分厨房打印
 
                     if (goodsList == null || goodsList.size() <= 0)
-                        return;
+                    {}
+                    else
+                    {
+                        if(allKitchenClientGoods.get(""+id)==null)//loongsun todo 如果别的模块中连接打印机，此处也会监听到，一但上次没有清空打印内容，此处很可能再打印一次，杜绝的办法就是打印成功或失败都把该id下的内容移除掉，但连接不上打印及打印失败需要再进一步调试判断，此问题在MainActivity也会存在
+                        {}
+                        else
+                        printGoodsAtRomoteByIndex(id);
+                    }
 
-                    if(allKitchenClientGoods.get(""+id)==null)//todo 如果别的模块中连接打印机，此处也会监听到，一但上次没有清空打印内容，此处很可能再打印一次，杜绝的办法就是打印成功或失败都把该id下的内容移除掉，但连接不上打印及打印失败需要再进一步调试判断，此问题在MainActivity也会存在
-                        return;
-
-                    printGoodsAtRomoteByIndex(id);
 
                 }
 
                 else if (type == GpDevice.STATE_INVALID_PRINTER)//4
 
                 {
-
-                    MyLog.e(Tag,"打印机不能连接");
+                    kitchenObj.setStatePrinter(false);
+                    MyLog.e(Tag,id+"-打印机不能连接");
 
                 }
 
+                CDBHelper.createAndUpdate(null,kitchenObj);
             }
 
             else if (action.equals(GpCom.ACTION_RECEIPT_RESPONSE))//本地打印完成回调
-
             {
 
                 MyLog.e(Tag,"打印机打印完成回调");
-
-
 
             } else if (action.equals(GpCom.ACTION_DEVICE_REAL_STATUS)) {
 
@@ -441,7 +493,6 @@ public class NewOrderService extends Service {
                         str = "打印机正常";
 
                         //printerSat = true;
-
                     }
 
                     else {
@@ -489,6 +540,30 @@ public class NewOrderService extends Service {
         }
 
     };
+
+    private BroadcastReceiver CmdBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+
+
+            if (action.equals(GlobalConstant.printer_msg_pause))//连接状态
+            {
+                unregisterReceiver(PrinterStatusBroadcastReceiver);
+
+            }
+            else if(action.equals(GlobalConstant.printer_msg_resum))
+            {
+                registerPrinterBroadcast();
+            }
+        }
+
+    };
+
+
 
     private int printContent(String content, int printIndex)//0发送数据到打印机 成功 其它错误
 
@@ -782,6 +857,24 @@ public class NewOrderService extends Service {
     }
 
 
+    Boolean CheckPortParamters(PortParameters param) {
+        boolean rel = false;
+        int type = param.getPortType();
+        if (type == PortParameters.BLUETOOTH) {
+            if (!param.getBluetoothAddr().equals("")) {
+                rel = true;
+            }
+        } else if (type == PortParameters.ETHERNET) {
+            if ((!param.getIpAddr().equals("")) && (param.getPortNumber() != 0)) {
+                rel = true;
+            }
+        } else if (type == PortParameters.USB) {
+            if (!param.getUsbDeviceName().equals("")) {
+                rel = true;
+            }
+        }
+        return rel;
+    }
 
     private int connectClientPrint(int index) {
 
@@ -791,16 +884,15 @@ public class NewOrderService extends Service {
 
                 PortParamDataBase database = new PortParamDataBase(this);
 
-                PortParameters mPortParam = new PortParameters();
-
-                mPortParam = database.queryPortParamDataBase(""+index);
 
 
-                Log.e("MainActivity",""+mPortParam.getPortNumber()+"----"+mPortParam.getIpAddr());
+                PortParameters mPortParam = database.queryPortParamDataBase(""+index);
 
+                Log.e("NewOrderService","index="+index+"portType="+mPortParam.getPortType());
                 int rel = -1;
 
-
+                if(!CheckPortParamters(mPortParam))
+                    return rel;
 
                 try {
 
@@ -825,8 +917,6 @@ public class NewOrderService extends Service {
                         break;
 
                     case PortParameters.ETHERNET:
-
-
 
                         try {
 
@@ -857,8 +947,6 @@ public class NewOrderService extends Service {
                             e.printStackTrace();
 
                         }
-
-
 
                         break;
 
@@ -899,8 +987,11 @@ public class NewOrderService extends Service {
             }
 
         } else
-
+        {
+            MyLog.e("打印机句柄为空");
             return -1;
+        }
+
 
     }
 
@@ -918,17 +1009,9 @@ public class NewOrderService extends Service {
 
      * */
 
-
-
-
-
     private Boolean isPrinterConnected(int index) {
 
-//        if (!printerSat)
 
-//            return false;
-
-        // 一上来就先连接蓝牙设备
 
         int status = 0;
 

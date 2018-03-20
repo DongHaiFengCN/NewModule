@@ -36,6 +36,8 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Function;
+import com.couchbase.lite.LogDomain;
+import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
@@ -108,7 +110,7 @@ public class CDBHelper implements ReplicatorChangeListener
             return;
         }
 
-        db.setLogLevel(Database.LogDomain.REPLICATOR, Database.LogLevel.NONE);
+        db.setLogLevel( LogDomain.REPLICATOR,  LogLevel.ERROR);
 
         URI url = null;
         try {

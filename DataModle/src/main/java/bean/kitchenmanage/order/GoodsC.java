@@ -38,9 +38,9 @@ public class GoodsC implements Cloneable {
 	/**
 	 * 所选菜品个数
 	 */
-	private float DishesCount;
+	private float dishesCount;
 	/**
-	 * 所选菜品个数
+	 * 菜品价格
 	 */
 	private float price;
 	/**
@@ -54,7 +54,7 @@ public class GoodsC implements Cloneable {
 	/**
 	 * 是否是待叫商品,0，代表正常上菜；1代表待叫菜品，打印时加备注
 	 */
-    private int isWaitCall;
+    private int waitCall;
 
 	/**
 	 *退菜标识 0.正常  1.退菜 2.赠菜 3.自定义菜
@@ -134,13 +134,7 @@ public class GoodsC implements Cloneable {
 		this.dishesTaste = dishesTaste;
 	}
 
-	public float getDishesCount() {
-		return DishesCount;
-	}
 
-	public void setDishesCount(float dishesCount) {
-		DishesCount = dishesCount;
-	}
 
 	public float getPrice() {
 		return price;
@@ -158,12 +152,20 @@ public class GoodsC implements Cloneable {
 		this.dishesName = dishesName;
 	}
 
-	public int getIsWaitCall() {
-		return isWaitCall;
+	public float getDishesCount() {
+		return dishesCount;
 	}
 
-	public void setIsWaitCall(int isWaitCall) {
-		this.isWaitCall = isWaitCall;
+	public void setDishesCount(float dishesCount) {
+		this.dishesCount = dishesCount;
+	}
+
+	public int getWaitCall() {
+		return waitCall;
+	}
+
+	public void setWaitCall(int waitCall) {
+		this.waitCall = waitCall;
 	}
 
 	public int getGoodsType() {

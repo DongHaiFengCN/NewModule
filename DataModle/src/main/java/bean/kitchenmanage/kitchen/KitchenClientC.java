@@ -40,6 +40,19 @@ public class KitchenClientC {
      * 数据分两大类，一个是基础数据 basic，一个业务实时数据 business
      */
     private String dataType = "BaseData";//basi,代表basic数据,busi,代表业务数据
+    /**
+     * 打印机序号
+     */
+    private int indexPrinter;
+    /**
+     * 是否配置了打印机
+     */
+    private boolean havePrinter;
+    /**
+     * 打印机连接状态
+     */
+    private boolean statePrinter;
+
 
     public String getDataType() {
         return dataType;
@@ -57,6 +70,30 @@ public class KitchenClientC {
     public KitchenClientC(String company_id) {
         this.channelId = company_id;
         this.className="KitchenClientC";
+    }
+
+    public int getIndexPrinter() {
+        return indexPrinter;
+    }
+
+    public void setIndexPrinter(int indexPrinter) {
+        this.indexPrinter = indexPrinter;
+    }
+
+    public boolean isHavePrinter() {
+        return havePrinter;
+    }
+
+    public void setHavePrinter(boolean havePrinter) {
+        this.havePrinter = havePrinter;
+    }
+
+    public boolean isStatePrinter() {
+        return statePrinter;
+    }
+
+    public void setStatePrinter(boolean statePrinter) {
+        this.statePrinter = statePrinter;
     }
 
     public String getChannelId() {

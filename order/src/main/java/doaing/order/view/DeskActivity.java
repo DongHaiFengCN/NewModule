@@ -33,19 +33,30 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.android.arouter.facade.annotation.Route;
 import com.alibaba.android.arouter.launcher.ARouter;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.gprinter.aidl.GpService;
@@ -75,6 +86,7 @@ import bean.kitchenmanage.user.UsersC;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.DeviceMain;
+import doaing.order.device.kitchen.KitchenCfgActivity;
 import doaing.order.service.NewOrderService;
 import doaing.order.untils.Tool;
 import doaing.order.view.adapter.AreaAdapter;
@@ -99,6 +111,8 @@ public class DeskActivity extends AppCompatActivity {
     private String[] tablesNos,tablesName;
     public int pos = 0,mPos = 0;
     private Toolbar toolbar;
+    private TextView msg_point;
+    private ImageView msg_printer;
     List<DishesKindC> dishesKindCList;
     private Map<String, List<Document>> dishesObjectCollection;
     public GpService mGpService;
@@ -137,22 +151,30 @@ public class DeskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_desk);
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("桌位");
+        toolbar = findViewById(R.id.mytoolbar);
+        toolbar.setTitle("区域桌位");
+
         setSupportActionBar(toolbar);
         //关键下面两句话，设置了回退按钮，及点击事件的效果
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if((System.currentTimeMillis() - mExitTime) > 2000) {
-                    Toast.makeText(DeskActivity.this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                    mExitTime = System.currentTimeMillis();
-                } else {
-                    finish();
-                }
+                finish();
             }
         });
+        msg_point = (TextView)findViewById(R.id.msg_point);
+        msg_point.setVisibility(View.INVISIBLE);
+        msg_printer = findViewById(R.id.icon_printer);
+        msg_printer.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+               Intent intent = new Intent(DeskActivity.this,KitchenCfgActivity.class);
+                startActivity(intent);
+            }
+         });
+
         myapp= (MyApplication) getApplicationContext();
         String mobile = getIntent().getStringExtra("mobile");
         String channelId = getIntent().getStringExtra("channelId");
@@ -168,9 +190,49 @@ public class DeskActivity extends AppCompatActivity {
         initDishesData();
         Intent intent = new Intent( this,
                 NewOrderService.class);
-        startService(intent);
-        Log.e("DeskUUID",""+ToolUtil.getUUID());
-        Log.e("DeskUUID",""+UUID.randomUUID().toString());
+
+        getPrinterStatus();
+    }
+
+    private void getPrinterStatus()
+    {
+        Query listsLiveQuery = QueryBuilder.select(SelectResult.expression(Meta.id)
+                , SelectResult.expression(Expression.property("statePrinter")))
+                .from(DataSource.database(db))
+                .where(
+                        Expression.property("className").equalTo(Expression.string("KitchenClientC"))
+                                .and(Expression.property("statePrinter").equalTo(Expression.booleanValue(false)))
+                );
+
+        listsLiveQuery.addChangeListener(new QueryChangeListener() {
+            @Override
+            public void changed(QueryChange change)
+            {
+
+                ResultSet rs = change.getResults();
+                Result result;
+
+                final  int sum = rs.allResults().size();
+
+                MyLog.e("changed","sum="+sum);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        if(sum>0)
+                        {
+                            msg_point.setVisibility(View.VISIBLE);
+                            msg_point.setText(""+sum);
+                        }
+                        else
+                        {
+                            msg_point.setVisibility(View.INVISIBLE);
+                            msg_point.setText(""+sum);
+                        }
+                    }});
+
+            }
+        });
     }
 
     @Override
@@ -881,6 +943,8 @@ private void cancelTableOrder(String Id,List<String> orderList)
         public void onServiceConnected(ComponentName name, IBinder service) {
             mGpService = GpService.Stub.asInterface(service);
             setmGpService(mGpService);
+
+
         }
     }
 
@@ -890,5 +954,10 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
     public void setmGpService(GpService smGpService) {
         this.smGpService = smGpService;
+
+
+        Intent intent = new Intent( this,
+                NewOrderService.class);
+        startService(intent);
     }
 }

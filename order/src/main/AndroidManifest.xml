@@ -56,13 +56,7 @@
         <activity
             android:name=".view.ScanActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <!-- 通过AndroidManifest配置AppKey和AppSecret，如果你选择通过代码配置，则不需要配置以下meta-data -->
-        <meta-data
-            android:name="Mob-AppKey"
-            android:value="21efc5a881e60" />
-        <meta-data
-            android:name="Mob-AppSecret"
-            android:value="db061f16515cf08d8c98c9857c4550d9" />
+
 
         <activity
             android:name=".view.MainActivity"

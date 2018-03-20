@@ -72,7 +72,20 @@ public class MyListAdapter extends BaseAdapter {
         }
         Document document = CDBHelper.getDocByID(activity.getApplicationContext(), list.get(position));
         viewHolder.itemKitchenKname.setText(document.getString("name"));
-        //viewHolder.itemKitchenPname.setText(""+document.getString("kitchenAdress"));
+        boolean pStatus = document.getBoolean("statePrinter");
+        if(pStatus)
+        {
+            viewHolder.itemKitchenPStatus.setText("连接成功");
+            int color = activity.getResources().getColor(R.color.title_font);
+            viewHolder.itemKitchenPStatus.setTextColor(color);
+        }
+        else
+        {
+            viewHolder.itemKitchenPStatus.setText("连接失败!");
+            int color = activity.getResources().getColor(R.color.md_red_500);
+            viewHolder.itemKitchenPStatus.setTextColor(color);
+        }
+
         Log.e("Port","---"+document.getString("kitchenAdress"));
         viewHolder.itemKitchenDelete.setOnClickListener(new OnDeleteButtonClick(position));
 
@@ -185,8 +198,9 @@ public class MyListAdapter extends BaseAdapter {
         public void onClick(View view) {
             Document doc=CDBHelper.getDocByID(activity,list.get(mPosition));
             Intent intent1=new Intent(activity,AddkitchenActivity.class);
-            intent1.putExtra("ipcontent", ""+doc.getString("kitchenAdress"));
-            intent1.putExtra("clientname", ""+doc.getString("name"));
+            intent1.putExtra("indexPrinter",  doc.getInt("indexPrinter"));
+
+            intent1.putExtra("clientName", ""+doc.getString("name"));
             intent1.putExtra("docId",list.get(mPosition));
             activity.startActivityForResult(intent1, 2016);//startActivityForResult(intent1, 2016);
         }
@@ -195,13 +209,13 @@ public class MyListAdapter extends BaseAdapter {
 
     class ViewHolder {
         TextView itemKitchenKname;
-        //TextView itemKitchenPname;
+        TextView itemKitchenPStatus;
         ImageView itemKitchenBianji;
         ImageView itemKitchenDelete;
 
         ViewHolder(View view) {
             itemKitchenKname = view.findViewById(R.id.item_kitchen_kname);
-            //itemKitchenPname= view.findViewById(R.id.item_kitchen_pname);
+            itemKitchenPStatus= view.findViewById(R.id.item_kitchen_status);
             itemKitchenBianji = view.findViewById(R.id.item_kitchen_bianji);
             itemKitchenDelete = view.findViewById(R.id.item_kitchen_delete);
         }

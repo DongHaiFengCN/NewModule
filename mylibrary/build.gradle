@@ -8,6 +8,12 @@ android {
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
 
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [moduleName: project.getName()]
+            }
+        }
+
     }
 
     packagingOptions {
@@ -41,8 +47,9 @@ dependencies {
     implementation rootProject.ext.libRxBindingDesign
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     implementation rootProject.ext.libAlibaba
+    annotationProcessor libArouter_compiler
     //Database依赖
     compile rootProject.ext.couchbase
     compile rootProject.ext.Json
-
+    implementation files('libs/commons-io-2.6.jar')
 }
