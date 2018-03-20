@@ -105,7 +105,7 @@ ext{
 
     gson                      ="com.google.code.gson:gson:${gsonVersion}"
     Json                      ="com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3"
-    couchbase                 = "com.couchbase.lite:couchbase-lite-android:2.0.0-DB023"
+    couchbase                 = "com.couchbase.lite:couchbase-lite-android:2.0.0-DB022"
 
 }
 

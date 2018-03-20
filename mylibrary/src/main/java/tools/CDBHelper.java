@@ -23,6 +23,8 @@ package tools;
  */
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Environment;
 import android.util.Log;
 
@@ -57,7 +59,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
@@ -75,13 +81,16 @@ public class CDBHelper implements ReplicatorChangeListener
     private static Database db;
     private static CDBHelper instance = null;
     private static String dbName="GuestDB";
-    private final static String mSyncGatewayEndpoint
-            = "ws://123.207.174.171:4984/kitchen/";
-
+    private final static String mSyncGatewayEndpoint = "ws://123.207.174.171:4984/kitchen/";
+   //private final static String mSyncGatewayEndpoint = "wss://www.yaodiandian.net:4984/kitchen/";
+  //private final static String mSyncGatewayEndpoint = "wss://123.207.174.171:4984/kitchen/";
+    private static boolean firstReplicator = true;
+    private static Context mcontext;
     public static CDBHelper getSharedInstance(Context context)
     {
         if (instance == null) {
             instance = new CDBHelper(context);
+            mcontext = context;
         }
         return instance;
     }
@@ -99,6 +108,20 @@ public class CDBHelper implements ReplicatorChangeListener
                 MyLog.e("CDBHelper","dbinit exception="+e.toString());
                 e.printStackTrace();
             }
+
+    }
+
+    private static byte[] getPinnedCertFile(Context context) {
+        AssetManager assetManager = context.getAssets();
+        InputStream is = null;
+        byte[] bytes = new byte[0];
+        try {
+            is = assetManager.open("cert.cer");
+            return (IOUtils.toByteArray(is));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
 
     }
     public static void startPushAndPullReplicationForCurrentUser(String username, String password) {
@@ -133,7 +156,37 @@ public class CDBHelper implements ReplicatorChangeListener
         config.setContinuous(true);
         config.setAuthenticator(new BasicAuthenticator(username, password));
 
+        byte[] pinnedServerCert = getPinnedCertFile(mcontext);
+        // Set pinned certificate.
+       // config.setPinnedServerCertificate(pinnedServerCert);
+
         Replicator replicator = new Replicator(config);
+        replicator.addChangeListener(new ReplicatorChangeListener() {
+            @Override
+            public void changed(ReplicatorChange change)
+            {
+
+                if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.IDLE))
+                {
+
+                    Intent intent = new Intent();
+                    intent.setAction("sync_complete");
+                    mcontext.sendBroadcast(intent);
+                    Log.e("Replication Comp Log", "Schedular Completed");
+
+                }
+                if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.STOPPED) || change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.OFFLINE)) {
+                    // stopReplication();
+
+                    Intent intent = new Intent();
+                    intent.setAction("sync_complete");
+                    mcontext.sendBroadcast(intent);
+
+                    Log.e("Rep schedular  Log", "ReplicationTag Stopped");
+
+                }
+                    }
+        });
         replicator.start();
     }
 

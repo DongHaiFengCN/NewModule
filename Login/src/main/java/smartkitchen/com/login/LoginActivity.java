@@ -426,12 +426,12 @@ public class LoginActivity extends AppCompatActivity  {
                         }
                         //跳转界面
 //                        ARouter
-//                                .getInstance()
-//                                .build("/order/DeskActivity")
-//                                .withString("mobile",mTelView.getText().toString())
-//                                .withString("channelId",userName)
-//                                .navigation();
-                       // finish();
+//                            .getInstance()
+//                            .build("/order/DeskActivity")
+//                            .withString("mobile",mTelView.getText().toString())
+//                            .withString("channelId",userName)
+//                            .navigation();
+                        finish();
                     }//r
                     else {
 
