@@ -6,6 +6,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -100,6 +101,7 @@ public class MobCheckActivity extends AppCompatActivity {
                 else
                 {
 
+                    Log.e("sendCode","error="+data.toString());
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run()
@@ -112,7 +114,7 @@ public class MobCheckActivity extends AppCompatActivity {
             }
         });
         // 触发操作
-        SMSSDK.getVerificationCode(country, phone,null,null);
+        SMSSDK.getVerificationCode(country, phone,"14967839",null);
     }
     // 提交验证码，其中的code表示验证码，如“1357”
     public void submitCode(String country, String phone, String code) {
