@@ -70,8 +70,8 @@ public class NewOrderService extends Service {
     //打印机连接
     private GpService mGpService = null;
     private ExecutorService myExecutor;
-    private Map<String, ArrayList<GoodsC>> allKitchenClientGoods = new HashMap<String, ArrayList<GoodsC>>();
-    private Map<String, String> allKitchenClientPrintNames = new HashMap<String, String>();
+    private Map<Integer, ArrayList<GoodsC>> allKitchenClientGoods = new HashMap<Integer, ArrayList<GoodsC>>();
+    private Map<Integer, String> allKitchenClientPrintNames = new HashMap<Integer, String>();
     private String tableName, areaName, currentPersions, serNum,gOrderId;
     private List<GoodsC> goodsList;
     private List<KitchenClientC> kitchenClientList;
@@ -297,12 +297,11 @@ public class NewOrderService extends Service {
 
                 String clientKtname = "" + kitchenClientObj.getName();//厨房名称
 
-                String printname = "" + kitchenClientObj.getKitchenAdress();//打印机名称
-                int printerId = Integer.parseInt(printname)-1;
+                int printerId = kitchenClientObj.getIndexPrinter();
 
-                allKitchenClientGoods.put("" + printerId, oneKitchenClientGoods);
+                allKitchenClientGoods.put( printerId, oneKitchenClientGoods);
 
-                allKitchenClientPrintNames.put("" + printerId, clientKtname);
+                allKitchenClientPrintNames.put(printerId, clientKtname);
 
                 if (!isPrinterConnected(printerId)) // 未连接
                 {
@@ -443,6 +442,13 @@ public class NewOrderService extends Service {
                        CDBHelper.saveDocument(null,mutableDocument);
                    }
 
+                   //对连接失败的打印机，移除本次打印内容
+                   if(allKitchenClientGoods.get(id)!=null)
+                    allKitchenClientGoods.remove(""+id);//移除
+
+                    if(allKitchenClientPrintNames.get(id)!=null)
+                    allKitchenClientPrintNames.remove(""+id);//移除
+
                     MyLog.e(Tag,id+"-打印机未连接");
                 }
 
@@ -468,7 +474,7 @@ public class NewOrderService extends Service {
                     {}
                     else
                     {
-                        if(allKitchenClientGoods.get(""+id)==null)//loongsun todo 如果别的模块中连接打印机，此处也会监听到，一但上次没有清空打印内容，此处很可能再打印一次，杜绝的办法就是打印成功或失败都把该id下的内容移除掉，但连接不上打印及打印失败需要再进一步调试判断，此问题在MainActivity也会存在
+                        if(allKitchenClientGoods.get(id)==null)//loongsun todo 如果别的模块中连接打印机，此处也会监听到，一但上次没有清空打印内容，此处很可能再打印一次，杜绝的办法就是打印成功或失败都把该id下的内容移除掉，但连接不上打印及打印失败需要再进一步调试判断，此问题在MainActivity也会存在
                         {}
                         else
                         printGoodsAtRomoteByIndex(id);

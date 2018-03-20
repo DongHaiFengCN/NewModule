@@ -185,7 +185,7 @@ public class CDBHelper implements ReplicatorChangeListener
                     Log.e("Rep schedular  Log", "ReplicationTag Stopped");
 
                 }
-                    }
+         }
         });
         replicator.start();
     }

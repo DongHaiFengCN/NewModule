@@ -133,8 +133,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
     private boolean printerToKitchen(GoodsC obj, int type, String areaName, String TableName) {
 
-
-
         return false;
     }
 
@@ -142,12 +140,11 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_CONNECT_STATUS));
         // 注册实时状态查询广播
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_DEVICE_REAL_STATUS));
-/**
+        /**
          * 票据模式下，可注册该广播，在需要打印内容的最后加入addQueryPrinterStatus()，在打印完成后会接收到
          * action为GpCom.ACTION_DEVICE_STATUS的广播，特别用于连续打印，
          * 可参照该sample中的sendReceiptWithResponse方法与广播中的处理
          **/
-
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_RECEIPT_RESPONSE));
     }
 

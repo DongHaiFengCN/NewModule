@@ -128,9 +128,11 @@ public class PortConfigurationActivity extends Activity {
 	}
 
 	@Override
-	protected void onDestroy() {
+	protected void onDestroy()
+	{
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		unregisterReceiver(mFindBlueToothReceiver);
 	}
 
 	private void messageBox(String err) {
