@@ -110,6 +110,7 @@ public class SeekT9Adapter extends BaseAdapter {
             viewHolder.viewTj.setVisibility(View.INVISIBLE);
             isState = true;
         }else{
+            viewHolder.viewTj.setVisibility(View.VISIBLE);
             isState = false;
         }
         try {

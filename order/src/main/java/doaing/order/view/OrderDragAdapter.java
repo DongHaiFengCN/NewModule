@@ -121,6 +121,7 @@ public class OrderDragAdapter extends BaseAdapter {
             view.addtion.setVisibility(View.INVISIBLE);
             view.name.setText(mlistDishes.get(position).getString("dishesName")+"(估清)");
         }else{
+            view.addtion.setVisibility(View.VISIBLE);
             view.name.setText(mlistDishes.get(position).getString("dishesName"));
         }
         // 当数量不为零，且关闭状态，打开减号与数量；当数量为零，处于开启状态则关闭。
