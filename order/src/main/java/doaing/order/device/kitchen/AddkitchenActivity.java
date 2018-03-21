@@ -132,8 +132,10 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             if (mGpService.getPrinterConnectStatus(mPrinterId) == GpDevice.STATE_CONNECTED)
             {
                 spPrinter.setText("连接成功");
+                mPortParam.setPortOpenState(true);
             }else {
                 spPrinter.setText("点击配置");
+                mPortParam.setPortOpenState(false);
             }
         } catch (RemoteException e) {
             // TODO Auto-generated catch block
