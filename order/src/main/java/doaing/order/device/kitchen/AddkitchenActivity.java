@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.gprinter.aidl.GpService;
@@ -566,12 +567,39 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
 
                 } else if (type == GpDevice.STATE_NONE)//0 没有连接
                 {
+                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                            Expression.property("className").equalTo(Expression.string("KitchenClientC"))
+                                    .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                            null);
+
+                    if(docList.size()>0)
+                    {
+                        Document doc  = docList.get(0);
+                        MutableDocument mutableDocument = doc.toMutable();
+                        mutableDocument.setBoolean("statePrinter",false);
+                        CDBHelper.saveDocument(null,mutableDocument);
+                    }
+
                     setProgressBarIndeterminateVisibility(false);
                     mPortParam.setPortOpenState(false);
                      spPrinter.setText("未连接");
 
                 } else if (type == GpDevice.STATE_VALID_PRINTER)//5 连接成功
                 {
+
+                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                            Expression.property("className").equalTo(Expression.string("KitchenClientC"))
+                                    .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                            null);
+
+                    if(docList.size()>0)
+                    {
+                        Document doc  = docList.get(0);
+                        MutableDocument mutableDocument = doc.toMutable();
+                        mutableDocument.setBoolean("statePrinter",true);
+                        CDBHelper.saveDocument(null,mutableDocument);
+                    }
+
                     setProgressBarIndeterminateVisibility(false);
                     mPortParam.setPortOpenState(true);
                     spPrinter.setText("连接成功");
