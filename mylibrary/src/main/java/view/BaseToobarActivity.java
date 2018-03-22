@@ -39,6 +39,7 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
 
     protected void setToolbarName(String name) {
         this.name = name;
+
     }
 
 

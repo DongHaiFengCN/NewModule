@@ -75,8 +75,14 @@ public class StatisticsActivity extends BaseToobarActivity {
     private TextView elmTv;
     private TextView mtTv;
     private TextView gzTv;
+    private Calendar calendar;
 
+    private int year;
+    private int month;
+    private int day;
 
+    @SuppressLint("DefaultLocale") String month1;
+    @SuppressLint("DefaultLocale") String day1;
     @Override
     protected int setMyContentView() {
         return (R.layout.activity_statistics);
@@ -99,6 +105,21 @@ public class StatisticsActivity extends BaseToobarActivity {
         mtTv = findViewById(R.id.statistics_mt_tv);
         memberTv = findViewById(R.id.statistics_member_tv);
         gzTv = findViewById(R.id.statistics_gz_tv);
+
+
+        calendar = Calendar.getInstance();
+
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+
+
+
+
+        month1 = String.format("%02d", (month + 1));
+        day1 = String.format("%02d", day);
+        StringBuilder stringBuilder = new StringBuilder();
+        getStartSingleDateInfo(stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
     }
 
     @Override
@@ -116,18 +137,13 @@ public class StatisticsActivity extends BaseToobarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
-        Calendar calendar;
-        final int year;
-        final int month;
-        final int day;
+/*
         @SuppressLint("DefaultLocale") String month1;
         @SuppressLint("DefaultLocale") String day1;
-        calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
+
+
         month1 = String.format("%02d", (month + 1));
-        day1 = String.format("%02d", day);
+        day1 = String.format("%02d", day);*/
         if (monetary != 0 && realIncome != 0) {
             monetary = 0f;
             realIncome = 0f;

@@ -46,7 +46,17 @@ public class BestSellersActivity extends BaseToobarActivity {
     private Database database;
     private ListView listView;
     private BestSellersAdapter bestSellersAdapter;
+    private Calendar calendar;
+    private int year;
+    private int month;
+    private int day;
+    @SuppressLint("DefaultLocale") String month1;
+    @SuppressLint("DefaultLocale") String day1;
 
+    static final String TODAY ="销量排行--今日";
+
+    static final String WEEK ="销量排行--本周";
+    static final String MONTH ="销量排行--本月";
     @Override
     protected int setMyContentView() {
         return R.layout.activity_best_sellers;
@@ -55,13 +65,21 @@ public class BestSellersActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent) {
 
-        setToolbarName("销量排行");
+        setToolbarName(TODAY);
 
         database = CDBHelper.getDatabase();
 
         listView = findViewById(R.id.my_lv);
 
+        calendar = Calendar.getInstance();
+        year = calendar.get(Calendar.YEAR);
+        month = calendar.get(Calendar.MONTH);
+        day = calendar.get(Calendar.DAY_OF_MONTH);
+        month1 = String.format("%02d", (month + 1));
+        day1 = String.format("%02d", day);
 
+        StringBuilder stringBuilder = new StringBuilder();
+        getStartSingleDateInfo(stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
     }
 
     @Override
@@ -79,30 +97,22 @@ public class BestSellersActivity extends BaseToobarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        Calendar calendar;
-        final int year;
-        final int month;
-        final int day;
-        @SuppressLint("DefaultLocale") String month1;
-        @SuppressLint("DefaultLocale") String day1;
-        calendar = Calendar.getInstance();
-        year = calendar.get(Calendar.YEAR);
-        month = calendar.get(Calendar.MONTH);
-        day = calendar.get(Calendar.DAY_OF_MONTH);
-        month1 = String.format("%02d", (month + 1));
-        day1 = String.format("%02d", day);
+
 
         if (item.getItemId() == R.id.action_today) {
+
+            getSupportActionBar().setTitle(TODAY);
             StringBuilder stringBuilder = new StringBuilder();
             getStartSingleDateInfo(stringBuilder.append(year).append("-").append(month1).append("-").append(day1).toString());
 
         } else if (item.getItemId() == R.id.action_week) {
-
+            getSupportActionBar().setTitle(WEEK);
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
             getStartSingleDateInfo(formatter.format(calendar.getTime()));
 
         } else if (item.getItemId() == R.id.action_month) {
+            getSupportActionBar().setTitle(MONTH);
             StringBuilder stringBuilder = new StringBuilder();
             getStartSingleDateInfo( stringBuilder.append(year).append("-").append(month1).append("-").append("01").toString());
 

@@ -66,9 +66,9 @@ public class SecondPackageActivity extends BaseToobarActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
 
-                    Intent intent = new Intent(SecondPackageActivity.this,PackageEditActivity.class);
-                    intent.putExtra("disheId",array.getString(position));
-                    intent.putExtra("kindId",firstId);
+                    Intent intent = new Intent(SecondPackageActivity.this, PackageEditActivity.class);
+                    intent.putExtra("disheId", array.getString(position));
+                    intent.putExtra("kindId", firstId);
                     startActivity(intent);
                 }
             });
@@ -107,6 +107,7 @@ public class SecondPackageActivity extends BaseToobarActivity {
     class MyAdapter extends BaseAdapter {
 
         int p1 = 0;
+
         @Override
         public int getCount() {
             return array == null ? 0 : array.count();
@@ -126,17 +127,7 @@ public class SecondPackageActivity extends BaseToobarActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             Document document = null;
-
-            //防止多次读库
-            if(p1<array.count()){
-
-                document = database.getDocument(array.getString(position));
-
-                p1++;
-                Log.e("DOAING",position+"");
-
-            }
-
+            document = database.getDocument(array.getString(position));
             Holder holder;
             if (convertView == null) {
 
@@ -150,11 +141,10 @@ public class SecondPackageActivity extends BaseToobarActivity {
 
                 holder = (Holder) convertView.getTag();
             }
-            if(document!=null){
+            if (document != null) {
                 holder.secondNameTv.setText(document.getString("dishesName"));
-                holder.secondPriceTv.setText(String.valueOf(document.getFloat("price"))+"/元");
+                holder.secondPriceTv.setText(String.valueOf(document.getFloat("price")) + "/元");
             }
-
 
 
             return convertView;

@@ -332,17 +332,20 @@ public class PackageAddActivity extends BaseToobarActivity {
                 listItemView = (ListItemView) convertView.getTag();
             }
             Document document = dishesList.get(position);
+            if(document!=null){
+                listItemView.disheNameTv.setText(document.getString("dishesName"));
+                listItemView.dishePriceTv.setText("¥" + document.getFloat("price"));
+                listItemView.dishesCk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        listMap.get(disheKindPosition)[position] = isChecked;
 
-            listItemView.disheNameTv.setText(document.getString("dishesName"));
-            listItemView.dishePriceTv.setText("¥" + document.getFloat("price"));
-            listItemView.dishesCk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    listMap.get(disheKindPosition)[position] = isChecked;
+                    }
+                });
+                listItemView.dishesCk.setChecked(listMap.get(disheKindPosition)[position]);
+            }
 
-                }
-            });
-            listItemView.dishesCk.setChecked(listMap.get(disheKindPosition)[position]);
+
 
             return convertView;
         }
