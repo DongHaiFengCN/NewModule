@@ -186,6 +186,7 @@ public class AreaAdapter extends BaseAdapter {
             listItemView.tv_title.setVisibility(View.GONE);
             listItemView.edit_im.setVisibility(View.GONE);
             listItemView.add_im.setVisibility(View.VISIBLE);
+            listItemView.list_area_layout.setBackgroundResource(R.drawable.tablenoclick);  //其他项背景
             final ListItemView finalListItemView = listItemView;
             listItemView.add_im.setOnClickListener(new View.OnClickListener() {
                 @Override

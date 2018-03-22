@@ -1,10 +1,8 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
     <include layout="@layout/common_view_toolbar" />
 
@@ -13,22 +11,24 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <ListView
-                android:layout_weight="7"
                 android:id="@+id/disheskind_lv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_weight="7"
+                android:background="@color/md_white_1000"
+                android:divider="@null" />
 
             <ListView
-                android:layout_weight="3"
                 android:id="@+id/dishes_lv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_weight="3" />
 
         </LinearLayout>
 
@@ -42,8 +42,7 @@
             android:layout_margin="@dimen/fab_margin"
             app:backgroundTint="@color/colorAccent"
 
-            app:srcCompat="@mipmap/icon_add"
-        />
+            app:srcCompat="@mipmap/icon_add" />
     </RelativeLayout>
 
 </LinearLayout>

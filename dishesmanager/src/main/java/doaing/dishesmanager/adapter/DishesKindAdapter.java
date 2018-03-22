@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -101,19 +102,109 @@ public class DishesKindAdapter extends BaseAdapter {
         ListItemView listItemView;
         if (view == null) {
             listItemView = new ListItemView();
+
             view = listContainerLeft.inflate(R.layout.disheskind_list_item, null);
+            listItemView.linearLayout = view.findViewById(R.id.list_item_ll);
             listItemView.tvTitle = view.findViewById(R.id.title);
-            listItemView.imageView = view.findViewById(R.id.imageView);
             listItemView.kindView = view.findViewById(R.id.kind_add_im);
             listItemView.kindEdit = view.findViewById(R.id.edit_im);
             view.setTag(listItemView);
         } else {
             listItemView = (ListItemView) view.getTag();
         }
+
+
+        listItemView.kindEdit.setVisibility(View.VISIBLE);
+        listItemView.kindEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                View view = LayoutInflater.from(context).inflate(R.layout.dishekind_add_dialog_item, null);
+
+                final EditText kindNameEt = view.findViewById(R.id.kindname_et);
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setView(view);
+                builder.setTitle("菜类编辑");
+                builder.setPositiveButton("确定", null);
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.setNeutralButton("删除菜类", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        Document document = database.getDocument(names.get(i));
+                        Array array = document.getArray("dishesListId");
+                        int length = array.count();
+                        for (int j = 0; j < length; j++) {
+
+                            Document document1 = database.getDocument(array.getString(j));
+
+                            if (document1 != null) {
+
+                                try {
+                                    database.delete(document1);
+                                } catch (CouchbaseLiteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                        }
+
+                        try {
+                            database.delete(document);
+                        } catch (CouchbaseLiteException e) {
+                            e.printStackTrace();
+                        }
+                        names.remove(i);
+                        notifyDataSetChanged();
+
+
+                        EventBus.getDefault().postSticky(0);
+
+
+                    }
+                });
+
+                final AlertDialog alertDialog = builder.show();
+
+                alertDialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (kindNameEt.getText().length() > 0) {
+                            MutableDocument document = database.getDocument(names.get(i)).toMutable();
+                            document.setString("kindName", kindNameEt.getText().toString());
+                            try {
+                                database.save(document);
+                            } catch (CouchbaseLiteException e) {
+                                e.printStackTrace();
+                            }
+                            notifyDataSetChanged();
+
+                            alertDialog.dismiss();
+
+
+                        } else {
+
+                            kindNameEt.setError("空值");
+                        }
+
+
+                    }
+                });
+
+
+            }
+        });
+
         if (mSelect == i) {
             //选中项背景
-            view.setBackgroundResource(R.color.md_grey_50);
-            listItemView.imageView.setVisibility(View.VISIBLE);
+            listItemView.linearLayout.setBackgroundResource(R.drawable.animtableclick);
+            listItemView.tvTitle.setTextColor(context.getResources().getColor(R.color.white));
             listItemView.kindEdit.setVisibility(View.VISIBLE);
             listItemView.kindEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -203,16 +294,14 @@ public class DishesKindAdapter extends BaseAdapter {
 
         } else {
             //其他项背景
-            view.setBackgroundResource(R.color.md_grey_100);
-            listItemView.imageView.setVisibility(View.INVISIBLE);
+            listItemView.linearLayout.setBackgroundResource(R.drawable.animtablenoclick);
+            listItemView.tvTitle.setTextColor(context.getResources().getColor(R.color.md_black_1000));
             listItemView.kindEdit.setVisibility(View.INVISIBLE);
         }
-
         if (names == null || i == names.size()) {
 
             listItemView.kindView.setVisibility(View.VISIBLE);
             listItemView.tvTitle.setVisibility(View.GONE);
-            listItemView.imageView.setVisibility(View.GONE);
             listItemView.kindEdit.setVisibility(View.GONE);
             listItemView.kindView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -279,6 +368,7 @@ public class DishesKindAdapter extends BaseAdapter {
             listItemView.kindView.setVisibility(View.GONE);
             listItemView.tvTitle.setVisibility(View.VISIBLE);
             listItemView.tvTitle.setText(database.getDocument(names.get(i)).getString("kindName"));
+
         }
 
         return view;
@@ -293,7 +383,8 @@ public class DishesKindAdapter extends BaseAdapter {
     class ListItemView {
 
         TextView tvTitle;
-        ImageView imageView;
+
+        LinearLayout linearLayout;
         ImageView kindView;
         ImageView kindEdit;
     }

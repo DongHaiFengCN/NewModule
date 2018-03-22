@@ -56,7 +56,7 @@ public class PackageActivity1 extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
-        setToolbarName("一级套餐");
+        setToolbarName("套餐索引");
         database = CDBHelper.getDatabase();
         packageLv = findViewById(R.id.package_lv);
         initList();

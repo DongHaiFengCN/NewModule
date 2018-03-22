@@ -222,6 +222,7 @@ public class DishesActivity extends BaseToobarActivity {
 
                 if (dishesKindAdapter.getNames().size() > 0 && position < dishesKindAdapter.getNames().size()) {
                     dishesKindAdapter.changeSelected(position);
+
                     kindPosition = position;
 
                     Document document = database.getDocument(dishesKindAdapter.getNames().get(position));
