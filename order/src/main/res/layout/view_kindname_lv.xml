@@ -36,13 +36,14 @@
         android:textColor="@color/md_white_1000"
         android:textSize="8sp"
         android:visibility="gone" />
-    <ImageView
+    <TextView
         android:id="@+id/imagePoint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/redpoint"
         android:visibility="visible"
-        android:layout_gravity="center_vertical"
-
+        android:gravity="center"
+        android:textColor="@color/md_white_1000"
+        android:layout_margin="2dp"
         />
 </LinearLayout>

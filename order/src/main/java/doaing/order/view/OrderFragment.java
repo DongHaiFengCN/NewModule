@@ -51,7 +51,6 @@ public class OrderFragment extends Fragment {
     private OrderDragAdapter orderDragAdapter;
     private View view;
 
-    private List<String> dishesIdList;
     //缓存disheskind 与 对应菜品数量的number集合
 
     private Map<String, float[]> dishesCollection = new HashMap<>();
@@ -479,7 +478,6 @@ public class OrderFragment extends Fragment {
                 listItemView = new ListItemView();
                 view = listContainerLeft.inflate(R.layout.view_kindname_lv, null);
                 listItemView.tv_title = view.findViewById(R.id.title);
-                //listItemView.imageView = view.findViewById(R.id.imageView);
                 listItemView.imagePoint = view.findViewById(R.id.imagePoint);
                 view.setTag(listItemView);
             } else {
@@ -495,10 +493,34 @@ public class OrderFragment extends Fragment {
 
             if (aBoolean[i]) {
 
+
+
                 listItemView.imagePoint.setVisibility(View.VISIBLE);
+
+                DishesKindC dishesKindC = dishesKindCList.get(i);
+
+                String id = dishesKindC.get_id();
+                int count = 0;
+
+                for (int j = 0; j < goodsCList.size(); j++) {
+
+                    if(id.equals(goodsCList.get(j).getDishesKindId())){
+
+                        count++;
+                    }
+                }
+
+                listItemView.imagePoint.setText(count+"");
+
+
+
+
+
+
             } else {
 
                 listItemView.imagePoint.setVisibility(View.INVISIBLE);
+                listItemView.imagePoint.setText(0+"");
             }
             listItemView.tv_title.setText(names.get(i).getKindName());
 
@@ -516,7 +538,7 @@ public class OrderFragment extends Fragment {
 
             TextView tv_title;
             //ImageView imageView;
-            ImageView imagePoint;
+            TextView imagePoint;
         }
 
     }
