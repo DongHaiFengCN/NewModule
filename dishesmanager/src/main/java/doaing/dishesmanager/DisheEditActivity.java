@@ -1,6 +1,7 @@
 
 package doaing.dishesmanager;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.CursorLoader;
@@ -11,7 +12,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -184,6 +187,7 @@ public class DisheEditActivity extends BaseToobarActivity {
 
         //提交菜品所有信息
         RxView.clicks(disheSubmitBt).throttleFirst(300, TimeUnit.MILLISECONDS).subscribe(new Action1<Void>() {
+            @TargetApi(Build.VERSION_CODES.GINGERBREAD)
             @Override
             public void call(Void aVoid) {
 
@@ -387,6 +391,7 @@ public class DisheEditActivity extends BaseToobarActivity {
      */
 
 
+    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
     private String getRealPathFromURI(Uri contentUri) {
         String[] proj = {MediaStore.Images.Media.DATA};
         CursorLoader loader = new CursorLoader(DisheEditActivity.this, contentUri, proj, null, null, null);

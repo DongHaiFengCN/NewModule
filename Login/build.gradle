@@ -54,8 +54,8 @@ dependencies {
     implementation rootProject.ext.libSupportDesign
     implementation rootProject.ext.libSupportRecyclerview
 
-    implementation rootProject.ext.okhttp3
-    implementation rootProject.ext.gson
+  //  implementation rootProject.ext.okhttp3
+    implementation rootProject.ext.libGson
 
     implementation project(':mylibrary')
     //阿里路由

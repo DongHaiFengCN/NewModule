@@ -3,9 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Login/Login.iml" filepath="$PROJECT_DIR$/Login/Login.iml" />
+      <module fileurl="file://C:\CloudMusic\T\NewModule\Login\Login.iml" filepath="C:\CloudMusic\T\NewModule\Login\Login.iml" />
       <module fileurl="file://D:\AndroidStudio\NewModuleCS\Login\Login.iml" filepath="D:\AndroidStudio\NewModuleCS\Login\Login.iml" />
+      <module fileurl="file://$PROJECT_DIR$/NewModule.iml" filepath="$PROJECT_DIR$/NewModule.iml" />
       <module fileurl="file://D:\AndroidStudio\NewModuleCS\NewModule.iml" filepath="D:\AndroidStudio\NewModuleCS\NewModule.iml" />
-      <module fileurl="file://$PROJECT_DIR$/NewModuleCS.iml" filepath="$PROJECT_DIR$/NewModuleCS.iml" />
+      <module fileurl="file://C:\CloudMusic\T\NewModule\NewModuleCS.iml" filepath="C:\CloudMusic\T\NewModule\NewModuleCS.iml" />
       <module fileurl="file://D:\AndroidStudio\NewModuleCS\PadModule.iml" filepath="D:\AndroidStudio\NewModuleCS\PadModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/dishesmanager/dishesmanager.iml" filepath="$PROJECT_DIR$/dishesmanager/dishesmanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/mylibrary/mylibrary.iml" filepath="$PROJECT_DIR$/mylibrary/mylibrary.iml" />
