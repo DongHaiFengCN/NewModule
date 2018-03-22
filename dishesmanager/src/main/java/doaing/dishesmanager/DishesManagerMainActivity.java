@@ -5,6 +5,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+
 import com.alibaba.android.arouter.facade.annotation.Route;
 
 import butterknife.BindView;
@@ -16,7 +17,7 @@ import view.BaseToobarActivity;
  */
 
 
-@Route(path = "/dishes/DishesManagerMainActivity")
+@Route(path = "/dishesmanager/DishesManagerMainActivity")
 public class DishesManagerMainActivity extends BaseToobarActivity {
 
     @BindView(R2.id.toolbar)
@@ -73,7 +74,7 @@ public class DishesManagerMainActivity extends BaseToobarActivity {
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(DishesManagerMainActivity.this, PackageActivity.class));
+                startActivity(new Intent(DishesManagerMainActivity.this, PackageActivity1.class));
                 overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             }
         });

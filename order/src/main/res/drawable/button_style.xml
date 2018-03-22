@@ -4,8 +4,8 @@
     <item android:state_pressed="true"> 
 		<shape android:shape="rectangle">		    
 		    <gradient 
-		        android:startColor="@color/black"
-		        android:endColor="@color/dimgray"
+		        android:startColor="@color/white"
+		        android:endColor="@color/md_black_1000"
 		        android:angle="90"/> 
 		    <padding android:left="10dp"
 		        android:top="10dp"
@@ -18,14 +18,14 @@
 		<shape android:shape="rectangle">
 		    <gradient
 		        android:startColor="@color/white"
-		        android:endColor="@color/whitesmoke"
+		        android:endColor="@color/white"
 		        android:angle="90"/> 
 		    <padding android:left="10dp"
 		        android:top="10dp"
 		        android:right="10dp"
 		        android:bottom="10dp" />
 		    <corners android:radius="10dp" />
-		   <stroke android:width="2dip" android:color="@color/white"/>
+		   <stroke android:width="1dip" android:color="@color/md_black_1000"/>
 		</shape>	
     </item>
  </selector>

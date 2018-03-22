@@ -214,12 +214,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@color/title"
             android:padding="3dp"
             android:scaleType="centerInside"
-            android:background="@color/title"
             android:text="确定"
-            android:textSize="18dp"
             android:textColor="@color/white"
+            android:textSize="18dp"
 
             />
 

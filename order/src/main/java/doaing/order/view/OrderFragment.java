@@ -43,7 +43,6 @@ import tools.CDBHelper;
 */
 
 
-
 public class OrderFragment extends Fragment {
 
     ListView dishesRv;
@@ -75,7 +74,6 @@ public class OrderFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frame_order, null);
-        ButterKnife.bind(this, view);
         dishesRv = view.findViewById(R.id.dishes_rv);
         orderList = view.findViewById(R.id.order_list);
         return view;
@@ -119,7 +117,7 @@ public class OrderFragment extends Fragment {
 
                 leftAdapter.changeSelected(position);
 
-                if (dishesKindCList.size() != 0){
+                if (dishesKindCList.size() != 0) {
                     kindId = dishesKindCList.get(position).get_id();
                     orderDragAdapter.setMessage(dishesObjectCollection.get(kindId)
                             , dishesCollection.get(kindId));
@@ -137,8 +135,9 @@ public class OrderFragment extends Fragment {
 
                 DishesC dishesC = CDBHelper.getObjById(getActivity().getApplication(), document.getId()
                         , DishesC.class);
-
+            if (dishesC.getState() != 1){
                 showDialog(dishesC, position, orderDragAdapter.getNumbers()[position]);
+            }
             }
         });
         orderList.performItemClick(orderList.getChildAt(0), 0, orderList
@@ -210,11 +209,11 @@ public class OrderFragment extends Fragment {
 
                     //找到对应的位置
                     if (dishesCList.get(i).getString("dishesName").equals(goodsC.getDishesName())) {
-                     //   Log.e("DOAING", "修改前的数据：" + floats[i]);
+                        //   Log.e("DOAING", "修改前的数据：" + floats[i]);
 
-                     //   Log.e("DOAING", "添加的数据：" + goodsC.getDishesCount());
+                        //   Log.e("DOAING", "添加的数据：" + goodsC.getDishesCount());
                         floats[i] = goodsC.getDishesCount() + floats[i];
-                      //  Log.e("DOAING", "修改完成的数据：" + floats[i]);
+                        //  Log.e("DOAING", "修改完成的数据：" + floats[i]);
                         dishesCollection.put(goodsC.getDishesKindId(), floats);
 
 
@@ -273,16 +272,15 @@ public class OrderFragment extends Fragment {
 
 
             float[] floats = dishesCollection.get(id);
-
-
             float count = 0f;
+            if(floats != null) {
 
-            for (float f : floats) {
+                for (float f : floats) {
 
-                count += f;
+                    count += f;
 
+                }
             }
-
             if (count == 0f && booleans[j]) {
 
                 booleans[j] = false;
@@ -301,21 +299,28 @@ public class OrderFragment extends Fragment {
 *
      * 菜品选择弹出框编辑模块
 */
-
-
     private void showDialog(final DishesC dishesC, final int position, float number) {
 
         final DishesMessage dishesMessage = new DishesMessage();
 
         final List<String> tasteList = new ArrayList<>();
-        if (dishesC.getTasteList() != null&&!dishesC.getTasteList().isEmpty()) {
+        if (dishesC.getTasteList() != null && !dishesC.getTasteList().isEmpty()) {
 
             for (int i = 0; i < dishesC.getTasteList().size(); i++) {
                 Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishesC.getTasteList().get(i).toString());
+                if (document == null || document.getString("tasteName") == null) {
+                    continue;
+                }
                 tasteList.add(document.getString("tasteName"));
             }
 
-            dishesMessage.setDishesTaste(tasteList.get(0));
+            if (tasteList.size() > 0) {
+                dishesMessage.setDishesTaste(tasteList.get(0));
+            } else if (tasteList.size() == 0) {
+
+                return;
+            }
+
 
         }
 
@@ -324,7 +329,6 @@ public class OrderFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.view_dialog_recycler);
 
         final GridLayoutManager manager = new GridLayoutManager(getActivity(), 3);
-
 
 
         recyclerView.setLayoutManager(manager);
@@ -347,7 +351,6 @@ public class OrderFragment extends Fragment {
         String all = MyBigDecimal.mul(amountView.getAmount() + "", dishesC.getPrice() + "", 2);
 
         price_tv.setText("总计 " + all + " 元");
-
 
 
         dishesMessage.setDishKindId(dishesC.getDishesKindId());
@@ -377,7 +380,6 @@ public class OrderFragment extends Fragment {
         dishesMessage.setName(dishesC.getDishesName());
 
         dishesMessage.setDishesC(dishesC);
-
 
         AlertDialog.Builder builder = new AlertDialog
                 .Builder(getActivity());
@@ -477,18 +479,18 @@ public class OrderFragment extends Fragment {
                 listItemView = new ListItemView();
                 view = listContainerLeft.inflate(R.layout.view_kindname_lv, null);
                 listItemView.tv_title = view.findViewById(R.id.title);
-                listItemView.imageView = view.findViewById(R.id.imageView);
+                //listItemView.imageView = view.findViewById(R.id.imageView);
                 listItemView.imagePoint = view.findViewById(R.id.imagePoint);
                 view.setTag(listItemView);
             } else {
                 listItemView = (ListItemView) view.getTag();
             }
             if (mSelect == i) {
-                view.setBackgroundResource(R.color.md_grey_50);  //选中项背景
-                listItemView.imageView.setVisibility(View.VISIBLE);
+                view.setBackgroundResource(R.drawable.animtableclick);
+                listItemView.tv_title.setTextColor(getActivity().getResources().getColor(R.color.white));
             } else {
-                view.setBackgroundResource(R.color.md_grey_100);  //其他项背景
-                listItemView.imageView.setVisibility(View.INVISIBLE);
+                view.setBackgroundResource(R.drawable.animtablenoclick);
+                listItemView.tv_title.setTextColor(getActivity().getResources().getColor(R.color.md_black_1000));
             }
 
             if (aBoolean[i]) {
@@ -513,7 +515,7 @@ public class OrderFragment extends Fragment {
         class ListItemView {
 
             TextView tv_title;
-            ImageView imageView;
+            //ImageView imageView;
             ImageView imagePoint;
         }
 

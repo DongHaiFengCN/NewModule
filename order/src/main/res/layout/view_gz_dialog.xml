@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+    <EditText
+        android:id="@+id/order_name_tv"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:hint="联系人姓名/单位"
+        android:layout_margin="@dimen/fab_margin"
+        android:paddingLeft="4dp"
+        android:background="@drawable/animselect"
+        />
+    <EditText
+        android:id="@+id/order_contactway_tv"
+        android:layout_width="match_parent"
+        android:paddingLeft="4dp"
+        android:layout_height="45dp"
+        android:hint="联系电话"
+        android:inputType="number"
+        android:background="@drawable/animselect"
+        android:layout_margin="@dimen/fab_margin"
+        />
+
+</LinearLayout>

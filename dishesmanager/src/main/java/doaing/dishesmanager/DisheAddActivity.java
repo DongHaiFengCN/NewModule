@@ -42,6 +42,8 @@ import com.couchbase.lite.SelectResult;
 import com.jakewharton.rxbinding.view.RxView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,9 +54,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import doaing.MyApplication;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
+import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -65,6 +67,8 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.functions.Action1;
+import tools.CDBHelper;
+import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -103,6 +107,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     String[] strings;
     private int position = 0;
 
+
     @Override
     protected int setMyContentView() {
 
@@ -112,13 +117,14 @@ public class DisheAddActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent) {
 
+
         setToolbarName("菜品添加");
 
         disheDocument = new MutableDocument("DishesC." + ToolUtil.getUUID());
         //初始化口味
         initTasteData();
 
-
+        disheKindSp.setSelection(intent.getIntExtra("kindPosition",0));
         disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
@@ -159,8 +165,9 @@ public class DisheAddActivity extends BaseToobarActivity {
             public void call(Void aVoid) {
 
                 disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
+               // MyLog.e("DishesAdd","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
                 disheDocument.setString("className", "DishesC");
-
+                disheDocument.setString("dataType", "BaseData");
                 if ("".equals(disheName.getText().toString())) {
 
                     disheName.setError("菜品名称不能为空");
@@ -215,7 +222,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                 MutableDocument mutableKindDocument = newKindDocument.toMutable();
 
                 mutableKindDocument.getArray("dishesListId").addString(disheDocument.getId());
-                database = ((MyApplication) getApplication()).getDatabase();
+                database = CDBHelper.getDatabase();
                 try {
 
                     database.save(disheDocument);
@@ -241,7 +248,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-/**
+    /**
      * 加载口味选择器
      */
 
@@ -251,7 +258,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
         //初始化适配器
         final TasteSelectAdapter oap = new TasteSelectAdapter(list, getApplicationContext());
-        final Database database = ((MyApplication) getApplicationContext()).getDatabase();
+        final Database database = CDBHelper.getDatabase();
 
         final List<Document> tasteList = new ArrayList<>();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
@@ -372,8 +379,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-
-/**
+    /**
      * document附加图片上去
      */
 
@@ -392,7 +398,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-/**
+    /**
      * 获取图片的绝对路径
      *
      * @param contentUri 文件相对路径
@@ -410,8 +416,7 @@ public class DisheAddActivity extends BaseToobarActivity {
     }
 
 
-
-/**
+    /**
      * 上传图片静态资源
      *
      * @param file 菜品图片文件

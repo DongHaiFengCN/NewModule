@@ -87,7 +87,7 @@
 
     <string name="title_other_devices">新设备</string>
 
-    <string name="scan">扫描</string>
+    <string name="scan">搜索设备</string>
 
     <string name="bluetooth_device_list">蓝牙设备列表</string>
 
@@ -121,4 +121,6 @@
 
     <string name="none_usb_device">未连接USB打印机</string>
     <string name="copy_right_cn">xxxx 版权所有</string>
+    <string name="dishename">已估清</string>
+    <string name="dishestate">估清状态</string>
 </resources>

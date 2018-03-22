@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:layout_width="match_parent"
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <include android:id="@+id/activity_toolbar" layout="@layout/common_view_toolbar"></include>
-
+   <include android:id="@+id/activity_toolbar" layout="@layout/common_view_toolbar"/>
     <FrameLayout
-        android:id="@+id/activity_frame"
+        android:id="@+id/activity_main_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/activity_toolbar"
         android:layout_above="@+id/linearLayout3">
 
     </FrameLayout>
+
     <ImageView
         android:id="@+id/shade"
         android:layout_width="match_parent"

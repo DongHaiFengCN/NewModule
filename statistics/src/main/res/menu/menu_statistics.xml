@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.example.donghaifeng.myapplication.MainActivity">
+
+       <item android:id="@+id/action_today"
+           app:showAsAction="never"
+           android:title="今日"/>
+       <item android:id="@+id/action_week"
+           app:showAsAction="never"
+           android:title="本周"/>
+       <item android:id="@+id/action_month"
+           app:showAsAction="never"
+           android:title="本月"/>
+       <item android:id="@+id/action_consum"
+           app:showAsAction="never"
+           android:title="自定义"/>
+       <item android:id="@+id/action_bestsellers"
+           app:showAsAction="never"
+           android:title="热卖排行"/>
+
+</menu>

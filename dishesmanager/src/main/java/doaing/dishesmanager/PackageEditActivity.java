@@ -1,19 +1,25 @@
 package doaing.dishesmanager;
+
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -27,11 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import bean.kitchenmanage.dishes.DishesC;
 import butterknife.BindView;
-import doaing.MyApplication;
 import doaing.dishesmanager.view.MySwipeListLayout;
 
 import rx.functions.Action1;
+import tools.CDBHelper;
+import tools.MyBigDecimal;
 import view.BaseToobarActivity;
 
 /**
@@ -50,10 +58,13 @@ public class PackageEditActivity extends BaseToobarActivity {
     @BindView(R2.id.revise_price_et)
     EditText revisePriceEt;
 
-    Document oneLevel;
-    Document secondLevel;
-    Database database;
-    ListAdapter listAdapter;
+    private Document oneLevel;
+    private Document secondLevel;
+    private Database database;
+    private ListAdapter listAdapter;
+    private Spinner spinner;
+    private boolean discount = false;
+    private float sum = 0f;
 
     @Override
     protected int setMyContentView() {
@@ -62,59 +73,99 @@ public class PackageEditActivity extends BaseToobarActivity {
 
     @Override
     public void initData(Intent intent) {
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+
+        spinner = findViewById(R.id.dishes_discount_sp);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1);
+        arrayAdapter.add("价格");
+        arrayAdapter.add("折扣");
+        spinner.setAdapter(arrayAdapter);
+
+
+        database = CDBHelper.getDatabase();
         oneLevel = database.getDocument(String.valueOf(intent.getExtras().get("kindId")));
         secondLevel = database.getDocument(String.valueOf(intent.getExtras().get("disheId")));
 
-        setToolbarName(secondLevel.getString("dishesName") + "  总价" + secondLevel.getFloat("price"));
+        setToolbarName("当前套餐总价 " + secondLevel.getFloat("price"));
 
         listAdapter = new ListAdapter();
 
         dishesLv.setAdapter(listAdapter);
-        Array array = secondLevel.getArray("dishesListId");
+        Array array = secondLevel.getArray("dishesIdList");
 
         int length = array.count();
-        Document temporary ;
+        Document temporary;
         for (int i = 0; i < length; i++) {
             temporary = database.getDocument(array.getString(i));
-            if(temporary.getString("dishesName")!=null){
+            if (temporary.getString("dishesName") != null) {
                 list.add(temporary);
+                sum += temporary.getFloat("price");
             }
         }
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position == 0) {
+                    discount = false;
+                    revisePriceEt.setHint("原价" + sum + " 例：80为80元");
+
+                } else if (position == 1) {
+                    discount = true;
+                    revisePriceEt.setHint("原价"+ sum + " 例：80为八折");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         listAdapter.notifyDataSetChanged();
 
         //提交编辑套餐编辑后的数据
         RxView.clicks(submit).throttleFirst(200, TimeUnit.MILLISECONDS)
                 .subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
+                    @Override
+                    public void call(Void aVoid) {
 
-                MutableDocument secondLevelMuDoc = secondLevel.toMutable();
+                        MutableDocument secondLevelMuDoc = secondLevel.toMutable();
 
-                String price = revisePriceEt.getText().toString();
+                        String price = revisePriceEt.getText().toString();
 
-                if (!"".equals(price)) {
+                        if (!"".equals(price)) {
 
-                    secondLevelMuDoc.setFloat("price", Float.valueOf(price));
-                }
-                try {
-                    MutableArray array = new MutableArray();
-                    int size = list.size();
-                    for(int i=0;i<size;i++){
+                            if(discount){
 
-                        array.addString(list.get(i).getId());
+                                float discount = MyBigDecimal.div(Float.valueOf(price), 100f, 2);
+                                secondLevelMuDoc.setFloat("price", MyBigDecimal.mul(sum, discount, 2));
+                            }else {
+
+                                secondLevelMuDoc.setFloat("price", Float.valueOf(price));
+                            }
+
+                        }else {
+                            revisePriceEt.setError("请输入修改价格或折扣");
+                            return;
+                        }
+                        try {
+                            MutableArray array = new MutableArray();
+                            int size = list.size();
+                            for (int i = 0; i < size; i++) {
+
+                                array.addString(list.get(i).getId());
+                            }
+                            secondLevelMuDoc.setArray("dishesIdList", array);
+                            database.save(secondLevelMuDoc);
+                            finish();
+                            Toast.makeText(PackageEditActivity.this,"修改成功！",Toast.LENGTH_SHORT).show();
+
+                        } catch (CouchbaseLiteException e) {
+                            e.printStackTrace();
+                        }
+
                     }
-                    secondLevelMuDoc.setArray("dishesListId",array);
-                    database.save(secondLevelMuDoc);
-                    finish();
-
-                } catch (CouchbaseLiteException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
+                });
 
     }
 

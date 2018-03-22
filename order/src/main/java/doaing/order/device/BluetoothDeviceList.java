@@ -102,7 +102,7 @@ public class BluetoothDeviceList extends Activity {
 		if (pairedDevices.size() > 0) {
 			tvPairedDevice.setVisibility(View.VISIBLE);
 			for (BluetoothDevice device : pairedDevices) {
-				mPairedDevicesArrayAdapter.add(device.getName() + "\n"
+				mPairedDevicesArrayAdapter.add(device.getName() + "    "
 						+ device.getAddress());
 			}
 		} else {
@@ -124,7 +124,7 @@ public class BluetoothDeviceList extends Activity {
 				// If it's already paired, skip it, because it's been listed
 				// already
 				if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-					mNewDevicesArrayAdapter.add(device.getName() + "\n"
+					mNewDevicesArrayAdapter.add(device.getName() + "    "
 							+ device.getAddress());
 				}
 				// When discovery is finished, change the Activity title

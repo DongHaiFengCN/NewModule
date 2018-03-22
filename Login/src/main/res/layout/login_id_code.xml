@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d3eff3"
+
+    android:background="@color/login_md_grey_200"
     android:orientation="vertical"
     tools:context="smartkitchen.com.login.modifyPsw.ModifyPswActivity">
 
@@ -39,7 +40,7 @@
             android:layout_marginRight="16dp"
             android:layout_weight="1"
             android:text="+86 18660198063"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/login_colorPrimaryDark"
             android:textSize="18sp" />
     </LinearLayout>
 
@@ -64,6 +65,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
+
         android:onClick="onClickResend"
         android:text="重新发送"
         android:textColor="@color/login_colorPrimaryDark"
@@ -75,7 +77,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="@color/login_colorPrimaryDark"
-        android:enabled="false"
+        android:enabled="true"
+
         android:onClick="onClickNext"
         android:text="下一步"
         android:textColor="@color/login_md_black_1000"

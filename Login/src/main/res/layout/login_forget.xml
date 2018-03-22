@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/login_textview2"
+        android:id="@+id/login_tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -35,6 +35,7 @@
             android:background="@color/login_md_white_1000"
             android:hint="+86  手机号"
             android:inputType="number|phone"
+            android:maxLength="11"
             android:paddingLeft="16dp"
             android:paddingRight="16dp" />
 

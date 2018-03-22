@@ -31,6 +31,7 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Ordering;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +44,10 @@ import butterknife.Unbinder;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
-import doaing.order.untils.MyLog;
 import doaing.order.view.adapter.MyGridAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
+import tools.ToolUtil;
 
 import static tools.CDBHelper.getFormatDate;
 
@@ -173,9 +175,11 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
         seekT9Adapter.setListener(new SeekT9Adapter.SeekT9OnClickListener() {
             @Override
-            public void OnClickListener(View view, String name, float price, int pos) {
-                view.setBackgroundResource(R.color.lucency);
-                showDialog(name, price, pos);
+            public void OnClickListener(View view, String name, float price, int pos,boolean isState) {
+                if (!isState){
+                    view.setBackgroundResource(R.color.lucency);
+                    showDialog(name, price, pos);
+                }
             }
 
         });
@@ -350,7 +354,15 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                         , null);
                 for (Document doc : documentList) {
                     GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
-                    goodsObj.setDishesName(doc.getString("dishesName"));
+                    try {
+                        if (doc.getInt("state") == 1){
+                                goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")+"(估清)"));
+                        }else {
+                                goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")));
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     goodsObj.setDishesCount(0);
                     goodsObj.setPrice(doc.getFloat("price"));
                     goodsObj.setDishesId(doc.getId());
@@ -382,7 +394,15 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
                 for (Document doc : documentList) {
                     GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
-                    goodsObj.setDishesName(doc.getString("dishesName"));
+                    try {
+                        if (doc.getInt("state") == 1){
+                            goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")+"(估清)"));
+                        }else {
+                            goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")));
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
                     goodsObj.setDishesCount(0);
                     goodsObj.setPrice(doc.getFloat("price"));
                     goodsObj.setDishesId(doc.getId());

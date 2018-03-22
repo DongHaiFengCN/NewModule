@@ -1,0 +1,7 @@
+<resources>
+    <string name="endtime">结束时间</string>
+    <string name="starttime">开始时间</string>
+    <string name="rank_title">名次</string>
+    <string name="rank_name">排名菜品</string>
+    <string name="rank_amount">销售数量</string>
+</resources>

@@ -58,9 +58,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import doaing.MyApplication;
 import doaing.dishesmanager.widget.DishesKindSpinner;
 import doaing.dishesmanager.widget.TasteSelectAdapter;
+import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -71,6 +71,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.functions.Action1;
+import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -79,7 +80,8 @@ import view.BaseToobarActivity;
  * @author donghaifeng
  */
 
-public class DisheEditActivity extends BaseToobarActivity {
+public class
+DisheEditActivity extends BaseToobarActivity {
 
     String url = "https://www.yaodiandian.net/dishes/";
     private static final int THUMBNAIL_SIZE = 150;
@@ -120,7 +122,7 @@ public class DisheEditActivity extends BaseToobarActivity {
     public void initData(Intent intent) {
 
         setToolbarName("菜品编辑");
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
         document = database.getDocument(intent.getStringExtra("dishes"));
         kindPosition = intent.getIntExtra("position", 0);
 
@@ -194,6 +196,7 @@ public class DisheEditActivity extends BaseToobarActivity {
                 String dishesName = disheName.getText().toString();
 
                 MutableDocument disheMuDoc = document.toMutable();
+
                 if ("".equals(dishesName)) {
 
                     disheName.setError("菜品名称不能为空");
@@ -258,8 +261,8 @@ public class DisheEditActivity extends BaseToobarActivity {
 
                 try {
 
-                    ((MyApplication) getApplication()).getDatabase().save(disheMuDoc);
-                    ((MyApplication) getApplication()).getDatabase().save(newMukindDoc);
+                    CDBHelper.getDatabase().save(disheMuDoc);
+                    CDBHelper.getDatabase().save(newMukindDoc);
                     EventBus.getDefault().postSticky(kindPosition);
 
                     finish();
@@ -292,7 +295,6 @@ public class DisheEditActivity extends BaseToobarActivity {
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(url)
                 .build();
-
 
         FileAddService service = retrofit.create(FileAddService.class);
         RequestBody requestFile =
@@ -333,6 +335,7 @@ public class DisheEditActivity extends BaseToobarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
+
             Uri uri = data.getData();
             ContentResolver cr = this.getContentResolver();
             try {
@@ -516,18 +519,19 @@ public class DisheEditActivity extends BaseToobarActivity {
         tasteList = new ArrayList<>();
         if (array != null) {
 
-            //   List<Object> objects = array.toList();
-            Iterator<Object> iterator = array.iterator();
+            MutableArray mutableArray = array.toMutable();
+            Iterator<Object> iterator = mutableArray.iterator();
+
             while (iterator.hasNext()) {
 
                 String o = (String) iterator.next();
                 Document document = database.getDocument(o);
-                if (document.getString("tasteName") != null) {
+                if (document != null) {
                     tasteList.add(document);
-
                 }
 
             }
+
 
         }
 
@@ -571,17 +575,16 @@ public class DisheEditActivity extends BaseToobarActivity {
                     removeDisheIdFromDishesKindList();
 
                     try {
-
-                        database.save(oldKind.toMutable());
                         database.delete(document);
-                        //删除服务器静态资源
-                        deletePicturesFromServer();
-                        EventBus.getDefault().postSticky(new Integer(kindPosition));
-                        finish();
-
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
+                    //删除服务器静态资源
+                        deletePicturesFromServer();
+                        EventBus.getDefault().postSticky(kindPosition);
+                        finish();
+
+
                 }
             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                 @Override
@@ -638,6 +641,7 @@ public class DisheEditActivity extends BaseToobarActivity {
         MutableArray oldArry = mutableDocument.getArray("dishesListId");
 
         for (int i = 0; i < oldArry.count(); i++) {
+
 
             if (oldArry.getString(i).equals(document.getId())) {
 

@@ -49,18 +49,6 @@
         android:background="@color/backgroud">
 
         <TextView
-            android:id="@+id/textView2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|center_horizontal"
-            android:singleLine="true"
-            android:text="序号"
-            android:textColor="@color/title_font"
-            android:textSize="18sp"
-            />
-
-        <TextView
             android:id="@+id/textView3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -79,7 +67,7 @@
             android:layout_weight="3"
             android:gravity="center_vertical|center_horizontal"
             android:singleLine="true"
-            android:text="打印机名称"
+            android:text="打印机"
             android:textColor="@color/title_font"
             android:textSize="18sp"
             />

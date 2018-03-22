@@ -3,20 +3,21 @@
     android:id="@+id/list_area_layout"
     android:layout_width="fill_parent"
     android:layout_height="50dp"
-    android:background="@color/md_white_1000"
+    android:background="@drawable/animselect"
     android:gravity="fill_vertical|center_horizontal"
     android:orientation="horizontal"
     android:paddingLeft="0dp"
-    android:paddingRight="0dp" >
+    android:paddingRight="0dp">
  
 <TextView
     android:id="@+id/area_name"
     android:layout_width="0dp"
-    android:layout_height="50dp"
+    android:layout_height="40dp"
     android:layout_weight="1"
     android:gravity="center_vertical|center_horizontal"
     android:text="房间"
     android:textColor="@color/md_black_1000"
-    android:textSize="22dp" />
+    android:textSize="20dp"
+    />
 
 </LinearLayout>

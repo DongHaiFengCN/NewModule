@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="doaing.order">
-
     // 管理蓝牙设备的权限
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     // 使用蓝牙设备的权限
@@ -9,41 +8,36 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     //短信权限
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     //微信权限
-    <!--<uses-permission android:name="android.permission.INTERNET" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
-    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!-- <uses-permission android:name="android.permission.INTERNET" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     //打印机权限
     <uses-permission android:name="android.hardware.usb.accessory" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <application
 
-        >
-
-
-
+    <application>
         <activity
             android:name=".view.DeskActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".view.PayActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
@@ -58,53 +52,59 @@
         <activity
             android:name=".view.ShowParticularsActivity"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysVisible|adjustPan"/>
+            android:windowSoftInputMode="stateAlwaysVisible|adjustPan" />
         <activity
             android:name=".view.ScanActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <!-- 通过AndroidManifest配置AppKey和AppSecret，如果你选择通过代码配置，则不需要配置以下meta-data -->
-        <meta-data
-            android:name="Mob-AppKey"
-            android:value="21efc5a881e60" />
-        <meta-data
-            android:name="Mob-AppSecret"
-            android:value="db061f16515cf08d8c98c9857c4550d9" />
+
+
         <activity
             android:name=".view.MainActivity"
             android:configChanges="keyboard|keyboardHidden|orientation"
-            android:theme="@style/AppTheme.NoActionBar"
-            ></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service
             android:name="com.gprinter.service.GpPrintService"
             android:enabled="true"
             android:exported="true"
-            android:label="GpPrintService" >
+            android:label="GpPrintService">
             <intent-filter>
                 <action android:name="com.gprinter.aidl.GpPrintService" />
             </intent-filter>
         </service>
-        <service android:name="com.gprinter.service.AllService" >
-        </service>
-        <activity android:name=".device.PortConfigurationActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <service android:name="com.gprinter.service.AllService" />
 
-        </activity>
-        <activity android:name=".device.PrinterConnectDialog"
+        <activity
+            android:name=".device.PortConfigurationActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".device.PrinterConnectDialog"
             android:label=""
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".device.BluetoothDeviceList"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".device.UsbDeviceList"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".device.kitchen.KitchenCfgActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".device.kitchen.AddkitchenActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".device.DeviceMain"
+            android:theme="@style/AppTheme.NoActionBar" />
 
+        <service
+            android:name=".service.NewOrderService"
+            android:enabled="true"
+            android:exported="true" />
 
-        </activity>
-        <activity android:name=".device.BluetoothDeviceList"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".device.UsbDeviceList"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".device.kitchen.KitchenCfgActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".device.kitchen.AddkitchenActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".device.DeviceMain"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".view.AssessmentActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            ></activity>
     </application>
 
 </manifest>

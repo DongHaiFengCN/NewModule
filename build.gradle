@@ -44,13 +44,15 @@ def daggerVersion = "2.0.2"
 def retrofitVersion = "2.0.0"
 def supportVersion = "26.1.0"
 def rxBindingVersion = '0.4.0'
-def constraintVersion = '1.0.2';
-def COUCHBASE_LITE_VERSION = "2.0.0-299"
+def constraintVersion = '1.0.2'
+def okHttpVersion = "3.9.1"
+def gsonVersion = "2.8.0";
+
 ext{
     //  各个组件版本号的统一管理
     android = [
             compileSdkVersion: 26,
-            buildToolsVersion: "25.0.2",
+            buildToolsVersion: "26.1.1",
             minSdkVersion    : 21,
             targetSdkVersion : 26,
             versionCode      : 1,
@@ -60,8 +62,10 @@ ext{
     libSupportAppcompat = "com.android.support:appcompat-v7:${supportVersion}"
     libSupportDesign = "com.android.support:design:${supportVersion}"
     libSupportRecyclerview = "com.android.support:recyclerview-v7:${supportVersion}"
-    libSupportV4 = "com.android.support:support-v4:${supportVersion}"
+    libSupportV4 = "com.android.support:support-v4:23.0.0"
     libSupportConstraint = "com.android.support.constraint:constraint-layout:${constraintVersion}"
+
+
     libTestImplementation = 'junit:junit:4.12'
     libandroidTest = 'com.android.support.test:runner:1.0.1'
    // libandroidEspresso 'com.android.support.test.espresso:espresso-core:3.0.1'
@@ -71,7 +75,7 @@ ext{
     libEventBus = "org.greenrobot:eventbus:3.0.0"
     libJavaxAnnotation = "javax.annotation:jsr250-api:1.0"
 
-    libGson = "com.google.code.gson:gson:2.4"
+
     libRetrofit = "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     libRetrofitConverterGson = "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
     libRetrofitAdapterRxJava = "com.squareup.retrofit2:adapter-rxjava:${retrofitVersion}"
@@ -96,6 +100,12 @@ ext{
 
     libButterknife = "com.jakewharton:butterknife:8.8.1"
     libBbutterknife_compiler = "com.jakewharton:butterknife-compiler:8.8.1"
+
+    okhttp3                   = "com.squareup.okhttp3:okhttp:${okHttpVersion}"
+
+    gson                      ="com.google.code.gson:gson:${gsonVersion}"
+    Json                      ="com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3"
+    couchbase                 = "com.couchbase.lite:couchbase-lite-android:2.0.0-DB022"
 
 }
 

@@ -20,7 +20,8 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.MyApplication;
+import tools.CDBHelper;
+
 
 /**
  * 项目名称：new
@@ -63,8 +64,7 @@ public class TasteSpinner extends android.support.v7.widget.AppCompatSpinner {
 
     public void getTasteItems() {
 
-        final Database database = ((MyApplication) getContext().getApplicationContext()).getDatabase();
-
+        final Database database = CDBHelper.getDatabase();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo(Expression.string("DishesTasteC")));

@@ -3,6 +3,7 @@ package doaing.order.view;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,28 +31,27 @@ import tools.CDBHelper;
 */
 
 
-
 public class OrderDragAdapter extends BaseAdapter {
 
-    private List<Document>   mlistDishes;
+    private List<Document> mlistDishes;
     private Context context;
 
     public float[] getNumbers() {
         return numbers;
     }
 
-    public void setList(List<String> toastList) {
-        this.toastList = toastList;
+    public void setList(List<String> tastetList) {
+        this.tastetList = tastetList;
     }
 
-    private List<String> toastList;
+    private List<String> tastetList;
 
     //维护数量数组
     private float[] numbers;
 
     ListView listview;
 
-    public void setMessage(List<Document> mlistDishes, float[] numbers){
+    public void setMessage(List<Document> mlistDishes, float[] numbers) {
 
         this.mlistDishes = mlistDishes;
 
@@ -62,10 +62,6 @@ public class OrderDragAdapter extends BaseAdapter {
     }
 
     ChangerNumbersListener changerNumbersListener;
-
-    public SubtractionTouchListener getTouchListener() {
-        return touchListener;
-    }
 
     public void setTouchListener(SubtractionTouchListener touchListener) {
         this.touchListener = touchListener;
@@ -87,7 +83,6 @@ public class OrderDragAdapter extends BaseAdapter {
         this.context = context;
 
     }
-
 
 
     @Override
@@ -122,6 +117,13 @@ public class OrderDragAdapter extends BaseAdapter {
             view = (HolderView) convertView.getTag();
         }
 
+        if (mlistDishes.get(position).getInt("state") == 1){
+            view.addtion.setVisibility(View.INVISIBLE);
+            view.name.setText(mlistDishes.get(position).getString("dishesName")+"(估清)");
+        }else{
+            view.addtion.setVisibility(View.VISIBLE);
+            view.name.setText(mlistDishes.get(position).getString("dishesName"));
+        }
         // 当数量不为零，且关闭状态，打开减号与数量；当数量为零，处于开启状态则关闭。
         if (numbers[position] != 0.0f && view.substruct.getVisibility() == View.INVISIBLE
                 && view.number.getVisibility() == View.INVISIBLE) {
@@ -142,13 +144,13 @@ public class OrderDragAdapter extends BaseAdapter {
 
         //设置数量
 
-        view.number.setText(numbers[position]+"");
+        view.number.setText(numbers[position] + "");
         //加法指示器
         view.addtion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               DishesC dishesC = CDBHelper.getObjById(context,mlistDishes.get(position).getId(),DishesC.class);
+                DishesC dishesC = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), DishesC.class);
 
                 setMessage(dishesC, true, position);
 
@@ -160,15 +162,11 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                DishesC dishesC = CDBHelper.getObjById(context,mlistDishes.get(position).getId(),DishesC.class);
-
+                DishesC dishesC = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), DishesC.class);
                 setMessage(dishesC, false, position);
 
             }
         });
-
-
-        view.name.setText(mlistDishes.get(position).getString("dishesName"));
 
         view.price.setText(mlistDishes.get(position).getFloat("price") + " 元/份");
 
@@ -176,12 +174,12 @@ public class OrderDragAdapter extends BaseAdapter {
         return convertView;
     }
 
-/**
+    /**
      * 初始化需要发送的数据，并发送到 MainActivity
-     *
      * @param dishesC 获取的菜品实体类
-     * @param flag    true+  false-
-     * @return 是否发送成功*/
+     * @param flag    true+  false
+     * @return 是否发送成功
+     */
 
 
     private void setMessage(final DishesC dishesC, final boolean flag, final int position) {
@@ -196,110 +194,76 @@ public class OrderDragAdapter extends BaseAdapter {
 
         dishesMessage.setName(dishesC.getDishesName());
 
+        //判断菜品引用的口味id在数据库中存在实例
 
         //有口味，添加选择口味dialog
         if (dishesC.getTasteList() != null && dishesC.getTasteList().size() > 0) {
 
-           if(flag){
+            //初始化一个缓存口味的数组
+            final String[] strings = new String[dishesC.getTasteList().size()];
 
-               //初始化一个缓存口味的数组
-               final String[] strings = new String[dishesC.getTasteList().size()];
+            for (int i = 0; i < dishesC.getTasteList().size(); i++) {
 
-               for (int i = 0; i < dishesC.getTasteList().size(); i++) {
+                DishesTasteC dishesTasteC = CDBHelper.getObjById(context, dishesC.getTasteList().get(i), DishesTasteC.class);
 
-                   DishesTasteC dishesTasteC = CDBHelper.getObjById(context, dishesC.getTasteList().get(i), DishesTasteC.class);
+                if (dishesTasteC != null) {
 
-                   if (dishesTasteC != null) {
+                    strings[i] = dishesTasteC.getTasteName();
+                }
 
-                       strings[i] = dishesTasteC.getTasteName();
-                   }
+            }
 
-               }
-               dishesMessage.setDishesTaste(strings[0]);
-               new AlertDialog.Builder(context).setTitle("全部口味")
+            //确认数据库口味不为空
+            if (strings[0] != null) {
 
+                dishesMessage.setDishesTaste(strings[0]);
+                tasteSelectDialog(flag, position, dishesMessage, strings);
 
-                       .setSingleChoiceItems(strings, 0, new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
+            }else {
+                Refresh(flag, dishesMessage);
+            }
 
-                               //得到口味
+        }else {
 
-                               dishesMessage.setDishesTaste(strings[i]);
-
-                           }
-                       })
-                       .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
-
-                               Refresh(flag, position, dishesMessage);
-
-
-                           }
-                       })
-                       .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
-
-                           }
-                       }).show();
-
-           } else {
-
-
-
-               touchListener.setSubtractionTouchListener(dishesC.get_id());
-
-
-
-               //获取这个当前菜品的id 找到goodsList中相同的，加载口味 ok？
-
-
-               final String[] arr = toastList.toArray(new String[toastList.size()]);
-               dishesMessage.setDishesTaste(arr[0]);
-               new AlertDialog.Builder(context).setTitle("已选择口味")
-
-
-                       .setSingleChoiceItems(arr, 0, new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
-
-                               //得到口味
-
-                               dishesMessage.setDishesTaste(arr[i]);
-
-                           }
-                       })
-                       .setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
-
-                               Refresh(flag, position, dishesMessage);
-
-
-                           }
-                       })
-                       .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                           @Override
-                           public void onClick(DialogInterface dialogInterface, int i) {
-
-                           }
-                       }).show();
-
-           }
-
-
-
-        } else {
-
-            Refresh(flag, position, dishesMessage);
+            Refresh(flag, dishesMessage);
         }
 
 
     }
 
-    private void Refresh(boolean flag, int position, DishesMessage dishesMessage) {
+    private void tasteSelectDialog(final boolean flag, final int position, final DishesMessage dishesMessage, final String[] strings) {
+        new AlertDialog.Builder(context).setTitle("全部口味")
+
+
+                .setSingleChoiceItems(strings, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        //得到口味
+
+                        dishesMessage.setDishesTaste(strings[i]);
+
+                    }
+                })
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        Refresh(flag, dishesMessage);
+
+
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).show();
+    }
+
+
+    private void Refresh(boolean flag, DishesMessage dishesMessage) {
 
         dishesMessage.setOperation(flag);
 
@@ -307,7 +271,6 @@ public class OrderDragAdapter extends BaseAdapter {
 
         changerNumbersListener.getNumber(numbers);
     }
-
 
 
     void updata(int position, float count) {
@@ -334,6 +297,7 @@ public class OrderDragAdapter extends BaseAdapter {
         void getNumber(float[] numbers);
 
     }
+
     interface SubtractionTouchListener {
 
         void setSubtractionTouchListener(String id);

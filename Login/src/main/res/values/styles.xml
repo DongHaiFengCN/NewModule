@@ -6,27 +6,41 @@
     </style>
 
     <!-- Base application theme. -->
-    <style name="LoginAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="LoginAppTheme11" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/login_colorPrimaryDark</item>
         <item name="colorPrimaryDark">@color/login_colorPrimaryDark</item>
         <item name="colorAccent">@color/login_colorAccent</item>
+        <item name="android:windowAnimationStyle">@style/LoginAnimfade</item>
     </style>
 
-    <style name="LoginAppTheme.NoActionBar">
+    <style name="LoginAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- 系统栏颜色. -->
-        <item name="colorPrimaryDark">@color/login_md_black_1000</item>
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/login_colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/login_colorPrimaryDark</item>
+        <item name="colorAccent">@color/login_colorAccent</item>
         <!-- 不悬浮. -->
         <item name="overlapAnchor">false</item>
+        <item name="android:windowAnimationStyle">@style/LoginAnimfade</item>
 
     </style>
+
+
 
     <style name="LoginAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="LoginAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
+
+    <style name="LoginAnimfade" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/login_slide_in_from_right</item>
+        <item name="android:activityOpenExitAnimation">@anim/login_slide_out_to_left</item>
+        <item name="android:activityCloseExitAnimation">@anim/login_slide_out_to_right</item>
+        <item name="android:activityCloseEnterAnimation">@anim/login_slide_in_from_left</item>
+    </style>
 
 </resources>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+     >
+    <include android:id="@+id/activity_toolbar" layout="@layout/common_view_toolbar"></include>
+    <FrameLayout
+        android:id="@+id/activity_main_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activity_toolbar"
+        android:layout_above="@+id/linearLayout3">
+
+    </FrameLayout>
+
+    <ImageView
+        android:id="@+id/shade"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#a0000000"
+        android:visibility="invisible"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <LinearLayout
+        android:id="@+id/orderList"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/md_white_1000"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:layout_above="@+id/linearLayout3">
+        <RelativeLayout
+            android:background="@color/colorPrimaryDark"
+            android:layout_width="match_parent"
+            android:layout_height="32dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="已选商品"
+                android:textColor="@color/md_white_1000"
+                android:textSize="12dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:id="@+id/textView5" />
+            <ImageButton
+                android:layout_width="47dp"
+                android:layout_height="16dp"
+                android:background="@drawable/delet_select"
+                android:id="@+id/delet"
+                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+
+
+        <ListView
+            android:id="@+id/order_lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="@color/grey_color1"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
+        android:gravity="right"
+        android:id="@+id/linearLayout3">
+        <TextView
+            android:id="@+id/total_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/md_white"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:gravity="center"
+            android:text="0.0元"
+
+            />
+        <TextView
+            android:id="@+id/ok_tv"
+            android:layout_width="100dp"
+            android:layout_height="46dp"
+            android:text="选好了"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/md_white"
+            android:background="@color/colorPrimaryDark"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            >
+        </TextView>
+
+    </LinearLayout>
+
+
+
+    <RelativeLayout
+        android:id="@+id/imageView2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/fab_margin"
+        >
+
+        <ImageButton
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/car_select"
+            android:id="@+id/car"
+            android:layout_marginLeft="3dp"
+            android:layout_marginBottom="3dp" />
+        <TextView
+            android:id="@+id/point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/redpoint"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@color/md_white_1000"
+            android:textSize="12sp"
+            android:visibility="invisible"
+            android:layout_alignTop="@+id/car"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
+</RelativeLayout>
+
+

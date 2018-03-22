@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/md_white_1000"
     android:orientation="horizontal">
 
     <ImageView
@@ -22,5 +21,24 @@
         android:layout_weight="1"
         android:textColor="@color/grey_color2"
         android:textSize="14sp" />
+
+
+    <ImageView
+        android:id="@+id/edit_im"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:clickable="true"
+        android:padding="2dp"
+        android:src="@mipmap/ic_edit"
+        />
+    <ImageView
+        android:id="@+id/kind_add_im"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:padding="8dp"
+        android:src="@mipmap/ic_add"
+        android:visibility="gone" />
+
 
 </LinearLayout>

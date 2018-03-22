@@ -19,10 +19,11 @@
         android:id="@+id/child_bt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/md_white_1000"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/text_size"
         android:text="+点击添加二级菜单"
-        android:visibility="gone"
+        android:background="@color/white"
+        android:visibility="visible"
 
         />
 </LinearLayout>

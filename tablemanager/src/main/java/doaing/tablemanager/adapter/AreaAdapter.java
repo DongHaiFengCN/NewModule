@@ -24,8 +24,6 @@ import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
-import com.couchbase.lite.QueryChange;
-import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
@@ -33,9 +31,10 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.MyApplication;
+import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.R;
 import doaing.tablemanager.TableManagerActivity;
+import tools.MyLog;
 import tools.ToolUtil;
 
 
@@ -96,6 +95,7 @@ public class AreaAdapter extends BaseAdapter {
             listItemView.imageView = view.findViewById(R.id.imageView);
             listItemView.edit_im = view.findViewById(R.id.edit_im);
             listItemView.add_im = view.findViewById(R.id.area_add_im);
+            listItemView.list_area_layout = view.findViewById(R.id.list_area_layout);
 
             view.setTag(listItemView);
         } else {
@@ -105,21 +105,21 @@ public class AreaAdapter extends BaseAdapter {
             listItemView.add_im.setVisibility(View.GONE);
             listItemView.tv_title.setVisibility(View.VISIBLE);
             if (mSelect == i) {
-                view.setBackgroundResource(R.color.md_grey_50);  //选中项背景
-                listItemView.imageView.setVisibility(View.VISIBLE);
+                listItemView.list_area_layout.setBackgroundResource(R.drawable.tableclick);  //选中项背景
                 listItemView.edit_im.setVisibility(View.VISIBLE);
+                listItemView.tv_title.setTextColor(context.getResources().getColor(R.color.white));
 
             } else {
-                view.setBackgroundResource(R.color.md_grey_100);  //其他项背景
-                listItemView.imageView.setVisibility(View.INVISIBLE);
+                listItemView.list_area_layout.setBackgroundResource(R.drawable.tablenoclick);  //其他项背景
                 listItemView.edit_im.setVisibility(View.INVISIBLE);
+                listItemView.tv_title.setTextColor(context.getResources().getColor(R.color.md_black_1000));
             }
             listItemView.edit_im.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                            .setTitle("房间编辑").setView(getLinearLayOfEditView())
+                            .setTitle("房间编辑").setView(getLinearLayOfEditView(i))
                             .setPositiveButton("确认修改房间名称", null).setNegativeButton("", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -184,14 +184,14 @@ public class AreaAdapter extends BaseAdapter {
             listItemView.tv_title.setText(database.getDocument(areaId.get(i)).getString("areaName"));
         } else {
             listItemView.tv_title.setVisibility(View.GONE);
-            listItemView.imageView.setVisibility(View.GONE);
             listItemView.edit_im.setVisibility(View.GONE);
             listItemView.add_im.setVisibility(View.VISIBLE);
+            final ListItemView finalListItemView = listItemView;
             listItemView.add_im.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final AlertDialog alertDialog = new AlertDialog.Builder(context).setTitle("添加房间")
-                            .setView(getLinearLayOfEditView())
+                            .setView(getLinearLayOfEditView(-1))
                             .setPositiveButton("确定", null).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -204,8 +204,10 @@ public class AreaAdapter extends BaseAdapter {
                             if ("".equals(editText.getText().toString())) {
                                 editText.setError("不能为空！");
                             } else {
+                                finalListItemView.list_area_layout.setBackgroundResource(R.drawable.tablenoclick);
                                 MutableDocument document = new MutableDocument("AreaC." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
+                                MyLog.e("AreaAdapter","channeldId="+((MyApplication) context.getApplicationContext()).getCompany_ID());
                                 document.setString("className", "AreaC");
                                 document.setString("areaName", editText.getText().toString());
                                 document.setBoolean("isValid", true);
@@ -249,10 +251,10 @@ public class AreaAdapter extends BaseAdapter {
         ImageView imageView;
         ImageView edit_im;
         ImageView add_im;
-
+        LinearLayout list_area_layout;
     }
 
-    public LinearLayout getLinearLayOfEditView() {
+    public LinearLayout getLinearLayOfEditView(int pos) {
         editText = new EditText(context);
         int left, top, right, bottom;
         left = top = right = bottom = 20;
@@ -261,6 +263,9 @@ public class AreaAdapter extends BaseAdapter {
         params.setMargins(left, top, right, bottom);
         editText.setLayoutParams(params);
         editText.setHint("请输入新名字");
+        if (pos > -1){
+            editText.setText(database.getDocument(areaId.get(pos)).getString("areaName"));
+        }
         LinearLayout ll = new LinearLayout(context); // + 增加行
         ll.setOrientation(LinearLayout.VERTICAL); // + 增加行
         editText.setBackground(context.getDrawable(R.drawable.shape_eidt_selector));

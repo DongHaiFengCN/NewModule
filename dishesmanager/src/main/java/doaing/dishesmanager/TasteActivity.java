@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,13 +35,19 @@ import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
-import doaing.MyApplication;
 
+import doaing.mylibrary.MyApplication;
+import tools.CDBHelper;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -64,7 +69,7 @@ public class TasteActivity extends BaseToobarActivity {
 
     @BindView(R2.id.taste_lv)
     ListView tasteLv;
-
+    SearchView.SearchAutoComplete mSearchAutoComplete;
     @Override
     protected int setMyContentView() {
         return R.layout.activity_taste;
@@ -91,7 +96,7 @@ public class TasteActivity extends BaseToobarActivity {
         listAdapter = new ListAdapter();
         tasteLv.setAdapter(listAdapter);
 
-        database = ((MyApplication) getApplicationContext()).getDatabase();
+        database = CDBHelper.getDatabase();
 
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("tasteName")))
                 .from(DataSource.database(database))
@@ -117,13 +122,29 @@ public class TasteActivity extends BaseToobarActivity {
         });
 
     }
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.taste, menu);
-
+        getMenuInflater().inflate(R.menu.toobar_add, menu);
+        final MenuItem addhItem = menu.findItem(R.id.action_add);
+        addhItem.setVisible(false);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView mSearchView = (SearchView) searchItem.getActionView();
-        final SearchView.SearchAutoComplete mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addhItem.setVisible(true);
+            }
+        });
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                addhItem.setVisible(false);
+                return false;
+            }
+        });
+
+        mSearchAutoComplete = mSearchView.findViewById(R.id.search_src_text);
         ImageView searchButton = mSearchView.findViewById(R.id.search_button);
         searchButton.setImageResource(R.mipmap.icon_add);
         mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.md_white));
@@ -141,21 +162,8 @@ public class TasteActivity extends BaseToobarActivity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-
-                    //1.添加数据到数据库
-                    MutableDocument document = new MutableDocument("DishesTasteC." + ToolUtil.getUUID());
-                    document.setString("channelId", "gysz");
-                    document.setString("className", "DishesTasteC");
-                    document.setString("tasteName", mSearchAutoComplete.getText().toString());
-                    try {
-                        database.save(document);
-                    } catch (CouchbaseLiteException e) {
-                        e.printStackTrace();
-                    }
-                    mSearchAutoComplete.setText("");
+                    addTasteInfo(mSearchAutoComplete);
                 }
-
-
                 return false;
             }
         });
@@ -163,6 +171,33 @@ public class TasteActivity extends BaseToobarActivity {
     }
 
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_add){
+            addTasteInfo(mSearchAutoComplete);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    private void addTasteInfo(SearchView.SearchAutoComplete mSearchAutoComplete) {
+        //1.添加数据到数据库
+        MutableDocument document = new MutableDocument("DishesTasteC." + ToolUtil.getUUID());
+        document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
+        document.setString("className", "DishesTasteC");
+        document.setString("dataType","BaseData");
+        try {
+            document.setString("tasteName",ToolUtil.emojiConvert1(mSearchAutoComplete.getText().toString()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            database.save(document);
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        mSearchAutoComplete.setText("");
+    }
     class ListAdapter extends BaseAdapter {
 
         @Override
@@ -188,7 +223,14 @@ public class TasteActivity extends BaseToobarActivity {
                         R.layout.slip_list_item, null);
             }
             final TextView tvName = view.findViewById(R.id.tv_name);
-            tvName.setText(list.get(arg0).getString("tasteName"));
+
+
+            try {
+                tvName.setText(ToolUtil.emojiRecovery2(list.get(arg0).getString("tasteName")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
             final MySwipeListLayout sllMain = view.findViewById(R.id.sll_main);
             TextView tvEdit = view.findViewById(R.id.tv_edit);
 
@@ -208,7 +250,11 @@ public class TasteActivity extends BaseToobarActivity {
                                 public void onClick(DialogInterface dialog, int which) {
 
                                     MutableDocument document = list.get(arg0).toMutable();
-                                    document.setString("tasteName", editText.getText().toString());
+
+
+                                    String a = editText.getText().toString();
+                                    document.setString("tasteName",a);
+
                                     try {
                                         database.save(document);
 
@@ -265,6 +311,9 @@ public class TasteActivity extends BaseToobarActivity {
         }
 
     }
+
+
+
 
 
 }

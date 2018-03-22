@@ -38,6 +38,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:gravity="center"
+                android:textColor="@color/md_grey_800"
                 />
         </LinearLayout>
 

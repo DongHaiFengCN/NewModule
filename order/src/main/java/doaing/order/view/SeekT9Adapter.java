@@ -14,10 +14,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
@@ -29,6 +31,7 @@ import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.view.adapter.SeekT9DialogAdapter;
 import tools.CDBHelper;
+import tools.ToolUtil;
 
 import static tools.CDBHelper.getFormatDate;
 
@@ -56,6 +59,7 @@ public class SeekT9Adapter extends BaseAdapter {
 
     private MyApplication myapp;
     private EditText editText;
+    private boolean isState = false;
 
     public SeekT9Adapter(MainActivity context, EditText editText, List<GoodsC> mData) {
         this.activity = context;
@@ -91,7 +95,7 @@ public class SeekT9Adapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final ViewHolder viewHolder;
-
+        final DishesC dishesC;
         if (convertView == null) {
 
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_item_seek, parent, false);
@@ -101,9 +105,19 @@ public class SeekT9Adapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-
-
-        viewHolder.itemSeekInfo.setText(mGoodsList.get(position).getDishesName());
+        dishesC = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), DishesC.class);
+        if (dishesC.getState() == 1){
+            viewHolder.viewTj.setVisibility(View.INVISIBLE);
+            isState = true;
+        }else{
+            viewHolder.viewTj.setVisibility(View.VISIBLE);
+            isState = false;
+        }
+        try {
+            viewHolder.itemSeekInfo.setText(ToolUtil.emojiRecovery2(mGoodsList.get(position).getDishesName()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         viewHolder.itemSeekTv.setText(mGoodsList.get(position).getPrice() + "");
         viewHolder.viewShu.setText("" + mGoodsList.get(position).getDishesCount());
 
@@ -113,7 +127,7 @@ public class SeekT9Adapter extends BaseAdapter {
                 Log.e("item click", "position = " + position);
                 v.setBackgroundResource(R.color.lucency);
                 if (listener != null) {
-                    listener.OnClickListener(v, mGoodsList.get(position).getDishesName(), mGoodsList.get(position).getPrice(), position);
+                    listener.OnClickListener(v, mGoodsList.get(position).getDishesName(), mGoodsList.get(position).getPrice(), position,isState);
                 }
             }
         });
@@ -127,6 +141,7 @@ public class SeekT9Adapter extends BaseAdapter {
             viewHolder.viewShu.setVisibility(View.VISIBLE);
             viewHolder.viewJian.setVisibility(View.VISIBLE);
         }
+
 
         viewHolder.viewTj.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,22 +157,25 @@ public class SeekT9Adapter extends BaseAdapter {
                             else
                                 tasteList.clear();
 
-                            DishesC dishesC = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), DishesC.class);
 
-                            if (dishesC.getTasteList() != null) {
+
+                            if (dishesC.getTasteList().size() != 0) {
                                 for (int i = 0; i < dishesC.getTasteList().size(); i++) {
                                     Document document = CDBHelper.getDocByID(activity.getApplicationContext(), dishesC.getTasteList().get(i).toString());
-                                    tasteList.add(document.getString("tasteName"));
+                                    try {
+                                        tasteList.add(ToolUtil.emojiRecovery2(document.getString("tasteName")));
+                                    } catch (UnsupportedEncodingException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-
                                 selTasteDialog(tasteList, position, viewHolder);
                                 activity.getOrderAdapter().notifyDataSetChanged();
 
                             } else {
-
                                 setAdd(position, viewHolder);
                                 activity.getOrderAdapter().notifyDataSetChanged();
                             }
+
                         }
                     });
                 } catch (CouchbaseLiteException e) {
@@ -254,7 +272,11 @@ public class SeekT9Adapter extends BaseAdapter {
         viewHolder.viewShu.setText(mGoodsList.get(position).getDishesCount() + "");
 
         GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
-        goodsObj.setDishesName(mGoodsList.get(position).getDishesName());
+        try {
+            goodsObj.setDishesName(ToolUtil.emojiConvert1(mGoodsList.get(position).getDishesName()));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         goodsObj.setDishesTaste(m_taste);
         goodsObj.setDishesCount(1);
         goodsObj.setPrice(mGoodsList.get(position).getPrice());
@@ -399,7 +421,7 @@ public class SeekT9Adapter extends BaseAdapter {
 
 
     interface SeekT9OnClickListener {
-        void OnClickListener(View view, String name, float price, int pos);
+        void OnClickListener(View view, String name, float price, int pos,boolean isState);
     }
 
     public class ViewHolder {

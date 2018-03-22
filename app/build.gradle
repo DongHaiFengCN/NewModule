@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
-// 添加插件
-apply plugin: 'com.mob.sdk'
+apply plugin: "com.mob.sdk"
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
 
@@ -9,6 +8,8 @@ android {
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
+        // Enabling multidex support.
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -17,14 +18,12 @@ android {
         }
     }
 }
-
 dependencies {
-    implementation rootProject.ext.libSupportAppcompat
-    if (!isModule.toBoolean()) {
-     //   implementation project(':order')
-      //  implementation project(':dishesmanager')
-        implementation project(':tablemanager')
-    }
     implementation project(':mylibrary')
+    compile project(':Login')
+    compile project(':order')
+    compile project(':dishesmanager')
+    compile project(':tablemanager')
+    compile project(':statistics')
 
 }

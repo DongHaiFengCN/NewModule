@@ -25,22 +25,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
         android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_marginTop="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
 
         <EditText
             android:id="@+id/revise_price_et"
             android:hint="修改套餐价格"
-            android:layout_marginTop="@dimen/base_margin"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:paddingLeft="@dimen/base_margin"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="45dp"
             android:inputType="numberDecimal"
-            android:background="@drawable/shape_eidt_selector"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-
+            android:paddingLeft="@dimen/activity_vertical_margin"
+            android:background="@drawable/shape_eidt_selector"
             />
-
+            <Spinner
+                android:id="@+id/dishes_discount_sp"
+                android:layout_width="80dp"
+                android:layout_height="match_parent" />
+        </LinearLayout>
         <Button
             android:id="@+id/revise_info_bt"
             android:textColor="@color/md_white_1000"

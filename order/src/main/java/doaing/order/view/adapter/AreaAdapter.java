@@ -1,5 +1,6 @@
 package doaing.order.view.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,14 +26,24 @@ import doaing.order.R;
 
 public class AreaAdapter extends ArrayAdapter<String> {
 	private static final String TAG = AreaAdapter.class.getSimpleName();
-
 	private Database db;
 	private Query listsLiveQuery = null;
 	private int  selectItem=-1;
-	public AreaAdapter(Context context, Database db )
+	AreaLocation areaLocation;
+	private Context context;
+
+	public interface AreaLocation{
+		public void setLocation(boolean location);
+	}
+
+	public void setAreaLocation(AreaLocation areaLocation){
+		this.areaLocation = areaLocation;
+	}
+
+	public AreaAdapter(Context context, Database db)
 	{
 		super(context, 0);
-
+		this.context = context;
 		if(db == null) throw new IllegalArgumentException();
 		this.db = db;
 
@@ -50,6 +61,10 @@ public class AreaAdapter extends ArrayAdapter<String> {
 					//Log.e("areaAdapter","liveQuery change getRows ="+result.getString(0));
 				}
 				notifyDataSetChanged();
+				if (getCount() > 0 ){
+					areaLocation.setLocation(true);
+				}
+
 			}
 		});
 
@@ -88,11 +103,14 @@ public class AreaAdapter extends ArrayAdapter<String> {
 		}
 
 		if (position == selectItem) {
-			convertView.setBackgroundResource(R.color.item_select);
+
+			convertView.setBackgroundResource(R.drawable.animtableclick);
+			viewHolder.areaname.setTextColor(context.getResources().getColor(R.color.white));
 		}
 		else
 		{
-			convertView.setBackgroundResource(R.color.item_normal);
+			convertView.setBackgroundResource(R.drawable.animtablenoclick);
+			viewHolder.areaname.setTextColor(context.getResources().getColor(R.color.md_black_1000));
 		}
 		viewHolder.areaname.setText(doc.getString("areaName"));
 
@@ -107,7 +125,5 @@ public class AreaAdapter extends ArrayAdapter<String> {
 		this.selectItem = selectItem;
 		notifyDataSetChanged();
 	}
-
-
 
 }

@@ -26,14 +26,12 @@ public class ShowParticularsAdapter extends BaseAdapter {
 
     private Activity activity;
     private List<GoodsC> goodsCs;
-
     public ShowParticularsAdapter(Activity activity, List<GoodsC> goodsCs)
     {
         this.activity = activity;
         this.goodsCs = goodsCs;
 
     }
-
 
     @Override
     public int getCount() {
@@ -100,7 +98,6 @@ public class ShowParticularsAdapter extends BaseAdapter {
         viewHolder.dj.setText(""+ MyBigDecimal.mul(goodsCs.get(position).getPrice(),goodsCs.get(position).getDishesCount(),1));
 
         viewHolder.sl.setText(goodsCs.get(position).getDishesCount()+"");
-
 
         return convertView;
     }

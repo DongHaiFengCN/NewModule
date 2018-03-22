@@ -4,13 +4,13 @@ if (isModule.toBoolean()) {
 } else {
     apply plugin: 'com.android.library'
 }
+
 apply plugin: "com.mob.sdk"
-apply plugin: 'com.jakewharton.butterknife'
 
 // 在MobSDK的扩展中注册SMSSDK的相关信息
 MobSDK {
-    appKey "21efc5a881e60"
-    appSecret "db061f16515cf08d8c98c9857c4550d9"
+    appKey "11534d36cd080"
+    appSecret "f498b1f609a79683545625dfab9a7917"
 
     SMSSDK {}
 }
@@ -25,7 +25,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [ moduleName : project.getName() ]
+                arguments = [moduleName: project.getName()]
             }
         }
 
@@ -41,6 +41,7 @@ android {
                 //集成开发模式下排除debug文件夹中的所有Java文件
                 java {
                     exclude 'module/**'
+
                 }
             }
         }
@@ -55,20 +56,22 @@ android {
 }
 
 
-repositories{
-    flatDir{
+repositories {
+    flatDir {
         dirs 'libs' //就是你放aar的目录地址
     }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     implementation rootProject.ext.libSupportConstraint
     implementation rootProject.ext.libSupportAppcompat
     implementation rootProject.ext.libSupportDesign
     //阿里路由
-    //implementation 'com.android.support:support-v13:26.1.0'
-    //implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation rootProject.ext.libAlibaba
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.android.support:support-v4:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
     annotationProcessor libArouter_compiler
     //Butterknife
     implementation rootProject.ext.libButterknife
@@ -81,18 +84,18 @@ dependencies {
     implementation rootProject.ext.libRxBindingDesign
     testImplementation rootProject.ext.libTestImplementation
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
-    implementation project(':mylibrary')
-    compile 'com.android.support:cardview-v7:26.+'
+
+    implementation 'com.android.support:cardview-v7:26.+'
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
-    compile 'com.journeyapps:zxing-android-embedded:3.3.0'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3'
-    compile 'com.google.zxing:core:3.2.1'
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.journeyapps:zxing-android-embedded:3.3.0'
+
+    implementation 'com.google.zxing:core:3.2.1'
+    implementation 'org.greenrobot:eventbus:3.0.0'
     implementation files('libs/commons-lang-2.6.jar')
-    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.2'
     implementation files('libs/xUtils-2.6.14.jar')
     implementation files('libs/ksoap2-android-assembly-2.5.2-jar-with-dependencies.jar')
-    //implementation files('libs/com.baidu.tts_2.3.0.jar')
-    implementation files('libs/modlelib0127.jar')
     implementation files('libs/gprintersdkv22.jar')
+
+    implementation project(':mylibrary')
 }

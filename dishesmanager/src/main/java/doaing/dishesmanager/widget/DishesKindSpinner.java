@@ -21,7 +21,7 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.MyApplication;
+import tools.CDBHelper;
 
 
 /**
@@ -67,7 +67,7 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
     }
     private void getKindItems() {
 
-        final Database database = ((MyApplication) getContext().getApplicationContext()).getDatabase();
+        final Database database = CDBHelper.getDatabase();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))

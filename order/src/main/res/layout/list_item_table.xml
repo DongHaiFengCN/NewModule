@@ -8,11 +8,10 @@
 
     <android.support.v7.widget.CardView
         android:id="@+id/table_state_cardview"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
         android:layout_margin="12dp"
-
-        app:cardBackgroundColor="@android:color/holo_green_dark"
+        app:cardBackgroundColor="@color/zws"
         app:cardCornerRadius="10dp"
         app:cardElevation="8dp"
         app:contentPaddingBottom="8dp"
@@ -20,14 +19,30 @@
         app:contentPaddingRight="8dp"
         app:contentPaddingTop="8dp">
 
-        <TextView
-            android:id="@+id/item_tablestate_name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="一号桌"
-            android:textColor="#ffffff"
-            android:textSize="16sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/item_tablestate_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="一号桌"
+                android:textColor="#ffffff"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/item_tablestate_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="0/4"
+                android:textColor="@color/white"
+                android:gravity="right"
+                />
+        </LinearLayout>
+
     </android.support.v7.widget.CardView>
 
 </FrameLayout>

@@ -12,21 +12,24 @@
          android:layout_width="80dp"
          android:layout_height="match_parent"
          android:gravity="center"
-         android:text="1" />
+         android:text="1"
+        android:textColor="@color/md_black_1000"/>
 
     <TextView
         android:id="@+id/taste"
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="2" />
+        android:text="2"
+        android:textColor="@color/md_black_1000"/>
 
     <TextView
         android:id="@+id/price"
         android:layout_width="50dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="" />
+        android:text=""
+        android:textColor="@color/md_black_1000"/>
 
 
     <doaing.order.view.AmountView
@@ -39,7 +42,6 @@
         app:btnTextSize="14sp"
         app:btnWidth="36dp"
         app:tvWidth="50dp"
-
         />
 
 </LinearLayout>

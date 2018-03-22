@@ -1,28 +1,8 @@
 package doaing;
 
-
-import android.app.Application;
-import android.os.Handler;
-
-import android.widget.Toast;
-
-import com.couchbase.lite.BasicAuthenticator;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.Database;
-import com.couchbase.lite.DatabaseConfiguration;
-import com.couchbase.lite.Endpoint;
-import com.couchbase.lite.Replicator;
-import com.couchbase.lite.ReplicatorChange;
-import com.couchbase.lite.ReplicatorChangeListener;
-import com.couchbase.lite.ReplicatorConfiguration;
-import com.couchbase.lite.URLEndpoint;
-import com.couchbase.lite.internal.support.Log;
 import com.mob.MobSDK;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
-
+import doaing.mylibrary.MyApplication;
 
 
 /**
@@ -36,11 +16,11 @@ import java.net.URISyntaxException;
  * @author donghaifeng
  */
 
-public class MainApplication extends doaing.MyApplication {
-
+public class MainApplication extends MyApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+
         MobSDK.init(this);
     }
 }
