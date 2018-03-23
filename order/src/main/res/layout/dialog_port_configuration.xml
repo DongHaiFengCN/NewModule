@@ -44,17 +44,17 @@
             android:orientation="horizontal"
             >
             <RadioButton
-                android:id="@+id/rbBluetooth"
+                android:id="@+id/rbEthernet"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:checked="true"
                 android:textSize="15sp"
                 android:textColor="@color/md_black_1000"
-                android:text="@string/bluetooth"
+                android:text="@string/ethernet"
                 android:layout_weight="1"
                 android:button="@null"
-                android:gravity="center"
                 android:layout_marginRight="15dp"
+                android:gravity="center"
+                android:checked="true"
                 android:background="@drawable/radio_checked">
             </RadioButton>
 
@@ -72,17 +72,20 @@
                 android:background="@drawable/radio_checked">
             </RadioButton>
 
+
+
             <RadioButton
-                android:id="@+id/rbEthernet"
+                android:id="@+id/rbBluetooth"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:checked="false"
                 android:textSize="15sp"
                 android:textColor="@color/md_black_1000"
-                android:text="@string/ethernet"
+                android:text="@string/bluetooth"
                 android:layout_weight="1"
                 android:button="@null"
-                android:layout_marginRight="15dp"
                 android:gravity="center"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/radio_checked">
             </RadioButton>
         </RadioGroup>

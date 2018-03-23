@@ -4,13 +4,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -83,8 +86,6 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
 
     @Override
     public void initData(Intent intent) {
-
-
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         myapp = (MyApplication) getApplication();
         if (mGpService == null){
@@ -105,6 +106,35 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             editKitchenData();
         }
     }
+
+    private void hideNavigationBar() {
+
+        int systemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
+        // Navigation bar hiding:  Backwards compatible to ICS.
+
+        if (Build.VERSION.SDK_INT >= 14) {
+
+            systemUiVisibility ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
+
+        }
+
+        // 全屏展示
+
+        if (Build.VERSION.SDK_INT >= 16) {
+
+            systemUiVisibility ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
+
+        }
+
+        if (Build.VERSION.SDK_INT >= 18) {
+
+            systemUiVisibility ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+        }
+        getWindow().getDecorView().setSystemUiVisibility(systemUiVisibility);
+
+    }
+
     private void addKitchenData()
     {
         if (infomations.size() == 0){
@@ -177,6 +207,18 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     @Override
     protected Toolbar setToolBarInfo() {
         return toolbar;
+    }
+
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            return true;
+
+        }
+        return false;
+
     }
 
     public void onClick(View view) {
@@ -453,8 +495,15 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        hideNavigationBar();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+
 
     }
 
@@ -462,6 +511,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         registerBroadcast();
+
         this.sendBroadcast(new Intent(GlobalConstant.printer_msg_pause));
     }
 

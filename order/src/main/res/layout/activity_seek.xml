@@ -31,258 +31,191 @@
         />
 
 
-    <TableLayout
+    <LinearLayout
         android:id="@+id/tl_key_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/activity_seek_edit"
         android:layout_marginTop="10dp"
-        android:visibility="gone"
-        android:layout_weight="1.1" >
-
-        <TableRow
+        android:visibility="visible"
+        android:layout_weight="1.1"
+        android:orientation="vertical"
+        >
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <RelativeLayout
-                android:id="@+id/ibtn_key_1"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-                <ImageView
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                    android:layout_width="40sp"
-                    android:layout_height="30sp"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_key_1" />
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut1"
+                    android:layout_margin="5dp">
 
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/ibtn_key_2"
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut4"
+                    android:layout_margin="5dp">
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut7"
+                    android:layout_margin="5dp">
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-                <ImageView
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_key_2" />
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut2"
+                    android:layout_margin="5dp"
+                    >
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut5"
+                    android:layout_margin="5dp">
 
 
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/ibtn_key_3"
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut8"
+                    android:layout_margin="5dp">
+                </RelativeLayout>
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut3"
+                    android:layout_margin="5dp"
+                    >
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut6"
+                    android:layout_margin="5dp">
+
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/ibtn_key_9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    style="@style/style_public_1"
+                    android:background="@drawable/animbut9"
+                    android:layout_margin="5dp">
+                </RelativeLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ibtn_key_del"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:background="@mipmap/btn_del"
+                android:layout_margin="5dp">
 
                 <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/icon_cha"
+                    android:layout_margin="5dp"
+                    android:padding="10dp">
 
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_key_3" />
-            </RelativeLayout>
-
-
-
+                </ImageView>
 
 
-        </TableRow>
+            </LinearLayout>
 
-        <TableRow
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="2.7">
 
-            <RelativeLayout
-                android:id="@+id/ibtn_key_4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-                <ImageView
-
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_key_4" />
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/ibtn_key_5"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-                <ImageView
-
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/icon_key_5"
-                    android:layout_centerInParent="true"/>
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/ibtn_key_6"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-
-                <ImageView
-
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/icon_key_6"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-
-
-
-
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <RelativeLayout
-                android:id="@+id/ibtn_key_7"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-
-                <ImageView
-
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_key_7" />
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/ibtn_key_8"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-                <ImageView
-
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/icon_key_8"
-                    android:layout_centerInParent="true"/>
-
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/ibtn_key_9"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-
-                <ImageView
-
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/icon_key_9"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <RelativeLayout
+            <Button
                 android:id="@+id/ibtn_key_r"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
+                android:layout_margin="5dp"
+                android:layout_weight="2"
+                android:textSize="20dp"
+                android:background="@drawable/animbut26">
+            </Button>
 
-                <ImageView
-
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/icon_key_r"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
-
-            <RelativeLayout
+            <LinearLayout
                 android:id="@+id/ibtn_key_0"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-                <ImageView
+                android:layout_weight="2"
+                android:layout_margin="5dp"
+                android:background="@mipmap/icon_btn_0">
+            </LinearLayout>
 
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/icon_key_0"
-                    android:layout_centerInParent="true"/>
-
-            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/ibtn_key_l"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 style="@style/style_public_1"
-                android:background="@drawable/bg_key_selector"
-                >
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="30dp"
-                    android:layout_centerInParent="true"
-                    android:src="@mipmap/icon_key_l" />
-            </RelativeLayout>
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <RelativeLayout
-                android:id="@+id/ibtn_key_del"
-                style="@style/style_public_1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_key_selector">
-                <ImageView
-
-                    android:layout_centerInParent="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:src="@mipmap/icon_key_del" />
-
+                android:background="@drawable/animbutzdc"
+                android:layout_margin="5dp"
+                android:layout_weight="1.3">
             </RelativeLayout>
 
+        </LinearLayout>
 
-        </TableRow>
-    </TableLayout>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/activity_seek_lin_26"
@@ -290,7 +223,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_below="@+id/activity_seek_edit"
         android:layout_marginTop="10dp"
         android:background="@color/white">

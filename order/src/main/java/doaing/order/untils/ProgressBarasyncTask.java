@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 
+import com.couchbase.lite.Expression;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,7 +67,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
     @Override
     protected void onPreExecute() {
 
-         this.payActivity.showDialog();
+         //this.payActivity.showDialog();
     }
 
     //其次是执行doInBackground方法
@@ -335,7 +337,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
     @Override
     protected void onPostExecute(String result) {
 
-        payActivity.closeDialog();
+        //payActivity.closeDialog();
 
         payActivity.turnDesk();
 

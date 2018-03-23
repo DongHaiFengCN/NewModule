@@ -124,7 +124,7 @@ public class PortConfigurationActivity extends Activity {
 				finish();
 			}
 		});
-		RbBluetooth();
+		Ethernet();
 	}
 
 	@Override
@@ -173,16 +173,20 @@ public class PortConfigurationActivity extends Activity {
 		}
 	}
 
+
+	private void Ethernet(){
+		tvPortInfo.setVisibility(View.GONE);
+		llEthernet.setVisibility(View.VISIBLE);
+		linearLayout.setVisibility(View.GONE);
+		tvUsb.setVisibility(View.GONE);
+		dialog_linearLayout.setVisibility(View.VISIBLE);
+		mPortParam.setPortType(PortParameters.ETHERNET);
+	}
 	class EthernetRaidoOnClickListener implements OnClickListener {
 		@Override
 		public void onClick(View arg0) {
 			// TODO Auto-generated method stub
-			tvPortInfo.setVisibility(View.GONE);
-			llEthernet.setVisibility(View.VISIBLE);
-			linearLayout.setVisibility(View.GONE);
-			tvUsb.setVisibility(View.GONE);
-			dialog_linearLayout.setVisibility(View.VISIBLE);
-			mPortParam.setPortType(PortParameters.ETHERNET);
+			Ethernet();
 		}
 	}
 

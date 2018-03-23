@@ -340,7 +340,9 @@ public class NewOrderService extends Service {
         //1、程序连接上厨房端打印机后要进行分厨房打印
 
         ArrayList<GoodsC> myshangpinlist = allKitchenClientGoods.get("" + printerId);
-
+        if (myshangpinlist == null){
+            return;
+        }
         //2、获得该打印机内容 打印机名称
 
         String printname = allKitchenClientPrintNames.get("" + printerId);
@@ -633,8 +635,6 @@ public class NewOrderService extends Service {
     private String getPrintContentforClient(ArrayList<GoodsC> myshangpinlist, String clientname)
 
     {
-
-
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
 

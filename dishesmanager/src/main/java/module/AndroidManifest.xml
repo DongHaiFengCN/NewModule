@@ -42,7 +42,7 @@
             android:label="@string/TasteActivity"
             android:launchMode="singleTask" />
         <activity
-            android:name=".DishesKindActivity"
+            android:name=".SpecificationActivity"
             android:label="@string/DishesKindActivity"
             android:launchMode="singleTask" />
         <activity

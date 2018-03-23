@@ -36,7 +36,7 @@ import tools.CDBHelper;
 
 
 public class Tool {
-    private static long lastClickTime;
+    public static long lastClickTime;
     public static boolean isNotEmpty(Object c){
 
         if(c == null){
@@ -215,7 +215,6 @@ public class Tool {
 
     public static boolean isFastDoubleClick() {
         long time = System.currentTimeMillis();
-        Log.e("TOol","time---"+time+"----lastClickTime-----"+lastClickTime);
         if ( (time - lastClickTime) < 3000) {
             return true;
         }
