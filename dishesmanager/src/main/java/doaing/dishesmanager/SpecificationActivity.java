@@ -100,7 +100,6 @@ public class SpecificationActivity extends BaseToobarActivity {
                 guige_list.setAdapter(listAdapter);
             }
         });
-
     }
     /**
      * 查询主菜品,并添加副菜品

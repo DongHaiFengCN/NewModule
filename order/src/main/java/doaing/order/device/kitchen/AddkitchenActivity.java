@@ -516,11 +516,19 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (isFinishing()){
+            this.unregisterReceiver(PrinterStatusBroadcastReceiver);
+            this.sendBroadcast(new Intent(GlobalConstant.printer_msg_resum));
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        this.unregisterReceiver(PrinterStatusBroadcastReceiver);
-        this.sendBroadcast(new Intent(GlobalConstant.printer_msg_resum));
+
     }
 
 
