@@ -124,17 +124,16 @@ public class SpecificationActivity extends BaseToobarActivity {
      * 查询副菜品
      */
     private void setGuiGeSupDishes(String guiGeSupDishes,String dishesSupCount){
-        List<DishesC> dishesList = CDBHelper.getObjByWhere(getApplicationContext(),
+        List<Document> dishesList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
                 Expression.property("className").equalTo(Expression.string("DishesC"))
                         .and(Expression.property("dishesName").equalTo(Expression.string(guiGeSupDishes)))
                         .and(Expression.property("dishesKindId").equalTo(Expression.string(dishesKindId)))
-                ,null
-                ,DishesC.class);
+                ,null);
 
         if (dishesList.size() != 0){
-            DishesC dishesObj = dishesList.get(0);
-            supDishesId = dishesObj.get_id();
-            supPrice = dishesObj.getPrice();
+            Document dishesObj = dishesList.get(0);
+            supDishesId = dishesObj.getId();
+            supPrice = dishesObj.getFloat("price");
         }else{
             Toast.makeText(this,"输入副菜品不匹配",Toast.LENGTH_LONG).show();
             return;
