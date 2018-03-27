@@ -5,11 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * The type Dishes c.
+ *
+ * @author loongsun
  * @ClassName: Dishes
  * @Description: 菜品类文件
- * @author loongsun
- * @date 2014-7-29 上午1:06:02
- *
+ * @date 2014 -7-29 上午1:06:02
  */
 public class DishesC implements Serializable {
 	/**
@@ -111,86 +112,190 @@ public class DishesC implements Serializable {
 	 */
 	private int state;
 
+	/**
+	 * Gets data type.
+	 *
+	 * @return the data type
+	 */
 	public String getDataType() {
 		return dataType;
 	}
 
+	/**
+	 * Sets data type.
+	 *
+	 * @param dataType the data type
+	 */
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
 
+	/**
+	 * Instantiates a new Dishes c.
+	 */
 	public DishesC()
 	{
 	}
+
+	/**
+	 * Instantiates a new Dishes c.
+	 *
+	 * @param channelId the channel id
+	 */
 	public DishesC(String channelId)
 	{
 		this.channelId=channelId;
 	}
 
+	/**
+	 * Gets channel id.
+	 *
+	 * @return the channel id
+	 */
 	public String getChannelId() {
 		return channelId;
 	}
 
+	/**
+	 * Sets channel id.
+	 *
+	 * @param channelId the channel id
+	 */
 	public void setChannelId(String channelId) {
 		this.channelId = channelId;
 	}
 
+	/**
+	 * Gets class name.
+	 *
+	 * @return the class name
+	 */
 	public String getClassName() {
 		return className;
 	}
 
+	/**
+	 * Sets class name.
+	 *
+	 * @param className the class name
+	 */
 	public void setClassName(String className) {
 		this.className = className;
 	}
 
+	/**
+	 * Gets order id.
+	 *
+	 * @return the order id
+	 */
 	public int getOrderId() {
 		return orderId;
 	}
 
+	/**
+	 * Sets order id.
+	 *
+	 * @param orderId the order id
+	 */
 	public void setOrderId(int orderId) {
 		this.orderId = orderId;
 	}
 
+	/**
+	 * Gets dishes name.
+	 *
+	 * @return the dishes name
+	 */
 	public String getDishesName() {
 		return dishesName;
 	}
 
+	/**
+	 * Sets dishes name.
+	 *
+	 * @param dishesName the dishes name
+	 */
 	public void setDishesName(String dishesName) {
 		this.dishesName = dishesName;
 	}
 
+	/**
+	 * Gets dishes name code 9.
+	 *
+	 * @return the dishes name code 9
+	 */
 	public String getDishesNameCode9() {
 		return dishesNameCode9;
 	}
 
+	/**
+	 * Sets dishes name code 9.
+	 *
+	 * @param dishesNameCode9 the dishes name code 9
+	 */
 	public void setDishesNameCode9(String dishesNameCode9) {
 		this.dishesNameCode9 = dishesNameCode9;
 	}
 
+	/**
+	 * Is takeout boolean.
+	 *
+	 * @return the boolean
+	 */
 	public boolean isTakeout() {
 		return takeout;
 	}
 
+	/**
+	 * Sets takeout.
+	 *
+	 * @param takeout the takeout
+	 */
 	public void setTakeout(boolean takeout) {
 		this.takeout = takeout;
 	}
 
+	/**
+	 * Is specialty boolean.
+	 *
+	 * @return the boolean
+	 */
 	public boolean isSpecialty() {
 		return specialty;
 	}
 
+	/**
+	 * Sets specialty.
+	 *
+	 * @param specialty the specialty
+	 */
 	public void setSpecialty(boolean specialty) {
 		this.specialty = specialty;
 	}
 
+	/**
+	 * Gets taste list.
+	 *
+	 * @return the taste list
+	 */
 	public List<String> getTasteList() {
 		return tasteList;
 	}
 
+	/**
+	 * Sets taste list.
+	 *
+	 * @param tasteList the taste list
+	 */
 	public void setTasteList(List<String> tasteList) {
 		this.tasteList = tasteList;
 	}
 
+	/**
+	 * Add tast id.
+	 *
+	 * @param id the id
+	 */
 	public void addTastId(String id)
 	{
 		if(this.tasteList==null)
@@ -198,45 +303,101 @@ public class DishesC implements Serializable {
 		this.tasteList.add(id);
 	}
 
+	/**
+	 * Gets price.
+	 *
+	 * @return the price
+	 */
 	public float getPrice() {
 		return price;
 	}
 
+	/**
+	 * Sets price.
+	 *
+	 * @param price the price
+	 */
 	public void setPrice(float price) {
 		this.price = price;
 	}
 
+	/**
+	 * Gets description.
+	 *
+	 * @return the description
+	 */
 	public String getDescription() {
 		return description;
 	}
 
+	/**
+	 * Sets description.
+	 *
+	 * @param description the description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	/**
+	 * Gets picpath.
+	 *
+	 * @return the picpath
+	 */
 	public String getPicpath() {
 		return picpath;
 	}
 
+	/**
+	 * Sets picpath.
+	 *
+	 * @param picpath the picpath
+	 */
 	public void setPicpath(String picpath) {
 		this.picpath = picpath;
 	}
 
+	/**
+	 * Is set menu boolean.
+	 *
+	 * @return the boolean
+	 */
 	public boolean isSetMenu() {
 		return setMenu;
 	}
 
+	/**
+	 * Sets set menu.
+	 *
+	 * @param setMenu the set menu
+	 */
 	public void setSetMenu(boolean setMenu) {
 		this.setMenu = setMenu;
 	}
 
+	/**
+	 * Gets dishes id list.
+	 *
+	 * @return the dishes id list
+	 */
 	public List<String> getDishesIdList() {
 		return dishesIdList;
 	}
 
+	/**
+	 * Sets dishes id list.
+	 *
+	 * @param dishesIdList the dishes id list
+	 */
 	public void setDishesIdList(List<String> dishesIdList) {
 		this.dishesIdList = dishesIdList;
 	}
+
+	/**
+	 * Add dishes id.
+	 *
+	 * @param id the id
+	 */
 	public void addDishesId(String id)
 	{
 		if(this.dishesIdList==null)
@@ -244,74 +405,164 @@ public class DishesC implements Serializable {
 		this.dishesIdList.add(id);
 	}
 
+	/**
+	 * Gets dishes kind id.
+	 *
+	 * @return the dishes kind id
+	 */
 	public String getDishesKindId() {
 		return dishesKindId;
 	}
 
+	/**
+	 * Sets dishes kind id.
+	 *
+	 * @param dishesKindId the dishes kind id
+	 */
 	public void setDishesKindId(String dishesKindId) {
 		this.dishesKindId = dishesKindId;
 	}
 
+	/**
+	 * Gets state.
+	 *
+	 * @return the state
+	 */
 	public int getState() {
 		return state;
 	}
 
+	/**
+	 * Sets state.
+	 *
+	 * @param state the state
+	 */
 	public void setState(int state) {
 		this.state = state;
 	}
 
+	/**
+	 * Is have sup dishes boolean.
+	 *
+	 * @return the boolean
+	 */
 	public boolean isHaveSupDishes() {
 		return haveSupDishes;
 	}
 
+	/**
+	 * Sets have sup dishes.
+	 *
+	 * @param haveSupDishes the have sup dishes
+	 */
 	public void setHaveSupDishes(boolean haveSupDishes) {
 		this.haveSupDishes = haveSupDishes;
 	}
 
+	/**
+	 * Gets sup dishes id.
+	 *
+	 * @return the sup dishes id
+	 */
 	public String getSupDishesId() {
 		return supDishesId;
 	}
 
+	/**
+	 * Sets sup dishes id.
+	 *
+	 * @param supDishesId the sup dishes id
+	 */
 	public void setSupDishesId(String supDishesId) {
 		this.supDishesId = supDishesId;
 	}
 
+	/**
+	 * Gets sup count.
+	 *
+	 * @return the sup count
+	 */
 	public float getSupCount() {
 		return supCount;
 	}
 
+	/**
+	 * Sets sup count.
+	 *
+	 * @param supCount the sup count
+	 */
 	public void setSupCount(float supCount) {
 		this.supCount = supCount;
 	}
 
+	/**
+	 * Gets sup price.
+	 *
+	 * @return the sup price
+	 */
 	public float getSupPrice() {
 		return supPrice;
 	}
 
+	/**
+	 * Sets sup price.
+	 *
+	 * @param supPrice the sup price
+	 */
 	public void setSupPrice(float supPrice) {
 		this.supPrice = supPrice;
 	}
 
+	/**
+	 * Gets sup dishes name.
+	 *
+	 * @return the sup dishes name
+	 */
 	public String getSupDishesName() {
 		return supDishesName;
 	}
 
+	/**
+	 * Sets sup dishes name.
+	 *
+	 * @param supDishesName the sup dishes name
+	 */
 	public void setSupDishesName(String supDishesName) {
 		this.supDishesName = supDishesName;
 	}
 
+	/**
+	 * Gets dishes name code 26.
+	 *
+	 * @return the dishes name code 26
+	 */
 	public String getDishesNameCode26() {
 		return dishesNameCode26;
 	}
 
+	/**
+	 * Sets dishes name code 26.
+	 *
+	 * @param dishesNameCode26 the dishes name code 26
+	 */
 	public void setDishesNameCode26(String dishesNameCode26) {
 		this.dishesNameCode26 = dishesNameCode26;
 	}
 
+	/**
+	 * Gets id.
+	 *
+	 * @return the id
+	 */
 	public String get_id() {
 		return _id;
 	}
 
+	/**
+	 * Sets id.
+	 *
+	 * @param _id the id
+	 */
 	public void set_id(String _id) {
 		this._id = _id;
 	}
