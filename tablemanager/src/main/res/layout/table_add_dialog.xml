@@ -45,12 +45,12 @@
 
         <TextView
             android:textSize="12sp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="13dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textColor="@color/grey_color1"
             android:gravity="center"
-            android:text=" *名         称:" />
+            android:text="* 名         称:" />
 
         <EditText
             android:id="@+id/tablename_et"
@@ -79,7 +79,7 @@
             android:layout_height="match_parent"
             android:textColor="@color/grey_color1"
             android:gravity="center"
-            android:text=" 最少人数:" />
+            android:text="  最少人数:" />
 
         <EditText
             android:id="@+id/minimun_number"
@@ -108,7 +108,7 @@
             android:layout_height="match_parent"
             android:textColor="@color/grey_color1"
             android:gravity="center"
-            android:text=" 最大人数:" />
+            android:text="  最大人数:" />
 
         <EditText
             android:id="@+id/maximum_number_et"
@@ -139,7 +139,7 @@
             android:layout_height="match_parent"
             android:textColor="@color/grey_color1"
             android:gravity="center"
-            android:text=" 最低消费:" />
+            android:text="  最低消费:" />
 
         <EditText
             android:id="@+id/minimun_consumption_et"

@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    //全屏
     private void hideNavigationBar() {
 
         int systemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
@@ -626,28 +627,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
 
             public void onClick(View view) {
+                if (getGoodsList().size() > 0) {
 
-                if (Tool.isFastDoubleClick()) {
-
-                    Toast.makeText(MainActivity.this, "点击太快，请稍候", Toast.LENGTH_LONG).show();
-
-                    return;
-
+                    saveOrder();
+                    Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
+                    startActivity(intent);
+                    finish();
                 } else {
 
-
-                    if (getGoodsList().size() > 0) {
-
-                        saveOrder();
-                        Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
-                        startActivity(intent);
-                        finish();
-
-                    } else {
-
-
-                        Toast.makeText(MainActivity.this, "订单为空！", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(MainActivity.this, "订单为空！", Toast.LENGTH_SHORT).show();
                 }
             }
 

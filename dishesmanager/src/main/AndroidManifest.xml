@@ -13,7 +13,7 @@
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DishesKindActivity"
+            android:name=".SpecificationActivity"
             android:label="@string/DishesKindActivity"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />

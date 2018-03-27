@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <stroke android:width="1dip"
+        android:color="@color/line"
+        />
+    <!--边框宽度-->
+    <size android:width="1dip"
+        android:height="1dip"
+        />
+
+    <solid android:color="@color/md_white_1000"></solid>
+</shape>

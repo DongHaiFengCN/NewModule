@@ -1447,16 +1447,15 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
             }//end for 2
 
-
             if (findflag)  //如果有所属菜品，就去打印
             {
 
                 proDialog.setMessage("正在分发到厨房打印机");
 
                 String clientKtname = "" + kitchenClientObj.getName()+hintDishes;//厨房名称
-                String printname = "" + kitchenClientObj.getKitchenAdress();//打印机名称
+                String printname = "" + kitchenClientObj.getIndexPrinter();//打印机名称
                 Log.e("Port",""+printname);
-                int printerId = Integer.parseInt(printname)-1;
+                int printerId = Integer.parseInt(printname);
 
                 allKitchenClientGoods.put("" + printerId, oneKitchenClientGoods);
                 allKitchenClientPrintNames.put("" + printerId, clientKtname);
