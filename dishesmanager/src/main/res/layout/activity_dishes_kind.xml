@@ -6,11 +6,53 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="doaing.dishesmanager.TasteActivity">
-    <include layout="@layout/common_view_toolbar"></include>
+    <include layout="@layout/common_view_toolbar">
+
+    </include>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="主菜品"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="22dp"
+            />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="副菜品"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="22dp"
+            />
+        <TextView
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="倍数"
+            android:textColor="@color/black"
+            android:gravity="center"
+            android:textSize="22dp"
+            />
+
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/disheskind_lv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"
+        tools:listitem="@layout/slip_list_item_guige"
+        android:divider="#00000000"
+        android:dividerHeight="10dp"
+        >
+    </ListView>
 
 </LinearLayout>
 

@@ -57,7 +57,7 @@ public class DishesManagerMainActivity extends BaseToobarActivity {
             @Override
             public void onClick(View v) {
 
-                startActivity(new Intent(DishesManagerMainActivity.this, DishesKindActivity.class));
+                startActivity(new Intent(DishesManagerMainActivity.this, SpecificationActivity.class));
                 overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             }
         });

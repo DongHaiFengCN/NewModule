@@ -64,8 +64,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
     ListView activitySeekList;
     EditText activitySeekEdit;
-    LinearLayout activitySeekLin26;
-    TableLayout tlKeyGrid;
+    LinearLayout activitySeekLin26,tlKeyGrid;
     public static String[][] pinyin2sz = new String[][]{{"a", "b", "c", ""}, {"d", "e", "f", ""}, {"g", "h", "i", ""}, {"j", "k", "l", ""}, {"m", "n", "o", ""}, {"p", "q", "r", "s"}, {"t", "u", "v", ""}, {"w", "x", "y", "z"}};
     private float total = 0.0f;
     public int point = 1, tastePos;
@@ -559,8 +558,9 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
 
         } else if (i == R.id.ibtn_key_0) {
-            activitySeekEdit.getText().insert(activitySeekEdit.getSelectionEnd(), "0");
-            search(activitySeekEdit.getText().toString());
+            activitySeekEdit.setText("");
+            t9GoodsList.clear();
+            seekT9Adapter.notifyDataSetChanged();
 
         } else if (i == R.id.ibtn_key_r) {
             tlKeyGrid.setVisibility(View.GONE);

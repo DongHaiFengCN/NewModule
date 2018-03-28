@@ -27,6 +27,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -125,6 +126,8 @@ public class DeskActivity extends AppCompatActivity {
     private String TAG = getCallingPackage();
     private MyApplication myapp;
     private long mExitTime = 0;
+    private int keyCode = 4;
+    private long boo;
     private Handler uiHandler = new Handler()
     {
         @Override
@@ -161,10 +164,18 @@ public class DeskActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if ((System.currentTimeMillis() - boo) > 2000) {
+                    Toast.makeText(getApplicationContext(), "再按一次退出系统",
+                            Toast.LENGTH_SHORT).show();
+                    boo = System.currentTimeMillis();
+                } else {
+                    finish();
+                    System.exit(0);
+                }
+
             }
         });
-        msg_point = (TextView)findViewById(R.id.msg_point);
+        msg_point = findViewById(R.id.msg_point);
         msg_point.setVisibility(View.INVISIBLE);
         msg_printer = findViewById(R.id.icon_printer);
         msg_printer.setOnClickListener(new View.OnClickListener()
@@ -234,6 +245,21 @@ public class DeskActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - boo) > 2000) {
+                Toast.makeText(getApplicationContext(), "再按一次退出系统",
+                        Toast.LENGTH_SHORT).show();
+                boo = System.currentTimeMillis();
+            } else {
+                finish();
+                System.exit(0);
+            }
+        }
+        return false;
     }
 
     @Override
@@ -438,9 +464,7 @@ public class DeskActivity extends AppCompatActivity {
                 final TableC tableC = CDBHelper.getObjById(getApplicationContext(),tableId,TableC.class);
                 myapp.setTable_sel_obj(tableC);
 
-
                 final AlertDialog.Builder alertLog = new AlertDialog.Builder(DeskActivity.this);
-
 
                 //空闲状态下重置上一次未买单状态
                 if(tableC.getState()==0){

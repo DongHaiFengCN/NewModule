@@ -398,6 +398,8 @@ public class LoginActivity extends AppCompatActivity  {
 
                         String userName = obj.getData();
                         String pwd =  mPasswordView.getText().toString();
+                        CDBHelper.dbName = userName;
+                        Log.e("dbName",CDBHelper.dbName);
                         //开始同步
                         CDBHelper.getSharedInstance(getApplicationContext());
                         CDBHelper.startPushAndPullReplicationForCurrentUser(userName,pwd);

@@ -7,11 +7,27 @@
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:background="@color/colorPrimaryDark"
-        android:gravity="center"
-        android:text="买单!"
+        android:gravity="center_vertical"
+        android:text="订单备注"
         android:paddingLeft="20sp"
         android:textColor="@color/md_white_1000"
         android:textSize="26sp"
+        />
+    <EditText
+        android:id="@+id/view_pay_ed"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="填写订单备注(选填)"
+        android:background="@drawable/animselect"
+        android:inputType="text"
+        android:textSize="16sp"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:paddingLeft="10dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
         />
     <View
         android:layout_width="match_parent"
@@ -48,23 +64,6 @@
             android:textSize="20dp"
             android:textColor="@color/md_black_1000"
             />
-        />
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:background="@color/md_blue_grey_100"
-            ></View>
-        <Button
-            android:id="@+id/view_pay_shi"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@null"
-            android:text="是"
-            android:textSize="20dp"
-            android:textColor="@color/md_black_1000"
-            />
-
 
     </LinearLayout>
 </LinearLayout>

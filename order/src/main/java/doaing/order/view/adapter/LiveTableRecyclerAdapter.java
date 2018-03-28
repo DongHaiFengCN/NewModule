@@ -149,7 +149,6 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
                 break;
             case 1:
                 holder.cardView.setCardBackgroundColor(Color.rgb(255,193,17));
-
                 break;
             case  2:
                 holder.cardView.setCardBackgroundColor(Color.rgb(253,117,80));
@@ -160,9 +159,25 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
         holder.tv.setText(name);
         holder.itemView.setTag(docId);
         if (state == 0){
-            holder.num.setText(0 + "/" + maxPersons);
+            if (maxPersons == 0){
+                holder.num.setText("");
+            }else {
+                holder.num.setText(""+maxPersons);
+            }
         }else {
-            holder.num.setText(currentPersions + "/" + maxPersons);
+            if (maxPersons == 0){
+                if (currentPersions ==0){
+                    holder.num.setText("");
+                }else {
+                    holder.num.setText(""+currentPersions);
+                }
+            }else {
+                if (currentPersions == 0){
+                    holder.num.setText(""+maxPersons);
+                }else {
+                    holder.num.setText(""+currentPersions + "/" + maxPersons);
+                }
+            }
         }
 
 
