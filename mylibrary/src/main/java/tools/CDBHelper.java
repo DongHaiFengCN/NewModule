@@ -80,7 +80,7 @@ public class CDBHelper implements ReplicatorChangeListener
 {
     private static Database db;
     private static CDBHelper instance = null;
-    private static String dbName="GuestDB";
+    public static String dbName="GuestDB";
     private final static String mSyncGatewayEndpoint = "ws://123.207.174.171:4984/kitchen/";
    //private final static String mSyncGatewayEndpoint = "wss://www.yaodiandian.net:4984/kitchen/";
   //private final static String mSyncGatewayEndpoint = "wss://123.207.174.171:4984/kitchen/";
@@ -102,6 +102,7 @@ public class CDBHelper implements ReplicatorChangeListener
             File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
             config.setDirectory(folder.getAbsolutePath());
             try {
+                Log.e("dbName",""+dbName);
                 db = new Database(dbName, config);
             } catch (CouchbaseLiteException e)
             {
@@ -110,6 +111,7 @@ public class CDBHelper implements ReplicatorChangeListener
             }
 
     }
+
 
     private static byte[] getPinnedCertFile(Context context) {
         AssetManager assetManager = context.getAssets();
@@ -172,17 +174,17 @@ public class CDBHelper implements ReplicatorChangeListener
 //                    Intent intent = new Intent();
 //                    intent.setAction("sync_complete");
 //                    mcontext.sendBroadcast(intent);
-                    Log.e("Replication Comp Log", "Schedular Completed");
+//                    Log.e("Replication Comp Log", "Schedular Completed");
 
                 }
                 if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.STOPPED) || change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.OFFLINE)) {
-                    // stopReplication();
+                     //stopReplication();
 
 //                    Intent intent = new Intent();
 //                    intent.setAction("sync_complete");
 //                    mcontext.sendBroadcast(intent);
-
-                    Log.e("Rep schedular  Log", "ReplicationTag Stopped");
+//
+//                    Log.e("Rep schedular  Log", "ReplicationTag Stopped");
 
                 }
          }

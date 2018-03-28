@@ -175,7 +175,7 @@ public class DeskActivity extends AppCompatActivity {
 
             }
         });
-        msg_point = (TextView)findViewById(R.id.msg_point);
+        msg_point = findViewById(R.id.msg_point);
         msg_point.setVisibility(View.INVISIBLE);
         msg_printer = findViewById(R.id.icon_printer);
         msg_printer.setOnClickListener(new View.OnClickListener()

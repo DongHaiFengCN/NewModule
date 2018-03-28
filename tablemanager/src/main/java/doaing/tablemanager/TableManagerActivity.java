@@ -148,7 +148,12 @@ public class TableManagerActivity extends BaseToobarActivity {
                 if (""+tableDoc.getInt("maxPersons")!= null){
                     maxPersons = ""+tableDoc.getInt("maxPersons");
                 }
-                ((ViewHolder) holder).num.setText("0" + "/" + maxPersons);
+                if (maxPersons.equals("0")){
+                    ((ViewHolder) holder).num.setText("");
+                }else{
+                    ((ViewHolder) holder).num.setText( ""+maxPersons);
+                }
+
                 ((ViewHolder) holder).mTv.setText(tableDoc.getString("tableName"));
                 ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
                     @Override

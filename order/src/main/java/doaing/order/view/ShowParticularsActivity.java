@@ -100,7 +100,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     TextView showTvSl;
     TextView showTvArea;
     ImageView showImg;
-    EditText showEdBz;
+    //EditText showEdBz;
     ShowParticularsAdapter adatper;
     private List<GoodsC> goodsCList;
     private MyApplication myapp;
@@ -130,11 +130,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     private List<GoodsC> tmpList;
     private String hintDishes = "";
     PortParameters mPortParam;
-
-    private boolean printerToKitchen(GoodsC obj, int type, String areaName, String TableName) {
-
-        return false;
-    }
 
     private void registerPrinterBroadcast() {
         registerReceiver(PrinterStatusBroadcastReceiver, new IntentFilter(GpCom.ACTION_CONNECT_STATUS));
@@ -313,9 +308,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear("2018");
-        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
-            newOrderObj.setDesc(showEdBz.getText().toString());
-        }
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
         newOrderObj.setGoodsList(tmpList);
@@ -355,9 +347,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
-        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
-            newOrderObj.setDesc(showEdBz.getText().toString());
-        }
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(退)");
@@ -400,9 +389,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
-        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
-            newOrderObj.setDesc(showEdBz.getText().toString());
-        }
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(2);//置成赠菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(赠)");
@@ -444,9 +430,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
-        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
-            newOrderObj.setDesc(showEdBz.getText().toString());
-        }
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(0);
 
@@ -492,9 +475,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setCreatedYear(getNianDate());
         newGoods.setOrder(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
-        if (!TextUtils.isEmpty(showEdBz.getText().toString())){
-            newOrderObj.setDesc(showEdBz.getText().toString());
-        }
         String dishesName = oldGoods.getDishesName();
         dishesName = dishesName.substring(0, dishesName.length() - 3);
         newGoods.setDishesName(dishesName + "(退)");
@@ -786,7 +766,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     setAll();
                 }
                 dialog.dismiss();
-                showEdBz.setText("");
                 adatper.notifyDataSetChanged();
 
             }
@@ -800,7 +779,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
             public void onClick(View v) {
                 dialog.dismiss();
-                showEdBz.setText("");
             }
 
         });
@@ -915,7 +893,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     proDialog.show();
 
                     uiHandler.obtainMessage(1).sendToTarget();
-                    showEdBz.setText("");
                 }
 
                 dialog.dismiss();
@@ -929,7 +906,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             public void onClick(View v) {
 
                 dialog.dismiss();
-                showEdBz.setText("");
             }
         });
         dialog.show();
@@ -1009,7 +985,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         showListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
-                showEdBz.setFocusable(false);
                 //点击订单OrderC
                 GoodsC obj = goodsCList.get(position);
                 switch (obj.getGoodsType()) {
@@ -1031,35 +1006,35 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             }
         });
 
-        showEdBz.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                Log.e("ShowPart",""+hasFocus);
-                if (hasFocus){
-
-                }else{
-                    if (TextUtils.isEmpty(showEdBz.getText().toString())){
-                        return ;
-                    }
-                    for (OrderC orderC : orderCList){
-                        orderC.setDesc(showEdBz.getText().toString());
-                        CDBHelper.createAndUpdate(getApplicationContext(),orderC);
-                    }
-                }
-            }
-        });
-        showEdBz.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    showEdBz.setFocusable(true);
-                    showEdBz.setFocusableInTouchMode(true);
-                    showEdBz.requestFocus();
-                }
-
-                return false;
-            }
-        });
+//        showEdBz.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                Log.e("ShowPart",""+hasFocus);
+//                if (hasFocus){
+//
+//                }else{
+//                    if (TextUtils.isEmpty(showEdBz.getText().toString())){
+//                        return ;
+//                    }
+//                    for (OrderC orderC : orderCList){
+//                        orderC.setDesc(showEdBz.getText().toString());
+//                        CDBHelper.createAndUpdate(getApplicationContext(),orderC);
+//                    }
+//                }
+//            }
+//        });
+//        showEdBz.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    showEdBz.setFocusable(true);
+//                    showEdBz.setFocusableInTouchMode(true);
+//                    showEdBz.requestFocus();
+//                }
+//
+//                return false;
+//            }
+//        });
     }
 
     private void initView() {
@@ -1069,12 +1044,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
          showTvSl = findViewById(R.id.show_tv_sl);
          showTvArea = findViewById(R.id.show_tv_area);
          showImg = findViewById(R.id.show_img);
-        showEdBz = findViewById(R.id.show_ed_bz);
         showImg.setOnClickListener(this);
         showButMd.setOnClickListener(this);
         showButDc.setOnClickListener(this);
         findViewById(R.id.show_but_dy).setOnClickListener(this);
-        findViewById(R.id.show_but_sddy).setOnClickListener(this);
         findViewById(R.id.show_list_lin).setOnClickListener(this);
     }
 
@@ -1291,13 +1264,11 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         Intent intent;
         int i = view.getId();
         if (i == R.id.show_but_dc) {
-            showEdBz.setFocusable(false);
             intent = new Intent(ShowParticularsActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
 
         } else if (i == R.id.show_but_md) {
-            showEdBz.setFocusable(false);
             intent = new Intent(ShowParticularsActivity.this, PayActivity.class);
             startActivity(intent);
             finish();
@@ -1306,7 +1277,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             finish();
 
         } else if (i == R.id.show_but_dy) {
-            showEdBz.setFocusable(false);
             if (Tool.isFastDoubleClick()) {
                 Toast.makeText(ShowParticularsActivity.this, "点击太快，请稍候", Toast.LENGTH_LONG).show();
                 return;
@@ -1314,19 +1284,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 setPrintOrder();
             }
 
-        }else if (i == R.id.show_but_sddy){
-            showEdBz.setFocusable(false);
-            if (Tool.isFastDoubleClick()) {
-                Toast.makeText(ShowParticularsActivity.this, "点击太快，请稍候", Toast.LENGTH_LONG).show();
-                return;
-            } else {
-                printOrderToKitchen(goodsCList);
-            }
-
-        }else{
-            showEdBz.setFocusable(false);
-        }if (i == R.id.show_list_lin){
-            showEdBz.setFocusable(false);
         }
     }
 
@@ -1410,7 +1367,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 /*
 *
      * 厨房分单打印
-
 */
     private void printOrderToKitchen(List<GoodsC> list)
     {
@@ -1472,6 +1428,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                         MyLog.d("***********打印机连接命令发送失败");
                         proDialog.setMessage("打印机连接命令发送失败");
                         uiHandler.obtainMessage(4).sendToTarget();
+                        Toast.makeText(ShowParticularsActivity.this,"打印机连接命令发送失败",Toast.LENGTH_SHORT).show();
                     }
                 }
                 else//已连接
@@ -1480,10 +1437,12 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     proDialog.setMessage(""+clientKtname+"厨房打印机已连接");
                     printGoodsAtRomoteByIndex(printerId);
 
+
                 }
             }
             else//不分发打印，就直接跳转
             {
+                Toast.makeText(ShowParticularsActivity.this,"不属于厨房打印菜品",Toast.LENGTH_SHORT).show();
                 proDialog.setMessage("不属于厨房打印菜品");
                 uiHandler.obtainMessage(4).sendToTarget();//
             }
@@ -1628,6 +1587,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             MyLog.d("厨房打印失败");
             proDialog.setMessage("厨房打印失败");
             uiHandler.obtainMessage(4).sendToTarget();
+            Toast.makeText(ShowParticularsActivity.this,"厨房打印失败",Toast.LENGTH_SHORT).show();
         }
 
     }

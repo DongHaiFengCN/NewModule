@@ -141,39 +141,39 @@
                 android:layout_marginTop="5dp">
             </ListView>
         </LinearLayout>
-        <LinearLayout
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="订单备注:"
-                android:gravity="center_vertical"
-                android:textSize="18dp"
-                android:textColor="@color/md_black_1000"
-                android:layout_marginLeft="20dp"
-                />
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:text="订单备注:"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:textSize="18dp"-->
+        <!--android:textColor="@color/md_black_1000"-->
+        <!--android:layout_marginLeft="20dp"-->
+        <!--/>-->
 
-            <EditText
-                android:id="@+id/show_ed_bz"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@drawable/animselect"
-                android:inputType="text"
-                android:textSize="16sp"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:paddingLeft="10dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="10dp"
-                />
+        <!--<EditText-->
+        <!--android:id="@+id/show_ed_bz"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:background="@drawable/animselect"-->
+        <!--android:inputType="text"-->
+        <!--android:textSize="16sp"-->
+        <!--android:focusable="true"-->
+        <!--android:focusableInTouchMode="true"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:layout_marginRight="8dp"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginLeft="10dp"-->
+        <!--/>-->
 
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -242,27 +242,27 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/show_but_sddy"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
-            <ImageView
-                android:layout_marginTop="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:src="@drawable/animdy"
-                />
+        <!--<LinearLayout-->
+            <!--android:id="@+id/show_but_sddy"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical"-->
+            <!--&gt;-->
+            <!--<ImageView-->
+                <!--android:layout_marginTop="5dp"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="35dp"-->
+                <!--android:src="@drawable/animdy"-->
+                <!--/>-->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="发送厨房" />
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:gravity="center"-->
+                <!--android:text="发送厨房" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/show_but_dc"

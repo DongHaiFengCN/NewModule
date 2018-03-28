@@ -92,7 +92,6 @@ public class MyApplication extends Application implements ISharedPreferences {
         //---------------------------------------
         //测试开发模式下初始化数据，发布版本时注释掉
         //---------------------------------------
-        CDBHelper.getSharedInstance(this);
     }
 
 
