@@ -6,17 +6,21 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +30,8 @@ import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,8 +43,10 @@ import bean.kitchenmanage.dishes.DishesKindC;
 import butterknife.BindView;
 
 import doaing.dishesmanager.widget.DishesKindListView;
+import doaing.mylibrary.MyApplication;
 import tools.CDBHelper;
 import tools.MyBigDecimal;
+import tools.ToolUtil;
 import view.BaseToobarActivity;
 
 public class PackageAddActivity extends BaseToobarActivity {
@@ -55,11 +63,15 @@ public class PackageAddActivity extends BaseToobarActivity {
     @BindView(R2.id.submit_bt)
     Button submitBt;
     private Database database;
-    Document packageDcoument;
     @BindView(R2.id.toolbar)
     Toolbar toolbar;
-
+    float sum;
     String firstId;
+    private boolean discount = false;
+
+
+    // private EditText packageNameEt;
+    private EditText packagePriceEt;
 
     @Override
     protected int setMyContentView() {
@@ -68,22 +80,65 @@ public class PackageAddActivity extends BaseToobarActivity {
 
     @Override
     public void initData(final Intent intent) {
-        setToolbarName("添加二级套餐");
+        setToolbarName("编辑套餐");
+
+        // packageNameEt = findViewById(R.id.packagename_et);
+        packagePriceEt = findViewById(R.id.packageprice_et);
+
+        packagePriceEt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (s.length() == 0 && submitBt.isEnabled()) {
+
+                    submitBt.setEnabled(false);
+                    submitBt.setTextColor(getResources().getColor(R.color.md_grey_300));
+
+                } else if (s.length() > 0 && !submitBt.isEnabled()) {
+
+                    submitBt.setEnabled(true);
+                    submitBt.setTextColor(getResources().getColor(R.color.md_white_1000));
+
+                }
+            }
+        });
 
         firstId = intent.getExtras().get("id").toString();
 
         if (disheskindLv.getDishesKindList().size() == 0) {
-            Toast.makeText(this, "请添加菜品", Toast.LENGTH_SHORT).show();
 
+            Toast.makeText(this, "请添加菜品", Toast.LENGTH_SHORT).show();
             finish();
             return;
+
         }
         database = CDBHelper.getDatabase();
-        packageDcoument = database.getDocument(firstId);
 
-        secondDocment = new MutableDocument();
-        secondDocment.setArray("dishesIdList", new MutableArray());
-        secondDocment.setString("dataType", "BaseData");
+        Document document = database.getDocument(firstId);
+
+
+        if(document == null){
+
+            secondDocment = new MutableDocument("DishesC." + ToolUtil.getUUID());
+            secondDocment.setString("dataType", "BaseData");
+            secondDocment.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
+            secondDocment.setString("className", "DishesC");
+            secondDocment.setArray("dishesIdList", new MutableArray());
+
+        }else {
+            secondDocment = document.toMutable();
+        }
+
 
 
         dishesAdapter = new DishesAdapter();
@@ -118,6 +173,32 @@ public class PackageAddActivity extends BaseToobarActivity {
             }
         });
 
+        final Spinner spinner = findViewById(R.id.dishes_discount_sp);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter(PackageAddActivity.this, android.R.layout.simple_list_item_1);
+        arrayAdapter.add("价格");
+        arrayAdapter.add("折扣");
+        spinner.setAdapter(arrayAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (position == 0) {
+                    discount = false;
+                    packagePriceEt.setHint("输入总价 例：80为80元");
+
+                } else if (position == 1) {
+                    discount = true;
+                    packagePriceEt.setHint("输入总价 例：80为八折");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         //默认选中第一项
         disheskindLv.performItemClick(disheskindLv.getChildAt(0), 0, disheskindLv
@@ -127,162 +208,78 @@ public class PackageAddActivity extends BaseToobarActivity {
             @Override
             public void onClick(View v) {
 
-                float sum = 0;
-                int size = disheskindLv.getDishesKindList().size();
-                for (int i = 0; i < size; i++) {
 
-                    boolean[] booleans = listMap.get(i);
-                    if (booleans == null) {
-                        continue;
-
-                    }
-                    Document document = disheskindLv.getDishesKindList().get(i);
-                    int length = booleans.length;
-                    for (int j = 0; j < length; j++) {
-
-
-                        if (booleans[j]) {
-                            Document dishe = database.getDocument(document.getArray("dishesListId").getString(j));
-                            sum += dishe.getFloat("price");
-
-
-                            secondDocment.getArray("dishesIdList").addString(dishe.getId());
-
-
-                        }
-                    }
-                }
                 if (sum == 0f) {
                     Toast.makeText(PackageAddActivity.this, "未选择菜品", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(PackageAddActivity.this);
-                builder.setTitle("选择套餐总价计算方式");
-                final float finalSum = sum;
+                if (discount) {
 
-                builder.setPositiveButton("自定折扣", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, int which) {
+                    secondDocment.setFloat("price", Float.valueOf(MyBigDecimal.mul(String.valueOf(sum), MyBigDecimal.div(packagePriceEt.getText().toString(),String.valueOf(100),2), 2)));
 
+                } else {
+                    secondDocment.setFloat("price", Float.valueOf(packagePriceEt.getText().toString()));
+                }
 
-                        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.package_dialog_item, null);
-                        final EditText packageNameEt = view.findViewById(R.id.packagename_et);
-                        final EditText packagePriceEt = view.findViewById(R.id.packageprice_et);
-                        packagePriceEt.setHint("例如：80 等于打八折");
-                        AlertDialog alertDialog = new AlertDialog.Builder(PackageAddActivity.this)
-                                .setTitle("折扣  当前总价：" + finalSum).setView(view)
-                                .setPositiveButton("确定", null)
-                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                try {
 
-                                    }
-                                }).show();
-                        alertDialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
+                    Log.e("DOAING", "保存的价格 " + secondDocment.getFloat("price"));
 
-                                if ("".equals(packageNameEt.getText().toString()) && "".equals(packagePriceEt.getText().toString())) {
+                    database.save(secondDocment);
 
-                                    packageNameEt.setError("不能为空！");
-                                    packagePriceEt.setError("不能为空！");
+                } catch (CouchbaseLiteException e) {
 
-                                } else {
-                                    float sum = Float.valueOf(packagePriceEt.getText().toString());
+                    e.printStackTrace();
+                }
 
-                                    secondDocment.setString("dishesName", packageNameEt.getText().toString());
+                EventBus.getDefault().postSticky(secondDocment.getId());
 
-                                    //保存数据库,设置套餐价格
-                                    float discount = MyBigDecimal.div(sum, 100f, 2);
-                                    secondDocment.setFloat("price", MyBigDecimal.mul(finalSum, discount, 2));
-                                    MutableDocument mutableDocument = packageDcoument.toMutable();
-                                    mutableDocument.getArray("dishesListId").addString(secondDocment.getId());
-                                    try {
-                                        database.save(mutableDocument);
-                                        database.save(secondDocment);
-                                    } catch (CouchbaseLiteException e) {
-                                        e.printStackTrace();
-                                    }
-                                    dialog.dismiss();
-                                    PackageAddActivity.this.finish();
-
-
-
-                                }
-
-                            }
-                        });
-
-                    }
-                }).setNeutralButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).setNegativeButton("自定总价", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(final DialogInterface dialog, int which) {
-                        View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.package_dialog_item, null);
-
-                        final EditText packageNameEt = view.findViewById(R.id.packagename_et);
-                        final EditText packagePriceEt = view.findViewById(R.id.packageprice_et);
-                        packagePriceEt.setHint("例如：80 等于80元");
-
-                        AlertDialog alertDialog = new AlertDialog.Builder(PackageAddActivity.this)
-                                .setTitle("自定总价  当前总价：" + finalSum).setView(view)
-                                .setPositiveButton("确定", null)
-                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                }).show();
-
-                        alertDialog.getButton(Dialog.BUTTON_POSITIVE)
-                                .setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                        if ("".equals(packageNameEt.getText().toString())) {
-
-                                            packageNameEt.setError("不能为空！");
-
-
-                                        } else if ("".equals(packagePriceEt.getText().toString())) {
-                                            packagePriceEt.setError("不能为空！");
-                                        } else {
-
-                                            float sum = Float.valueOf(packagePriceEt.getText().toString());
-                                            secondDocment.setString("dishesName", packageNameEt.getText().toString());
-                                            //保存数据库,设置套餐价格
-                                            secondDocment.setFloat("price", sum);
-                                            MutableDocument mutableDocument = packageDcoument.toMutable();
-
-                                            mutableDocument.getArray("dishesListId").addString(secondDocment.getId());
-
-
-
-                                            try {
-                                                database.save(mutableDocument);
-                                                database.save(secondDocment);
-                                            } catch (CouchbaseLiteException e) {
-                                                e.printStackTrace();
-                                            }
-                                            dialog.dismiss();
-                                            PackageAddActivity.this.finish();
-
-                                        }
-                                    }
-                                });
-
-                    }
-                }).show();
+                finish();
 
             }
         });
 
+
+
     }
+
+    private float getSum() {
+
+        float sum = 0;
+        int size = disheskindLv.getDishesKindList().size();
+
+        if (secondDocment.getArray("dishesIdList").count() > 0) {
+
+            secondDocment.setArray("dishesIdList", new MutableArray());
+        }
+
+        for (int i = 0; i < size; i++) {
+
+            boolean[] booleans = listMap.get(i);
+
+            if (booleans == null) {
+
+                continue;
+
+            }
+            Document document = disheskindLv.getDishesKindList().get(i);
+
+            int length = booleans.length;
+
+            for (int j = 0; j < length; j++) {
+
+
+                if (booleans[j]) {
+                    Document dishe = database.getDocument(document.getArray("dishesListId").getString(j));
+                    sum += dishe.getFloat("price");
+                    secondDocment.getArray("dishesIdList").addString(dishe.getId());
+                }
+            }
+        }
+        return sum;
+    }
+
 
     @Override
     protected Toolbar setToolBarInfo() {
@@ -332,19 +329,25 @@ public class PackageAddActivity extends BaseToobarActivity {
                 listItemView = (ListItemView) convertView.getTag();
             }
             Document document = dishesList.get(position);
-            if(document!=null){
+
+            if (document != null) {
                 listItemView.disheNameTv.setText(document.getString("dishesName"));
                 listItemView.dishePriceTv.setText("¥" + document.getFloat("price"));
                 listItemView.dishesCk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                         listMap.get(disheKindPosition)[position] = isChecked;
+
+                        sum = getSum();
+                        getSupportActionBar().setTitle("编辑套餐  当前总价：" + sum);
 
                     }
                 });
-                listItemView.dishesCk.setChecked(listMap.get(disheKindPosition)[position]);
-            }
 
+                listItemView.dishesCk.setChecked(listMap.get(disheKindPosition)[position]);
+
+            }
 
 
             return convertView;

@@ -27,6 +27,12 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
     private Subscription subscription;
     private String name;
 
+    public void setNavigationOnClickListener(NavigationOnClickListener navigationOnClickListener) {
+        this.navigationOnClickListener = navigationOnClickListener;
+    }
+
+    NavigationOnClickListener navigationOnClickListener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +51,7 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
 
     /**
      * 返回布局文件
+     *
      * @return 获取布局资源的id
      */
 
@@ -77,12 +84,16 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
             public void onClick(View v) {
                 finish();
                 overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+                if (navigationOnClickListener != null) {
+                    navigationOnClickListener.setNavigationOnClickListener();
+                }
+
 
             }
         });
 
-        if(!"".equals(this.name )){
-             getSupportActionBar().setTitle(this.name );
+        if (!"".equals(this.name)) {
+            getSupportActionBar().setTitle(this.name);
         }
 
     }
@@ -138,4 +149,14 @@ public abstract class BaseToobarActivity extends AppCompatActivity {
             subscription.unsubscribe();
         }
     }
+
+    /**
+     * 自定义系统返回箭头功能
+     */
+
+    public interface NavigationOnClickListener {
+
+        void setNavigationOnClickListener();
+    }
+
 }

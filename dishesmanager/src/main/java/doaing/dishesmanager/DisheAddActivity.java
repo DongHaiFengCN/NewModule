@@ -15,6 +15,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -44,6 +46,7 @@ import com.jakewharton.rxbinding.view.RxView;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.greenrobot.eventbus.util.ThrowableFailureEvent;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -68,7 +71,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.functions.Action1;
 import tools.CDBHelper;
-import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -117,14 +119,23 @@ public class DisheAddActivity extends BaseToobarActivity {
     @Override
     public void initData(Intent intent) {
 
+        setToolbarName("添加菜品");
 
-        setToolbarName("菜品添加");
+
+        EventBus.getDefault().register(this);
+        database = CDBHelper.getDatabase();
 
         disheDocument = new MutableDocument("DishesC." + ToolUtil.getUUID());
+
+        disheDocument.setString("dataType", "BaseData");
+        disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
+        disheDocument.setString("className", "DishesC");
+
+
         //初始化口味
         initTasteData();
 
-        disheKindSp.setSelection(intent.getIntExtra("kindPosition",0));
+        disheKindSp.setSelection(intent.getIntExtra("kindPosition", 0));
         disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
@@ -136,6 +147,8 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                 //KindId保存到菜品中
                 disheDocument.setString("dishesKindId", newKindDocument.getId());
+
+               // Log.e("DOAING", " ==== " + newKindDocument.getId());
 
                 //默认依次添加到队尾
                 disheDocument.setInt("orderId", newKindDocument.getArray("dishesListId").count());
@@ -164,10 +177,7 @@ public class DisheAddActivity extends BaseToobarActivity {
             @Override
             public void call(Void aVoid) {
 
-                disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
-               // MyLog.e("DishesAdd","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
-                disheDocument.setString("className", "DishesC");
-                disheDocument.setString("dataType", "BaseData");
+
                 if ("".equals(disheName.getText().toString())) {
 
                     disheName.setError("菜品名称不能为空");
@@ -222,7 +232,7 @@ public class DisheAddActivity extends BaseToobarActivity {
                 MutableDocument mutableKindDocument = newKindDocument.toMutable();
 
                 mutableKindDocument.getArray("dishesListId").addString(disheDocument.getId());
-                database = CDBHelper.getDatabase();
+
                 try {
 
                     database.save(disheDocument);
@@ -245,13 +255,57 @@ public class DisheAddActivity extends BaseToobarActivity {
             }
         });
 
+        super.setNavigationOnClickListener(new NavigationOnClickListener() {
+            @Override
+            public void setNavigationOnClickListener() {
+
+
+                Document document = database.getDocument(disheDocument.getId());
+
+                if (document != null) {
+                    try {
+                        database.delete(document);
+
+                    } catch (CouchbaseLiteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void setInfo(String id) {
+
+
+       // Log.e("DOAING", "得到的id " + id);
+
+
+            Document document = database.getDocument(id);
+
+            //回填数据
+
+            dishePriceEt.setText(String.valueOf(document.getFloat("price")));
+         //   Log.e("DOAING", "得到的价格 " + document.getFloat("price"));
+
+            disheDocument = document.toMutable();
+
+
+
+    }
 
     /**
      * 加载口味选择器
      */
-
     private void initTasteData() {
 
         list = new ArrayList<>();
@@ -345,6 +399,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (resultCode == RESULT_OK) {
             Uri uri = data.getData();
             ContentResolver cr = this.getContentResolver();
@@ -464,6 +519,28 @@ public class DisheAddActivity extends BaseToobarActivity {
         });
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.packge_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.menu_send) {
+
+            Intent intent = new Intent(DisheAddActivity.this, PackageAddActivity.class);
+            intent.putExtra("id", disheDocument.getId());
+            startActivity(intent);
+
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }
 

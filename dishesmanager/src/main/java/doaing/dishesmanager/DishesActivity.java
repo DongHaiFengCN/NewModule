@@ -112,10 +112,22 @@ public class DishesActivity extends BaseToobarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Document dishes = ((Document) dishesList.get(position));
-                Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
-                intent1.putExtra("dishes", dishes.getId());
-                intent1.putExtra("position", kindPosition);
-                startActivity(intent1);
+                if (dishes.getArray("dishesIdList") == null) {
+
+                    Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
+                    intent1.putExtra("dishes", dishes.getId());
+                    intent1.putExtra("position", kindPosition);
+                    startActivity(intent1);
+
+                }else {
+
+                    Intent intent2 = new Intent(DishesActivity.this, PackageEditActivity.class);
+                    intent2.putExtra("disheId", dishes.getId());
+                    String kind = (String) dishesKindAdapter.getItem(kindPosition);
+                    intent2.putExtra("kindId",kind);
+                    startActivity(intent2);
+                }
+
 
 
             }
@@ -236,7 +248,7 @@ public class DishesActivity extends BaseToobarActivity {
                     }
 
                     for (int i = 0; i < array.count(); i++) {
-                        if (database.getDocument(array.getString(i)) != null){
+                        if (database.getDocument(array.getString(i)) != null) {
                             dishesList.add(database.getDocument(array.getString(i)));
                         }
 
@@ -245,7 +257,6 @@ public class DishesActivity extends BaseToobarActivity {
                     dishesAdapter.notifyDataSetChanged();
 
                 } else if (dishesKindAdapter.getNames().size() == 0) {
-
 
 
                     dishesList.clear();

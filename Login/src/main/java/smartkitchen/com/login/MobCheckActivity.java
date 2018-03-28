@@ -114,7 +114,8 @@ public class MobCheckActivity extends AppCompatActivity {
             }
         });
         // 触发操作
-        SMSSDK.getVerificationCode(country, phone,"14967839",null);
+       // SMSSDK.getVerificationCode(country, phone,"14967839",null);
+        SMSSDK.getVerificationCode(country, phone,null,null);
     }
     // 提交验证码，其中的code表示验证码，如“1357”
     public void submitCode(String country, String phone, String code) {

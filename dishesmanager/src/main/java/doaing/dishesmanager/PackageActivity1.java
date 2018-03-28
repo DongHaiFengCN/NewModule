@@ -34,6 +34,7 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import doaing.dishesmanager.view.MySwipeListLayout;
@@ -222,18 +223,38 @@ public class PackageActivity1 extends BaseToobarActivity {
                 @Override
                 public void onClick(View view) {
 
-                    Intent intent = new Intent(PackageActivity1.this,SecondPackageActivity.class);
 
-                    intent.putExtra("id",document.getId());
-                    startActivity(intent);
+                    AlertDialog.Builder a = new AlertDialog.Builder(PackageActivity1.this);
 
+                    a.setTitle("选择套餐方式");
+                    a.setPositiveButton("二级套餐", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            Intent  intent = new Intent(PackageActivity1.this,SecondPackageActivity.class);
+                            intent.putExtra("id",document.getId());
+                            startActivity(intent);
+
+                        }
+                    });
+                    a.setNegativeButton("菜品", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            Intent intent = new Intent(PackageActivity1.this, PackageAddActivity1.class);
+                            intent.putExtra("id", document.getId());
+                            startActivity(intent);
+                        }
+                    });
+
+                    a.show();
                 }
             });
             tvDelete.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View view) {
-                    Log.e("DOAING", "22222");
+
                     new AlertDialog.Builder(PackageActivity1.this).setTitle("删除一级套餐？")
                             .setMessage(tvName.getText().toString())
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -251,6 +272,10 @@ public class PackageActivity1 extends BaseToobarActivity {
                                     list.remove(document.getId());
                                     listAdapter.notifyDataSetChanged();
 
+                                    //删除二级套餐，dishe 的数据
+
+
+
                                 }
                             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                         @Override
@@ -258,6 +283,8 @@ public class PackageActivity1 extends BaseToobarActivity {
 
                         }
                     }).show();
+
+
 
                 }
             });
