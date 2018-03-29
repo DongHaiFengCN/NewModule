@@ -469,10 +469,12 @@ public class DeskActivity extends AppCompatActivity {
                 }else {
                     List<String> orderCList= CDBHelper.getIdsByWhere(getApplicationContext(),
                             Expression.property("className").equalTo(Expression.string("OrderC"))
-                                    .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
+                                    .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getTableNum())))
                                     .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                             ,null
                     );
+                    Log.e("Desk","TableNum=="+tableC.getTableNum());
+                    Log.e("Desk","orderCList=="+orderCList.size());
 
                     if (orderCList.size() > 0 )
                     {
@@ -540,7 +542,7 @@ public class DeskActivity extends AppCompatActivity {
                                                     //移除不是当前桌的订单
                                                     while (iterator.hasNext()){
                                                         CheckOrderC c = iterator.next();
-                                                        if(!c.getTableNo().equals(tableC.getTableNum())){
+                                                        if(!c.getTableNum().equals(tableC.getTableNum())){
                                                             iterator.remove();
                                                         }
                                                     }
@@ -631,7 +633,7 @@ public class DeskActivity extends AppCompatActivity {
                     //使用&&预定状态
                  final   List<String> orderCList = CDBHelper.getIdsByWhere(getApplicationContext(),
                             Expression.property("className").equalTo(Expression.string("OrderC"))
-                                    .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
+                                    .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getTableNum())))
                                     .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                                     .and(Expression.property("orderCType").notEqualTo(Expression.intValue(1)))
                             ,null);
@@ -692,12 +694,12 @@ public class DeskActivity extends AppCompatActivity {
                                             //3\改变原桌位下订单为该桌位下
                                             List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
                                                     Expression.property("className").equalTo(Expression.string("OrderC")).and(Expression.property("orderState").equalTo(Expression.intValue(1))
-                                                            .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))),
+                                                            .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getTableNum())))),
                                                     null);
                                             for (Document doc : documentList)
                                             {
                                                 MutableDocument mDoc = doc.toMutable();
-                                                mDoc.setString("tableNo",tableNum);
+                                                mDoc.setString("tableNum",tableNum);
                                                 CDBHelper.saveDocument(getApplicationContext(),mDoc);
                                             }
                                             dialog.dismiss();

@@ -168,7 +168,7 @@ public class OrderDragAdapter extends BaseAdapter {
             }
         });
 
-        view.price.setText(mlistDishes.get(position).getFloat("price") + " 元/份");
+        view.price.setText(""+mlistDishes.get(position).getFloat("price"));
 
 
         return convertView;

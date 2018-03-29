@@ -1185,12 +1185,13 @@ public class MainActivity extends AppCompatActivity {
 
             for (int i = 0; i < myshangpinlist.size(); i++)
             {
-                String dishesName = "",temp = "";
+                String dishesName  ,temp  ;
                 float num = myshangpinlist.get(i).getDishesCount();
                 temp = myshangpinlist.get(i).getDishesTaste();
+                dishesName = myshangpinlist.get(i).getDishesName();
                 Document doc = CDBHelper.getDocByID(getApplicationContext(),myshangpinlist.get(i).getDishesId());
                 Array array = doc.getArray("dishesIdList");
-                if (array.count() != 0 ){
+                if (array != null ){
                     for (int d = 0; d < array.count();d++){
                         Document document = CDBHelper.getDocByID(getApplicationContext(),array.getString(d));
                         dishesName = document.getString("dishesName");
@@ -1209,7 +1210,6 @@ public class MainActivity extends AppCompatActivity {
                         esc.addPrintAndLineFeed();
                     }
                 }else{
-                    dishesName = myshangpinlist.get(i).getDishesName();
                     esc.addSetAbsolutePrintPosition((short) 0);
                     if (temp == null || "".equals(temp))//无口味
                     {
@@ -1258,7 +1258,7 @@ public class MainActivity extends AppCompatActivity {
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
                 Expression.property("className").equalTo(Expression.string("OrderC"))
                         .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNo").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
                 , Ordering.property("createdTime").descending()
 
         );
@@ -1298,7 +1298,7 @@ public class MainActivity extends AppCompatActivity {
         newOrderDoc.setInt("orderCType",0);//正常
         newOrderDoc.setInt("deviceType",1);//点餐宝
         newOrderDoc.setString("createdTime",getFormatDate());
-        newOrderDoc.setString("tableNo",myApp.getTable_sel_obj().getTableNum());
+        newOrderDoc.setString("tableNum",myApp.getTable_sel_obj().getTableNum());
         newOrderDoc.setString("tableName",myApp.getTable_sel_obj().getTableName());
         AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
         newOrderDoc.setString("areaName",areaC.getAreaName());
@@ -1321,7 +1321,7 @@ public class MainActivity extends AppCompatActivity {
             zcOrderDoc.setInt("orderCType",2);//赠菜
             zcOrderDoc.setInt("deviceType",1);//点餐宝
             zcOrderDoc.setString("createdTime",newOrderDoc.getString("createdTime"));
-            zcOrderDoc.setString("tableNo",newOrderDoc.getString("tableNo"));
+            zcOrderDoc.setString("tableNum",newOrderDoc.getString("tableNum"));
             zcOrderDoc.setString("tableName",newOrderDoc.getString("tableName"));
             zcOrderDoc.setString("areaName",newOrderDoc.getString("areaName"));
             MutableArray zcArray = new MutableArray();
@@ -1367,7 +1367,7 @@ public class MainActivity extends AppCompatActivity {
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
                 Expression.property("className").equalTo(Expression.string("OrderC"))
                         .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNo").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
                 , Ordering.property("createdTime").descending()
 
         );
@@ -1396,7 +1396,7 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
-        newOrderObj.setTableNo(myApp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myApp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(myApp.getTable_sel_obj().getTableName());
         AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
         newOrderObj.setAreaName(areaC.getAreaName());
@@ -1409,7 +1409,7 @@ public class MainActivity extends AppCompatActivity {
             zcOrderObj.setOrderState(1);//未买单
             zcOrderObj.setOrderCType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
             zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
-            zcOrderObj.setTableNo(newOrderObj.getTableNo());
+            zcOrderObj.setTableNum(newOrderObj.getTableNum());
             zcOrderObj.setTableName(newOrderObj.getTableName());
             zcOrderObj.setAreaName(newOrderObj.getAreaName());
             zcOrderObj.setCreatedYear("2018");

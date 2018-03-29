@@ -36,11 +36,11 @@ public class ConsumLogC {
 	/**
 	 * 卡号
 	 */
-	private String cardNo;
+	private String cardNum;
 	/**
 	 *订单号
 	 */
-	private String orderNo;
+	private String orderNum;
 	/**
 	 *消费金额
 	 */
@@ -122,20 +122,20 @@ public class ConsumLogC {
 		this.membersId = membersId;
 	}
 
-	public String getCardNo() {
-		return cardNo;
+	public String getCardNum() {
+		return cardNum;
 	}
 
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
+	public void setCardNum(String cardNo) {
+		this.cardNum = cardNo;
 	}
 
-	public String getOrderNo() {
-		return orderNo;
+	public String getOrderNum() {
+		return orderNum;
 	}
 
-	public void setOrderNo(String orderNo) {
-		this.orderNo = orderNo;
+	public void setOrderNum(String orderNo) {
+		this.orderNum = orderNo;
 	}
 
 	public float getCardConsum() {

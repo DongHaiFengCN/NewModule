@@ -169,7 +169,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         //获取包含桌号xx的所有订单
         List<OrderC> orderCList = CDBHelper.getObjByWhere(getApplicationContext(), Expression.property("className")
                         .equalTo(Expression.string("OrderC"))
-                        .and(Expression.property("tableNo").equalTo(Expression.string(tableC.getTableNum())))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getTableNum())))
                         .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").ascending()
                 , OrderC.class);
@@ -207,6 +207,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         cash = findViewById(R.id.cash);
         tableNumber = findViewById(R.id.table_number);
         findViewById(R.id.gz).setOnClickListener(this);
+        findViewById(R.id.tg).setOnClickListener(this);
         associator.setOnClickListener(this);
         discount.setOnClickListener(this);
         action.setOnClickListener(this);
@@ -637,7 +638,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         consumLogC.setClassName("ConsumLogC");
         consumLogC.setChannelId(myApplication.getCompany_ID());
         consumLogC.setMembersId(members.getId());
-        consumLogC.setCardNo(members.getString("cardNum"));
+        consumLogC.setCardNum(members.getString("cardNum"));
 
         consumLogC.setCardConsum(consum);
         consumLogC.setTime(new Date());
@@ -981,8 +982,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             bankDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-
-
                     setPayDetail(2, total);
 
                     try {
@@ -1033,7 +1032,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         onOrderC.setChannelId(myApplication.getCompany_ID());
                         onOrderC.setClassName("OnOrderC");
                         onOrderC.setNeedPay(total);
-                        onOrderC.setTableNo(myApplication.getTable_sel_obj().getTableNum());
+                        onOrderC.setTableNum(myApplication.getTable_sel_obj().getTableNum());
                         onOrderC.setCreatedYear("2018");
                         onOrderC.setOnName(nameEt.getText().toString());
                         onOrderC.setOnTel(contactWayEt.getText().toString());
@@ -1054,6 +1053,34 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                     }
                 }
             });
+        }else if (i == R.id.tg){
+            AlertDialog.Builder gzDialog = new AlertDialog.Builder(PayActivity.this);
+            gzDialog.setTitle("团购支付");
+
+            gzDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
+            gzDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+
+                    setPayDetail(11, total);
+
+                    try {
+                        submitCheckOrder();
+                    } catch (CouchbaseLiteException e) {
+                        e.printStackTrace();
+                    }
+                    isGuaZ = false;
+
+                }
+            });
+
+            gzDialog.show();
         }
     }
 
@@ -1440,7 +1467,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         checkOrder.setClassName("CheckOrderC");
         checkOrder.setPay(all);
         checkOrder.setNeedPay(total);
-        checkOrder.setTableNo(myApplication.getTable_sel_obj().getTableNum());
+        checkOrder.setTableNum(myApplication.getTable_sel_obj().getTableNum());
         checkOrder.setCreatedYear("2018");
         Database database = CDBHelper.getDatabase();
         for (String orderC : checkOrder.getOrderList()) {
@@ -1472,7 +1499,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
         //设置会员消费记录的checkorder ID
         if (consumLogC != null) {
-            consumLogC.setOrderNo(id);
+            consumLogC.setOrderNum(id);
             consumLogC.setCreatedYear("2018");
             CDBHelper.createAndUpdate(myApplication, consumLogC);
         }
@@ -1562,7 +1589,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         List<OrderC> orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
                 Expression.property("className").equalTo(Expression.string("OrderC"))
                         .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNo").equalTo(Expression.string(myApplication.getTable_sel_obj().getTableNum())))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(myApplication.getTable_sel_obj().getTableNum())))
                 , Ordering.property("createdTime").descending()
                 , OrderC.class);
 

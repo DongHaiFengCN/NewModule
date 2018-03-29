@@ -258,7 +258,7 @@ public class NewOrderService extends Service {
         else //多次下单
             serNum = obj.getSerialNum() + "_" + obj.getOrderNum();
         gOrderId = order_id;
-        String tableNo = obj.getTableNo();
+        String tableNo = obj.getTableNum();
         changeTableState(tableNo);
 
         //1\ 查询出所有厨房,并分配菜品
