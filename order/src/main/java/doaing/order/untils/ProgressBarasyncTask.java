@@ -221,6 +221,11 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
                             stringBuffer.append("赠卷 ");
                             break;
 
+                        case 11:
+                            stringBuffer.append("团购 ");
+                            break;
+
+
                         default:
                             break;
                     }

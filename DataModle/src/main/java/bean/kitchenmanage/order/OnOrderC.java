@@ -40,7 +40,7 @@ public class OnOrderC {
     /**
      * 所属桌位号
      */
-    private String tableNo;
+    private String tableNum;
 
     /**
      *应收
@@ -136,12 +136,12 @@ public class OnOrderC {
         this.onTime = onTime;
     }
 
-    public String getTableNo() {
-        return tableNo;
+    public String getTableNum() {
+        return tableNum;
     }
 
-    public void setTableNo(String tableNo) {
-        this.tableNo = tableNo;
+    public void setTableNum(String tableNum) {
+        this.tableNum = tableNum;
     }
 
     public float getNeedPay() {

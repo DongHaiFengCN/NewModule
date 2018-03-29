@@ -48,7 +48,7 @@ public class CheckOrderC {
 	/**
 	 * 所属桌位号
 	 */
-    private String tableNo;
+    private String tableNum;
 	/**
 	 *实收
 	 */
@@ -147,12 +147,12 @@ public class CheckOrderC {
 		this.checkTime = checkTime;
 	}
 
-	public String getTableNo() {
-		return tableNo;
+	public String getTableNum() {
+		return tableNum;
 	}
 
-	public void setTableNo(String tableNo) {
-		this.tableNo = tableNo;
+	public void setTableNum(String tableNum) {
+		this.tableNum = tableNum;
 	}
 
 	public float getPay() {

@@ -89,7 +89,7 @@ public class OrderC implements Serializable{
 	/**
 	 *桌位号
 	 */
-	private String tableNo;
+	private String tableNum;
 	/**
 	 * 操作员员工号
 	 */
@@ -287,12 +287,12 @@ public class OrderC implements Serializable{
 		this.note = note;
 	}
 
-	public String getTableNo() {
-		return tableNo;
+	public String getTableNum() {
+		return tableNum;
 	}
 
-	public void setTableNo(String tableNo) {
-		this.tableNo = tableNo;
+	public void setTableNum(String tableNum) {
+		this.tableNum = tableNum;
 	}
 
 	public int getDeviceType() {

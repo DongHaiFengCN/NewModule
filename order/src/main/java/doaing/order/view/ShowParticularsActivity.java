@@ -39,6 +39,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
@@ -304,7 +305,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderCType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear("2018");
@@ -343,7 +344,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderCType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
@@ -385,7 +386,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderCType(2);//赠菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
@@ -426,7 +427,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderCType(0);//添菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
@@ -469,7 +470,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderCType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNo(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
@@ -1068,7 +1069,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                 orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
                         Expression.property("className").equalTo(Expression.string("OrderC"))
-                                .and(Expression.property("tableNo").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
+                                .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
                                 .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                         , Ordering.property("createdTime").descending()
                         , OrderC.class);
@@ -1174,7 +1175,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
         orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
                 Expression.property("className").equalTo(Expression.string("OrderC"))
-                        .and(Expression.property("tableNo").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
                         .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").descending()
                 , OrderC.class);
@@ -1712,22 +1713,45 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
             for (int i = 0; i < myshangpinlist.size(); i++)
             {
-                String dishesName = myshangpinlist.get(i).getDishesName();
+                String dishesName  ,temp  ;
                 float num = myshangpinlist.get(i).getDishesCount();
-                String temp = myshangpinlist.get(i).getDishesTaste();
-                esc.addSetAbsolutePrintPosition((short) 0);
-                if (temp == null || "".equals(temp))//无口味
-                {
-                    esc.addText(dishesName);
+                temp = myshangpinlist.get(i).getDishesTaste();
+                dishesName = myshangpinlist.get(i).getDishesName();
+                Document doc = CDBHelper.getDocByID(getApplicationContext(),myshangpinlist.get(i).getDishesId());
+                Array array = doc.getArray("dishesIdList");
+                if (array != null ){
+                    for (int d = 0; d < array.count();d++){
+                        Document document = CDBHelper.getDocByID(getApplicationContext(),array.getString(d));
+                        dishesName = document.getString("dishesName");
+                        esc.addSetAbsolutePrintPosition((short) 0);
+                        if (temp == null || "".equals(temp))//无口味
+                        {
+                            esc.addText(dishesName);
+                        }
+                        else//有口味
+                        {
+                            esc.addText(dishesName+"("+temp+")");
+                        }
+                        esc.addSetAbsolutePrintPosition((short) 13);
+                        esc.addText("" + num+"\n");
+                        //换行
+                        esc.addPrintAndLineFeed();
+                    }
+                }else{
+                    esc.addSetAbsolutePrintPosition((short) 0);
+                    if (temp == null || "".equals(temp))//无口味
+                    {
+                        esc.addText(dishesName);
+                    }
+                    else//有口味
+                    {
+                        esc.addText(dishesName+"("+temp+")");
+                    }
+                    esc.addSetAbsolutePrintPosition((short) 13);
+                    esc.addText("" + num+"\n");
+                    //换行
+                    esc.addPrintAndLineFeed();
                 }
-                else//有口味
-                {
-                    esc.addText(dishesName+"("+temp+")");
-                }
-                esc.addSetAbsolutePrintPosition((short) 13);
-                esc.addText("" + num+"\n");
-                //换行
-                esc.addPrintAndLineFeed();
 
             }
             esc.addText("--------------------------------\n");
