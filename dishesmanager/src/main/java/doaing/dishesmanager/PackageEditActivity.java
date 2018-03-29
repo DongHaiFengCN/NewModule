@@ -29,6 +29,8 @@ import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.jakewharton.rxbinding.view.RxView;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -65,6 +67,7 @@ public class PackageEditActivity extends BaseToobarActivity {
     private Spinner spinner;
     private boolean discount = false;
     private float sum = 0f;
+    private int kindPosition = 0;
 
     @Override
     protected int setMyContentView() {
@@ -84,6 +87,9 @@ public class PackageEditActivity extends BaseToobarActivity {
         database = CDBHelper.getDatabase();
         oneLevel = database.getDocument(String.valueOf(intent.getExtras().get("kindId")));
         secondLevel = database.getDocument(String.valueOf(intent.getExtras().get("disheId")));
+
+
+        kindPosition = (int) intent.getExtras().get("position");
 
         setToolbarName("当前套餐总价 " + secondLevel.getFloat("price"));
 
@@ -212,6 +218,8 @@ public class PackageEditActivity extends BaseToobarActivity {
                     try {
                         database.delete(secondLevel);
                         database.save(mutableDocument);
+
+                        EventBus.getDefault().postSticky(Integer.valueOf(kindPosition));
                         finish();
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();

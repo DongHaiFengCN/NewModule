@@ -71,12 +71,20 @@ public class DishesKindAdapter extends BaseAdapter {
     private Context context;
     private Database database;
 
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+        notifyDataSetChanged();
+    }
+
+    private boolean flag = true;
+
     public DishesKindAdapter(Context context, Database database) {
 
         this.database = database;
         this.context = context;
         disheKindQuery();
     }
+
 
     @Override
     public int getCount() {
@@ -113,184 +121,101 @@ public class DishesKindAdapter extends BaseAdapter {
             listItemView = (ListItemView) view.getTag();
         }
 
-
-        listItemView.kindEdit.setVisibility(View.VISIBLE);
-        listItemView.kindEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                View view = LayoutInflater.from(context).inflate(R.layout.dishekind_add_dialog_item, null);
-
-                final EditText kindNameEt = view.findViewById(R.id.kindname_et);
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setView(view);
-                builder.setTitle("菜类编辑");
-                builder.setPositiveButton("确定", null);
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                builder.setNeutralButton("删除菜类", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        Document document = database.getDocument(names.get(i));
-                        Array array = document.getArray("dishesListId");
-                        int length = array.count();
-                        for (int j = 0; j < length; j++) {
-
-                            Document document1 = database.getDocument(array.getString(j));
-
-                            if (document1 != null) {
-
-                                try {
-                                    database.delete(document1);
-                                } catch (CouchbaseLiteException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                        }
-
-                        try {
-                            database.delete(document);
-                        } catch (CouchbaseLiteException e) {
-                            e.printStackTrace();
-                        }
-                        names.remove(i);
-                        notifyDataSetChanged();
-
-
-                        EventBus.getDefault().postSticky(0);
-
-
-                    }
-                });
-
-                final AlertDialog alertDialog = builder.show();
-
-                alertDialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if (kindNameEt.getText().length() > 0) {
-                            MutableDocument document = database.getDocument(names.get(i)).toMutable();
-                            document.setString("kindName", kindNameEt.getText().toString());
-                            try {
-                                database.save(document);
-                            } catch (CouchbaseLiteException e) {
-                                e.printStackTrace();
-                            }
-                            notifyDataSetChanged();
-
-                            alertDialog.dismiss();
-
-
-                        } else {
-
-                            kindNameEt.setError("空值");
-                        }
-
-
-                    }
-                });
-
-
-            }
-        });
-
         if (mSelect == i) {
             //选中项背景
             listItemView.linearLayout.setBackgroundResource(R.drawable.animtableclick);
             listItemView.tvTitle.setTextColor(context.getResources().getColor(R.color.white));
-            listItemView.kindEdit.setVisibility(View.VISIBLE);
-            listItemView.kindEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            if(flag){
 
-                    View view = LayoutInflater.from(context).inflate(R.layout.dishekind_add_dialog_item, null);
+                listItemView.kindEdit.setVisibility(View.VISIBLE);
+                listItemView.kindEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                    final EditText kindNameEt = view.findViewById(R.id.kindname_et);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setView(view);
-                    builder.setTitle("菜类编辑");
-                    builder.setPositiveButton("确定", null);
-                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        View view = LayoutInflater.from(context).inflate(R.layout.dishekind_add_dialog_item, null);
 
-                        }
-                    });
-                    builder.setNeutralButton("删除菜类", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        final EditText kindNameEt = view.findViewById(R.id.kindname_et);
+                        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                        builder.setView(view);
+                        builder.setTitle("菜类编辑");
+                        builder.setPositiveButton("确定", null);
+                        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                            Document document = database.getDocument(names.get(i));
-                            Array array = document.getArray("dishesListId");
-                            int length = array.count();
-                            for (int j = 0; j < length; j++) {
+                            }
+                        });
+                        builder.setNeutralButton("删除菜类", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                                Document document1 = database.getDocument(array.getString(j));
+                                Document document = database.getDocument(names.get(i));
+                                Array array = document.getArray("dishesListId");
+                                int length = array.count();
+                                for (int j = 0; j < length; j++) {
 
-                                if (document1 != null) {
+                                    Document document1 = database.getDocument(array.getString(j));
 
-                                    try {
-                                        database.delete(document1);
-                                    } catch (CouchbaseLiteException e) {
-                                        e.printStackTrace();
+                                    if (document1 != null) {
+
+                                        try {
+                                            database.delete(document1);
+                                        } catch (CouchbaseLiteException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
+
                                 }
 
-                            }
-
-                            try {
-                                database.delete(document);
-                            } catch (CouchbaseLiteException e) {
-                                e.printStackTrace();
-                            }
-                            names.remove(i);
-                            notifyDataSetChanged();
-
-
-                            EventBus.getDefault().postSticky(0);
-
-
-                        }
-                    });
-
-                    final AlertDialog alertDialog = builder.show();
-
-                    alertDialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            if (kindNameEt.getText().length() > 0) {
-                                MutableDocument document = database.getDocument(names.get(i)).toMutable();
-                                document.setString("kindName", kindNameEt.getText().toString());
                                 try {
-                                    database.save(document);
+                                    database.delete(document);
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
                                 }
+                                names.remove(i);
                                 notifyDataSetChanged();
 
-                                alertDialog.dismiss();
+
+                                EventBus.getDefault().postSticky(0);
 
 
-                            } else {
-
-                                kindNameEt.setError("空值");
                             }
+                        });
+
+                        final AlertDialog alertDialog = builder.show();
+
+                        alertDialog.getButton(Dialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (kindNameEt.getText().length() > 0) {
+                                    MutableDocument document = database.getDocument(names.get(i)).toMutable();
+                                    document.setString("kindName", kindNameEt.getText().toString());
+                                    try {
+                                        database.save(document);
+                                    } catch (CouchbaseLiteException e) {
+                                        e.printStackTrace();
+                                    }
+                                    notifyDataSetChanged();
+
+                                    alertDialog.dismiss();
 
 
-                        }
-                    });
+                                } else {
+
+                                    kindNameEt.setError("空值");
+                                }
 
 
-                }
-            });
+                            }
+                        });
+
+
+                    }
+                });
+
+            }
+
 
         } else {
             //其他项背景

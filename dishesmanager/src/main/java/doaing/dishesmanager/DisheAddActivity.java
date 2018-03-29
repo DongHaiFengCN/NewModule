@@ -263,12 +263,15 @@ public class DisheAddActivity extends BaseToobarActivity {
                 Document document = database.getDocument(disheDocument.getId());
 
                 if (document != null) {
+
                     try {
+
                         database.delete(document);
 
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
+
                 }
             }
         });

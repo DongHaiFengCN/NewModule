@@ -42,6 +42,7 @@ import bean.kitchenmanage.dishes.DishesC;
 import bean.kitchenmanage.dishes.DishesKindC;
 import butterknife.BindView;
 
+import doaing.dishesmanager.adapter.PackageDishesKindAdapter;
 import doaing.dishesmanager.widget.DishesKindListView;
 import doaing.mylibrary.MyApplication;
 import tools.CDBHelper;
@@ -57,7 +58,7 @@ public class PackageAddActivity extends BaseToobarActivity {
     private MutableDocument secondDocment;
     private DishesAdapter dishesAdapter;
     @BindView(R2.id.disheskind_lv)
-    DishesKindListView disheskindLv;
+    ListView disheskindLv;
     @BindView(R2.id.dishes_lv)
     ListView dishesLv;
     @BindView(R2.id.submit_bt)
@@ -70,11 +71,13 @@ public class PackageAddActivity extends BaseToobarActivity {
     private boolean discount = false;
 
 
-    // private EditText packageNameEt;
     private EditText packagePriceEt;
+    private PackageDishesKindAdapter packageDishesKindAdapter;
 
     @Override
-    protected int setMyContentView() {
+    protected int setMyContentView()
+    {
+
         return R.layout.activity_package_add;
     }
 
@@ -82,7 +85,9 @@ public class PackageAddActivity extends BaseToobarActivity {
     public void initData(final Intent intent) {
         setToolbarName("编辑套餐");
 
-        // packageNameEt = findViewById(R.id.packagename_et);
+        packageDishesKindAdapter = new PackageDishesKindAdapter(getApplicationContext(),CDBHelper.getDatabase());
+        disheskindLv.setAdapter(packageDishesKindAdapter);
+
         packagePriceEt = findViewById(R.id.packageprice_et);
 
         packagePriceEt.addTextChangedListener(new TextWatcher() {
@@ -115,7 +120,7 @@ public class PackageAddActivity extends BaseToobarActivity {
 
         firstId = intent.getExtras().get("id").toString();
 
-        if (disheskindLv.getDishesKindList().size() == 0) {
+        if (packageDishesKindAdapter.getCount() == 0) {
 
             Toast.makeText(this, "请添加菜品", Toast.LENGTH_SHORT).show();
             finish();
@@ -148,8 +153,8 @@ public class PackageAddActivity extends BaseToobarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                disheskindLv.getDishesKindAdapter().changeSelected(position);
-                Document dishesKind = disheskindLv.getDishesKindList().get(position);
+                packageDishesKindAdapter.changeSelected(position);
+                Document dishesKind = CDBHelper.getDatabase().getDocument((String) packageDishesKindAdapter.getItem(position));
 
                 Array array = dishesKind.getArray("dishesListId");
 
@@ -247,7 +252,7 @@ public class PackageAddActivity extends BaseToobarActivity {
     private float getSum() {
 
         float sum = 0;
-        int size = disheskindLv.getDishesKindList().size();
+        int size = packageDishesKindAdapter.getCount();
 
         if (secondDocment.getArray("dishesIdList").count() > 0) {
 
@@ -263,7 +268,7 @@ public class PackageAddActivity extends BaseToobarActivity {
                 continue;
 
             }
-            Document document = disheskindLv.getDishesKindList().get(i);
+            Document document = CDBHelper.getDatabase().getDocument((String) packageDishesKindAdapter.getItem(i));
 
             int length = booleans.length;
 
@@ -331,6 +336,7 @@ public class PackageAddActivity extends BaseToobarActivity {
             Document document = dishesList.get(position);
 
             if (document != null) {
+
                 listItemView.disheNameTv.setText(document.getString("dishesName"));
                 listItemView.dishePriceTv.setText("¥" + document.getFloat("price"));
                 listItemView.dishesCk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -340,6 +346,7 @@ public class PackageAddActivity extends BaseToobarActivity {
                         listMap.get(disheKindPosition)[position] = isChecked;
 
                         sum = getSum();
+
                         getSupportActionBar().setTitle("编辑套餐  当前总价：" + sum);
 
                     }

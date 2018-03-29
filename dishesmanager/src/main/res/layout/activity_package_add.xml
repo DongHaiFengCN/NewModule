@@ -13,12 +13,12 @@
         android:layout_width="match_parent"
         android:background="@color/md_white_1000"
         android:layout_height="0dp">
-        <doaing.dishesmanager.widget.DishesKindListView
+        <ListView
             android:id="@+id/disheskind_lv"
-
             android:layout_weight="3"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            />
         <ListView
             android:id="@+id/dishes_lv"
             android:layout_weight="7"

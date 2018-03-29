@@ -75,7 +75,6 @@ public class DishesActivity extends BaseToobarActivity {
     @Override
     public void initData(final Intent intent) {
         setToolbarName("菜品管理");
-
         EventBus.getDefault().register(this);
 
         database = CDBHelper.getDatabase();
@@ -125,6 +124,7 @@ public class DishesActivity extends BaseToobarActivity {
                     intent2.putExtra("disheId", dishes.getId());
                     String kind = (String) dishesKindAdapter.getItem(kindPosition);
                     intent2.putExtra("kindId",kind);
+                    intent2.putExtra("position",kindPosition);
                     startActivity(intent2);
                 }
 
@@ -273,7 +273,6 @@ public class DishesActivity extends BaseToobarActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updataPosition(Integer integer) {
-        // Log.e("DOAING","主界面返回的位置："+integer);
         if (dishesKindAdapter.getNames().size() == 0) {
 
             Toast.makeText(DishesActivity.this, "请添加菜类！", Toast.LENGTH_SHORT).show();
