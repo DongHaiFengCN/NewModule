@@ -148,12 +148,14 @@ public class NewOrderService extends Service {
     public void onDestroy()
     {
         super.onDestroy();
+        MyLog.e(Tag,"NewOderServer Destroy");
+
         if(PrinterStatusBroadcastReceiver!=null)
         {
             unregisterReceiver(PrinterStatusBroadcastReceiver);
         }
         unregisterReceiver(CmdBroadcastReceiver);
-        MyLog.e(Tag,"NewOderServer Destroy");
+
     }
 
 

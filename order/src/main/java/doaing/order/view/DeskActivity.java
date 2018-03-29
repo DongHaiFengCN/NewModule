@@ -171,9 +171,9 @@ public class DeskActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     boo = System.currentTimeMillis();
                 } else {
-                    stopService(orderIntent);
+
                     finish();
-                    System.exit(0);
+                   // System.exit(0);
                 }
 
             }
@@ -249,20 +249,21 @@ public class DeskActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - boo) > 2000) {
-                Toast.makeText(getApplicationContext(), "再按一次退出系统",
-                        Toast.LENGTH_SHORT).show();
-                boo = System.currentTimeMillis();
-            } else {
-                finish();
-                System.exit(0);
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) {
+//            if ((System.currentTimeMillis() - boo) > 2000) {
+//                Toast.makeText(getApplicationContext(), "再按一次退出系统",
+//                        Toast.LENGTH_SHORT).show();
+//                boo = System.currentTimeMillis();
+//            } else {
+//
+//                finish();
+//                System.exit(0);
+//            }
+//        }
+//        return false;
+//    }
 
     @Override
     protected void onResume() {
@@ -300,13 +301,18 @@ public class DeskActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         MyLog.e(Tag,"onDestroy");
+        releaseResource();
+
+    }
+    private void releaseResource()
+    {
         EventBus.getDefault().unregister(this);
 
         // 注销打印消息
         if (conn != null) {
             unbindService(conn); // unBindService
         }
-
+        stopService(orderIntent);
     }
     //点击返回键
     @Override
@@ -316,8 +322,8 @@ public class DeskActivity extends AppCompatActivity {
             mExitTime = System.currentTimeMillis();
         }
         else {
-            stopService(orderIntent);
             finish();
+            //System.exit(0);
         }
 
     }
@@ -989,8 +995,6 @@ private void cancelTableOrder(String Id,List<String> orderList)
         public void onServiceConnected(ComponentName name, IBinder service) {
             mGpService = GpService.Stub.asInterface(service);
             setmGpService(mGpService);
-
-
         }
     }
 
