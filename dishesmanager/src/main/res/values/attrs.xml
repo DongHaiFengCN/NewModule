@@ -1,0 +1,9 @@
+<resources>
+    <declare-styleable name="MyListView">
+
+        <attr name="edit_visibility" format="boolean"/>
+
+    </declare-styleable>
+
+
+</resources>

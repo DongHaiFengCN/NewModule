@@ -2,13 +2,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.menutest.MainActivity" >
-
+<!--
     <item
         android:id="@+id/action_add"
         android:title=""
         app:showAsAction="always"
-        android:icon="@mipmap/icon_menu_add_big"
-       />
-
+        android:icon="@mipmap/icon_setpackge"
+       >
+    </item>-->
+    <item
+        android:id="@+id/menu_send"
+        android:title="设置为套餐"
+        android:textSize="16sp"
+        app:showAsAction="ifRoom|withText" />
 
 </menu>

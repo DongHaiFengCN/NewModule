@@ -75,7 +75,6 @@ public class DishesActivity extends BaseToobarActivity {
     @Override
     public void initData(final Intent intent) {
         setToolbarName("菜品管理");
-
         EventBus.getDefault().register(this);
 
         database = CDBHelper.getDatabase();
@@ -112,10 +111,23 @@ public class DishesActivity extends BaseToobarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Document dishes = ((Document) dishesList.get(position));
-                Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
-                intent1.putExtra("dishes", dishes.getId());
-                intent1.putExtra("position", kindPosition);
-                startActivity(intent1);
+                if (dishes.getArray("dishesIdList") == null) {
+
+                    Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
+                    intent1.putExtra("dishes", dishes.getId());
+                    intent1.putExtra("position", kindPosition);
+                    startActivity(intent1);
+
+                }else {
+
+                    Intent intent2 = new Intent(DishesActivity.this, PackageEditActivity.class);
+                    intent2.putExtra("disheId", dishes.getId());
+                    String kind = (String) dishesKindAdapter.getItem(kindPosition);
+                    intent2.putExtra("kindId",kind);
+                    intent2.putExtra("position",kindPosition);
+                    startActivity(intent2);
+                }
+
 
 
             }
@@ -236,7 +248,7 @@ public class DishesActivity extends BaseToobarActivity {
                     }
 
                     for (int i = 0; i < array.count(); i++) {
-                        if (database.getDocument(array.getString(i)) != null){
+                        if (database.getDocument(array.getString(i)) != null) {
                             dishesList.add(database.getDocument(array.getString(i)));
                         }
 
@@ -245,7 +257,6 @@ public class DishesActivity extends BaseToobarActivity {
                     dishesAdapter.notifyDataSetChanged();
 
                 } else if (dishesKindAdapter.getNames().size() == 0) {
-
 
 
                     dishesList.clear();
@@ -262,7 +273,6 @@ public class DishesActivity extends BaseToobarActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void updataPosition(Integer integer) {
-        // Log.e("DOAING","主界面返回的位置："+integer);
         if (dishesKindAdapter.getNames().size() == 0) {
 
             Toast.makeText(DishesActivity.this, "请添加菜类！", Toast.LENGTH_SHORT).show();

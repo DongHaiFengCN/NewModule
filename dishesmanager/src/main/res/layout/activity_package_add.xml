@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/md_white_1000"
     tools:context="doaing.dishesmanager.TasteActivity">
     <include layout="@layout/common_view_toolbar"></include>
     <LinearLayout
         android:layout_weight="1"
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:background="@color/md_white_1000"
         android:layout_height="0dp">
-        <doaing.dishesmanager.widget.DishesKindListView
+        <ListView
             android:id="@+id/disheskind_lv"
-            android:background="@color/md_white_1000"
             android:layout_weight="3"
             android:layout_width="0dp"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            />
         <ListView
             android:id="@+id/dishes_lv"
             android:layout_weight="7"
@@ -27,17 +26,59 @@
             android:layout_height="match_parent"/>
 
     </LinearLayout>
+
+  <!--  <EditText
+        android:id="@+id/packagename_et"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/shape_eidt_selector"
+        android:hint="输入套餐的名称"
+        android:textColorHint="@color/black_overlay"
+        android:textColor="@color/md_blue_grey_700"
+        android:paddingLeft="4dp"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_vertical_margin"
+        android:layout_marginTop="4dp"
+        />-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_vertical_margin"
+        android:layout_marginTop="12dp"
+        android:layout_height="40dp"
+        >
+        <EditText
+            android:id="@+id/packageprice_et"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:textColorHint="@color/black_overlay"
+            android:textColor="@color/md_blue_grey_700"
+            android:background="@drawable/shape_eidt_selector"
+            android:inputType="number"
+            />
+        <Spinner
+            android:id="@+id/dishes_discount_sp"
+            android:layout_width="80dp"
+            android:layout_height="match_parent">
+
+        </Spinner>
+
+    </LinearLayout>
     <Button
         android:id="@+id/submit_bt"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
         android:layout_margin="@dimen/base_margin"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="确认提交"
+        android:gravity="center"
+        android:enabled="false"
         android:background="@drawable/shape_button_selector"
-        android:textColor="@color/md_white_1000" />
+        android:textColor="@color/md_grey_300" />
 
 
 </LinearLayout>
