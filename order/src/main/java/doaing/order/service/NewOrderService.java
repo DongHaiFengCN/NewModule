@@ -77,7 +77,7 @@ public class NewOrderService extends Service {
     private List<KitchenClientC> kitchenClientList;
     private Map<Integer ,KitchenClientC> kitchenClientMap=new HashMap<>();
 
-    private String Tag;
+    private String Tag = "NewOrderService";;
 
     private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
 
@@ -85,9 +85,6 @@ public class NewOrderService extends Service {
 
     private static final int REQUEST_PRINT_RECEIPT = 0xfc;
 
-    public NewOrderService()
-    {
-    }
     private Query listsLiveQuery() {
         return QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
@@ -98,19 +95,31 @@ public class NewOrderService extends Service {
          ;
     }
 
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        MyLog.e(Tag,"onBind");
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+    @Override
+    public void onCreate() {
+        MyLog.e(Tag,"oncreate");
+
+        super.onCreate();
+    }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
+        MyLog.e(Tag,"onStartCommand");
 
         registerPrinterBroadcast();
-
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_pause));
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_resum));
 
-        Tag = "NewOrderService";
+
         MyLog.e(Tag,"************NewOrderService   started*********");
         mGpService = DeskActivity.getmGpService();
-       //只执行一个，后面的排队
+        //只执行一个，后面的排队
         myExecutor   = Executors.newScheduledThreadPool(1);
 
         db = CDBHelper.getDatabase();
@@ -132,13 +141,9 @@ public class NewOrderService extends Service {
         });
 
         connectAllPrinter();
+
         return super.onStartCommand(intent, flags, startId);
     }
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
     @Override
     public void onDestroy()
     {
@@ -151,11 +156,7 @@ public class NewOrderService extends Service {
         MyLog.e(Tag,"NewOderServer Destroy");
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
+
     private void printNewOrder(String orderId)
     {
 

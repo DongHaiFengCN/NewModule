@@ -427,8 +427,7 @@ public class LoginActivity extends AppCompatActivity  {
                                     .commit();
                         }
                         //跳转界面
-                        ARouter
-                            .getInstance()
+                        ARouter.getInstance()
                             .build("/order/DeskActivity")
                             .withString("mobile",mTelView.getText().toString())
                             .withString("channelId",userName)
@@ -479,7 +478,11 @@ public class LoginActivity extends AppCompatActivity  {
         MyLog.e("LoginActivity","onPause");
     }
 
-
+    @Override
+    protected void onDestroy() {
+        MyLog.e("LoginActivity","onDestroy");
+        super.onDestroy();
+    }
 
     // 继承BroadcastReceivre基类
     public class mBroadcastReceiver extends BroadcastReceiver {

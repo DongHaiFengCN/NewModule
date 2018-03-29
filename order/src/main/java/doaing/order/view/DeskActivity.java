@@ -119,20 +119,18 @@ public class DeskActivity extends AppCompatActivity {
     private Map<String, List<Document>> dishesObjectCollection;
     public GpService mGpService;
     private PrinterServiceConnection conn = null;
-    private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
-    private static final int REQUEST_PRINT_LABEL = 0xfd;
-    private static final int REQUEST_PRINT_RECEIPT = 0xfc;
-    private Integer printnums = 1;
-    private String TAG = getCallingPackage();
+
+    private String Tag = "DeskActivity";
     private MyApplication myapp;
     private long mExitTime = 0;
-    private int keyCode = 4;
     private long boo;
+    private Intent orderIntent;
     private Handler uiHandler = new Handler()
     {
         @Override
         public void handleMessage(Message msg)
         {
+            MyLog.e(Tag,"msg what="+msg.what);
 
             switch (msg.what) {
                 case 1: //语音播放
@@ -141,6 +139,10 @@ public class DeskActivity extends AppCompatActivity {
                     break;
                 case 2: //没有订单
                     Toast.makeText(DeskActivity.this,"没有订单！",Toast.LENGTH_SHORT).show();
+                    break;
+                case 3: //打印机服务初始化完成，可以启动打印机状态检测程序以及订单监听程序
+
+                    startService(orderIntent);
                     break;
                 default:
                     break;
@@ -169,6 +171,7 @@ public class DeskActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                     boo = System.currentTimeMillis();
                 } else {
+                    stopService(orderIntent);
                     finish();
                     System.exit(0);
                 }
@@ -196,12 +199,11 @@ public class DeskActivity extends AppCompatActivity {
         myapp.setUsersC(obj);
         //  myapp.initDishesData();
         initWidget();
-
+        orderIntent = new Intent( this, NewOrderService.class);
         //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
         bindPrinterService();
         initDishesData();
-        Intent intent = new Intent( this,
-                NewOrderService.class);
+
 
         getPrinterStatus();
     }
@@ -265,12 +267,6 @@ public class DeskActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-//                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
-//                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
-//                , null , DishesKindC.class);
-//
-//        initDishesData();
 
         List<String> kitchenClientIds = CDBHelper.getIdsByClass(null, KitchenClientC.class);
         if(kitchenClientIds.size()>0)
@@ -280,23 +276,53 @@ public class DeskActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        initDishesData();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MyLog.e(Tag,"  onPause");
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        MyLog.e(Tag," on Stop");
+
+
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MyLog.e(Tag,"onDestroy");
+        EventBus.getDefault().unregister(this);
+
+        // 注销打印消息
+        if (conn != null) {
+            unbindService(conn); // unBindService
+        }
+
+    }
     //点击返回键
     @Override
     public void onBackPressed() {
         if((System.currentTimeMillis() - mExitTime) > 2000) {
             Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
             mExitTime = System.currentTimeMillis();
-        } else {
+        }
+        else {
+            stopService(orderIntent);
             finish();
         }
 
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        initDishesData();
-    }
+
 
     private void initWidget()
     {
@@ -780,7 +806,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
                 });
             } catch (CouchbaseLiteException e)
             {
-                Log.e(TAG, e.toString());
+                Log.e(Tag, e.toString());
             }
             dialog1.dismiss();
         }})
@@ -830,20 +856,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
         startActivity(mainIntent);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
 
-        // 注销打印消息
-        if (conn != null) {
-            unbindService(conn); // unBindService
-        }
-
-        Intent intent = new Intent( this,
-                NewOrderService.class);
-        stopService(intent);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -962,6 +975,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
         intent.setPackage(getPackageName());
         boolean ret = bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
+
     //打印机初始化
     class PrinterServiceConnection implements ServiceConnection {
         @Override
@@ -987,9 +1001,9 @@ private void cancelTableOrder(String Id,List<String> orderList)
     public void setmGpService(GpService smGpService) {
         this.smGpService = smGpService;
 
+        Message msg = Message.obtain();
+        msg.what = 3;
+        uiHandler.sendMessage(msg);
 
-        Intent intent = new Intent( this,
-                NewOrderService.class);
-        startService(intent);
     }
 }
