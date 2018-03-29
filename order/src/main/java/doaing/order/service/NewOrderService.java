@@ -314,8 +314,8 @@ public class NewOrderService extends Service {
                     else
                      {
 
-                        allKitchenClientPrintNames.remove(""+"" + printerId);
-                        allKitchenClientGoods.remove(""+printerId);
+                        allKitchenClientPrintNames.remove( printerId);
+                        allKitchenClientGoods.remove(printerId);
 
                         MyLog.d("***********打印机连接命令发送失败");
                     }
@@ -339,13 +339,13 @@ public class NewOrderService extends Service {
     {
         //1、程序连接上厨房端打印机后要进行分厨房打印
 
-        ArrayList<GoodsC> myshangpinlist = allKitchenClientGoods.get("" + printerId);
+        ArrayList<GoodsC> myshangpinlist = allKitchenClientGoods.get( printerId);
         if (myshangpinlist == null){
             return;
         }
         //2、获得该打印机内容 打印机名称
 
-        String printname = allKitchenClientPrintNames.get("" + printerId);
+        String printname = allKitchenClientPrintNames.get( printerId);
 
         String printcontent = getPrintContentforClient(myshangpinlist, printname);
 
@@ -364,8 +364,8 @@ public class NewOrderService extends Service {
         }
 
         setOrderPrintState(gOrderId);
-        allKitchenClientGoods.remove(""+printerId);//移除
-        allKitchenClientPrintNames.remove(""+printerId);//移除
+        allKitchenClientGoods.remove(printerId);//移除
+        allKitchenClientPrintNames.remove(printerId);//移除
 
 
     }
@@ -446,10 +446,10 @@ public class NewOrderService extends Service {
 
                    //对连接失败的打印机，移除本次打印内容
                    if(allKitchenClientGoods.get(id)!=null)
-                    allKitchenClientGoods.remove(""+id);//移除
+                    allKitchenClientGoods.remove(id);//移除
 
                     if(allKitchenClientPrintNames.get(id)!=null)
-                    allKitchenClientPrintNames.remove(""+id);//移除
+                    allKitchenClientPrintNames.remove(id);//移除
 
                     MyLog.e(Tag,id+"-打印机未连接");
                 }
