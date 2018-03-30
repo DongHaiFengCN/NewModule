@@ -293,6 +293,11 @@ public class DeskActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        if(isFinishing())
+        {
+            MyLog.e(Tag," on Stop isFinishing");
+            releaseResource();
+        }
         MyLog.e(Tag," on Stop");
 
 
@@ -301,7 +306,7 @@ public class DeskActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         MyLog.e(Tag,"onDestroy");
-        releaseResource();
+
 
     }
     private void releaseResource()

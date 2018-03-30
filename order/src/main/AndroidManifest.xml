@@ -100,7 +100,7 @@
         <service
             android:name=".service.NewOrderService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity android:name=".view.AssessmentActivity"
             android:theme="@style/AppTheme.NoActionBar"
