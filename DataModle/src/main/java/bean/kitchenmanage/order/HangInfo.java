@@ -1,18 +1,13 @@
 package bean.kitchenmanage.order;
-
 /**
- * Class 忌口类.
+ *  挂单类
  * <p>
- * Created by loongsun on 17/1/7.
+ * Created by loongsun on 2017/12/4.
  * <p>
  * email: 125736964@qq.com
  */
 
-public class TaboosC {
-    /**
-     * docId
-     */
-    private String id;
+public class HangInfo {
     /**
      * 公司唯一身份id,用于数据同步,做为唯一管道符
      */
@@ -20,29 +15,33 @@ public class TaboosC {
     /**
      * 类名，用于数据库查询类过滤
      */
-    private String className;
+    private String className = "HangInfo";
     /**
      * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
      */
     private String dataType = "BaseData";
     /**
-     * 忌口描述
+     * docId
      */
-    private String name;
+    private String id;
     /**
-     * 是否有效 1，有效，0无效
+     * 挂帐人员名称
      */
-    private boolean valid;
+     private String name;
+    /**
+     * 挂帐人员手机号码
+     */
+     private String mobile;
+    /**
+     * 挂帐人单位名称
+     */
+     private String companyName;
+    /**
+     * 挂帐人地址
+     */
+     private String address;
 
-    public TaboosC() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public HangInfo() {
     }
 
     public String getChannelId() {
@@ -69,6 +68,14 @@ public class TaboosC {
         this.dataType = dataType;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -77,11 +84,27 @@ public class TaboosC {
         this.name = name;
     }
 
-    public boolean isValid() {
-        return valid;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

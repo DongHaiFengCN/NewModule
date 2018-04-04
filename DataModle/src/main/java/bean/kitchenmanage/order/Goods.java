@@ -8,7 +8,7 @@ package bean.kitchenmanage.order;
  * @date 2017-01-06
  *
  */
-public class GoodsC implements Cloneable {
+public class Goods implements Cloneable {
 	/**
 	 * 公司唯一身份id,用于数据同步,做为唯一管道符
 	 */
@@ -20,16 +20,16 @@ public class GoodsC implements Cloneable {
 	/**
 	 * docId
 	 */
-	private String _id;
+	private String id;
 
 	/**
 	 * 所属订单对象
 	 */
-	private String order;//订单号
+	private String orderId;//订单号
 	/**
 	 * 所包含菜品对象
 	 */
-//	private DishesC dishes;
+
 	private String dishesId;
 	/**
 	 * 所选菜品口味
@@ -44,6 +44,10 @@ public class GoodsC implements Cloneable {
 	 */
 	private float price;
 	/**
+	 *
+	 */
+	private float memberPrice;
+	/**
 	 * 所选菜品名称
 	 */
 	private String dishesName;
@@ -55,24 +59,21 @@ public class GoodsC implements Cloneable {
 	 * 是否是待叫商品,0，代表正常上菜；1代表待叫菜品，打印时加备注
 	 */
     private int waitCall;
-
 	/**
 	 *退菜标识 0.正常  1.退菜 2.赠菜 3.自定义菜
 	 */
 	private int goodsType;
 	/**
-	 *用于产品排序及热度排行
+	 * 创建时间、
 	 */
-	private String createdTime;// 日期时间****
+	private String createdTime;
 
-	/**
-	 * 商品备注
-	 */
-    private String desc;
-	public GoodsC() {
+
+
+	public Goods() {
 	}
 
-	public GoodsC(String company_id) {
+	public Goods(String company_id) {
 		this.channelId = company_id;
 		this.className="GoodsC";
 	}

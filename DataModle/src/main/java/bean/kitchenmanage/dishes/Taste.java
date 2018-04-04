@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @date 2014-7-29 上午1:06:02
  *
  */
-public class DishesTasteC implements Serializable {
+public class Taste implements Serializable {
 	/**
 	 * 公司唯一身份id,用于数据同步,做为唯一管道符
 	 */
@@ -17,24 +17,24 @@ public class DishesTasteC implements Serializable {
 	/**
 	 * 类名，用于数据库查询类过滤
 	 */
-	private String className;
-	/**
-	 * 口味名称，口味不要重名，添加时要做判断
-	 */
+	private String className = "Taste";
 	/**
 	 * 对象id,等于docmentid,一般用于Pojo操作时使用。
 	 */
-	private String _id;
-
-	private String tasteName;
+	private String id;
+	/**
+	 * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
+	 */
+	private String dataType = "BaseData";
+	/**
+	 * 口味名称
+	 */
+	private String name;
 	/**
 	 * 是否有效
 	 */
 	private boolean valid;
-	/**
-	 * 数据分两大类，一个是基础数据 basic，一个业务实时数据 business
-	 */
-	private String dataType = "BaseData";//basi,代表basic数据,busi,代表业务数据
+
 
 	public String getDataType() {
 		return dataType;
@@ -44,24 +44,9 @@ public class DishesTasteC implements Serializable {
 		this.dataType = dataType;
 	}
 
-	public DishesTasteC()
+	public Taste()
 	{
 	}
-	public DishesTasteC(String channelId, String tasteName)
-	{
-		this.channelId = channelId;
-		this.tasteName = tasteName;
-		this.className="DishesTasteC";
-	}
-
-	public String get_id() {
-		return _id;
-	}
-
-	public void set_id(String _id) {
-		this._id = _id;
-	}
-
 	public String getChannelId() {
 		return channelId;
 	}
@@ -78,12 +63,20 @@ public class DishesTasteC implements Serializable {
 		this.className = className;
 	}
 
-	public String getTasteName() {
-		return tasteName;
+	public String getId() {
+		return id;
 	}
 
-	public void setTasteName(String tasteName) {
-		this.tasteName = tasteName;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public boolean isValid() {

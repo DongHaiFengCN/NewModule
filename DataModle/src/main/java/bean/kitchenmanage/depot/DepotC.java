@@ -51,8 +51,6 @@ public class DepotC implements Serializable {
      * 公司唯一身份id,用于数据同步,做为唯一管道符
      */
     private String channelId;
-
-
     /**
      * 仓库名称
      */

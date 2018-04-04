@@ -15,10 +15,7 @@ import bean.kitchenmanage.user.UsersC;
  *
  */
 public class MaterialDelive implements Serializable
-
-
 {
-
     /**
      * 公司唯一身份id,用于数据同步,做为唯一管道符
      */

@@ -1,14 +1,13 @@
-package bean.kitchenmanage.order;
+package bean.kitchenmanage.promotion;
 
 /**
- * 流水号
- * <p>
- * Created by loongsun on 2017/11/28.
- * <p>
+ * Class description ：活动规则类
+ *
+ * Created by loongsun on 17/1/8.
+ *
  * email: 125736964@qq.com
  */
-
-public class OrderNum {
+public class PromotionRule {
     /**
      * docId
      */
@@ -20,21 +19,26 @@ public class OrderNum {
     /**
      * 类名，用于数据库查询类过滤
      */
-    private String className = "OrderNum";
+    private String className = "Promotion";
     /**
      * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
      */
     private String dataType = "BaseData";
     /**
-     *yyyy-MM-DD
+     * 满金额
      */
-    private String Date;
+    private int counts;
     /**
-     * 从1开始三位数
+     * 折扣或优惠金额
      */
-    private int num;
+    private int discounts;
 
-    public OrderNum() {
+    /**
+     * 活动类型 1,打折；2，满赠，3满减
+     */
+    private int mode;
+
+    public PromotionRule() {
     }
 
     public String getId() {
@@ -69,19 +73,27 @@ public class OrderNum {
         this.dataType = dataType;
     }
 
-    public String getDate() {
-        return Date;
+    public int getCounts() {
+        return counts;
     }
 
-    public void setDate(String date) {
-        Date = date;
+    public void setCounts(int counts) {
+        this.counts = counts;
     }
 
-    public int getNum() {
-        return num;
+    public int getDiscounts() {
+        return discounts;
     }
 
-    public void setNum(int num) {
-        this.num = num;
+    public void setDiscounts(int discounts) {
+        this.discounts = discounts;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }

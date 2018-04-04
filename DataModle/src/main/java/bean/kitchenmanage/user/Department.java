@@ -11,7 +11,7 @@ package bean.kitchenmanage.user;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DepartmentsC {
+public class Department {
 
 	/**
 	 * 公司唯一身份id,用于数据同步,做为唯一管道符
@@ -20,12 +20,12 @@ public class DepartmentsC {
 	/**
 	 * 类名，用于数据库查询类过滤
 	 */
-	private String className;
+	private String className = "Department";
 
 	/**
 	 * 对象id,等于docmentid,一般用于Pojo操作时使用。
 	 */
-	private String _id;
+	private String id;
 	/**
 	 *
 	 * 公司id
@@ -34,7 +34,7 @@ public class DepartmentsC {
 	/**
 	 * 部门名称
 	 */
-	private String departmentName;
+	private String name;
 	/**
 	 * 是否有效
 	 */
@@ -45,15 +45,9 @@ public class DepartmentsC {
 	private String createdTime;
 
 	/**
-	 * 包含多个岗位对象
-	 */
-	private List<String> stationsIdlist;
-
-	/**
 	 * 数据分两大类，一个是基础数据 basic，一个业务实时数据 business
 	 */
-	private String dataType = "BaseData";//basi,代表basic数据,busi,代表业务数据
-
+	private String dataType = "BaseData";
 	public String getDataType() {
 		return dataType;
 	}
@@ -63,12 +57,7 @@ public class DepartmentsC {
 	}
 
 
-	public DepartmentsC(String companyId) {
-		this.companyId = companyId;
-		this.className="DepartmentsC";
-	}
-
-	public DepartmentsC() {
+	public Department() {
 	}
 
 	public String getChannelId() {
@@ -87,12 +76,12 @@ public class DepartmentsC {
 		this.className = className;
 	}
 
-	public String get_id() {
-		return _id;
+	public String getId() {
+		return id;
 	}
 
-	public void set_id(String _id) {
-		this._id = _id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getCompanyId() {
@@ -103,12 +92,12 @@ public class DepartmentsC {
 		this.companyId = companyId;
 	}
 
-	public String getDepartmentName() {
-		return departmentName;
+	public String getName() {
+		return name;
 	}
 
-	public void setDepartmentName(String departmentName) {
-		this.departmentName = departmentName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public boolean isValid() {
@@ -125,19 +114,5 @@ public class DepartmentsC {
 
 	public void setCreatedTime(String createdTime) {
 		this.createdTime = createdTime;
-	}
-
-	public List<String> getStationsIdlist() {
-		return stationsIdlist;
-	}
-
-	public void setStationsIdlist(List<String> stationsIdlist) {
-		this.stationsIdlist = stationsIdlist;
-	}
-	public void addStationsId(String id)
-	{
-		if(this.stationsIdlist==null)
-			this.stationsIdlist=new ArrayList<>();
-		this.stationsIdlist.add(id);
 	}
 }
