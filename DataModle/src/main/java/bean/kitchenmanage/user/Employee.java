@@ -19,7 +19,11 @@ import java.util.List;
  * @date 2014-7-29 上午1:19:08 
  *  
  */
-public class UsersC {
+public class Employee {
+	/**
+	 * 对象id,等于docmentid,一般用于Pojo操作时使用。
+	 */
+	private String id;
 	/**
 	 * 公司唯一身份id,用于数据同步,做为唯一管道符
 	 */
@@ -27,20 +31,23 @@ public class UsersC {
 	/**
 	 * 类名，用于数据库查询类过滤
 	 */
-	private String className;
+	private String className = "Employee";
 	/**
-	 * 员工号
+	 * 数据分两大类，一个是基础数据 basic，一个业务实时数据 business
+	 */
+	private String dataType = "BaseData";
+	/**
+	 * 员工号,唯一判断
 	 */
 	private String userName;
 	/**
-	 * 登陆密码
+	 * 员工密码
 	 */
-	//private String password;
-	private String passwd;
+	private String pwd;
 	/**
 	 *员工姓名
 	 */
-	private String employeeName;
+	private String name;
 	/**
 	 *员工生日
 	 */
@@ -64,29 +71,16 @@ public class UsersC {
 	/**
 	 *工作岗位,可以在多个岗位任职
 	 */
-	private List<String> stationsId;
-	/**
-	 * 终端程序用户权限 1级：全部功能；2级：点餐、收银；3级：库管
-	 */
-	private int  level;
+	private List<String> stationIds;
+
 	/**
 	 *联系电话
 	 */
 	private String mobile;
 	/**
-	 *员工状态，1：正常；2：注销；3：其它
+	 *员工状态，0：正常；1：禁用；2：离岗
 	 */
-	private int state;//
-	/**
-	 *
-	 */
-	private String _id;
-
-
-	/**
-	 * 数据分两大类，一个是基础数据 basic，一个业务实时数据 business
-	 */
-	private String dataType = "BaseData";//basi,代表basic数据,busi,代表业务数据
+	private int state;
 
 	public String getDataType() {
 		return dataType;
@@ -98,12 +92,15 @@ public class UsersC {
 
 
 
-	public UsersC() {
+	public Employee() {
 	}
 
-	public UsersC(String channelId) {
-		this.channelId = channelId;
-		this.className ="UsersC";
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getChannelId() {
@@ -130,28 +127,20 @@ public class UsersC {
 		this.userName = userName;
 	}
 
-//	public String getPassword() {
-//		return password;
-//	}
-//
-//	public void setPassword(String password) {
-//		this.password = password;
-//	}
-
-	public String getPasswd() {
-		return passwd;
+	public String getPwd() {
+		return pwd;
 	}
 
-	public void setPasswd(String passwd) {
-		this.passwd = passwd;
+	public void setPwd(String pwd) {
+		this.pwd = pwd;
 	}
 
-	public String getEmployeeName() {
-		return employeeName;
+	public String getName() {
+		return name;
 	}
 
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getBirthday() {
@@ -194,33 +183,12 @@ public class UsersC {
 		this.registedTime = registedTime;
 	}
 
-	public List<String> getStationsId() {
-		return stationsId;
+	public List<String> getStationIds() {
+		return stationIds;
 	}
 
-	public void setStationsId(List<String> stationsId) {
-		this.stationsId = stationsId;
-	}
-
-	public void addStationsId(String stationId)
-	{
-		if(this.stationsId==null)
-			this.stationsId = new ArrayList<>();
-
-		this.stationsId.add(stationId);
-	}
-	public void removeStationId(String stationId)
-	{
-		if(stationsId!=null)
-			stationsId.remove(stationId);
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
+	public void setStationIds(List<String> stationIds) {
+		this.stationIds = stationIds;
 	}
 
 	public String getMobile() {
@@ -237,13 +205,5 @@ public class UsersC {
 
 	public void setState(int state) {
 		this.state = state;
-	}
-
-	public String get_id() {
-		return _id;
-	}
-
-	public void set_id(String _id) {
-		this._id = _id;
 	}
 }
