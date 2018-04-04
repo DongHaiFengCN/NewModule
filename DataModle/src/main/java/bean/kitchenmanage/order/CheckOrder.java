@@ -9,7 +9,6 @@
 package bean.kitchenmanage.order;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,7 +77,7 @@ public class CheckOrder {
 	/**
 	 * 支付细节
 	 */
-	private List<PayDetailC> payDetailList;
+	private List<PayDetail> payDetailList;
 	/**
 	 * 挂单信息引用；注意挂单统计时怎么使用这个字段。
 	 */
@@ -195,11 +194,11 @@ public class CheckOrder {
 		this.memberMobile = memberMobile;
 	}
 
-	public List<PayDetailC> getPayDetailList() {
+	public List<PayDetail> getPayDetailList() {
 		return payDetailList;
 	}
 
-	public void setPayDetailList(List<PayDetailC> payDetailList) {
+	public void setPayDetailList(List<PayDetail> payDetailList) {
 		this.payDetailList = payDetailList;
 	}
 

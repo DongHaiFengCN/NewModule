@@ -1,6 +1,5 @@
 package bean.kitchenmanage.promotion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,7 +45,7 @@ public class Promotion {
     /**
      *所支持的菜品品类
      */
-    private List<PromotionDishesKindC> promotionDishesKindList;
+    private List<PromotionDishesKind> promotionDishesKindList;
 
 
     public Promotion() {
@@ -116,11 +115,11 @@ public class Promotion {
         this.promotionRuleIds = promotionRuleIds;
     }
 
-    public List<PromotionDishesKindC> getPromotionDishesKindList() {
+    public List<PromotionDishesKind> getPromotionDishesKindList() {
         return promotionDishesKindList;
     }
 
-    public void setPromotionDishesKindList(List<PromotionDishesKindC> promotionDishesKindList) {
+    public void setPromotionDishesKindList(List<PromotionDishesKind> promotionDishesKindList) {
         this.promotionDishesKindList = promotionDishesKindList;
     }
 }

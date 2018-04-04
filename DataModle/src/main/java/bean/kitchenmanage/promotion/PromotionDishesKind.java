@@ -1,6 +1,5 @@
 package bean.kitchenmanage.promotion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,7 +9,7 @@ import java.util.List;
  *
  * email: 125736964@qq.com
  */
-public class PromotionDishesKindC {
+public class PromotionDishesKind {
     /**
      * 菜品类id
      */
@@ -22,9 +21,9 @@ public class PromotionDishesKindC {
     /**
      *
      */
-    private List<PromotionDishesC> promotionDishesList;
+    private List<PromotionDishes> promotionDishesList;
 
-    public PromotionDishesKindC() {
+    public PromotionDishesKind() {
     }
 
     public String getDishesKindId() {
@@ -43,11 +42,11 @@ public class PromotionDishesKindC {
         this.checked = checked;
     }
 
-    public List<PromotionDishesC> getPromotionDishesList() {
+    public List<PromotionDishes> getPromotionDishesList() {
         return promotionDishesList;
     }
 
-    public void setPromotionDishesList(List<PromotionDishesC> promotionDishesList) {
+    public void setPromotionDishesList(List<PromotionDishes> promotionDishesList) {
         this.promotionDishesList = promotionDishesList;
     }
 }

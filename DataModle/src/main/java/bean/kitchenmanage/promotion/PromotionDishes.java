@@ -7,7 +7,7 @@ package bean.kitchenmanage.promotion;
  *
  * email: 125736964@qq.com
  */
-public class PromotionDishesC {
+public class PromotionDishes {
     /**
      *菜品id
      */
@@ -21,7 +21,7 @@ public class PromotionDishesC {
      */
     private boolean checked;
 
-    public PromotionDishesC() {
+    public PromotionDishes() {
     }
 
     public String getDishesId() {

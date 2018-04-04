@@ -8,7 +8,7 @@ package bean.kitchenmanage.order;
  * email: 125736964@qq.com
  */
 
-public class PayDetailC
+public class PayDetail
 {
     /**
      * 支付方式 支付类型名称 1\现金、2\银行卡、3\微信、4\支付宝、5\美团、6\会员卡 7\抹零 8\赠卷 9\饿了吗 10\挂账 11\团购
@@ -19,7 +19,7 @@ public class PayDetailC
      */
     private float subtotal;
 
-    public PayDetailC() {
+    public PayDetail() {
     }
 
     public int getPayTypes() {

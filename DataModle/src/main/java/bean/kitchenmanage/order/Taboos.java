@@ -8,7 +8,7 @@ package bean.kitchenmanage.order;
  * email: 125736964@qq.com
  */
 
-public class TaboosC {
+public class Taboos {
     /**
      * docId
      */
@@ -34,7 +34,7 @@ public class TaboosC {
      */
     private boolean valid;
 
-    public TaboosC() {
+    public Taboos() {
     }
 
     public String getId() {
