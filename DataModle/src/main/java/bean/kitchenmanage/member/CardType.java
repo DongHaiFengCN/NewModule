@@ -32,7 +32,6 @@ public class CardType {
      * 卡名称
      */
     private String name;
-
     /**
      * 充值金额
      */
@@ -42,7 +41,8 @@ public class CardType {
      */
     private int rechargeGive;
     /**
-     *是否有效， false 无效，true有效
+     *是否有效， false 无效：不能开新卡，不参加活动，老会员仍然能用，仍然也能充值
+     * 但卡类列表仍然显示
      */
     private boolean valid;
 

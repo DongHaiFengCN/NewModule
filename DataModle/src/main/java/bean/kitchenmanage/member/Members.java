@@ -67,10 +67,9 @@ public class Members {
 	 *操作者
 	 */
 	private Employee creator;
-
 	/**
-	   *卡类型名称
-	  */
+	 *卡类型id
+	 */
  	private String  cardTypeId;
 	/**
 	 *充值记录

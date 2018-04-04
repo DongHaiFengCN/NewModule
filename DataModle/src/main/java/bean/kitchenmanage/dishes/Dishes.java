@@ -49,11 +49,11 @@ public class Dishes implements Serializable {
 	/**
 	 * 是否外卖 true 是外卖菜品，false 非外卖菜品
 	 */
-	private boolean takeout;//是否外卖，未使用
+	private boolean takeout;
 	/**
 	 * 是否招牌菜
 	 */
-	private boolean specialty;//是否招牌菜 ，未使用
+	private boolean specialty;
 	/**
 	 *所含菜品口味Id列表，
 	 */
@@ -95,8 +95,10 @@ public class Dishes implements Serializable {
 	 * 菜品状态，0为正常，1为估清
 	 */
 	private boolean sell;
-
-
+	/**
+	 * 创建时间
+	 */
+	private String createdTime;
 
 
 }

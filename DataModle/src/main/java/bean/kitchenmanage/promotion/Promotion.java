@@ -41,7 +41,11 @@ public class Promotion {
     /**
      *支持的消费规则，比如是消费多少打几折，还是消费多少优惠多少
      */
-    private List <String> promotionRuleIds;
+    private List<String> promotionRuleIds;
+    /**
+     * 支持哪些卡类
+     */
+    private List<String> cardTypeIds;
     /**
      *所支持的菜品品类
      */
