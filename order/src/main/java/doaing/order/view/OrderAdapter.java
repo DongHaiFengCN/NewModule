@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import bean.kitchenmanage.order.GoodsC;
+import bean.kitchenmanage.order.Goods;
 import doaing.order.R;
 import tools.MyLog;
 
@@ -35,7 +35,7 @@ public class OrderAdapter extends BaseAdapter {
 
 
 
-    private List<GoodsC> goodsCs;
+    private List<Goods> goodsCs;
     private MainActivity context;
     private int Price = 0;
     private Handler mHandler= new Handler();
@@ -54,7 +54,7 @@ public class OrderAdapter extends BaseAdapter {
 
     public OrderAdapter(){}
 
-    public OrderAdapter(List<GoodsC> goodsCs, MainActivity mainActivity) {
+    public OrderAdapter(List<Goods> goodsCs, MainActivity mainActivity) {
         this.goodsCs = goodsCs;
         this.context = mainActivity;
     }

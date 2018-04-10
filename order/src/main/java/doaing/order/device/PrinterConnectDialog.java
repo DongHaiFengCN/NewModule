@@ -14,14 +14,13 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.journeyapps.barcodescanner.CaptureActivity;
 
 import java.util.List;
 
-import bean.kitchenmanage.qrcode.qrcodeC;
+import bean.kitchenmanage.kitchen.KitchenClient;
+import bean.kitchenmanage.qrcode.Qrcode;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
-import doaing.order.view.DeskActivity;
 import doaing.order.view.ScanActivity;
 import tools.CDBHelper;
 import view.BaseToobarActivity;
@@ -46,7 +45,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     private MyApplication myapp;
     private final static int SCANNIN_GREQUEST_CODE1 = 1;
     private final static int SCANNIN_GREQUEST_CODE2 = 2;
-    private qrcodeC obj_qrcodepay;
+    private Qrcode obj_qrcodepay;
     private int flag = 0;
     @Override
     protected void onResume() {
@@ -95,7 +94,8 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     }
     private void initQrPay()
     {
-        final List<qrcodeC> qrCodeDoc= CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
+        final List<Qrcode> qrCodeDoc= CDBHelper.getObjByClass(getApplicationContext(),Qrcode.class);
+
         if(qrCodeDoc.size()>0)
         {
             obj_qrcodepay = qrCodeDoc.get(0);
@@ -114,22 +114,22 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             }else {
                 ifqrcodeprint2.setChecked(false);
             }
-
-            if (obj_qrcodepay.isWxReceiveFlag()){
+            if (myapp.WX_RECEIVE_FLAG){
                 cboxWxYao.setChecked(true);
             }else{
                 cboxWxYao.setChecked(false);
             }
-            if (obj_qrcodepay.getNums() == 0){
+            if (obj_qrcodepay.getNumbers() == 0){
                 printnums.setText("1");
             }else {
-                printnums.setText("" + obj_qrcodepay.getNums());
+                printnums.setText("" + obj_qrcodepay.getNumbers());
             }
         }
         else
         {
             Log.e("test","find null");
-            obj_qrcodepay = new qrcodeC(myapp.getCompany_ID());
+            obj_qrcodepay = new Qrcode();
+            obj_qrcodepay.setChannelId(myapp.getCompany_ID());
         }
 
 
@@ -259,9 +259,9 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    obj_qrcodepay.setWxReceiveFlag(true);
+                    myapp.WX_RECEIVE_FLAG = true;
                 }else{
-                    obj_qrcodepay.setWxReceiveFlag(false);
+                    myapp.WX_RECEIVE_FLAG = false;
                 }
                 CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);
             }
@@ -322,13 +322,14 @@ public class PrinterConnectDialog extends BaseToobarActivity {
         {
             if(obj_qrcodepay==null)
             {
-                obj_qrcodepay = new qrcodeC(myapp.getCompany_ID());
+                obj_qrcodepay = new Qrcode();
+                obj_qrcodepay.setChannelId(myapp.getCompany_ID());
             }
             obj_qrcodepay.setWxUrl(qrcodeWxcontent.getText().toString());
             obj_qrcodepay.setZfbUrl(qrcodeZfbcontent.getText().toString());
             obj_qrcodepay.setWxPrintFlag(ifqrcodeprint1.isChecked());
             obj_qrcodepay.setZfbPrintFlag(ifqrcodeprint2.isChecked());
-            obj_qrcodepay.setNums(nums);
+            obj_qrcodepay.setNumbers(nums);
             CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);
 
         }
@@ -340,7 +341,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
 
         // 获取解析结果
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        List<qrcodeC> qrcodeCS = CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
+        List<Qrcode> qrcodeCS = CDBHelper.getObjByClass(getApplicationContext(),Qrcode.class);
 
 
         if (result != null) {
@@ -368,7 +369,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
 
             }else if(qrcodeCS.isEmpty()){//添加二维码
 
-                qrcodeC qrcodeCS1 = new qrcodeC();
+                Qrcode qrcodeCS1 = new Qrcode();
                 qrcodeCS1.setChannelId(myapp.getCompany_ID());
                 qrcodeCS1.setClassName("qrcodeC");
 

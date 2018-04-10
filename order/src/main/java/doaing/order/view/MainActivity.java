@@ -75,12 +75,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.kitchen.KitchenClientC;
-import bean.kitchenmanage.order.GoodsC;
-import bean.kitchenmanage.order.OrderC;
+import bean.kitchenmanage.kitchen.KitchenClient;
+import bean.kitchenmanage.order.Goods;
+import bean.kitchenmanage.order.Order;
 import bean.kitchenmanage.order.OrderNum;
-import bean.kitchenmanage.table.AreaC;
+import bean.kitchenmanage.table.Area;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment orderFragment;
 
-    private List<GoodsC> t9GoodsList;
+    private List<Goods> t9GoodsList;
 
     private SeekT9Adapter seekT9Adapter;
 
@@ -143,16 +142,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     private MenuItem menuItem;
-    private List<GoodsC> goodsList = new ArrayList<>();
+    private List<Goods> goodsList = new ArrayList<>();
 
-    private List<GoodsC> zcGoodsList = new ArrayList<>();
+    private List<Goods> zcGoodsList = new ArrayList<>();
 
     private String gOrderId;
     private EditText editText;
     private Document document;
 
     private String tableName, areaName, currentPersions, serNum;
-    private Map<String, ArrayList<GoodsC>> allKitchenClientGoods = new HashMap<String, ArrayList<GoodsC>>();
+    private Map<String, ArrayList<Goods>> allKitchenClientGoods = new HashMap<String, ArrayList<Goods>>();
     private Map<String, String> allKitchenClientPrintNames = new HashMap<String, String>();
     private GpService mGpService = null;
     private PrinterServiceConnection conn = null;
@@ -163,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
     private String hintDishes = "";
     PortParameters mPortParam;
     private int printerType = 58;
-    private OrderC newOrderObj;
+    private Order newOrderObj;
     Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -286,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void setT9GoodsList(List<GoodsC> t9GoodsList) {
+    public void setT9GoodsList(List<Goods> t9GoodsList) {
 
         this.t9GoodsList = t9GoodsList;
 
@@ -294,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public List<GoodsC> getT9GoodsList() {
+    public List<Goods> getT9GoodsList() {
 
         return t9GoodsList;
 
@@ -307,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public List<GoodsC> getGoodsList() {
+    public List<Goods> getGoodsList() {
 
         return goodsList;
 
@@ -315,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void changeOrderGoodsByT9(GoodsC goodsObj)
+    public void changeOrderGoodsByT9(Goods goodsObj)
 
     {
 
@@ -499,9 +498,9 @@ public class MainActivity extends AppCompatActivity {
 
 //1\
 
-                final GoodsC goodsC = goodsList.get(position);
+                final Goods goods = goodsList.get(position);
 
-                if (goodsC.getGoodsType() == 2){
+                if (goods.getGoodsType() == 2){
 
                     return ;
 
@@ -518,10 +517,10 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //2\
 
-                                goodsC.setGoodsType(2);
+                                goods.setGoodsType(2);
 
-                                goodsC.setDishesName(goodsC.getDishesName() + "(赠)");
-                                total = MyBigDecimal.sub(total, MyBigDecimal.mul(goodsC.getPrice(), goodsC.getDishesCount(), 1), 1);
+                                goods.setDishesName(goods.getDishesName() + "(赠)");
+                                total = MyBigDecimal.sub(total, MyBigDecimal.mul(goods.getPrice(), goods.getDishesCount(), 1), 1);
                                 setTotal(total);
                                 orderAdapter.notifyDataSetChanged();
                                 dialog.dismiss();
@@ -797,7 +796,8 @@ public class MainActivity extends AppCompatActivity {
 
         {
 
-            OrderNum obj = new OrderNum(myApp.getCompany_ID());
+            OrderNum obj = new OrderNum();
+            obj.setChannelId(myApp.getCompany_ID());
 
             String time = formatter.format(new Date());
 
@@ -855,10 +855,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void printOrderToKitchen(List<GoodsC> list)
+    private void printOrderToKitchen(List<Goods> list)
     {
         //1\ 查询出所有厨房,并分配菜品
-        List<KitchenClientC> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClientC.class);
+        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClient.class);
         if (kitchenClientList.size() <= 0)
         {
             Toast.makeText(getApplicationContext(), "未配置厨房数据", Toast.LENGTH_SHORT).show();
@@ -867,22 +867,26 @@ public class MainActivity extends AppCompatActivity {
 
         allKitchenClientGoods.clear();
         allKitchenClientPrintNames.clear();
-        for (KitchenClientC kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
+        for (KitchenClient kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
         {
             boolean findflag = false;
-            ArrayList<GoodsC> oneKitchenClientGoods = new ArrayList<GoodsC>();
+            ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
+            List<String> dishesIds = CDBHelper.getIdsByWhere(getApplicationContext(),
+                    Expression.property("className").equalTo(Expression.string("Dishes").
+                            add(Expression.string("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
+                    null);
 
-            for (String dishKindId : kitchenClientObj.getDishesKindIDList())//2 for 遍历厨房下所含菜系
+            for (String dishKindId : dishesIds)//2 for 遍历厨房下所含菜系
             {
 
                 //3 for 该厨房下所应得商品
-                for (GoodsC goodsC : list) {
+                for (Goods goods : list) {
 
-                    if (dishKindId.equals(goodsC.getDishesKindId())) {
+                    if (dishKindId.equals(goods.getDishesKindId())) {
                         findflag = true;
-                        // g_printGoodsList.remove(goodsC);
+                        // g_printGoodsList.remove(goods);
                         // 为了降低循环次数，因为菜品只可能在一个厨房打印分发，故分发完后移除掉。
-                        oneKitchenClientGoods.add(goodsC);
+                        oneKitchenClientGoods.add(goods);
                     }
                 } //end for 3
 
@@ -893,7 +897,7 @@ public class MainActivity extends AppCompatActivity {
 
 
                 String clientKtname = "" + kitchenClientObj.getName()+hintDishes;//厨房名称
-                String printname = "" + kitchenClientObj.getIndexPrinter();//打印机名称
+                String printname = "" + kitchenClientObj.getPrinterId();//打印机名称
                 Log.e("Port",""+printname);
                 int printerId = Integer.parseInt(printname);
 
@@ -1047,7 +1051,7 @@ public class MainActivity extends AppCompatActivity {
     private void printGoodsAtRomoteByIndex(int printerId)
     {
         //1、程序连接上厨房端打印机后要进行分厨房打印
-        ArrayList<GoodsC> myshangpinlist = allKitchenClientGoods.get("" + printerId);
+        ArrayList<Goods> myshangpinlist = allKitchenClientGoods.get("" + printerId);
 
         //2、获得该打印机内容 打印机名称
         String printname = allKitchenClientPrintNames.get("" + printerId);
@@ -1067,7 +1071,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setOrderPrintState(String orderId) {
 
-        OrderC obj = CDBHelper.getObjById(getApplicationContext(), orderId, OrderC.class);
+        Order obj = CDBHelper.getObjById(getApplicationContext(), orderId, Order.class);
         obj.setPrintFlag(1);
         CDBHelper.createAndUpdate(getApplicationContext(), obj);
     }
@@ -1091,7 +1095,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private String getPrintContentforClient(ArrayList<GoodsC> myshangpinlist, String clientname)
+    private String getPrintContentforClient(ArrayList<Goods> myshangpinlist, String clientname)
     {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
@@ -1190,11 +1194,11 @@ public class MainActivity extends AppCompatActivity {
                 temp = myshangpinlist.get(i).getDishesTaste();
                 dishesName = myshangpinlist.get(i).getDishesName();
                 Document doc = CDBHelper.getDocByID(getApplicationContext(),myshangpinlist.get(i).getDishesId());
-                Array array = doc.getArray("dishesIdList");
+                Array array = doc.getArray("dishesIds");
                 if (array != null ){
                     for (int d = 0; d < array.count();d++){
                         Document document = CDBHelper.getDocByID(getApplicationContext(),array.getString(d));
-                        dishesName = document.getString("dishesName");
+                        dishesName = document.getString("name");
                         esc.addSetAbsolutePrintPosition((short) 0);
                         if (temp == null || "".equals(temp))//无口味
                         {
@@ -1228,8 +1232,8 @@ public class MainActivity extends AppCompatActivity {
             }
             esc.addText("--------------------------------\n");
             esc.addPrintAndLineFeed();
-            if (newOrderObj.getDesc() != null) {
-                esc.addText("备注信息：             " + newOrderObj.getDesc() + "\n");
+            if (newOrderObj.getDescription() != null) {
+                esc.addText("备注信息：             " + newOrderObj.getDescription() + "\n");
                 esc.addPrintAndLineFeed();
             }
 
@@ -1256,9 +1260,9 @@ public class MainActivity extends AppCompatActivity {
         String zcId = "OrderC."+ ToolUtil.getUUID();
         MutableDocument zcOrderDoc = new MutableDocument(zcId);
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                Expression.property("className").equalTo(Expression.string("OrderC"))
-                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
+                Expression.property("className").equalTo(Expression.string("Order"))
+                        .and(Expression.property("state").equalTo(Expression.intValue(1)))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getNum())))
                 , Ordering.property("createdTime").descending()
 
         );
@@ -1271,19 +1275,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < goodsList.size(); i++) {
-            GoodsC obj = goodsList.get(i);
+            Goods obj = goodsList.get(i);
             if (obj.getGoodsType() == 2) {
                 zcGoodsList.add(obj);
                 goodsList.remove(i);
                 i--;
                 continue;
             }
-            obj.setOrder(newId);
+            obj.setOrderId(newId);
         }
 
         MutableArray array = new MutableArray();
         for (int i = 0;i < goodsList.size();i++){
-            GoodsC obj = goodsList.get(i);
+            Goods obj = goodsList.get(i);
             ObjectMapper m = new ObjectMapper();
             Map<String, Object> props = m.convertValue(obj, Map.class);
             array.addValue(props);
@@ -1298,10 +1302,10 @@ public class MainActivity extends AppCompatActivity {
         newOrderDoc.setInt("orderCType",0);//正常
         newOrderDoc.setInt("deviceType",1);//点餐宝
         newOrderDoc.setString("createdTime",getFormatDate());
-        newOrderDoc.setString("tableNum",myApp.getTable_sel_obj().getTableNum());
-        newOrderDoc.setString("tableName",myApp.getTable_sel_obj().getTableName());
-        AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
-        newOrderDoc.setString("areaName",areaC.getAreaName());
+        newOrderDoc.setString("tableNum",myApp.getTable_sel_obj().getNum());
+        newOrderDoc.setString("tableName",myApp.getTable_sel_obj().getName());
+        Area area = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), Area.class);
+        newOrderDoc.setString("areaName",area.getName());
         try {
             if (CDBHelper.getDatabase() != null){
                 CDBHelper.getDatabase().save(newOrderDoc);
@@ -1325,8 +1329,8 @@ public class MainActivity extends AppCompatActivity {
             zcOrderDoc.setString("tableName",newOrderDoc.getString("tableName"));
             zcOrderDoc.setString("areaName",newOrderDoc.getString("areaName"));
             MutableArray zcArray = new MutableArray();
-            for (GoodsC obj : zcGoodsList) {
-                obj.setOrder(zcId);
+            for (Goods obj : zcGoodsList) {
+                obj.setOrderId(zcId);
                 zcArray.addValue(obj);
             }
 
@@ -1359,15 +1363,17 @@ public class MainActivity extends AppCompatActivity {
 
         zcGoodsList.clear();
 
-        newOrderObj = new OrderC(myApp.getCompany_ID());
-        OrderC zcOrderObj = new OrderC(myApp.getCompany_ID());
+        newOrderObj = new Order();
+        newOrderObj.setChannelId(myApp.getCompany_ID());
+        Order zcOrderObj = new Order();
+        zcOrderObj.setChannelId(myApp.getCompany_ID());
         gOrderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-        newOrderObj.set_id(gOrderId);
+        newOrderObj.setId(gOrderId);
 
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                Expression.property("className").equalTo(Expression.string("OrderC"))
-                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getTableNum())))
+                Expression.property("className").equalTo(Expression.string("Order"))
+                        .and(Expression.property("state").equalTo(Expression.intValue(1)))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getNum())))
                 , Ordering.property("createdTime").descending()
 
         );
@@ -1380,45 +1386,45 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (int i = 0; i < goodsList.size(); i++) {
-            GoodsC obj = goodsList.get(i);
+            Goods obj = goodsList.get(i);
             if (obj.getGoodsType() == 2) {
                 zcGoodsList.add(obj);
                 goodsList.remove(i);
                 i--;
                 continue;
             }
-            obj.setOrder(gOrderId);
+            obj.setOrderId(gOrderId);
         }
-        newOrderObj.setGoodsList(goodsList);
-        newOrderObj.setAllPrice(total);
-        newOrderObj.setOrderState(1);//未买单
-        newOrderObj.setOrderCType(0);//正常
+        newOrderObj.setGoods(goodsList);
+        newOrderObj.setTotalPrice(total);
+        newOrderObj.setState(1);//未买单
+        newOrderObj.setOrderType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
-        newOrderObj.setTableNum(myApp.getTable_sel_obj().getTableNum());
-        newOrderObj.setTableName(myApp.getTable_sel_obj().getTableName());
-        AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), AreaC.class);
-        newOrderObj.setAreaName(areaC.getAreaName());
+        newOrderObj.setTableNum(myApp.getTable_sel_obj().getNum());
+        newOrderObj.setTableName(myApp.getTable_sel_obj().getName());
+        Area area = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), Area.class);
+        newOrderObj.setAreaName(area.getName());
         if (!TextUtils.isEmpty(editText.getText().toString())){
-            newOrderObj.setDesc(editText.getText().toString());
+            newOrderObj.setDescription(editText.getText().toString());
         }
         CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
         if (zcGoodsList.size() > 0) {
             zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
-            zcOrderObj.setOrderState(1);//未买单
-            zcOrderObj.setOrderCType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
+            zcOrderObj.setState(1);//未买单
+            zcOrderObj.setOrderType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
             zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
             zcOrderObj.setTableNum(newOrderObj.getTableNum());
             zcOrderObj.setTableName(newOrderObj.getTableName());
             zcOrderObj.setAreaName(newOrderObj.getAreaName());
             zcOrderObj.setCreatedYear("2018");
             String id = CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
-            for (GoodsC obj : zcGoodsList) {
-                obj.setOrder(id);
+            for (Goods obj : zcGoodsList) {
+                obj.setOrderId(id);
             }
-            zcOrderObj.setGoodsList(zcGoodsList);
-            zcOrderObj.set_id(id);
+            zcOrderObj.setGoods(zcGoodsList);
+            zcOrderObj.setId(id);
             CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
         }
 
@@ -1669,7 +1675,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-                if (goodsList.get(i).getDishesName().equals(dishesMessage.getDishesC().getDishesName())) {
+                if (goodsList.get(i).getDishesName().equals(dishesMessage.getDishes().getName())) {
 
 
 
@@ -1737,27 +1743,27 @@ public class MainActivity extends AppCompatActivity {
 
         if (!isDishes && dishesMessage.isOperation()) {
 
-            GoodsC goodsC = new GoodsC();
+            Goods goods = new Goods();
 
-            goodsC.setChannelId(myApp.getCompany_ID());
+            goods.setChannelId(myApp.getCompany_ID());
 
-            goodsC.setDishesKindId(dishesMessage.getDishKindId());
+            goods.setDishesKindId(dishesMessage.getDishKindId());
 
-            goodsC.setDishesTaste(dishesMessage.getDishesTaste());
+            goods.setDishesTaste(dishesMessage.getDishesTaste());
 
-            goodsC.setDishesName(dishesMessage.getName());
+            goods.setDishesName(dishesMessage.getName());
 
-            goodsC.setDishesCount(dishesMessage.getCount());
+            goods.setDishesCount(dishesMessage.getCount());
 
-            goodsC.setDishesId(dishesMessage.getDishesC().get_id());
+            goods.setDishesId(dishesMessage.getDishes().getId());
 
-            goodsC.setGoodsType(0);
+            goods.setGoodsType(0);
 
-            goodsC.setCreatedTime(getFormatDate());
+            goods.setCreatedTime(getFormatDate());
 
-            goodsC.setPrice(dishesMessage.getDishesC().getPrice());
+            goods.setPrice(dishesMessage.getDishes().getPrice());
 
-            goodsList.add(goodsC);
+            goodsList.add(goods);
 
 
 

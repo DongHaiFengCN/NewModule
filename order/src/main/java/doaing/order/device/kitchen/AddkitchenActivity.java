@@ -38,8 +38,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dishes.DishesKindC;
-import bean.kitchenmanage.kitchen.KitchenClientC;
+import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.kitchen.KitchenClient;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.PortConfigurationActivity;
@@ -185,7 +185,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         findViewById(R.id.btn_kcsave).setOnClickListener(this);
         spPrinter.setOnClickListener(this);
 
-        allDishKindIdList = CDBHelper.getIdsByClass(null,DishesKindC.class);
+        allDishKindIdList = CDBHelper.getIdsByClass(null,DishesKind.class);
         addKitchenAdapter = new AddKitchenAdapter(AddkitchenActivity.this, allDishKindIdList);
         listViewCk.setAdapter(addKitchenAdapter);
         listViewCk.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -287,22 +287,23 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     //保存到数据库
     private void savecheckinfo() {
 
-        KitchenClientC obj=new KitchenClientC(myapp.getCompany_ID());
+        KitchenClient obj=new KitchenClient();
 
         obj.setName(etClientname.getText().toString().trim());
 
-          obj.setIndexPrinter(mPrinterId);
+        obj.setPrinterId(mPrinterId);
+        obj.setWxReceiveFlag(myapp.WX_RECEIVE_FLAG);
        // obj.setKitchenAdress(""+pos);
         //保存一下打印机状态，实时反馈到状态界面上
-        boolean state = mPortParam.getPortOpenState();
-        obj.setStatePrinter(state);
+//        boolean state = mPortParam.getPortOpenState();
+//        obj.setStatePrinter(state);
 
         List<String> dishKindIDList=new ArrayList<String>();
         for(int i=0;i<listSelectedDocId.size();i++)
         {
             dishKindIDList.add(listSelectedDocId.get(i));
         }
-        obj.setDishesKindIDList(dishKindIDList);
+        obj.setKindIds(dishKindIDList);
         CDBHelper.createAndUpdate(getApplicationContext(),obj);
 
     }
@@ -361,9 +362,9 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             //保存一下打印机状态，实时反馈到状态界面上
             boolean state = mPortParam.getPortOpenState();
 
-            muDoc.setInt("indexPrinter",mPrinterId);
-            muDoc.setBoolean("statePrinter",state);
-            muDoc.setValue("dishesKindIDList",dishKindIdArray);
+            muDoc.setInt("printerId",mPrinterId);
+            //muDoc.setBoolean("statePrinter",state);
+            muDoc.setValue("kindIds",dishKindIdArray);
             CDBHelper.saveDocument(getApplicationContext(),muDoc);
         }
 
@@ -628,8 +629,8 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                 } else if (type == GpDevice.STATE_NONE)//0 没有连接
                 {
                     List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
-                            Expression.property("className").equalTo(Expression.string("KitchenClientC"))
-                                    .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                            Expression.property("className").equalTo(Expression.string("KitchenClient"))
+                                    .and(Expression.property("printerId").equalTo(Expression.intValue(id))),
                             null);
 
                     if(docList.size()>0)
@@ -648,8 +649,8 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                 {
 
                     List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
-                            Expression.property("className").equalTo(Expression.string("KitchenClientC"))
-                                    .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                            Expression.property("className").equalTo(Expression.string("KitchenClient"))
+                                    .and(Expression.property("printerId").equalTo(Expression.intValue(id))),
                             null);
 
                     if(docList.size()>0)

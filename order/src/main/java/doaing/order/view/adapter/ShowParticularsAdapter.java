@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import bean.kitchenmanage.order.GoodsC;
+import bean.kitchenmanage.order.Goods;
 import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
 
@@ -25,8 +25,8 @@ import doaing.order.untils.MyBigDecimal;
 public class ShowParticularsAdapter extends BaseAdapter {
 
     private Activity activity;
-    private List<GoodsC> goodsCs;
-    public ShowParticularsAdapter(Activity activity, List<GoodsC> goodsCs)
+    private List<Goods> goodsCs;
+    public ShowParticularsAdapter(Activity activity, List<Goods> goodsCs)
     {
         this.activity = activity;
         this.goodsCs = goodsCs;

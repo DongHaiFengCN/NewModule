@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
@@ -24,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.order.GoodsC;
+import bean.kitchenmanage.dishes.Dishes;
+import bean.kitchenmanage.order.Goods;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
@@ -47,7 +46,7 @@ import static tools.CDBHelper.getFormatDate;
 public class SeekT9Adapter extends BaseAdapter {
 
     private static final String TAG = "SeekT9Adapter";
-    private List<GoodsC> mGoodsList;
+    private List<Goods> mGoodsList;
     private MainActivity activity;
     private SeekT9OnClickListener listener;
     //private float number=1;
@@ -59,16 +58,16 @@ public class SeekT9Adapter extends BaseAdapter {
 
     private MyApplication myapp;
     private EditText editText;
-    private boolean isState = false;
+    private boolean isSell = false;
 
-    public SeekT9Adapter(MainActivity context, EditText editText, List<GoodsC> mData) {
+    public SeekT9Adapter(MainActivity context, EditText editText, List<Goods> mData) {
         this.activity = context;
         this.editText = editText;
         myapp = (MyApplication) activity.getApplication();
         this.mGoodsList = mData;
     }
 
-    public List<GoodsC> getGoodsList(){
+    public List<Goods> getGoodsList(){
         return mGoodsList;
     }
 
@@ -95,7 +94,7 @@ public class SeekT9Adapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final ViewHolder viewHolder;
-        final DishesC dishesC;
+        final Dishes dishes;
         if (convertView == null) {
 
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_item_seek, parent, false);
@@ -105,13 +104,13 @@ public class SeekT9Adapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        dishesC = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), DishesC.class);
-        if (dishesC.getState() == 1){
+        dishes = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), Dishes.class);
+        if (dishes.isSell()){
             viewHolder.viewTj.setVisibility(View.INVISIBLE);
-            isState = true;
+            isSell = true;
         }else{
             viewHolder.viewTj.setVisibility(View.VISIBLE);
-            isState = false;
+            isSell = false;
         }
         try {
             viewHolder.itemSeekInfo.setText(ToolUtil.emojiRecovery2(mGoodsList.get(position).getDishesName()));
@@ -127,7 +126,7 @@ public class SeekT9Adapter extends BaseAdapter {
                 Log.e("item click", "position = " + position);
                 v.setBackgroundResource(R.color.lucency);
                 if (listener != null) {
-                    listener.OnClickListener(v, mGoodsList.get(position).getDishesName(), mGoodsList.get(position).getPrice(), position,isState);
+                    listener.OnClickListener(v, mGoodsList.get(position).getDishesName(), mGoodsList.get(position).getPrice(), position,isSell);
                 }
             }
         });
@@ -159,11 +158,11 @@ public class SeekT9Adapter extends BaseAdapter {
 
 
 
-                            if (dishesC.getTasteList().size() != 0) {
-                                for (int i = 0; i < dishesC.getTasteList().size(); i++) {
-                                    Document document = CDBHelper.getDocByID(activity.getApplicationContext(), dishesC.getTasteList().get(i).toString());
+                            if (dishes.getTasteIds().size() != 0) {
+                                for (int i = 0; i < dishes.getTasteIds().size(); i++) {
+                                    Document document = CDBHelper.getDocByID(activity.getApplicationContext(), dishes.getTasteIds().get(i).toString());
                                     try {
-                                        tasteList.add(ToolUtil.emojiRecovery2(document.getString("tasteName")));
+                                        tasteList.add(ToolUtil.emojiRecovery2(document.getString("name")));
                                     } catch (UnsupportedEncodingException e) {
                                         e.printStackTrace();
                                     }
@@ -181,8 +180,6 @@ public class SeekT9Adapter extends BaseAdapter {
                 } catch (CouchbaseLiteException e) {
                     e.printStackTrace();
                 }
-
-
             }
         });
 
@@ -200,7 +197,7 @@ public class SeekT9Adapter extends BaseAdapter {
                 }
                 viewHolder.viewShu.setText(mGoodsList.get(position).getDishesCount() + "");
 
-                GoodsC obj = mGoodsList.get(position);
+                Goods obj = mGoodsList.get(position);
                 setSub(obj);
 
             }
@@ -211,7 +208,7 @@ public class SeekT9Adapter extends BaseAdapter {
         return convertView;
     }
 
-    private void setSub(GoodsC goodsObj)
+    private void setSub(Goods goodsObj)
     {
         if (activity.getGoodsList().size() != 0)
         {
@@ -271,7 +268,7 @@ public class SeekT9Adapter extends BaseAdapter {
         mGoodsList.get(position).setDishesCount(mGoodsList.get(position).getDishesCount() + 1);
         viewHolder.viewShu.setText(mGoodsList.get(position).getDishesCount() + "");
 
-        GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
+        Goods goodsObj = new Goods(myapp.getCompany_ID());
         try {
             goodsObj.setDishesName(ToolUtil.emojiConvert1(mGoodsList.get(position).getDishesName()));
         } catch (UnsupportedEncodingException e) {

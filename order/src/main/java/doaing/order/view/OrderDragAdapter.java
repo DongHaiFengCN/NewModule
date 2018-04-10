@@ -19,8 +19,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.dishes.DishesTasteC;
+import bean.kitchenmanage.dishes.Dishes;
+import bean.kitchenmanage.dishes.Taste;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
 import tools.CDBHelper;
@@ -117,12 +117,12 @@ public class OrderDragAdapter extends BaseAdapter {
             view = (HolderView) convertView.getTag();
         }
 
-        if (mlistDishes.get(position).getInt("state") == 1){
+        if (mlistDishes.get(position).getBoolean("sell")){
             view.addtion.setVisibility(View.INVISIBLE);
-            view.name.setText(mlistDishes.get(position).getString("dishesName")+"(估清)");
+            view.name.setText(mlistDishes.get(position).getString("name")+"(估清)");
         }else{
             view.addtion.setVisibility(View.VISIBLE);
-            view.name.setText(mlistDishes.get(position).getString("dishesName"));
+            view.name.setText(mlistDishes.get(position).getString("name"));
         }
         // 当数量不为零，且关闭状态，打开减号与数量；当数量为零，处于开启状态则关闭。
         if (numbers[position] != 0.0f && view.substruct.getVisibility() == View.INVISIBLE
@@ -150,9 +150,9 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                DishesC dishesC = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), DishesC.class);
+                Dishes dishes = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), Dishes.class);
 
-                setMessage(dishesC, true, position);
+                setMessage(dishes, true, position);
 
             }
         });
@@ -162,8 +162,8 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                DishesC dishesC = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), DishesC.class);
-                setMessage(dishesC, false, position);
+                Dishes dishes = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), Dishes.class);
+                setMessage(dishes, false, position);
 
             }
         });
@@ -182,33 +182,33 @@ public class OrderDragAdapter extends BaseAdapter {
      */
 
 
-    private void setMessage(final DishesC dishesC, final boolean flag, final int position) {
+    private void setMessage(final Dishes dishesC, final boolean flag, final int position) {
 
         final DishesMessage dishesMessage = new DishesMessage();
 
-        dishesMessage.setDishKindId(dishesC.getDishesKindId());
+        dishesMessage.setDishKindId(dishesC.getKindId());
 
         dishesMessage.setSingle(true);
 
         dishesMessage.setDishesC(dishesC);
 
-        dishesMessage.setName(dishesC.getDishesName());
+        dishesMessage.setName(dishesC.getName());
 
         //判断菜品引用的口味id在数据库中存在实例
 
         //有口味，添加选择口味dialog
-        if (dishesC.getTasteList() != null && dishesC.getTasteList().size() > 0) {
+        if (dishesC.getTasteIds() != null && dishesC.getTasteIds().size() > 0) {
 
             //初始化一个缓存口味的数组
-            final String[] strings = new String[dishesC.getTasteList().size()];
+            final String[] strings = new String[dishesC.getTasteIds().size()];
 
-            for (int i = 0; i < dishesC.getTasteList().size(); i++) {
+            for (int i = 0; i < dishesC.getTasteIds().size(); i++) {
 
-                DishesTasteC dishesTasteC = CDBHelper.getObjById(context, dishesC.getTasteList().get(i), DishesTasteC.class);
+                Taste dishesTasteC = CDBHelper.getObjById(context, dishesC.getTasteIds().get(i), Taste.class);
 
                 if (dishesTasteC != null) {
 
-                    strings[i] = dishesTasteC.getTasteName();
+                    strings[i] = dishesTasteC.getName();
                 }
 
             }

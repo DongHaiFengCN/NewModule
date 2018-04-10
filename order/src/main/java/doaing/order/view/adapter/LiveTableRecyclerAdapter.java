@@ -83,13 +83,13 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
     {
         return QueryBuilder.select(SelectResult.expression(Meta.id),
                 SelectResult.expression(Expression.property("state")),
-                SelectResult.expression(Expression.property("tableName")),
+                SelectResult.expression(Expression.property("name")),
                 SelectResult.expression(Expression.property("maxPersons")),
                 SelectResult.expression(Expression.property("currentPersions")))
                 .from(DataSource.database(db))
-                .where(Expression.property("className").equalTo(Expression.string("TableC"))
+                .where(Expression.property("className").equalTo(Expression.string("Table"))
                         .and(Expression.property("areaId").equalTo(Expression.string(areaId))))
-                .orderBy(Ordering.property("tableNum").ascending());
+                .orderBy(Ordering.property("num").ascending());
     }
     @Override
     public TestHolderView onCreateViewHolder(ViewGroup parent, int viewType)

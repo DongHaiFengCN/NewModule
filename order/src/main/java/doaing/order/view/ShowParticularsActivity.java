@@ -68,11 +68,11 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import bean.kitchenmanage.kitchen.KitchenClientC;
-import bean.kitchenmanage.order.GoodsC;
-import bean.kitchenmanage.order.OrderC;
-import bean.kitchenmanage.table.AreaC;
-import bean.kitchenmanage.user.CompanyC;
+import bean.kitchenmanage.kitchen.KitchenClient;
+import bean.kitchenmanage.order.Goods;
+import bean.kitchenmanage.order.Order;
+import bean.kitchenmanage.table.Area;
+import bean.kitchenmanage.user.Company;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.BluetoothUtil;
@@ -103,20 +103,20 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     ImageView showImg;
     //EditText showEdBz;
     ShowParticularsAdapter adatper;
-    private List<GoodsC> goodsCList;
+    private List<Goods> goodsCList;
     private MyApplication myapp;
     private float all = 0f;
 
     private BluetoothAdapter btAdapter;
     private BluetoothDevice device;
     private BluetoothSocket socket;
-    private List<OrderC> orderCList;
+    private List<Order> orderCList;
     private String areaName, tableName;
     private int selActionId;
     private boolean isSupDishesCheck = false;
     private float supCount;
     private ProgressDialog proDialog =null;
-    private Map<String, ArrayList<GoodsC>> allKitchenClientGoods = new HashMap<String, ArrayList<GoodsC>>();
+    private Map<String, ArrayList<Goods>> allKitchenClientGoods = new HashMap<String, ArrayList<Goods>>();
     private Map<String, String> allKitchenClientPrintNames = new HashMap<String, String>();
     private GpService mGpService = null;
     private PrinterServiceConnection conn = null;
@@ -128,7 +128,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     private static String pIp = "192.168.2.249";
     private static int pPortNum = 9100;
     private EditText editText;
-    private List<GoodsC> tmpList;
+    private List<Goods> tmpList;
     private String hintDishes = "";
     PortParameters mPortParam;
 
@@ -277,17 +277,18 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     }
     //追加菜品
     private void addDishes(int pos, float counts) {
-        GoodsC oldGoods = goodsCList.get(pos);
+        Goods oldGoods = goodsCList.get(pos);
 
-        OrderC newOrderObj = new OrderC(myapp.getCompany_ID());
+        Order newOrderObj = new Order();
+        newOrderObj.setChannelId(myapp.getCompany_ID());
         String orderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-        newOrderObj.set_id(orderId);
+        newOrderObj.setId(orderId);
 
-        GoodsC newGoods = null;
+        Goods newGoods = null;
         try {
-            newGoods = (GoodsC) oldGoods.clone();//向下转型----P2没有被实例化
+            newGoods = (Goods) oldGoods.clone();//向下转型----P2没有被实例化
             newGoods.setDishesCount(counts);
-            newGoods.setOrder(orderId);
+            newGoods.setOrderId(orderId);
         } catch (CloneNotSupportedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -300,27 +301,27 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             newOrderObj.setOrderNum(1);
             newOrderObj.setSerialNum(Tool.getOrderSerialNum(this));
         }
-        newOrderObj.setAllPrice(MyBigDecimal.mul(newGoods.getPrice(), counts, 1));
-        newOrderObj.setOrderState(1);//未买单
-        newOrderObj.setOrderCType(0);//正常
+        newOrderObj.setTotalPrice(MyBigDecimal.mul(newGoods.getPrice(), counts, 1));
+        newOrderObj.setState(1);//未买单
+        newOrderObj.setOrderType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear("2018");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoodsList(tmpList);
+        newOrderObj.setGoods(tmpList);
         CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
     }
     //退菜
     private void retreatDishes(int pos, float counts) {
-        GoodsC oldGoods = goodsCList.get(pos);
+        Goods oldGoods = goodsCList.get(pos);
         Log.e("Show",""+oldGoods.getDishesCount());
-        GoodsC newGoods = null;
+        Goods newGoods = null;
         try {
-            newGoods = (GoodsC) oldGoods.clone();//向下转型----P2没有被实例化
+            newGoods = (Goods) oldGoods.clone();//向下转型----P2没有被实例化
 
         } catch (CloneNotSupportedException e) {
             // TODO Auto-generated catch block
@@ -329,9 +330,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newGoods.setDishesCount(counts);
         removeGoodsFromOrder(newGoods, 0);//修改正常老订单
 
-        OrderC newOrderObj = new OrderC(myapp.getCompany_ID());
+        Order newOrderObj = new Order();
+        newOrderObj.setChannelId(myapp.getCompany_ID());
         String orderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-        newOrderObj.set_id(orderId);
+        newOrderObj.setId(orderId);
         if (orderCList.size() > 1) {
             newOrderObj.setOrderNum(orderCList.get(0).getOrderNum() + 1);
             newOrderObj.setSerialNum(orderCList.get(0).getSerialNum());
@@ -339,31 +341,31 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             newOrderObj.setOrderNum(1);
             newOrderObj.setSerialNum(Tool.getOrderSerialNum(this));
         }
-        newOrderObj.setAllPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
-        newOrderObj.setOrderState(1);//未买单
-        newOrderObj.setOrderCType(1);//退菜订单
+        newOrderObj.setTotalPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
+        newOrderObj.setState(1);//未买单
+        newOrderObj.setOrderType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrder(orderId);
+        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(退)");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoodsList(tmpList);
+        newOrderObj.setGoods(tmpList);
         CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
 
     }
 
     private void giveDishes(int pos, float counts) {
 
-        GoodsC oldGoods = goodsCList.get(pos);
-        GoodsC newGoods = null;
+        Goods oldGoods = goodsCList.get(pos);
+        Goods newGoods = null;
         try {
-            newGoods = (GoodsC) oldGoods.clone();//向下转型----P2没有被实例化
+            newGoods = (Goods) oldGoods.clone();//向下转型----P2没有被实例化
         } catch (CloneNotSupportedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -371,9 +373,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newGoods.setDishesCount(counts);
         removeGoodsFromOrder(newGoods, 0);//修改正常老订单
 
-        OrderC newOrderObj = new OrderC(myapp.getCompany_ID());
+        Order newOrderObj = new Order();
+        newOrderObj.setChannelId(myapp.getCompany_ID());
         String orderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-        newOrderObj.set_id(orderId);
+        newOrderObj.setId(orderId);
         if (orderCList.size() > 1) {
             newOrderObj.setOrderNum(orderCList.get(0).getOrderNum() + 1);
             newOrderObj.setSerialNum(orderCList.get(0).getSerialNum());
@@ -381,30 +384,30 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             newOrderObj.setOrderNum(1);
             newOrderObj.setSerialNum(Tool.getOrderSerialNum(this));
         }
-        newOrderObj.setAllPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
-        newOrderObj.setOrderState(1);//未买单
-        newOrderObj.setOrderCType(2);//赠菜订单
+        newOrderObj.setTotalPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
+        newOrderObj.setState(1);//未买单
+        newOrderObj.setOrderType(2);//赠菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrder(orderId);
+        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(2);//置成赠菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(赠)");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoodsList(tmpList);
+        newOrderObj.setGoods(tmpList);
         CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
 
     }
 
     private void backDishes(int pos, float counts) {
-        GoodsC oldGoods = goodsCList.get(pos);
-        GoodsC newGoods = null;
+        Goods oldGoods = goodsCList.get(pos);
+        Goods newGoods = null;
         try {
-            newGoods = (GoodsC) oldGoods.clone();//向下转型----P2没有被实例化
+            newGoods = (Goods) oldGoods.clone();//向下转型----P2没有被实例化
         } catch (CloneNotSupportedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -412,9 +415,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newGoods.setDishesCount(counts);
         removeGoodsFromOrder(newGoods, 2);//修改赠菜老订单
 
-        OrderC newOrderObj = new OrderC(myapp.getCompany_ID());
+        Order newOrderObj = new Order();
+        newOrderObj.setChannelId(myapp.getCompany_ID());
         String orderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-        newOrderObj.set_id(orderId);
+        newOrderObj.setId(orderId);
         if (orderCList.size() > 1) {
             newOrderObj.setOrderNum(orderCList.get(0).getOrderNum() + 1);
             newOrderObj.setSerialNum(orderCList.get(0).getSerialNum());
@@ -422,16 +426,16 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             newOrderObj.setOrderNum(1);
             newOrderObj.setSerialNum(Tool.getOrderSerialNum(this));
         }
-        newOrderObj.setAllPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
-        newOrderObj.setOrderState(1);//未买单
-        newOrderObj.setOrderCType(0);//添菜订单
+        newOrderObj.setTotalPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
+        newOrderObj.setState(1);//未买单
+        newOrderObj.setOrderType(0);//添菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrder(orderId);
+        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(0);
 
         String dishesName = oldGoods.getDishesName();
@@ -439,15 +443,15 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newGoods.setDishesName(dishesName);
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoodsList(tmpList);
+        newOrderObj.setGoods(tmpList);
         CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
     }
 
     private void retreatDishesFromZC(int pos, float counts) {
-        GoodsC oldGoods = goodsCList.get(pos);
-        GoodsC newGoods = null;
+        Goods oldGoods = goodsCList.get(pos);
+        Goods newGoods = null;
         try {
-            newGoods = (GoodsC) oldGoods.clone();//向下转型----P2没有被实例化
+            newGoods = (Goods) oldGoods.clone();//向下转型----P2没有被实例化
         } catch (CloneNotSupportedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -455,9 +459,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newGoods.setDishesCount(counts);
         removeGoodsFromOrder(newGoods, 2);//修改老订单 ，2代表从赠菜中移除
 
-        OrderC newOrderObj = new OrderC(myapp.getCompany_ID());
+        Order newOrderObj = new Order();
+        newOrderObj.setChannelId(myapp.getCompany_ID());
         String orderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
-        newOrderObj.set_id(orderId);
+        newOrderObj.setId(orderId);
         if (orderCList.size() > 1) {
             newOrderObj.setOrderNum(orderCList.get(0).getOrderNum() + 1);
             newOrderObj.setSerialNum(orderCList.get(0).getSerialNum());
@@ -465,27 +470,27 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             newOrderObj.setOrderNum(1);
             newOrderObj.setSerialNum(Tool.getOrderSerialNum(this));
         }
-        newOrderObj.setAllPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
-        newOrderObj.setOrderState(1);//未买单
-        newOrderObj.setOrderCType(1);//退菜订单
+        newOrderObj.setTotalPrice(MyBigDecimal.mul(oldGoods.getPrice(), counts, 1));
+        newOrderObj.setState(1);//未买单
+        newOrderObj.setOrderType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getTableNum());
+        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
         newOrderObj.setTableName(tableName);
         newOrderObj.setAreaName(areaName);
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrder(orderId);
+        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
         String dishesName = oldGoods.getDishesName();
         dishesName = dishesName.substring(0, dishesName.length() - 3);
         newGoods.setDishesName(dishesName + "(退)");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoodsList(tmpList);
+        newOrderObj.setGoods(tmpList);
         CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
     }
 
-    private void removeGoodsFromOrder(GoodsC retreateObj, int type)
+    private void removeGoodsFromOrder(Goods retreateObj, int type)
     {
         float  retreateCounts = retreateObj.getDishesCount();//数量
         String retreateTaste  = retreateObj.getDishesTaste();//口味
@@ -494,17 +499,17 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         {
             if(retreateCounts<=0)
                 break;
-            OrderC orderObj = orderCList.get(i);
-            if (orderObj.getOrderCType() != type)
+            Order orderObj = orderCList.get(i);
+            if (orderObj.getOrderType() != type)
                 continue;
 
-            List<GoodsC> oldGoodsList = orderObj.getGoodsList();
+            List<Goods> oldGoodsList = orderObj.getGoods();
             for (int j = 0; j < oldGoodsList.size(); j++)
             {
                 if(retreateCounts<=0)
                     break;
 
-                GoodsC oldGoods = oldGoodsList.get(j);
+                Goods oldGoods = oldGoodsList.get(j);
 
                 if (retreate.equals(oldGoods.getDishesName()))//名字相同
                 {
@@ -513,22 +518,22 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                         if (retreateCounts >= oldGoods.getDishesCount())//退出菜品数量超出原有数量
                         {
                             float retreatePrice = MyBigDecimal.mul(oldGoods.getPrice(), oldGoods.getDishesCount(), 1);
-                            orderObj.getGoodsList().remove(oldGoods);
+                            orderObj.getGoods().remove(oldGoods);
                             j--;
-                            if (orderObj.getGoodsList().size() == 0)
+                            if (orderObj.getGoods().size() == 0)
                             {
                                 CDBHelper.deleteObj(getApplicationContext(), orderObj);
                             } else {
-                                float lastPrice = MyBigDecimal.sub(orderObj.getAllPrice(), retreatePrice, 1);
-                                orderObj.setAllPrice(lastPrice);
+                                float lastPrice = MyBigDecimal.sub(orderObj.getTotalPrice(), retreatePrice, 1);
+                                orderObj.setTotalPrice(lastPrice);
                                 CDBHelper.createAndUpdate(getApplicationContext(), orderObj);
                             }
                             retreateCounts = MyBigDecimal.sub(retreateCounts,oldGoods.getDishesCount(),1);
                         } else //数量上有剩余菜品
                         {
                             float retreatePrice = MyBigDecimal.mul(retreateObj.getPrice(), retreateCounts, 1);
-                            float lastPrice = MyBigDecimal.sub(orderObj.getAllPrice(), retreatePrice, 1);
-                            orderObj.setAllPrice(lastPrice);
+                            float lastPrice = MyBigDecimal.sub(orderObj.getTotalPrice(), retreatePrice, 1);
+                            orderObj.setTotalPrice(lastPrice);
 
                             float  lastCount = MyBigDecimal.sub(oldGoods.getDishesCount(),retreateCounts,1);
                             oldGoods.setDishesCount(lastCount);
@@ -544,14 +549,14 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                         if (retreateCounts >= oldGoods.getDishesCount())//退出菜品数量超出原有数量
                         {
                             float retreatePrice = MyBigDecimal.mul(oldGoods.getPrice(), oldGoods.getDishesCount(), 1);
-                            orderObj.getGoodsList().remove(oldGoods);
+                            orderObj.getGoods().remove(oldGoods);
                             j--;
-                            if (orderObj.getGoodsList().size() == 0)
+                            if (orderObj.getGoods().size() == 0)
                             {
                                 CDBHelper.deleteObj(getApplicationContext(), orderObj);
                             } else {
-                                float lastPrice = MyBigDecimal.sub(orderObj.getAllPrice(), retreatePrice, 1);
-                                orderObj.setAllPrice(lastPrice);
+                                float lastPrice = MyBigDecimal.sub(orderObj.getTotalPrice(), retreatePrice, 1);
+                                orderObj.setTotalPrice(lastPrice);
                                 CDBHelper.createAndUpdate(getApplicationContext(), orderObj);
                             }
                             retreateCounts = MyBigDecimal.sub(retreateCounts,oldGoods.getDishesCount(),1);
@@ -559,8 +564,8 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                         else //数量上有剩余菜品
                         {
                             float retreatePrice = MyBigDecimal.mul(retreateObj.getPrice(), retreateCounts, 1);
-                            float lastPrice = MyBigDecimal.sub(orderObj.getAllPrice(), retreatePrice, 1);
-                            orderObj.setAllPrice(lastPrice);
+                            float lastPrice = MyBigDecimal.sub(orderObj.getTotalPrice(), retreatePrice, 1);
+                            orderObj.setTotalPrice(lastPrice);
 
                             float  lastCount = MyBigDecimal.sub(oldGoods.getDishesCount(),retreateCounts,1);
                             oldGoods.setDishesCount(lastCount);
@@ -688,17 +693,17 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                                                  @Override
                                                  public void run() {
 
-                                                     GoodsC obj = goodsCList.get(position);
+                                                     Goods obj = goodsCList.get(position);
                                                      if (isSupDishesCheck){
                                                          //1
                                                          //2
                                                          final Document doc = CDBHelper.getDocByID(getApplicationContext(),obj.getDishesId());
-                                                         for (OrderC orderC : orderCList)
+                                                         for (Order orderC : orderCList)
                                                          {
-                                                             if (orderC.getOrderCType() != 0){
+                                                             if (orderC.getOrderType() != 0){
                                                                  continue;
                                                              }
-                                                             for (GoodsC goodsObj : orderC.getGoodsList())
+                                                             for (Goods goodsObj : orderC.getGoods())
                                                              {
                                                                  if (goodsObj.getDishesId() ==null){
                                                                      continue;
@@ -928,7 +933,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             title.setText(goodsCList.get(position).getDishesName() + "(已点数量 " + unitCount+ ")");
         }else if (selActionId == R.id.dialog_delete_tc)
         {
-            GoodsC obj = goodsCList.get(position);
+            Goods obj = goodsCList.get(position);
             if (obj.getDishesId() == null){
                 return;
             }
@@ -971,9 +976,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
         myapp = (MyApplication) getApplication();
-        tableName = myapp.getTable_sel_obj().getTableName();
-        AreaC areaC = CDBHelper.getObjById(getApplicationContext(), myapp.getTable_sel_obj().getAreaId(), AreaC.class);
-        areaName = areaC.getAreaName();
+        tableName = myapp.getTable_sel_obj().getName();
+        Area areaC = CDBHelper.getObjById(getApplicationContext(), myapp.getTable_sel_obj().getAreaId(), Area.class);
+        areaName = areaC.getName();
         initView();
         goodsCList = new ArrayList<>();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -987,7 +992,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             @Override
             public void onItemClick(final AdapterView<?> parent, View view, final int position, long id) {
                 //点击订单OrderC
-                GoodsC obj = goodsCList.get(position);
+                Goods obj = goodsCList.get(position);
                 switch (obj.getGoodsType()) {
                     case 0:
                         normalDishesDialog(position);
@@ -1063,28 +1068,28 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             public void run() {
                 goodsCList.clear();
                 all = 0f;
-                List<OrderC> orderCList0 =new ArrayList<>();//
-                List<OrderC> orderCList1 =new ArrayList<>();//
-                List<OrderC> orderCList2 =new ArrayList<>();//
+                List<Order> orderCList0 =new ArrayList<>();//
+                List<Order> orderCList1 =new ArrayList<>();//
+                List<Order> orderCList2 =new ArrayList<>();//
 
                 orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
-                        Expression.property("className").equalTo(Expression.string("OrderC"))
-                                .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
-                                .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                        Expression.property("className").equalTo(Expression.string("Order"))
+                                .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getNum())))
+                                .and(Expression.property("state").equalTo(Expression.intValue(1)))
                         , Ordering.property("createdTime").descending()
-                        , OrderC.class);
+                        , Order.class);
 
 
                 boolean flag = false;
-                for (OrderC orderC : orderCList) {
-                    Log.e("Show",""+orderC.getDesc());
-                    if (orderC.getOrderCType() == 0)//0，正常菜订单
+                for (Order orderC : orderCList) {
+                    Log.e("Show",""+orderC.getDescription());
+                    if (orderC.getOrderType() == 0)//0，正常菜订单
                     {
-                        all = MyBigDecimal.add(all, orderC.getAllPrice(), 1);
+                        all = MyBigDecimal.add(all, orderC.getTotalPrice(), 1);
                         orderCList0.add(orderC);
 
                     }
-                    else if(orderC.getOrderCType() ==1)
+                    else if(orderC.getOrderType() ==1)
                     {
                         orderCList1.add(orderC);
                     }
@@ -1096,11 +1101,11 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 orderCList.addAll(orderCList2);
                 orderCList.addAll(orderCList0);
                  //
-                  for (OrderC orderC : orderCList)
+                  for (Order orderC : orderCList)
                   {
-                      List<GoodsC> goodsCList1 = orderC.getGoodsList();
+                      List<Goods> goodsCList1 = orderC.getGoods();
                       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                      GoodsC temp ;
+                      Goods temp ;
 
                       for (int i = 0 ; i < goodsCList1.size()-1 ;i++){
                           if (goodsCList1.get(i).getCreatedTime() == null){
@@ -1118,9 +1123,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                               }
                           }
                       }
-                    for (GoodsC goodsb : goodsCList1) {
+                    for (Goods goodsb : goodsCList1) {
                         flag = false;
-                        for (GoodsC goodsC : goodsCList) {
+                        for (Goods goodsC : goodsCList) {
                             if (goodsC.getDishesName().equals(goodsb.getDishesName())) {
                                 if (goodsb.getDishesTaste() != null) {
                                     if (goodsb.getDishesTaste().equals(goodsC.getDishesTaste())) {
@@ -1143,9 +1148,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                         }
                         if (!flag) {
-                            GoodsC objClone = null;
+                            Goods objClone = null;
                             try {
-                                objClone = (GoodsC) goodsb.clone();
+                                objClone = (Goods) goodsb.clone();
                             } catch (CloneNotSupportedException e) {
                                 // TODO Auto-generated catch block
                                 e.printStackTrace();
@@ -1169,25 +1174,25 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     private void setAll() {
         goodsCList.clear();
         all = 0f;
-        List<OrderC> orderCList0 =new ArrayList<>();//
-        List<OrderC> orderCList1 =new ArrayList<>();//
-        List<OrderC> orderCList2 =new ArrayList<>();//
+        List<Order> orderCList0 =new ArrayList<>();//
+        List<Order> orderCList1 =new ArrayList<>();//
+        List<Order> orderCList2 =new ArrayList<>();//
 
         orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
-                Expression.property("className").equalTo(Expression.string("OrderC"))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getTableNum())))
-                        .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                Expression.property("className").equalTo(Expression.string("Order"))
+                        .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getNum())))
+                        .and(Expression.property("state").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").descending()
-                , OrderC.class);
+                , Order.class);
 
         boolean flag = false;
-        for (OrderC orderC : orderCList) {
-            if (orderC.getOrderCType() == 0)//0，正常菜订单
+        for (Order orderC : orderCList) {
+            if (orderC.getOrderType() == 0)//0，正常菜订单
             {
-                all = MyBigDecimal.add(all, orderC.getAllPrice(), 1);
+                all = MyBigDecimal.add(all, orderC.getTotalPrice(), 1);
                 orderCList0.add(orderC);
             }
-            else if(orderC.getOrderCType() ==1)
+            else if(orderC.getOrderType() ==1)
             {
                 orderCList1.add(orderC);
             }
@@ -1198,11 +1203,11 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         orderCList.addAll(orderCList1);
         orderCList.addAll(orderCList2);
         orderCList.addAll(orderCList0);
-        for (OrderC orderC : orderCList) {
+        for (Order orderC : orderCList) {
 
-            List<GoodsC> goodsCList1 = orderC.getGoodsList();
+            List<Goods> goodsCList1 = orderC.getGoods();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            GoodsC temp ;
+            Goods temp ;
             for (int i = 0 ; i < goodsCList1.size()-1 ;i++){
                 if (goodsCList1.get(i).getCreatedTime() ==null)
                 {
@@ -1222,9 +1227,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 }
             }
 
-            for (GoodsC goodsb : goodsCList1) {
+            for (Goods goodsb : goodsCList1) {
                 flag = false;
-                for (GoodsC goodsC : goodsCList) {
+                for (Goods goodsC : goodsCList) {
 
                     if (goodsC.getDishesName().equals(goodsb.getDishesName())) {
                         if (goodsb.getDishesTaste() != null) {
@@ -1246,9 +1251,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                     }
                 }
                 if (!flag) {
-                    GoodsC objClone = null;
+                    Goods objClone = null;
                     try {
-                        objClone = (GoodsC) goodsb.clone();
+                        objClone = (Goods) goodsb.clone();
                     } catch (CloneNotSupportedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -1257,7 +1262,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 }
             }
         }
-        showTvArea.setText(areaName+",   "+ myapp.getTable_sel_obj().getTableName());
+        showTvArea.setText(areaName+",   "+ myapp.getTable_sel_obj().getName());
         showTvSl.setText(goodsCList.size() + "道菜，总计：" + all + "元");
     }
 
@@ -1315,15 +1320,15 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
     private void onPrint() {
         String waiter = "";
-        if (myapp.getUsersC() != null){
-            waiter = myapp.getUsersC().getEmployeeName();
+        if (myapp.getEmployee() != null){
+            waiter = myapp.getEmployee().getName();
         }
-        List<CompanyC> companyCs = CDBHelper.getObjByClass(getApplicationContext(), CompanyC.class);
+        List<Company> companyCs = CDBHelper.getObjByClass(getApplicationContext(), Company.class);
         PrintUtils.selectCommand(PrintUtils.RESET);
         PrintUtils.selectCommand(PrintUtils.LINE_SPACING_DEFAULT);
         PrintUtils.selectCommand(PrintUtils.ALIGN_CENTER);
         if (companyCs.size() != 0) {
-            PrintUtils.printText(companyCs.get(0).getPointName() + "\n\n");
+            PrintUtils.printText(companyCs.get(0).getName() + "\n\n");
         }
         PrintUtils.selectCommand(PrintUtils.DOUBLE_HEIGHT_WIDTH);
         PrintUtils.printText(areaName + "/" + tableName + "\n\n");
@@ -1341,13 +1346,15 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
         for (int j = 0; j < goodsCList.size(); j++) {
 
-            GoodsC goodsC = goodsCList.get(j);
+            Goods goods = goodsCList.get(j);
             String taste = "";
-            if (goodsC.getDishesTaste() != null) {
-                taste = "(" + goodsC.getDishesTaste() + ")";
+            if (goods.getDishesTaste() != null) {
+                taste = "(" + goods.getDishesTaste() + ")";
             }
 
-            PrintUtils.printText(PrintUtils.printThreeData(goodsC.getDishesName() + taste, goodsC.getDishesCount() + "", MyBigDecimal.mul(goodsC.getPrice(),goodsC.getDishesCount(),1) + "\n"));
+            PrintUtils.printText(PrintUtils.printThreeData(goods.getDishesName() + taste,
+                    goods.getDishesCount() + "",
+                    MyBigDecimal.mul(goods.getPrice(),goods.getDishesCount(),1) + "\n"));
 
 
         }
@@ -1369,10 +1376,10 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 *
      * 厨房分单打印
 */
-    private void printOrderToKitchen(List<GoodsC> list)
+    private void printOrderToKitchen(List<Goods> list)
     {
         //1\ 查询出所有厨房,并分配菜品
-        List<KitchenClientC> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClientC.class);
+        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClient.class);
         if (kitchenClientList.size() <= 0)
         {
             Toast.makeText(getApplicationContext(), "未配置厨房数据", Toast.LENGTH_SHORT).show();
@@ -1383,16 +1390,20 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         allKitchenClientGoods.clear();
         allKitchenClientPrintNames.clear();
         proDialog.setMessage("正在整理数据");
-        for (KitchenClientC kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
+        for (KitchenClient kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
         {
             boolean findflag = false;
-            ArrayList<GoodsC> oneKitchenClientGoods = new ArrayList<GoodsC>();
+            ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
+            List<String> dishesKindId = CDBHelper.getIdsByWhere(getApplicationContext(),
+                    Expression.property("className").equalTo(Expression.string("Dishes")
+                    .add(Expression.string("kindId")).equalTo(Expression.string(kitchenClientObj.getId()))),
+                    null);
 
-            for (String dishKindId : kitchenClientObj.getDishesKindIDList())//2 for 遍历厨房下所含菜系
+            for (String dishKindId : dishesKindId)//2 for 遍历厨房下所含菜系
             {
 
                     //3 for 该厨房下所应得商品
-                    for (GoodsC goodsC : list) {
+                    for (Goods goodsC : list) {
 
                         if (dishKindId.equals(goodsC.getDishesKindId())) {
                             findflag = true;
@@ -1410,7 +1421,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 proDialog.setMessage("正在分发到厨房打印机");
 
                 String clientKtname = "" + kitchenClientObj.getName()+hintDishes;//厨房名称
-                String printname = "" + kitchenClientObj.getIndexPrinter();//打印机名称
+                String printname = "" + kitchenClientObj.getPrinterId();//打印机名称
                 Log.e("Port",""+printname);
                 int printerId = Integer.parseInt(printname);
 
@@ -1571,7 +1582,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     {
         proDialog.setMessage("正在打印，请稍候");
         //1、程序连接上厨房端打印机后要进行分厨房打印
-        ArrayList<GoodsC> myshangpinlist = allKitchenClientGoods.get("" + printerId);
+        ArrayList<Goods> myshangpinlist = allKitchenClientGoods.get("" + printerId);
 
         //2、获得该打印机内容 打印机名称
         String printname = allKitchenClientPrintNames.get("" + printerId);
@@ -1595,7 +1606,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
     private void setOrderPrintState(String orderId) {
 
-        OrderC obj = CDBHelper.getObjById(getApplicationContext(), orderId, OrderC.class);
+        Order obj = CDBHelper.getObjById(getApplicationContext(), orderId, Order.class);
         obj.setPrintFlag(1);
         CDBHelper.createAndUpdate(getApplicationContext(), obj);
     }
@@ -1619,7 +1630,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
     }
 
 
-    private String getPrintContentforClient(ArrayList<GoodsC> myshangpinlist, String clientname)
+    private String getPrintContentforClient(ArrayList<Goods> myshangpinlist, String clientname)
     {
 
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");// 设置日期格式
@@ -1756,9 +1767,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             }
             esc.addText("--------------------------------\n");
             esc.addPrintAndLineFeed();
-            for (OrderC orderC : orderCList) {
-                if (orderC.getDesc() != null) {
-                    esc.addText("备注信息：             " + orderC.getDesc() + "\n");
+            for (Order order : orderCList) {
+                if (order.getDescription() != null) {
+                    esc.addText("备注信息：             " + order.getDescription() + "\n");
                     esc.addPrintAndLineFeed();
                     break;
                 }
@@ -1802,7 +1813,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             {
                 case 0:
                     proDialog.dismiss();
-                    showTvArea.setText(areaName+",   "+ myapp.getTable_sel_obj().getTableName());
+                    showTvArea.setText(areaName+",   "+ myapp.getTable_sel_obj().getName());
                     showTvSl.setText(goodsCList.size() + "道菜，总计：" + all + "元");
                     adatper.notifyDataSetChanged();
                     break;

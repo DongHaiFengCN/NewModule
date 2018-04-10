@@ -1,6 +1,6 @@
 package doaing.order.module;
 
-import bean.kitchenmanage.dishes.DishesC;
+import bean.kitchenmanage.dishes.Dishes;
 
 /**
  * 项目名称：Order
@@ -21,7 +21,7 @@ public class DishesMessage {
     String dishesTaste;
 
     //菜品实体
-    DishesC dishesC;
+    Dishes dishes;
 
     //加减操作 true +  false -
     boolean operation;
@@ -79,12 +79,12 @@ public class DishesMessage {
         this.dishesTaste = dishesTaste;
     }
 
-    public DishesC getDishesC() {
-        return dishesC;
+    public Dishes getDishes() {
+        return dishes;
     }
 
-    public void setDishesC(DishesC dishesC) {
-        this.dishesC = dishesC;
+    public void setDishesC(Dishes dishes) {
+        this.dishes = dishes;
     }
 
 

@@ -27,10 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.dishes.DishesKindC;
-import bean.kitchenmanage.order.GoodsC;
-import butterknife.ButterKnife;
+import bean.kitchenmanage.dishes.Dishes;
+import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.order.Goods;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
@@ -56,11 +55,11 @@ public class OrderFragment extends Fragment {
     private Map<String, float[]> dishesCollection = new HashMap<>();
     private Map<String, List<Document>> dishesObjectCollection;
     private boolean[] booleans;
-    List<DishesKindC> dishesKindCList;
+    List<DishesKind> dishesKindCList;
 
     String kindId;
 
-    List<GoodsC> goodsCList;
+    List<Goods> goodsCList;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -117,7 +116,7 @@ public class OrderFragment extends Fragment {
                 leftAdapter.changeSelected(position);
 
                 if (dishesKindCList.size() != 0) {
-                    kindId = dishesKindCList.get(position).get_id();
+                    kindId = dishesKindCList.get(position).getId();
                     orderDragAdapter.setMessage(dishesObjectCollection.get(kindId)
                             , dishesCollection.get(kindId));
                 }
@@ -132,10 +131,10 @@ public class OrderFragment extends Fragment {
 
                 Document document = (Document) orderDragAdapter.getItem(position);
 
-                DishesC dishesC = CDBHelper.getObjById(getActivity().getApplication(), document.getId()
-                        , DishesC.class);
-            if (dishesC.getState() != 1){
-                showDialog(dishesC, position, orderDragAdapter.getNumbers()[position]);
+                Dishes dishes = CDBHelper.getObjById(getActivity().getApplication(), document.getId()
+                        , Dishes.class);
+            if (!dishes.isSell()){
+                showDialog(dishes, position, orderDragAdapter.getNumbers()[position]);
             }
             }
         });
@@ -194,26 +193,26 @@ public class OrderFragment extends Fragment {
         if (!goodsCList.isEmpty()) {
 
             //遍历已存的goodsList
-            for (GoodsC goodsC : goodsCList) {
+            for (Goods goods : goodsCList) {
 
 
                 //依次获取每个Goodc对应的映射表包含的dishe集合
-                List<Document> dishesCList = dishesObjectCollection.get(goodsC.getDishesKindId());
+                List<Document> dishesCList = dishesObjectCollection.get(goods.getDishesKindId());
 
                 //获取缓存的数量对应数组
-                float[] floats = dishesCollection.get(goodsC.getDishesKindId());
+                float[] floats = dishesCollection.get(goods.getDishesKindId());
 
                 //遍历disheList 得到所在映射表的位置
                 for (int i = 0; i < dishesCList.size(); i++) {
 
                     //找到对应的位置
-                    if (dishesCList.get(i).getString("dishesName").equals(goodsC.getDishesName())) {
+                    if (dishesCList.get(i).getString("dishesName").equals(goods.getDishesName())) {
                         //   Log.e("DOAING", "修改前的数据：" + floats[i]);
 
                         //   Log.e("DOAING", "添加的数据：" + goodsC.getDishesCount());
-                        floats[i] = goodsC.getDishesCount() + floats[i];
+                        floats[i] = goods.getDishesCount() + floats[i];
                         //  Log.e("DOAING", "修改完成的数据：" + floats[i]);
-                        dishesCollection.put(goodsC.getDishesKindId(), floats);
+                        dishesCollection.put(goods.getDishesKindId(), floats);
 
 
                         break;
@@ -267,7 +266,7 @@ public class OrderFragment extends Fragment {
         for (int j = 0; j < dishesKindCList.size(); j++) {
 
 
-            String id = dishesKindCList.get(j).get_id();
+            String id = dishesKindCList.get(j).getId();
 
 
             float[] floats = dishesCollection.get(id);
@@ -298,19 +297,19 @@ public class OrderFragment extends Fragment {
 *
      * 菜品选择弹出框编辑模块
 */
-    private void showDialog(final DishesC dishesC, final int position, float number) {
+    private void showDialog(final Dishes dishes, final int position, float number) {
 
         final DishesMessage dishesMessage = new DishesMessage();
 
         final List<String> tasteList = new ArrayList<>();
-        if (dishesC.getTasteList() != null && !dishesC.getTasteList().isEmpty()) {
+        if (dishes.getTasteIds() != null && !dishes.getTasteIds().isEmpty()) {
 
-            for (int i = 0; i < dishesC.getTasteList().size(); i++) {
-                Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishesC.getTasteList().get(i).toString());
-                if (document == null || document.getString("tasteName") == null) {
+            for (int i = 0; i < dishes.getTasteIds().size(); i++) {
+                Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishes.getTasteIds().get(i).toString());
+                if (document == null || document.getString("name") == null) {
                     continue;
                 }
-                tasteList.add(document.getString("tasteName"));
+                tasteList.add(document.getString("name"));
             }
 
             if (tasteList.size() > 0) {
@@ -347,12 +346,12 @@ public class OrderFragment extends Fragment {
 
         amountView.setNumber(1.0 + "");
 
-        String all = MyBigDecimal.mul(amountView.getAmount() + "", dishesC.getPrice() + "", 2);
+        String all = MyBigDecimal.mul(amountView.getAmount() + "", dishes.getPrice() + "", 2);
 
         price_tv.setText("总计 " + all + " 元");
 
 
-        dishesMessage.setDishKindId(dishesC.getDishesKindId());
+        dishesMessage.setDishKindId(dishes.getKindId());
         dishesMessage.setOperation(true);
         dishesMessage.setSingle(false);
         final float[] l = new float[1];
@@ -367,7 +366,7 @@ public class OrderFragment extends Fragment {
             @Override
             public void OnChange(float ls, boolean flag) {
 
-                String all = MyBigDecimal.mul(ls + "", dishesC.getPrice() + "", 2);
+                String all = MyBigDecimal.mul(ls + "", dishes.getPrice() + "", 2);
                 l[0] = Float.parseFloat(all);
 
 
@@ -376,13 +375,13 @@ public class OrderFragment extends Fragment {
             }
         });
 
-        dishesMessage.setName(dishesC.getDishesName());
+        dishesMessage.setName(dishes.getName());
 
-        dishesMessage.setDishesC(dishesC);
+        dishesMessage.setDishesC(dishes);
 
         AlertDialog.Builder builder = new AlertDialog
                 .Builder(getActivity());
-        builder.setTitle(dishesC.getDishesName());
+        builder.setTitle(dishes.getName());
         builder.setView(view);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", null);
@@ -442,12 +441,12 @@ public class OrderFragment extends Fragment {
 
         boolean aBoolean[];
 
-        public void setNames(List<DishesKindC> names) {
+        public void setNames(List<DishesKind> names) {
             this.names = names;
         }
 
 
-        private List<DishesKindC> names;
+        private List<DishesKind> names;
 
         public DishesKindAdapter() {
         }
@@ -497,9 +496,9 @@ public class OrderFragment extends Fragment {
 
                 listItemView.imagePoint.setVisibility(View.VISIBLE);
 
-                DishesKindC dishesKindC = dishesKindCList.get(i);
+                DishesKind dishesKindC = dishesKindCList.get(i);
 
-                String id = dishesKindC.get_id();
+                String id = dishesKindC.getId();
                 int count = 0;
 
                 for (int j = 0; j < goodsCList.size(); j++) {
@@ -522,7 +521,7 @@ public class OrderFragment extends Fragment {
                 listItemView.imagePoint.setVisibility(View.INVISIBLE);
                 listItemView.imagePoint.setText(0+"");
             }
-            listItemView.tv_title.setText(names.get(i).getKindName());
+            listItemView.tv_title.setText(names.get(i).getName());
 
             return view;
 

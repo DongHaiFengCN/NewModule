@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Locale;
 
 import bean.kitchenmanage.order.OrderNum;
-import bean.kitchenmanage.promotion.PromotionRuleC;
+import bean.kitchenmanage.promotion.PromotionRule;
 import doaing.mylibrary.MyApplication;
 import tools.CDBHelper;
 
@@ -123,7 +123,7 @@ public class Tool {
     }
 
     //排序
-    public static List<PromotionRuleC> Sort(List<PromotionRuleC> list){
+    public static List<PromotionRule> Sort(List<PromotionRule> list){
 
         if(list.size() == 1){
             return list;
@@ -132,7 +132,7 @@ public class Tool {
             //从大到小排序
             if(list.size()>0)
             {
-                PromotionRuleC tmp = null;
+                PromotionRule tmp = null;
                 for(int i=0;i<list.size();i++)
                 {
                     for(int j=i+1;j<list.size();j++)
@@ -233,7 +233,8 @@ public class Tool {
                 ,OrderNum.class);
         if(orderNumList.size()<=0)//第一次使用
         {
-            OrderNum obj = new OrderNum(myApp.getCompany_ID());
+            OrderNum obj = new OrderNum();
+            obj.setChannelId(myApp.getCompany_ID());
             String time=formatter.format(new Date());
             obj.setDate(time);
             obj.setNum(1);
