@@ -130,7 +130,7 @@ public class AreaAdapter extends BaseAdapter {
                             }).setNeutralButton("删除房间", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    List<Document> doc = CDBHelper.getDocmentsByWhere(context.getApplicationContext(),
+                                    List<Document> doc = CDBHelper.getDocmentsByWhere(
                                             Expression.parameter("className").equalTo(Expression.string("Table")
                                             .add(Expression.property("areaId").equalTo(Expression.string(areaId.get(i))))),
                                             null);

@@ -805,7 +805,7 @@ public class MainActivity extends AppCompatActivity {
 
             obj.setNum(1);
 
-            CDBHelper.createAndUpdate(getApplicationContext(), obj);
+            CDBHelper.createAndUpdate( obj);
 
             orderNum = "001";
 
@@ -829,7 +829,7 @@ public class MainActivity extends AppCompatActivity {
 
                 obj.setDate(newDate);
 
-                CDBHelper.createAndUpdate(getApplicationContext(), obj);
+                CDBHelper.createAndUpdate(obj);
 
                 orderNum = "001";
 
@@ -841,7 +841,7 @@ public class MainActivity extends AppCompatActivity {
 
                 obj.setNum(newNum);
 
-                CDBHelper.createAndUpdate(getApplicationContext(), obj);
+                CDBHelper.createAndUpdate( obj);
 
                 orderNum = String.format("%3d", newNum).replace(" ", "0");
 
@@ -858,7 +858,7 @@ public class MainActivity extends AppCompatActivity {
     private void printOrderToKitchen(List<Goods> list)
     {
         //1\ 查询出所有厨房,并分配菜品
-        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClient.class);
+        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass( KitchenClient.class);
         if (kitchenClientList.size() <= 0)
         {
             Toast.makeText(getApplicationContext(), "未配置厨房数据", Toast.LENGTH_SHORT).show();
@@ -871,7 +871,7 @@ public class MainActivity extends AppCompatActivity {
         {
             boolean findflag = false;
             ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
-            List<String> dishesIds = CDBHelper.getIdsByWhere(getApplicationContext(),
+            List<String> dishesIds = CDBHelper.getIdsByWhere(
                     Expression.property("className").equalTo(Expression.string("Dishes").
                             add(Expression.string("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
                     null);
@@ -1071,9 +1071,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setOrderPrintState(String orderId) {
 
-        Order obj = CDBHelper.getObjById(getApplicationContext(), orderId, Order.class);
+        Order obj = CDBHelper.getObjById( orderId, Order.class);
         obj.setPrintFlag(1);
-        CDBHelper.createAndUpdate(getApplicationContext(), obj);
+        CDBHelper.createAndUpdate( obj);
     }
 
     private int printContent(String content, int printIndex)//0发送数据到打印机 成功 其它错误
@@ -1193,11 +1193,11 @@ public class MainActivity extends AppCompatActivity {
                 float num = myshangpinlist.get(i).getDishesCount();
                 temp = myshangpinlist.get(i).getDishesTaste();
                 dishesName = myshangpinlist.get(i).getDishesName();
-                Document doc = CDBHelper.getDocByID(getApplicationContext(),myshangpinlist.get(i).getDishesId());
+                Document doc = CDBHelper.getDocByID(myshangpinlist.get(i).getDishesId());
                 Array array = doc.getArray("dishesIds");
                 if (array != null ){
                     for (int d = 0; d < array.count();d++){
-                        Document document = CDBHelper.getDocByID(getApplicationContext(),array.getString(d));
+                        Document document = CDBHelper.getDocByID(array.getString(d));
                         dishesName = document.getString("name");
                         esc.addSetAbsolutePrintPosition((short) 0);
                         if (temp == null || "".equals(temp))//无口味
@@ -1259,7 +1259,7 @@ public class MainActivity extends AppCompatActivity {
         Log.e("Main",newId);
         String zcId = "OrderC."+ ToolUtil.getUUID();
         MutableDocument zcOrderDoc = new MutableDocument(zcId);
-        List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+        List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
                         .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getNum())))
@@ -1304,7 +1304,7 @@ public class MainActivity extends AppCompatActivity {
         newOrderDoc.setString("createdTime",getFormatDate());
         newOrderDoc.setString("tableNum",myApp.getTable_sel_obj().getNum());
         newOrderDoc.setString("tableName",myApp.getTable_sel_obj().getName());
-        Area area = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), Area.class);
+        Area area = CDBHelper.getObjById( myApp.getTable_sel_obj().getAreaId(), Area.class);
         newOrderDoc.setString("areaName",area.getName());
         try {
             if (CDBHelper.getDatabase() != null){
@@ -1367,10 +1367,10 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setChannelId(myApp.getCompany_ID());
         Order zcOrderObj = new Order();
         zcOrderObj.setChannelId(myApp.getCompany_ID());
-        gOrderId = CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
+        gOrderId = CDBHelper.createAndUpdate( newOrderObj);
         newOrderObj.setId(gOrderId);
 
-        List<Document> orderCList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+        List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
                         .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getNum())))
@@ -1404,12 +1404,12 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setCreatedYear(getNianDate());
         newOrderObj.setTableNum(myApp.getTable_sel_obj().getNum());
         newOrderObj.setTableName(myApp.getTable_sel_obj().getName());
-        Area area = CDBHelper.getObjById(getApplicationContext(), myApp.getTable_sel_obj().getAreaId(), Area.class);
+        Area area = CDBHelper.getObjById( myApp.getTable_sel_obj().getAreaId(), Area.class);
         newOrderObj.setAreaName(area.getName());
         if (!TextUtils.isEmpty(editText.getText().toString())){
             newOrderObj.setDescription(editText.getText().toString());
         }
-        CDBHelper.createAndUpdate(getApplicationContext(), newOrderObj);
+        CDBHelper.createAndUpdate(newOrderObj);
         if (zcGoodsList.size() > 0) {
             zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
             zcOrderObj.setState(1);//未买单
@@ -1419,13 +1419,13 @@ public class MainActivity extends AppCompatActivity {
             zcOrderObj.setTableName(newOrderObj.getTableName());
             zcOrderObj.setAreaName(newOrderObj.getAreaName());
             zcOrderObj.setCreatedYear("2018");
-            String id = CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
+            String id = CDBHelper.createAndUpdate( zcOrderObj);
             for (Goods obj : zcGoodsList) {
                 obj.setOrderId(id);
             }
             zcOrderObj.setGoods(zcGoodsList);
             zcOrderObj.setId(id);
-            CDBHelper.createAndUpdate(getApplicationContext(), zcOrderObj);
+            CDBHelper.createAndUpdate( zcOrderObj);
         }
 
         areaName = newOrderObj.getAreaName();

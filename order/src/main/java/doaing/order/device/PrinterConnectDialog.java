@@ -94,7 +94,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     }
     private void initQrPay()
     {
-        final List<Qrcode> qrCodeDoc= CDBHelper.getObjByClass(getApplicationContext(),Qrcode.class);
+        final List<Qrcode> qrCodeDoc= CDBHelper.getObjByClass(Qrcode.class);
 
         if(qrCodeDoc.size()>0)
         {
@@ -263,7 +263,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
                 }else{
                     myapp.WX_RECEIVE_FLAG = false;
                 }
-                CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);
+                CDBHelper.createAndUpdate(obj_qrcodepay);
             }
         });
 
@@ -330,7 +330,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             obj_qrcodepay.setWxPrintFlag(ifqrcodeprint1.isChecked());
             obj_qrcodepay.setZfbPrintFlag(ifqrcodeprint2.isChecked());
             obj_qrcodepay.setNumbers(nums);
-            CDBHelper.createAndUpdate(getApplicationContext(),obj_qrcodepay);
+            CDBHelper.createAndUpdate(obj_qrcodepay);
 
         }
 
@@ -341,7 +341,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
 
         // 获取解析结果
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        List<Qrcode> qrcodeCS = CDBHelper.getObjByClass(getApplicationContext(),Qrcode.class);
+        List<Qrcode> qrcodeCS = CDBHelper.getObjByClass(Qrcode.class);
 
 
         if (result != null) {
@@ -364,7 +364,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
                     qrcodeCS.get(0).setWxUrl(authCode);
                 }
 
-                CDBHelper.createAndUpdate(getApplicationContext(),qrcodeCS.get(0));
+                CDBHelper.createAndUpdate(qrcodeCS.get(0));
 
 
             }else if(qrcodeCS.isEmpty()){//添加二维码
@@ -384,7 +384,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
                     qrcodeCS1.setWxUrl(authCode);
 
                 }
-                CDBHelper.createAndUpdate(getApplicationContext(),qrcodeCS1);
+                CDBHelper.createAndUpdate(qrcodeCS1);
             }
         }else {
             Toast.makeText(PrinterConnectDialog.this,"扫描失败请重试！",Toast.LENGTH_LONG).show();

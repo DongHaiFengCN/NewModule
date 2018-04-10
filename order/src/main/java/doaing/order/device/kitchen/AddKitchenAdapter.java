@@ -71,7 +71,7 @@ public class AddKitchenAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        Document doc = CDBHelper.getDocByID(activity, list.get(position));
+        Document doc = CDBHelper.getDocByID( list.get(position));
         // 设置list中TextView的显示
         viewHolder.itemAddkitchenName.setText("" + doc.getString("name"));
         // 根据isSelected来设置checkbox的选中状况

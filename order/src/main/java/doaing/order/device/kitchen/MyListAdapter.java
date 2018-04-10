@@ -65,7 +65,7 @@ public class MyListAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        Document document = CDBHelper.getDocByID(activity.getApplicationContext(), list.get(position));
+        Document document = CDBHelper.getDocByID(list.get(position));
         viewHolder.itemKitchenKname.setText(document.getString("name"));
         boolean pStatus = document.getBoolean("statePrinter");
         if(pStatus)
@@ -144,7 +144,7 @@ public class MyListAdapter extends BaseAdapter {
         //删除打印机
         database.deleteDataBase(""+position);
         database.close();
-        Document doc = CDBHelper.getDocByID(activity, list.get(position));
+        Document doc = CDBHelper.getDocByID( list.get(position));
         Log.e("MyList",doc.getId());
         //CDBHelper.deleDocument(activity.getApplicationContext(), doc);
         try {
@@ -165,7 +165,7 @@ public class MyListAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View view) {
-            Document doc=CDBHelper.getDocByID(activity,list.get(mPosition));
+            Document doc=CDBHelper.getDocByID(list.get(mPosition));
             Intent intent1=new Intent(activity,AddkitchenActivity.class);
             intent1.putExtra("indexPrinter",  doc.getInt("printerId"));
 

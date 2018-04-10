@@ -141,7 +141,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
 
             mPrinterId = 0;
         }else {
-            Document doc = CDBHelper.getDocByID(getApplicationContext(),infomations.get(infomations.size()-1));
+            Document doc = CDBHelper.getDocByID(infomations.get(infomations.size()-1));
             int pos = doc.getInt("indexPrinter");
             mPrinterId = pos+1;//下一个打印机id
 
@@ -185,7 +185,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         findViewById(R.id.btn_kcsave).setOnClickListener(this);
         spPrinter.setOnClickListener(this);
 
-        allDishKindIdList = CDBHelper.getIdsByClass(null,DishesKind.class);
+        allDishKindIdList = CDBHelper.getIdsByClass(DishesKind.class);
         addKitchenAdapter = new AddKitchenAdapter(AddkitchenActivity.this, allDishKindIdList);
         listViewCk.setAdapter(addKitchenAdapter);
         listViewCk.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -304,7 +304,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             dishKindIDList.add(listSelectedDocId.get(i));
         }
         obj.setKindIds(dishKindIDList);
-        CDBHelper.createAndUpdate(getApplicationContext(),obj);
+        CDBHelper.createAndUpdate(obj);
 
     }
 
@@ -352,7 +352,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         {
             dishKindIdArray.addString(listSelectedDocId.get(i));
         }
-        Document docKitchenClient=CDBHelper.getDocByID(getApplicationContext(),docId);
+        Document docKitchenClient=CDBHelper.getDocByID(docId);
         if(docKitchenClient!=null)
         {
             MutableDocument muDoc = docKitchenClient.toMutable();
@@ -375,7 +375,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
 
     private void Initcpplfromdata(String docId)
     {
-        Document docKC = CDBHelper.getDocByID(getApplicationContext(),docId);
+        Document docKC = CDBHelper.getDocByID(docId);
 
         if(docKC!=null)
         {
@@ -628,7 +628,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
 
                 } else if (type == GpDevice.STATE_NONE)//0 没有连接
                 {
-                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(
                             Expression.property("className").equalTo(Expression.string("KitchenClient"))
                                     .and(Expression.property("printerId").equalTo(Expression.intValue(id))),
                             null);
@@ -648,7 +648,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                 } else if (type == GpDevice.STATE_VALID_PRINTER)//5 连接成功
                 {
 
-                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(
                             Expression.property("className").equalTo(Expression.string("KitchenClient"))
                                     .and(Expression.property("printerId").equalTo(Expression.intValue(id))),
                             null);

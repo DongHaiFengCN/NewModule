@@ -258,7 +258,7 @@ public class DeskActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        List<String> kitchenClientIds = CDBHelper.getIdsByClass(null, KitchenClient.class);
+        List<String> kitchenClientIds = CDBHelper.getIdsByClass( KitchenClient.class);
         if(kitchenClientIds.size()>0)
             msg_printer.setVisibility(View.VISIBLE);
         else
@@ -378,8 +378,9 @@ public class DeskActivity extends AppCompatActivity {
 
                 String tableId= (String)data;
                 MyLog.e("DeskTableID",""+tableId);
-                final Table table =  CDBHelper.getObjById(getApplicationContext(),tableId,Table.class);
+                final Table table =  CDBHelper.getObjById(tableId,Table.class);
                 myapp.setTable_sel_obj(table);
+                MyLog.e("DeskTableID",""+table.getId());
                 if(table.getState()!=2)
                 {
                     final EditText  editText = new EditText(DeskActivity.this);
@@ -431,7 +432,7 @@ public class DeskActivity extends AppCompatActivity {
                                 table.setCurrentPersions(Integer.valueOf(editText.getText().toString()));
                                 //设置全局Table
                                 myapp.setTable_sel_obj(table);
-                                CDBHelper.createAndUpdate(getApplicationContext(),table);
+                                CDBHelper.createAndUpdate(table);
                                 dialog.dismiss();
                                 //转跳点餐界面
                                 turnMainActivity();
@@ -460,7 +461,7 @@ public class DeskActivity extends AppCompatActivity {
                     alertDialog.show();
 
                 }else {
-                    List<String> orderCList= CDBHelper.getIdsByWhere(getApplicationContext(),
+                    List<String> orderCList= CDBHelper.getIdsByWhere(
                             Expression.property("className").equalTo(Expression.string("Order"))
                                     .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))
                                     .and(Expression.property("state").equalTo(Expression.intValue(1)))
@@ -488,7 +489,7 @@ public class DeskActivity extends AppCompatActivity {
             public void onItemLongClick(View view, final Object data)
             {
                 final String tableId = (String)data;
-                final Table table = CDBHelper.getObjById(getApplicationContext(),tableId,Table.class);
+                final Table table = CDBHelper.getObjById(tableId,Table.class);
                 myapp.setTable_sel_obj(table);
 
                 final AlertDialog.Builder alertLog = new AlertDialog.Builder(DeskActivity.this);
@@ -551,16 +552,16 @@ public class DeskActivity extends AppCompatActivity {
                                                         checkOrder = checkOrderCS.get(f);
                                                         for (int i = 0; i < checkOrder.getOrderIds().size(); i++) {
 
-                                                            Order order = CDBHelper.getObjById(getApplicationContext(),checkOrder.getOrderIds().get(i),Order.class);
+                                                            Order order = CDBHelper.getObjById(checkOrder.getOrderIds().get(i),Order.class);
                                                             order.setState(1);
-                                                            CDBHelper.createAndUpdate(getApplicationContext(), order);
+                                                            CDBHelper.createAndUpdate( order);
                                                         }
 
                                                         //删除之前的checkorder记录
-                                                        CDBHelper.deleDocumentById(getApplicationContext(),checkOrder.getId());
+                                                        CDBHelper.deleDocumentById(checkOrder.getId());
 
                                                         table.setState(2);
-                                                        CDBHelper.createAndUpdate(getApplicationContext(), table);
+                                                        CDBHelper.createAndUpdate(table);
 
                                                     }else {
 
@@ -573,23 +574,23 @@ public class DeskActivity extends AppCompatActivity {
 
                                                     //新数据查询
 
-                                                    checkOrder = CDBHelper.getObjById(getApplicationContext(),table.getLastCheckOrderId(),CheckOrder.class);
+                                                    checkOrder = CDBHelper.getObjById(table.getLastCheckOrderId(),CheckOrder.class);
                                                     if (checkOrder == null&&checkOrder.getOrderIds().size()==0){
                                                         return;
                                                     }
 
                                                     for (int i = 0; i < checkOrder.getOrderIds().size(); i++) {
 
-                                                        Order order = CDBHelper.getObjById(getApplicationContext(),checkOrder.getOrderIds().get(i),Order.class);
+                                                        Order order = CDBHelper.getObjById(checkOrder.getOrderIds().get(i),Order.class);
                                                         order.setState(1);
-                                                        CDBHelper.createAndUpdate(getApplicationContext(), order);
+                                                        CDBHelper.createAndUpdate( order);
 
                                                     }
 
                                                     //删除之前的checkorder记录
-                                                    CDBHelper.deleDocumentById(getApplicationContext(),checkOrder.getId());
+                                                    CDBHelper.deleDocumentById(checkOrder.getId());
                                                     table.setState(2);
-                                                    CDBHelper.createAndUpdate(getApplicationContext(), table);
+                                                    CDBHelper.createAndUpdate( table);
 
                                                 }
 
@@ -624,7 +625,7 @@ public class DeskActivity extends AppCompatActivity {
                 else if(table.getState()==2)//开台中
                 {
                     //使用&&预定状态
-                 final   List<String> orderCList = CDBHelper.getIdsByWhere(getApplicationContext(),
+                 final   List<String> orderCList = CDBHelper.getIdsByWhere(
                             Expression.property("className").equalTo(Expression.string("Order"))
                                     .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))
                                     .and(Expression.property("state").equalTo(Expression.intValue(1)))
@@ -658,7 +659,7 @@ public class DeskActivity extends AppCompatActivity {
                                     String[] areaTable = new String[tablesName.length];
                                     for (int i = 0; i< freeTableList.size();i++){
                                         Document selectTable = freeTableList.get(i);
-                                        Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
+                                        Document document = CDBHelper.getDocByID(selectTable.getString("areaId"));
                                         String areaName = document.getString("name");
                                         areaTable[i] = areaName+" : "+tablesName[i];
                                     }
@@ -685,7 +686,7 @@ public class DeskActivity extends AppCompatActivity {
                                             //2\改变原桌位对象状态为空闲
                                             changeOldTable(tableId);
                                             //3\改变原桌位下订单为该桌位下
-                                            List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+                                            List<Document> documentList = CDBHelper.getDocmentsByWhere(
                                                     Expression.property("className").equalTo(Expression.string("Order"))
                                                             .and(Expression.property("state").equalTo(Expression.intValue(1))
                                                             .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))),
@@ -736,7 +737,7 @@ public class DeskActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 table.setState(0);
-                                CDBHelper.createAndUpdate(getApplicationContext(),table);
+                                CDBHelper.createAndUpdate(table);
                                 myapp.setTable_sel_obj(table);
                                 dialog.dismiss();
                             }
@@ -760,7 +761,7 @@ public class DeskActivity extends AppCompatActivity {
 
     private void changeOldTable(String tableId)
     {
-        Document doc = CDBHelper.getDocByID(getApplicationContext(),tableId);
+        Document doc = CDBHelper.getDocByID(tableId);
         MutableDocument mDoc = doc.toMutable();
         mDoc.setInt("state",0);
         CDBHelper.saveDocument(getApplicationContext(),mDoc);
@@ -788,7 +789,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
                     {
                         for(String  docId:orderCList)
                         {
-                            Document doc = CDBHelper.getDocByID(null,docId);
+                            Document doc = CDBHelper.getDocByID(docId);
                             if(doc!=null)
                             {
                                 MutableDocument mDoc= doc.toMutable();
@@ -800,7 +801,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
                             }
                         }
 
-                        Document tabDoc = CDBHelper.getDocByID(null,tableId);
+                        Document tabDoc = CDBHelper.getDocByID(tableId);
                         MutableDocument tabmDoc = tabDoc.toMutable();
                         tabmDoc.setInt("state",0);
                         CDBHelper.saveDocument(null,tabmDoc);
@@ -826,8 +827,8 @@ private void cancelTableOrder(String Id,List<String> orderList)
     {
         String[] freetables=null;
         freeTableList.clear();
-        List<Document> tableDocList= CDBHelper.getDocmentsByWhere(getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("Table"))
+        List<Document> tableDocList= CDBHelper.getDocmentsByWhere(
+                Expression.property("className").equalTo(Expression.string("Table"))
                         .and(Expression.property("state").equalTo(Expression.intValue(0)))
                 , Ordering.property("num").ascending()
         );
@@ -938,7 +939,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
                 //1、初始化菜品数量维护映射表
                 for (DishesKind dishesKind : dishesKindCList) {
-                    List<String> dishesIds = CDBHelper.getIdsByWhere(getApplicationContext(),
+                    List<String> dishesIds = CDBHelper.getIdsByWhere(
                             Expression.property("className").equalTo(Expression.string("Dishes")).
                                     add(Expression.string("kindId").equalTo(Expression.string(dishesKind.getId()))),
                             null);
@@ -949,7 +950,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
                     for (int i = 0; i < count; i++) {
 
-                        Document dishesC = CDBHelper.getDocByID(getApplicationContext(), dishesIds.get(i));
+                        Document dishesC = CDBHelper.getDocByID(dishesIds.get(i));
                         if (dishesC != null){
                             dishesCS.add(dishesC);
                         }

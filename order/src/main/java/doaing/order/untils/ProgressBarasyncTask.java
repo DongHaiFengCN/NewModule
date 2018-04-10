@@ -121,8 +121,8 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
 
             setAll();
             //List<OrderC> list = checkOrderC.getOrderList();
-            List<Company> companyCs = CDBHelper.getObjByClass(payActivity.getApplicationContext(),Company.class);
-            Area areaCs = CDBHelper.getObjById(payActivity.getApplicationContext(),m.getTable_sel_obj().getAreaId(),Area.class);
+            List<Company> companyCs = CDBHelper.getObjByClass(Company.class);
+            Area areaCs = CDBHelper.getObjById(m.getTable_sel_obj().getAreaId(),Area.class);
             PrintUtils.selectCommand(PrintUtils.RESET);
             PrintUtils.selectCommand(PrintUtils.LINE_SPACING_DEFAULT);
             PrintUtils.selectCommand(PrintUtils.ALIGN_CENTER);
@@ -133,7 +133,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.printText(areaCs.getName()+"/"+m.getTable_sel_obj().getName()+"\n\n");
             PrintUtils.selectCommand(PrintUtils.NORMAL);
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
-            Order orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),checkOrderC.getOrderIds().get(0),Order.class);
+            Order orderC = CDBHelper.getObjById(checkOrderC.getOrderIds().get(0),Order.class);
             PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getOrderNum()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("下单时间", checkOrderC.getCheckTime()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getCurrentPersions(), "收银员："+waiter+"\n"));
@@ -277,7 +277,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
         boolean flag ;
 
         for (String orderCId: checkOrderC.getOrderIds()) {
-            Order orderC = CDBHelper.getObjById(payActivity.getApplicationContext(),orderCId,Order.class);
+            Order orderC = CDBHelper.getObjById(orderCId,Order.class);
             for (Goods goodsb : orderC.getGoods()) {
                 flag = false;
                 for (Goods goodsC : goodsCList) {

@@ -178,7 +178,7 @@ public class NewOrderService extends Service {
     private void connectAllPrinter()
     {
 
-         kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClient.class);
+         kitchenClientList = CDBHelper.getObjByClass( KitchenClient.class);
 
         if (kitchenClientList.size() <= 0)
         {
@@ -201,7 +201,7 @@ public class NewOrderService extends Service {
                 } else {
                     MyLog.e("printCMD","***********打印机连接命令发送失败");
                     //kitchenClientObj.setStatePrinter(false);
-                    CDBHelper.createAndUpdate(null,kitchenClientObj);
+                    CDBHelper.createAndUpdate(kitchenClientObj);
                 }
             }
             else
@@ -212,7 +212,7 @@ public class NewOrderService extends Service {
     }
     private void changeTableState( String tableNo)
     {
-        List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+        List<Document> documentList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Table"))
                         .and(Expression.property("num").equalTo(Expression.string(tableNo)))
                 ,null);
@@ -238,7 +238,7 @@ public class NewOrderService extends Service {
 
     {
         //判断此设备是否支持接收微信点餐打印
-        List<Qrcode> qrCodeList = CDBHelper.getObjByClass(getApplicationContext(),Qrcode.class);
+        List<Qrcode> qrCodeList = CDBHelper.getObjByClass(Qrcode.class);
         if(qrCodeList.size()>0)
         {
             //Qrcode qrCode = qrCodeList.get(0);
@@ -246,7 +246,7 @@ public class NewOrderService extends Service {
                 return;
         }
 
-        Order obj= CDBHelper.getObjById(getApplicationContext(),order_id,Order.class);
+        Order obj= CDBHelper.getObjById(order_id,Order.class);
         goodsList.addAll(obj.getGoods());// = obj.getGoodsList();
         areaName = obj.getAreaName();
         tableName = obj.getTableName();
@@ -262,7 +262,7 @@ public class NewOrderService extends Service {
 
         //1\ 查询出所有厨房,并分配菜品
 
-        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClient.class);
+        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass( KitchenClient.class);
 
         if (kitchenClientList.size() <= 0)
 
@@ -279,7 +279,7 @@ public class NewOrderService extends Service {
         {
             boolean findflag = false;
             ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
-            List<String> dishesKindId = CDBHelper.getIdsByWhere(getApplicationContext(),
+            List<String> dishesKindId = CDBHelper.getIdsByWhere(
                     Expression.property("className").equalTo(Expression.string("Dishes")
                     .add(Expression.property("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
                     null);
@@ -377,11 +377,11 @@ public class NewOrderService extends Service {
     }
     private void setOrderPrintState(String orderId) {
 
-        Order obj = CDBHelper.getObjById(getApplicationContext(), orderId, Order.class);
+        Order obj = CDBHelper.getObjById( orderId, Order.class);
 
         obj.setPrintFlag(1);
 
-        CDBHelper.createAndUpdate(getApplicationContext(), obj);
+        CDBHelper.createAndUpdate( obj);
 
     }
 
@@ -437,7 +437,7 @@ public class NewOrderService extends Service {
                 {
 
 
-                   List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                   List<Document>    docList  = CDBHelper.getDocmentsByWhere(
                              Expression.property("className").equalTo(Expression.string("KitchenClientC"))
                                      .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
                     null);
@@ -464,7 +464,7 @@ public class NewOrderService extends Service {
                 {
                     MyLog.e(Tag,id+"-打印机连接成功");
 
-                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(null,
+                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(
                             Expression.property("className").equalTo(Expression.string("KitchenClientC"))
                                     .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
                             null);

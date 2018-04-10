@@ -238,7 +238,7 @@ public class Tool {
             String time=formatter.format(new Date());
             obj.setDate(time);
             obj.setNum(1);
-            CDBHelper.createAndUpdate(context.getApplicationContext(),obj);
+            CDBHelper.createAndUpdate(obj);
             orderNum =  "001";
         }
         else//有数据，判断是不是当天
@@ -251,14 +251,14 @@ public class Tool {
             {
                 obj.setNum(1);
                 obj.setDate(newDate);
-                CDBHelper.createAndUpdate(context.getApplicationContext(),obj);
+                CDBHelper.createAndUpdate(obj);
                 orderNum =  "001";
             }
             else//同一天
             {
                 int newNum = num+1;
                 obj.setNum(newNum);
-                CDBHelper.createAndUpdate(context.getApplicationContext(),obj);
+                CDBHelper.createAndUpdate(obj);
                 orderNum = String.format("%3d", newNum).replace(" ", "0");
             }
         }

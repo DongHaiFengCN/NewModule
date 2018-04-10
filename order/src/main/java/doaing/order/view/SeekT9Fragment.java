@@ -217,7 +217,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
         final TextView price_tv = view.findViewById(R.id.price);
 
-        final Dishes dishes = CDBHelper.getObjById(getActivity().getApplicationContext(), t9GoodsList.get(selGoodsPos).getDishesId(), Dishes.class);
+        final Dishes dishes = CDBHelper.getObjById( t9GoodsList.get(selGoodsPos).getDishesId(), Dishes.class);
         final AmountView amountView = view.findViewById(R.id.amount_view);
         final  float  sourceCount = t9GoodsList.get(selGoodsPos).getDishesCount();
         if (sourceCount == 0.0)
@@ -246,7 +246,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
         if (dishes.getTasteIds() != null)
         {
             for (int i = 0; i < dishes.getTasteIds().size(); i++) {
-                Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishes.getTasteIds().get(i).toString());
+                Document document = CDBHelper.getDocByID( dishes.getTasteIds().get(i).toString());
                 tasteList.add(document.getString("name"));
             }
 
@@ -341,8 +341,8 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                List<Document> documentList = CDBHelper.getDocmentsByWhere(getActivity().getApplicationContext()
-                        , Expression.property("className").equalTo(Expression.string("Dishes"))
+                List<Document> documentList = CDBHelper.getDocmentsByWhere(
+                        Expression.property("className").equalTo(Expression.string("Dishes"))
                                 .and(Expression.property("code9").like(Expression.string("%" + search + "%")))
                         , null);
                 for (Document doc : documentList) {
@@ -380,8 +380,8 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             @Override
             public void run() {
 
-                List<Document> documentList = CDBHelper.getDocmentsByWhere(getActivity().getApplicationContext()
-                        , Expression.property("className").equalTo(Expression.string("Dishes"))
+                List<Document> documentList = CDBHelper.getDocmentsByWhere(
+                        Expression.property("className").equalTo(Expression.string("Dishes"))
                                 .and(Expression.property("code26").like(Expression.string("%"+search + "%")))
                         , Ordering.property("name").ascending());
 
@@ -415,8 +415,8 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
     }
     private  String findZDCKindId()
     {
-        List<String> zdcIdList = CDBHelper.getIdsByWhere(getActivity().getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("DishesKind"))
+        List<String> zdcIdList = CDBHelper.getIdsByWhere(
+                Expression.property("className").equalTo(Expression.string("DishesKind"))
                  .and(Expression.property("name").equalTo(Expression.string("自点菜")))
                 ,null);
         Log.e("SeekT9",""+zdcIdList.size());

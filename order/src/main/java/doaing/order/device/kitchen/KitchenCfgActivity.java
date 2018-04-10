@@ -54,7 +54,7 @@ public class KitchenCfgActivity extends BaseToobarActivity implements View.OnCli
             infomations = new ArrayList<>();
         }
         infomations.clear();
-        infomations = CDBHelper.getIdsByClass(getApplicationContext(), KitchenClient.class);
+        infomations = CDBHelper.getIdsByClass( KitchenClient.class);
         Log.e("loadformdb", "size=" + infomations.size());
 
     }
@@ -84,7 +84,7 @@ public class KitchenCfgActivity extends BaseToobarActivity implements View.OnCli
 
         } else if (i == R.id.activity_kitchen_tj) {
             Bundle bundle = new Bundle();
-            infomations = CDBHelper.getIdsByClass(getApplicationContext(), KitchenClient.class);
+            infomations = CDBHelper.getIdsByClass( KitchenClient.class);
             Intent intent = new Intent(KitchenCfgActivity.this, AddkitchenActivity.class);
             bundle.putSerializable("infomations", (Serializable) infomations);
             intent.putExtras(bundle);

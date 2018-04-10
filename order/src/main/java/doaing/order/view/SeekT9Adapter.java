@@ -104,7 +104,7 @@ public class SeekT9Adapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        dishes = CDBHelper.getObjById(activity.getApplicationContext(), mGoodsList.get(position).getDishesId(), Dishes.class);
+        dishes = CDBHelper.getObjById( mGoodsList.get(position).getDishesId(), Dishes.class);
         if (dishes.isSell()){
             viewHolder.viewTj.setVisibility(View.INVISIBLE);
             isSell = true;
@@ -160,7 +160,7 @@ public class SeekT9Adapter extends BaseAdapter {
 
                             if (dishes.getTasteIds().size() != 0) {
                                 for (int i = 0; i < dishes.getTasteIds().size(); i++) {
-                                    Document document = CDBHelper.getDocByID(activity.getApplicationContext(), dishes.getTasteIds().get(i).toString());
+                                    Document document = CDBHelper.getDocByID( dishes.getTasteIds().get(i).toString());
                                     try {
                                         tasteList.add(ToolUtil.emojiRecovery2(document.getString("name")));
                                     } catch (UnsupportedEncodingException e) {

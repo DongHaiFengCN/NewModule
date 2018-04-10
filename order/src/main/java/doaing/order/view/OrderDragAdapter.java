@@ -150,7 +150,7 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                Dishes dishes = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), Dishes.class);
+                Dishes dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dishes.class);
 
                 setMessage(dishes, true, position);
 
@@ -162,7 +162,7 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                Dishes dishes = CDBHelper.getObjById(context, mlistDishes.get(position).getId(), Dishes.class);
+                Dishes dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dishes.class);
                 setMessage(dishes, false, position);
 
             }
@@ -204,7 +204,7 @@ public class OrderDragAdapter extends BaseAdapter {
 
             for (int i = 0; i < dishesC.getTasteIds().size(); i++) {
 
-                Taste dishesTasteC = CDBHelper.getObjById(context, dishesC.getTasteIds().get(i), Taste.class);
+                Taste dishesTasteC = CDBHelper.getObjById( dishesC.getTasteIds().get(i), Taste.class);
 
                 if (dishesTasteC != null) {
 

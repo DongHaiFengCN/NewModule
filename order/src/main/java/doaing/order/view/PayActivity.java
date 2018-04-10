@@ -136,7 +136,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         myApplication = (MyApplication) getApplication();
         //获取餐桌编号
         tableC = myApplication.getTable_sel_obj();
-        Area areaCs = CDBHelper.getObjById(getApplicationContext(), tableC.getAreaId(), Area.class);
+        Area areaCs = CDBHelper.getObjById(tableC.getAreaId(), Area.class);
 
         tableNumber.setText(areaCs.getName() + "桌/牌:" + tableC.getName());
 
@@ -225,7 +225,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         //微信支付
         String wechatId;
 
-        List<Qrcode> qrcodeList = CDBHelper.getObjByClass(getApplicationContext(), Qrcode.class);
+        List<Qrcode> qrcodeList = CDBHelper.getObjByClass( Qrcode.class);
 
         if (!qrcodeList.isEmpty()) {
 
@@ -251,9 +251,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
         //营销方式
 
-        promotionCList = CDBHelper.getObjByClass(getApplicationContext(), Promotion.class);
+        promotionCList = CDBHelper.getObjByClass( Promotion.class);
         //活动
-        promotionRulesList = CDBHelper.getObjByClass(getApplicationContext(),PromotionRule.class);
+        promotionRulesList = CDBHelper.getObjByClass(PromotionRule.class);
 
         Iterator iterator = promotionCList.iterator();
 
@@ -801,7 +801,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             obj.setLastCheckOrderId(id);
             obj.setState(0);
 
-            CDBHelper.createAndUpdate(getApplicationContext(), tableC);
+            CDBHelper.createAndUpdate( tableC);
         } else {
             Toast.makeText(getApplicationContext(), "有未买单信息，不能改变桌位状态", Toast.LENGTH_SHORT).show();
             return;
@@ -1117,7 +1117,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
                 if (promotion[0] != null) {
                     for (int ps = 0; ps < promotion[0].getPromotionRuleIds().size(); ps++) {
-                        PromotionRule promotionRule = CDBHelper.getObjById(getApplicationContext(), promotion[0].getPromotionRuleIds().get(ps), PromotionRule.class);
+                        PromotionRule promotionRule = CDBHelper.getObjById( promotion[0].getPromotionRuleIds().get(ps), PromotionRule.class);
                         if (promotionRule.getMode() == 1) {     //打折状态
 
                             total = MyBigDecimal.sub(total, copy, 1);
@@ -1150,7 +1150,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                 promotion[0] = promotionCList.get(p);
 
                 for (int ps = 0; ps < promotion[0].getPromotionRuleIds().size(); ps++ ){
-                    PromotionRule promotionRule = CDBHelper.getObjById(getApplicationContext(),promotion[0].getPromotionRuleIds().get(ps),PromotionRule.class);
+                    PromotionRule promotionRule = CDBHelper.getObjById(promotion[0].getPromotionRuleIds().get(ps),PromotionRule.class);
                     if (promotionRule.getMode() == 1){
                         copy = 0f;
 

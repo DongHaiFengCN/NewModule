@@ -90,8 +90,8 @@ public class SpecificationActivity extends BaseToobarActivity {
         mHandle.post(new Runnable() {
             @Override
             public void run() {
-                dishesCList = CDBHelper.getDocmentsByClass(getApplicationContext(),Dishes.class);
-                HaveDishesSupList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+                dishesCList = CDBHelper.getDocmentsByClass(Dishes.class);
+                HaveDishesSupList = CDBHelper.getDocmentsByWhere(
                         Expression.property("className").equalTo(Expression.string("Dishes"))
                                 .and(Expression.property("supDishesId").notNullOrMissing())
                         ,null);
@@ -105,7 +105,7 @@ public class SpecificationActivity extends BaseToobarActivity {
      * 查询主菜品,并添加副菜品
      */
     private void setGuiGeDishes(String guiGeDishes){
-        List<Document> dishesList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+        List<Document> dishesList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Dishes"))
                         .and(Expression.property("name").like(Expression.string(guiGeDishes)))
                 ,null);
@@ -124,7 +124,7 @@ public class SpecificationActivity extends BaseToobarActivity {
      * 查询副菜品
      */
     private void setGuiGeSupDishes(String guiGeSupDishes,String dishesSupCount){
-        List<Document> dishesList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+        List<Document> dishesList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Dishes"))
                         .and(Expression.property("name").equalTo(Expression.string(guiGeSupDishes)))
                         .and(Expression.property("kindId").equalTo(Expression.string(dishesKindId)))
@@ -148,7 +148,7 @@ public class SpecificationActivity extends BaseToobarActivity {
      * 查找HaveSupDishes是否为true
      */
     private void findHaveSupDishes(){
-        HaveDishesSupList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
+        HaveDishesSupList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Dishes"))
                         .and(Expression.property("supDishesId").notNullOrMissing())
                 ,null);

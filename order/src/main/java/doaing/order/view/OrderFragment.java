@@ -131,7 +131,7 @@ public class OrderFragment extends Fragment {
 
                 Document document = (Document) orderDragAdapter.getItem(position);
 
-                Dishes dishes = CDBHelper.getObjById(getActivity().getApplication(), document.getId()
+                Dishes dishes = CDBHelper.getObjById(document.getId()
                         , Dishes.class);
             if (!dishes.isSell()){
                 showDialog(dishes, position, orderDragAdapter.getNumbers()[position]);
@@ -305,7 +305,7 @@ public class OrderFragment extends Fragment {
         if (dishes.getTasteIds() != null && !dishes.getTasteIds().isEmpty()) {
 
             for (int i = 0; i < dishes.getTasteIds().size(); i++) {
-                Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishes.getTasteIds().get(i).toString());
+                Document document = CDBHelper.getDocByID(dishes.getTasteIds().get(i).toString());
                 if (document == null || document.getString("name") == null) {
                     continue;
                 }

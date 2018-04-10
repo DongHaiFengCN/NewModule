@@ -96,7 +96,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                 }
                 areaDocment = database.getDocument(areaAdapter.getAreaId().get(pos));
 
-                List<Document> doc = CDBHelper.getDocmentsByWhere(TableManagerActivity.this,
+                List<Document> doc = CDBHelper.getDocmentsByWhere(
                         Expression.property("className").equalTo(Expression.string("Table"))
                         .add(Expression.property("areaId").equalTo(Expression.string(areaDocment.getId())))
                         ,null);
