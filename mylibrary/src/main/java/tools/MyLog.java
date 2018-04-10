@@ -44,6 +44,12 @@ public class MyLog  {
             android.util.Log.e(tag,content);
         }
     }
+    public static void e(String tag,String content, Throwable tr)
+    {
+        if(FLAG){
+            android.util.Log.e(tag,content,tr);
+        }
+    }
     public static void d(String tag,String content)
     {
         if(FLAG){
