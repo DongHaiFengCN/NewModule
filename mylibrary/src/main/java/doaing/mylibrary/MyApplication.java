@@ -35,8 +35,6 @@ public class MyApplication extends Application  {
 
     private final static boolean SYNC_ENABLED = true;
 
-    public static boolean WX_RECEIVE_FLAG = false;
-
     public Map<String, List<Document>> getDishesObjectCollection() {
         return dishesObjectCollection;
     }

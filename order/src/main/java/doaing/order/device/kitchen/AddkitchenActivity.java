@@ -292,7 +292,6 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         obj.setName(etClientname.getText().toString().trim());
 
         obj.setPrinterId(mPrinterId);
-        obj.setWxReceiveFlag(myapp.WX_RECEIVE_FLAG);
        // obj.setKitchenAdress(""+pos);
         //保存一下打印机状态，实时反馈到状态界面上
 //        boolean state = mPortParam.getPortOpenState();

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Base64;
@@ -241,9 +242,13 @@ public class NewOrderService extends Service {
         List<Qrcode> qrCodeList = CDBHelper.getObjByClass(Qrcode.class);
         if(qrCodeList.size()>0)
         {
+            SharedPreferences sharedPreferences = getSharedPreferences("WxReceiveFlag", 0);
+
+            boolean isFlag = sharedPreferences.getBoolean("isFlag",true);
             //Qrcode qrCode = qrCodeList.get(0);
-            if(!MyApplication.WX_RECEIVE_FLAG)
+            if(!isFlag) {
                 return;
+            }
         }
 
         Order obj= CDBHelper.getObjById(order_id,Order.class);

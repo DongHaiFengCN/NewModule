@@ -1,6 +1,7 @@
 package doaing.order.device;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,6 +48,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
     private final static int SCANNIN_GREQUEST_CODE2 = 2;
     private Qrcode obj_qrcodepay;
     private int flag = 0;
+    private boolean isFlag;
     @Override
     protected void onResume() {
         // TODO Auto-generated method stub
@@ -64,6 +66,9 @@ public class PrinterConnectDialog extends BaseToobarActivity {
 
         Log.e(DEBUG_TAG, "onCreate ");
         myapp = (MyApplication) getApplication();
+        SharedPreferences sharedPreferences = getSharedPreferences("WxReceiveFlag", 0);
+
+        isFlag = sharedPreferences.getBoolean("isFlag",true);
         initView();
         initQrPay();
     }
@@ -114,7 +119,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             }else {
                 ifqrcodeprint2.setChecked(false);
             }
-            if (myapp.WX_RECEIVE_FLAG){
+            if (isFlag){
                 cboxWxYao.setChecked(true);
             }else{
                 cboxWxYao.setChecked(false);
@@ -258,12 +263,16 @@ public class PrinterConnectDialog extends BaseToobarActivity {
         cboxWxYao.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
-                    myapp.WX_RECEIVE_FLAG = true;
-                }else{
-                    myapp.WX_RECEIVE_FLAG = false;
-                }
-                CDBHelper.createAndUpdate(obj_qrcodepay);
+
+                SharedPreferences settings = getSharedPreferences("WxReceiveFlag", 0);
+
+                SharedPreferences.Editor editor = settings.edit();
+
+                editor.clear();
+
+                editor.putBoolean("isFlag",isChecked);
+
+                editor.commit();
             }
         });
 
