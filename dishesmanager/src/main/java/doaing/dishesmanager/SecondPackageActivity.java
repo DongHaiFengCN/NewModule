@@ -18,7 +18,6 @@ import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 
 
-import bean.kitchenmanage.dishes.DishesC;
 import tools.CDBHelper;
 import view.BaseToobarActivity;
 

@@ -44,7 +44,7 @@ public class Goods implements Cloneable {
 	 */
 	private float price;
 	/**
-	 *
+	 *会员价格
 	 */
 	private float memberPrice;
 	/**
@@ -78,12 +78,12 @@ public class Goods implements Cloneable {
 		this.className="GoodsC";
 	}
 
-	public String get_id() {
-		return _id;
+	public String getId() {
+		return id;
 	}
 
-	public void set_id(String _id) {
-		this._id = _id;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getChannelId() {
@@ -102,14 +102,13 @@ public class Goods implements Cloneable {
 		this.className = className;
 	}
 
-	public String getOrder() {
-		return order;
+	public String getOrderId() {
+		return orderId;
 	}
 
-	public void setOrder(String order) {
-		this.order = order;
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
-
 
 	public String getDishesKindId() {
 		return dishesKindId;
@@ -188,11 +187,11 @@ public class Goods implements Cloneable {
 		this.createdTime = createdTime;
 	}
 
-	public String getDesc() {
-		return desc;
+	public float getMemberPrice() {
+		return memberPrice;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setMemberPrice(float memberPrice) {
+		this.memberPrice = memberPrice;
 	}
 }

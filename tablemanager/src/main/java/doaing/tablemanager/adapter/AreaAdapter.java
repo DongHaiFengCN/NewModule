@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
@@ -34,6 +35,7 @@ import java.util.List;
 import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.R;
 import doaing.tablemanager.TableManagerActivity;
+import tools.CDBHelper;
 import tools.MyLog;
 import tools.ToolUtil;
 
@@ -128,23 +130,19 @@ public class AreaAdapter extends BaseAdapter {
                             }).setNeutralButton("删除房间", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Document document = database.getDocument(areaId.get(i));
-                                    Array array = document.getArray("tableIDList");
-                                    int count = array.count();
-
-                                    //删除餐桌信息
-                                    for (int j = 0; j < count; j++) {
+                                    List<Document> doc = CDBHelper.getDocmentsByWhere(context.getApplicationContext(),
+                                            Expression.parameter("className").equalTo(Expression.string("Table")
+                                            .add(Expression.property("areaId").equalTo(Expression.string(areaId.get(i))))),
+                                            null);
+                                    int count = doc.size();
+                                    if (count != 0){
+                                        Toast.makeText(context,"区域下有桌位,不可删除。",Toast.LENGTH_SHORT).show();
+                                    }else{
                                         try {
-                                            database.delete(database.getDocument(array.getString(j)));
-
+                                            database.delete(database.getDocument(areaId.get(i)));
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
-                                    }
-                                    try {
-                                        database.delete(document);
-                                    } catch (CouchbaseLiteException e) {
-                                        e.printStackTrace();
                                     }
                                     updata();
                                     context.setAreaListViewItemPosition(0);
@@ -165,7 +163,7 @@ public class AreaAdapter extends BaseAdapter {
                                 //修改房间名字
                                 MutableDocument document = database.getDocument(areaId.get(i)).toMutable();
 
-                                document.setString("areaName", editText.getText().toString());
+                                document.setString("name", editText.getText().toString());
 
                                 try {
                                     database.save(document);
@@ -181,7 +179,7 @@ public class AreaAdapter extends BaseAdapter {
 
                 }
             });
-            listItemView.tv_title.setText(database.getDocument(areaId.get(i)).getString("areaName"));
+            listItemView.tv_title.setText(database.getDocument(areaId.get(i)).getString("name"));
         } else {
             listItemView.tv_title.setVisibility(View.GONE);
             listItemView.edit_im.setVisibility(View.GONE);
@@ -206,14 +204,13 @@ public class AreaAdapter extends BaseAdapter {
                                 editText.setError("不能为空！");
                             } else {
                                 finalListItemView.list_area_layout.setBackgroundResource(R.drawable.tablenoclick);
-                                MutableDocument document = new MutableDocument("AreaC." + ToolUtil.getUUID());
+                                MutableDocument document = new MutableDocument("Area." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
                                 MyLog.e("AreaAdapter","channeldId="+((MyApplication) context.getApplicationContext()).getCompany_ID());
-                                document.setString("className", "AreaC");
-                                document.setString("areaName", editText.getText().toString());
+                                document.setString("className", "Area");
+                                document.setString("name", editText.getText().toString());
                                 document.setBoolean("isValid", true);
-                                document.setString("areaNum", String.valueOf(areaId == null ? 0 : areaId.size()));
-                                document.setArray("tableIDList", new MutableArray());
+                                document.setString("num", String.valueOf(areaId == null ? 0 : areaId.size()));
                                 document.setString("dataType", "BaseData");
                                 try {
                                     database.save(document);
@@ -299,10 +296,10 @@ public class AreaAdapter extends BaseAdapter {
 
     private Query listsLiveQuery() {
         return QueryBuilder.select(SelectResult.expression(Meta.id)
-                , SelectResult.expression(Expression.property("areaName")))
+                , SelectResult.expression(Expression.property("name")))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo(Expression.string("AreaC")))
-                .orderBy(Ordering.property("areaNum").ascending());
+                .where(Expression.property("className").equalTo(Expression.string("Area")))
+                .orderBy(Ordering.property("num").ascending());
     }
 
 }

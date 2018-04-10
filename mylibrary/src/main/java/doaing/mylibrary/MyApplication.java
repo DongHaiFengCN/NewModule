@@ -13,10 +13,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import bean.kitchenmanage.dishes.DishesKindC;
-import bean.kitchenmanage.table.TableC;
-import bean.kitchenmanage.user.UsersC;
-import tools.CDBHelper;
+import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.table.Table;
+import bean.kitchenmanage.user.Employee;
+
 
 /**
  * 项目名称：Order
@@ -33,6 +33,7 @@ public class MyApplication extends Application implements ISharedPreferences {
     private static final String TAG = Application.class.getSimpleName();
 
     private final static boolean SYNC_ENABLED = true;
+    public static boolean WX_RECEIVE_FLAG = false;
 
     public Map<String, List<Document>> getDishesObjectCollection() {
         return dishesObjectCollection;
@@ -46,32 +47,32 @@ public class MyApplication extends Application implements ISharedPreferences {
 
     private Map<String, List<Document>> dishesObjectCollection = new HashMap<>();
 
-    public List<DishesKindC> getDishesKindCList() {
+    public List<DishesKind> getDishesKindCList() {
         return dishesKindCList;
     }
 
-    public void setDishesKindCList(List<DishesKindC> dishesKindCList) {
+    public void setDishesKindCList(List<DishesKind> dishesKindCList) {
         this.dishesKindCList = dishesKindCList;
     }
 
-    List<DishesKindC> dishesKindCList;
+    List<DishesKind> dishesKindCList;
 
 
     private String Company_ID = "gysz";
 
 
 
-    private TableC table_sel_obj;
+    private Table table_sel_obj;
 
-    public UsersC getUsersC() {
-        return usersC;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setUsersC(UsersC usersC) {
-        this.usersC = usersC;
+    public void setEmployee(Employee usersC) {
+        this.employee = usersC;
     }
 
-    private UsersC usersC;
+    private Employee employee;
 
     public ExecutorService mExecutor;
 
@@ -127,11 +128,11 @@ public class MyApplication extends Application implements ISharedPreferences {
     public void setCompany_ID(String company_ID) {
         Company_ID = company_ID;
     }
-    public TableC getTable_sel_obj() {
+    public Table getTable_sel_obj() {
         return table_sel_obj;
     }
 
-    public void setTable_sel_obj(TableC table_sel_obj) {
+    public void setTable_sel_obj(Table table_sel_obj) {
         this.table_sel_obj = table_sel_obj;
     }
 }

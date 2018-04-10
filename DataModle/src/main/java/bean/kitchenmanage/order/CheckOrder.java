@@ -81,7 +81,7 @@ public class CheckOrder {
 	/**
 	 * 挂单信息引用；注意挂单统计时怎么使用这个字段。
 	 */
-	private HangInfo   hangInfo;
+	private HangInfo  hangInfo;
 	/**
 	 * 操作员名称
 	 */
@@ -137,7 +137,6 @@ public class CheckOrder {
 	public void setOrderIds(List<String> orderIds) {
 		this.orderIds = orderIds;
 	}
-
 	public String getCheckTime() {
 		return checkTime;
 	}

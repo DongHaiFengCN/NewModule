@@ -100,5 +100,171 @@ public class Dishes implements Serializable {
 	 */
 	private String createdTime;
 
+	public String getId() {
+		return id;
+	}
 
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getChannelId() {
+		return channelId;
+	}
+
+	public void setChannelId(String channelId) {
+		this.channelId = channelId;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public String getDataType() {
+		return dataType;
+	}
+
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
+
+	public int getSortNum() {
+		return sortNum;
+	}
+
+	public void setSortNum(int sortNum) {
+		this.sortNum = sortNum;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCode9() {
+		return code9;
+	}
+
+	public void setCode9(String code9) {
+		this.code9 = code9;
+	}
+
+	public String getCode26() {
+		return code26;
+	}
+
+	public void setCode26(String code26) {
+		this.code26 = code26;
+	}
+
+	public boolean isTakeout() {
+		return takeout;
+	}
+
+	public void setTakeout(boolean takeout) {
+		this.takeout = takeout;
+	}
+
+	public boolean isSpecialty() {
+		return specialty;
+	}
+
+	public void setSpecialty(boolean specialty) {
+		this.specialty = specialty;
+	}
+
+	public List<String> getTasteIds() {
+		return tasteIds;
+	}
+
+	public void setTasteIds(List<String> tasteIds) {
+		this.tasteIds = tasteIds;
+	}
+
+	public float getPrice() {
+		return price;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+	public float getMemberPrice() {
+		return memberPrice;
+	}
+
+	public void setMemberPrice(float memberPrice) {
+		this.memberPrice = memberPrice;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Blob getImage() {
+		return image;
+	}
+
+	public void setImage(Blob image) {
+		this.image = image;
+	}
+
+	public String getKindId() {
+		return kindId;
+	}
+
+	public void setKindId(String kindId) {
+		this.kindId = kindId;
+	}
+
+	public List<String> getDishesIds() {
+		return dishesIds;
+	}
+
+	public void setDishesIds(List<String> dishesIds) {
+		this.dishesIds = dishesIds;
+	}
+
+	public String getSupDishesId() {
+		return supDishesId;
+	}
+
+	public void setSupDishesId(String supDishesId) {
+		this.supDishesId = supDishesId;
+	}
+
+	public float getSupCount() {
+		return supCount;
+	}
+
+	public void setSupCount(float supCount) {
+		this.supCount = supCount;
+	}
+
+	public boolean isSell() {
+		return sell;
+	}
+
+	public void setSell(boolean sell) {
+		this.sell = sell;
+	}
+
+	public String getCreatedTime() {
+		return createdTime;
+	}
+
+	public void setCreatedTime(String createdTime) {
+		this.createdTime = createdTime;
+	}
 }

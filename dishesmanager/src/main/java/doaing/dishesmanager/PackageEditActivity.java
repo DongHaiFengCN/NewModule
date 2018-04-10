@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import bean.kitchenmanage.dishes.DishesC;
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
 

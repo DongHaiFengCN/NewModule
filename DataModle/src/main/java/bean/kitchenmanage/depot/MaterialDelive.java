@@ -5,7 +5,6 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.List;
 
-import bean.kitchenmanage.user.UsersC;
 
 /**
  * @ClassName: MaterialDelive
@@ -56,7 +55,7 @@ public class MaterialDelive implements Serializable
     public MaterialDelive() {
     }
 
-    public MaterialDelive(String id, String time, UsersC requester, UsersC operator, float totalValue, String note, int state, List<MaterialDeliveItem> materialDeliveItemList) {
+    public MaterialDelive(String id, String time,  float totalValue, String note, int state, List<MaterialDeliveItem> materialDeliveItemList) {
         this.id = id;
         this.totalValue = totalValue;
         this.note = note;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import bean.kitchenmanage.user.UsersC;
+import bean.kitchenmanage.user.Employee;
 
 /**
  * @ClassName: Depot
@@ -58,11 +58,11 @@ public class DepotC implements Serializable {
     /**
      * 负责人
      */
-    private UsersC manager;
+    private Employee manager;
     /**
      * 创建者
      */
-    private UsersC creator;
+    private Employee creator;
     /**
      * 创建时间
      */
@@ -79,7 +79,7 @@ public class DepotC implements Serializable {
     public DepotC()
     {
     }
-    public DepotC(String depotName, UsersC manager, UsersC creator, Date createdTime, int deliveMode)
+    public DepotC(String depotName, Employee manager, Employee creator, Date createdTime, int deliveMode)
     {
         this.depotName = depotName;
         this.manager = manager;

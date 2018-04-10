@@ -12,7 +12,6 @@ import com.couchbase.lite.Document;
 
 import java.util.List;
 
-import bean.kitchenmanage.dishes.DishesC;
 import doaing.dishesmanager.R;
 
 /**
