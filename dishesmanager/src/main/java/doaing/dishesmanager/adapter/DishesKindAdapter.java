@@ -38,7 +38,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dishes.DishesKindC;
 import doaing.dishesmanager.DishesActivity;
 import doaing.dishesmanager.R;
 import doaing.mylibrary.MyApplication;

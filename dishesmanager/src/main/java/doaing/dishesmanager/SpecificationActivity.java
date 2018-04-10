@@ -43,7 +43,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dishes.DishesC;
+import bean.kitchenmanage.dishes.Dishes;
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.ListAdapter;
 import doaing.mylibrary.MyApplication;
@@ -90,10 +90,10 @@ public class SpecificationActivity extends BaseToobarActivity {
         mHandle.post(new Runnable() {
             @Override
             public void run() {
-                dishesCList = CDBHelper.getDocmentsByClass(getApplicationContext(),DishesC.class);
+                dishesCList = CDBHelper.getDocmentsByClass(getApplicationContext(),Dishes.class);
                 HaveDishesSupList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                        Expression.property("className").equalTo(Expression.string("DishesC"))
-                                .and(Expression.property("haveSupDishes").like(Expression.booleanValue(true)))
+                        Expression.property("className").equalTo(Expression.string("Dishes"))
+                                .and(Expression.property("supDishesId").notNullOrMissing())
                         ,null);
 
                 listAdapter  = new ListAdapter(SpecificationActivity.this,HaveDishesSupList);
@@ -106,8 +106,8 @@ public class SpecificationActivity extends BaseToobarActivity {
      */
     private void setGuiGeDishes(String guiGeDishes){
         List<Document> dishesList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                Expression.property("className").equalTo(Expression.string("DishesC"))
-                        .and(Expression.property("dishesName").like(Expression.string(guiGeDishes)))
+                Expression.property("className").equalTo(Expression.string("Dishes"))
+                        .and(Expression.property("name").like(Expression.string(guiGeDishes)))
                 ,null);
         if (dishesList.size() == 0){
             Toast.makeText(this,"输入主菜品不存在",Toast.LENGTH_LONG).show();
@@ -115,7 +115,7 @@ public class SpecificationActivity extends BaseToobarActivity {
         }
         Document doc = dishesList.get(0);
         document = doc.toMutable();
-        dishesKindId = document.getString("dishesKindId");
+        dishesKindId = document.getString("kindId");
 
     }
 
@@ -125,9 +125,9 @@ public class SpecificationActivity extends BaseToobarActivity {
      */
     private void setGuiGeSupDishes(String guiGeSupDishes,String dishesSupCount){
         List<Document> dishesList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                Expression.property("className").equalTo(Expression.string("DishesC"))
-                        .and(Expression.property("dishesName").equalTo(Expression.string(guiGeSupDishes)))
-                        .and(Expression.property("dishesKindId").equalTo(Expression.string(dishesKindId)))
+                Expression.property("className").equalTo(Expression.string("Dishes"))
+                        .and(Expression.property("name").equalTo(Expression.string(guiGeSupDishes)))
+                        .and(Expression.property("kindId").equalTo(Expression.string(dishesKindId)))
                 ,null);
 
         if (dishesList.size() != 0){
@@ -138,11 +138,8 @@ public class SpecificationActivity extends BaseToobarActivity {
             Toast.makeText(this,"输入副菜品不匹配",Toast.LENGTH_LONG).show();
             return;
         }
-        document.setBoolean("haveSupDishes",true);
         document.setString("supDishesId",supDishesId);
-        document.setFloat("supPrice",supPrice);
         document.setFloat("supCount",Float.parseFloat(dishesSupCount));
-        document.setString("supDishesName",guiGeSupDishes);
         CDBHelper.saveDocument(getApplicationContext(),document);
 
     }
@@ -152,10 +149,9 @@ public class SpecificationActivity extends BaseToobarActivity {
      */
     private void findHaveSupDishes(){
         HaveDishesSupList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                Expression.property("className").equalTo(Expression.string("DishesC"))
-                        .and(Expression.property("haveSupDishes").like(Expression.booleanValue(true)))
+                Expression.property("className").equalTo(Expression.string("Dishes"))
+                        .and(Expression.property("supDishesId").notNullOrMissing())
                 ,null);
-
         listAdapter  = new ListAdapter(this,HaveDishesSupList);
         guige_list.setAdapter(listAdapter);
         Log.e("GuiGeActivity",""+HaveDishesSupList.size());
@@ -169,8 +165,8 @@ public class SpecificationActivity extends BaseToobarActivity {
         }
 
         for (Document dishesObj : dishesCList) {
-            if (dishesObj.getString("dishesName") !=null)
-                dishesList.add(dishesObj.getString("dishesName"));
+            if (dishesObj.getString("name") !=null)
+                dishesList.add(dishesObj.getString("name"));
 
         }
         Log.e("GuiGeActivity",""+dishesList.size()+"----"+dishesCList.size());

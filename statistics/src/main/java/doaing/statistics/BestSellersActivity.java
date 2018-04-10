@@ -35,8 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import bean.kitchenmanage.order.GoodsC;
-import bean.kitchenmanage.order.OrderC;
 import doaing.test.R;
 import tools.CDBHelper;
 import tools.MyBigDecimal;

@@ -4,7 +4,7 @@ package bean.kitchenmanage.depot;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import bean.kitchenmanage.user.UsersC;
+import bean.kitchenmanage.user.Employee;
 
 
 /**
@@ -50,7 +50,7 @@ public class Inventory implements Serializable
     {
     }
 
-    public Inventory(String id, String time, UsersC operator, String note, int state) {
+    public Inventory(String id, String time, String note, int state) {
         this.id = id;
         this.time = time;
 

@@ -95,8 +95,13 @@ public class TableManagerActivity extends BaseToobarActivity {
                     return;
                 }
                 areaDocment = database.getDocument(areaAdapter.getAreaId().get(pos));
-                Array array = areaDocment.getArray("tableIDList");
-                tableRecycleAdapter.setArray(array);
+
+                List<Document> doc = CDBHelper.getDocmentsByWhere(TableManagerActivity.this,
+                        Expression.property("className").equalTo(Expression.string("Table"))
+                        .add(Expression.property("areaId").equalTo(Expression.string(areaDocment.getId())))
+                        ,null);
+
+                tableRecycleAdapter.setArray(doc);
 
             }
         });
@@ -109,25 +114,25 @@ public class TableManagerActivity extends BaseToobarActivity {
     }
 
     public class TableRecycleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-       Array array;
+        List<Document> docList;
 
         @Override
         public int getItemViewType(int position) {
-            if (position == array.count()) {
+            if (position == docList.size()) {
 
-                return array.count() + 1;
+                return docList.size() + 1;
             }
             return super.getItemViewType(position);
         }
 
-        private void setArray(Array array) {
-            this.array = array;
+        private void setArray(List<Document> docList) {
+            this.docList = docList;
             notifyDataSetChanged();
         }
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            if (viewType < array.count()) {
+            if (viewType < docList.size()) {
                 View v = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.list_item_table, parent, false);
                 return new ViewHolder(v);
@@ -143,7 +148,7 @@ public class TableManagerActivity extends BaseToobarActivity {
         public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
             // 绑定数据
             if (holder instanceof ViewHolder) {
-                final Document tableDoc = database.getDocument(array.getString(position));
+                final Document tableDoc = docList.get(position);
                 String maxPersons = "";
                 if (""+tableDoc.getInt("maxPersons")!= null){
                     maxPersons = ""+tableDoc.getInt("maxPersons");
@@ -154,12 +159,12 @@ public class TableManagerActivity extends BaseToobarActivity {
                     ((ViewHolder) holder).num.setText( ""+maxPersons);
                 }
 
-                ((ViewHolder) holder).mTv.setText(tableDoc.getString("tableName"));
+                ((ViewHolder) holder).mTv.setText(tableDoc.getString("name"));
                 ((ViewHolder) holder).cardView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         View view = getView();
-                        tableNameEt.setText(tableDoc.getString("tableName"));
+                        tableNameEt.setText(tableDoc.getString("name"));
                         maxmunNumberEt.setText(String.valueOf(tableDoc.getInt("maxPersons")));
                         minmunNumberEt.setText(String.valueOf(tableDoc.getInt("minPersons")));
                         minimunConsumptionEt.setText(String.valueOf(tableDoc.getInt("minConsum")));
@@ -174,18 +179,14 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 }).setNeutralButton("删除餐桌", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-
                                         MutableDocument mutableDocument = areaDocment.toMutable();
-                                        //获取房间信息
-                                        MutableArray array = mutableDocument.getArray("tableIDList");
-
                                         //获取需要删除的餐桌id
                                         String id = tableDoc.getId();
-                                        int count = array.count();
+                                        int count = docList.size();
                                         for (int i = 0; i < count; i++) {
-                                            if (id.equals(array.getString(i))) {
+                                            if (id.equals(docList.get(i))) {
 
-                                                array.remove(i);
+                                                docList.remove(i);
                                                 break;
                                             }
                                         }
@@ -218,7 +219,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                         if ("".equals(tableNameEt.getText().toString())) {
                                             tableNameEt.setError("不能为空！");
                                         } else{
-                                            mutableDocument.setString("tableName", tableNameEt.getText().toString());
+                                            mutableDocument.setString("name", tableNameEt.getText().toString());
                                             if (TextUtils.isEmpty(maxmunNumberEt.getText().toString())){
                                                 mutableDocument.setInt("maxPersons", 0);
                                             }else{
@@ -255,7 +256,7 @@ public class TableManagerActivity extends BaseToobarActivity {
 
         @Override
         public int getItemCount() {
-            return array == null ? 0 : array.count() + 1;
+            return docList == null ? 0 : docList.size() + 1;
         }
 
         private class ViewHolder extends RecyclerView.ViewHolder {
@@ -306,15 +307,15 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 if ("".equals(tableNameEt.getText().toString())) {
                                     tableNameEt.setError("不能为空！");
                                 }else{
-                                    MutableDocument mutableDocument = new MutableDocument("TableC." + ToolUtil.getUUID());
+                                    MutableDocument mutableDocument = new MutableDocument("Table." + ToolUtil.getUUID());
                                     mutableDocument.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
                                     MyLog.e("AreaAdapter","channeldId="+((MyApplication) getApplicationContext()).getCompany_ID());
-                                    mutableDocument.setString("className", "TableC");
-                                    mutableDocument.setString("tableName", tableNameEt.getText().toString());
+                                    mutableDocument.setString("className", "Table");
+                                    mutableDocument.setString("name", tableNameEt.getText().toString());
                                     mutableDocument.setString("dataType", "BaseData");
                                     //id
                                     mutableDocument.setInt("state", 0);
-                                    mutableDocument.setString("tableNum", getMaxTableNum());
+                                    mutableDocument.setString("num", getMaxTableNum());
                                     mutableDocument.setString("areaId", areaDocment.getId());
                                     if (TextUtils.isEmpty(maxmunNumberEt.getText().toString())){
                                         mutableDocument.setInt("maxPersons", 0);
@@ -333,13 +334,8 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     }else{
                                         mutableDocument.setInt("minConsum", Integer.valueOf(minimunConsumptionEt.getText().toString()));
                                     }
-                                    MutableDocument areaDoc = areaDocment.toMutable();
-
-                                    MutableArray mutableArray = areaDoc.getArray("tableIDList");
-                                    mutableArray.addString(mutableDocument.getId());
                                     try {
                                         database.save(mutableDocument);
-                                        database.save(areaDoc);
                                     } catch (CouchbaseLiteException e) {
                                         e.printStackTrace();
 
@@ -377,7 +373,8 @@ public class TableManagerActivity extends BaseToobarActivity {
         String maxNum = null;
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("TableC"))).orderBy(Ordering.property("tableNum").descending());
+                        .equalTo(Expression.string("Table"))).
+                        orderBy(Ordering.property("num").descending());
         try {
             ResultSet resultSet = query.execute();
             Result row;
@@ -396,7 +393,7 @@ public class TableManagerActivity extends BaseToobarActivity {
 
             Document document = documentList.get(0);
             MyLog.e("*******_____","size="+documentList.size()+"---"+document.toMap().toString());
-            maxNum = document.getString("tableNum");
+            maxNum = document.getString("num");
             int temp = Integer.valueOf(maxNum).intValue();
             maxNum = String.format("%3d", temp + 1).replace(" ", "0");
         } else if (documentList.size() == 0)

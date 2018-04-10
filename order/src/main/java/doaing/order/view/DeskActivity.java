@@ -3,18 +3,15 @@ package doaing.order.view;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
@@ -27,7 +24,6 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +44,6 @@ import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Meta;
-import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
@@ -59,10 +54,7 @@ import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.gprinter.aidl.GpService;
-import com.gprinter.command.GpCom;
-import com.gprinter.service.GpPrintService;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -75,16 +67,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
-import java.util.UUID;
 
 
-import bean.kitchenmanage.dishes.DishesKindC;
-import bean.kitchenmanage.kitchen.KitchenClientC;
-import bean.kitchenmanage.order.CheckOrderC;
-import bean.kitchenmanage.order.OrderC;
-import bean.kitchenmanage.qrcode.qrcodeC;
-import bean.kitchenmanage.table.TableC;
-import bean.kitchenmanage.user.UsersC;
+import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.kitchen.KitchenClient;
+import bean.kitchenmanage.order.CheckOrder;
+import bean.kitchenmanage.order.Order;
+import bean.kitchenmanage.table.Table;
+import bean.kitchenmanage.user.Employee;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.DeviceMain;
@@ -95,9 +85,7 @@ import doaing.order.view.adapter.AreaAdapter;
 import doaing.order.view.adapter.LiveTableRecyclerAdapter;
 import tools.CDBHelper;
 import tools.MyLog;
-import tools.ToolUtil;
 
-import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
 import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
 
 @Route(path = "/order/DeskActivity")
@@ -115,7 +103,7 @@ public class DeskActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView msg_point;
     private ImageView msg_printer;
-    List<DishesKindC> dishesKindCList;
+    List<DishesKind> dishesKindCList;
     private Map<String, List<Document>> dishesObjectCollection;
     public GpService mGpService;
     private PrinterServiceConnection conn = null;
@@ -194,9 +182,10 @@ public class DeskActivity extends AppCompatActivity {
         String mobile = getIntent().getStringExtra("mobile");
         String channelId = getIntent().getStringExtra("channelId");
         Log.e("DeskActivity","mobile = "+mobile);
-        UsersC obj = new UsersC(channelId);
-        obj.setEmployeeName("管理员");
-        myapp.setUsersC(obj);
+        Employee obj = new Employee();
+        obj.setChannelId(channelId);
+        obj.setName("管理员");
+        myapp.setEmployee(obj);
         //  myapp.initDishesData();
         initWidget();
         orderIntent = new Intent( this, NewOrderService.class);
@@ -214,7 +203,7 @@ public class DeskActivity extends AppCompatActivity {
                 , SelectResult.expression(Expression.property("statePrinter")))
                 .from(DataSource.database(db))
                 .where(
-                        Expression.property("className").equalTo(Expression.string("KitchenClientC"))
+                        Expression.property("className").equalTo(Expression.string("KitchenClient"))
                                 .and(Expression.property("statePrinter").equalTo(Expression.booleanValue(false)))
                 );
 
@@ -269,7 +258,7 @@ public class DeskActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        List<String> kitchenClientIds = CDBHelper.getIdsByClass(null, KitchenClientC.class);
+        List<String> kitchenClientIds = CDBHelper.getIdsByClass(null, KitchenClient.class);
         if(kitchenClientIds.size()>0)
             msg_printer.setVisibility(View.VISIBLE);
         else
@@ -375,7 +364,7 @@ public class DeskActivity extends AppCompatActivity {
 
     public void showDeskListView(String areaId)
     {
-
+        Log.e("Desk",""+areaId);
         if(tableadapter!=null)
             tableadapter.StopQuery();
 
@@ -388,9 +377,10 @@ public class DeskActivity extends AppCompatActivity {
 
 
                 String tableId= (String)data;
-                final TableC tableC =  CDBHelper.getObjById(getApplicationContext(),tableId,TableC.class);
-                myapp.setTable_sel_obj(tableC);
-                if(tableC.getState()!=2)
+                MyLog.e("DeskTableID",""+tableId);
+                final Table table =  CDBHelper.getObjById(getApplicationContext(),tableId,Table.class);
+                myapp.setTable_sel_obj(table);
+                if(table.getState()!=2)
                 {
                     final EditText  editText = new EditText(DeskActivity.this);
                     editText.setFilters(new InputFilter[]{new InputFilter.LengthFilter(2)});
@@ -416,7 +406,7 @@ public class DeskActivity extends AppCompatActivity {
                     //添加控件到布局
                     linearLayout.addView(editText);
 
-                    editText.setHint("最多人数："+tableC.getMaxPersons()+"最小人数 : "+tableC.getMinConsum());
+                    editText.setHint("最多人数："+table.getMaxPersons()+"最小人数 : "+table.getMinConsum());
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(DeskActivity.this);
 
@@ -437,14 +427,12 @@ public class DeskActivity extends AppCompatActivity {
 
                                 //设置就餐人数，转跳
 
-                                tableC.setState(2);
-                                tableC.setCurrentPersions(Integer.valueOf(editText.getText().toString()));
+                                table.setState(2);
+                                table.setCurrentPersions(Integer.valueOf(editText.getText().toString()));
                                 //设置全局Table
-                                myapp.setTable_sel_obj(tableC);
-                                CDBHelper.createAndUpdate(getApplicationContext(),tableC);
-
+                                myapp.setTable_sel_obj(table);
+                                CDBHelper.createAndUpdate(getApplicationContext(),table);
                                 dialog.dismiss();
-
                                 //转跳点餐界面
                                 turnMainActivity();
 
@@ -473,12 +461,12 @@ public class DeskActivity extends AppCompatActivity {
 
                 }else {
                     List<String> orderCList= CDBHelper.getIdsByWhere(getApplicationContext(),
-                            Expression.property("className").equalTo(Expression.string("OrderC"))
-                                    .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getTableNum())))
-                                    .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
+                            Expression.property("className").equalTo(Expression.string("Order"))
+                                    .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))
+                                    .and(Expression.property("state").equalTo(Expression.intValue(1)))
                             ,null
                     );
-                    Log.e("Desk","TableNum=="+tableC.getTableNum());
+                    Log.e("Desk","TableNum=="+table.getNum());
                     Log.e("Desk","orderCList=="+orderCList.size());
 
                     if (orderCList.size() > 0 )
@@ -500,13 +488,13 @@ public class DeskActivity extends AppCompatActivity {
             public void onItemLongClick(View view, final Object data)
             {
                 final String tableId = (String)data;
-                final TableC tableC = CDBHelper.getObjById(getApplicationContext(),tableId,TableC.class);
-                myapp.setTable_sel_obj(tableC);
+                final Table table = CDBHelper.getObjById(getApplicationContext(),tableId,Table.class);
+                myapp.setTable_sel_obj(table);
 
                 final AlertDialog.Builder alertLog = new AlertDialog.Builder(DeskActivity.this);
 
                 //空闲状态下重置上一次未买单状态
-                if(tableC.getState()==0){
+                if(table.getState()==0){
                     alertLog.setTitle("是否重置？");
                     String[] an = new  String[1];
                     an[0] = "重置最近一次账单";
@@ -530,24 +518,24 @@ public class DeskActivity extends AppCompatActivity {
                                         CDBHelper.getDatabase().inBatch(new TimerTask() {
                                             @Override
                                             public void run() {
-                                                CheckOrderC checkOrderC = null;
+                                                CheckOrder checkOrder = null;
                                                 //老数据没有字段遍历查询
-                                                if(tableC.getLastCheckOrderId() == null || tableC.getLastCheckOrderId().isEmpty()){
+                                                if(table.getLastCheckOrderId() == null || table.getLastCheckOrderId().isEmpty()){
 
                                                     Date date = new Date();
                                                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                                                     //查询当日的订单
-                                                    List<CheckOrderC> checkOrderCS = CDBHelper.getObjByWhere(getApplicationContext()
-                                                            , Expression.property("className").equalTo(Expression.string("CheckOrderC"))
+                                                    List<CheckOrder> checkOrderCS = CDBHelper.getObjByWhere(getApplicationContext()
+                                                            , Expression.property("className").equalTo(Expression.string("CheckOrder"))
                                                                     .and(Expression.property("checkTime").like(Expression.string(formatter.format(date)+"%")))
-                                                            , null, CheckOrderC.class);
+                                                            , null, CheckOrder.class);
 
-                                                    Iterator<CheckOrderC> iterator = checkOrderCS.iterator();
+                                                    Iterator<CheckOrder> iterator = checkOrderCS.iterator();
 
                                                     //移除不是当前桌的订单
                                                     while (iterator.hasNext()){
-                                                        CheckOrderC c = iterator.next();
-                                                        if(!c.getTableNum().equals(tableC.getTableNum())){
+                                                        CheckOrder c = iterator.next();
+                                                        if(!c.getTableNum().equals(table.getNum())){
                                                             iterator.remove();
                                                         }
                                                     }
@@ -560,19 +548,19 @@ public class DeskActivity extends AppCompatActivity {
 
                                                         //得到最近订单的坐标
                                                         int f =  Tool.getLastCheckOrder(dateList);
-                                                        checkOrderC = checkOrderCS.get(f);
-                                                        for (int i = 0; i < checkOrderC.getOrderList().size(); i++) {
+                                                        checkOrder = checkOrderCS.get(f);
+                                                        for (int i = 0; i < checkOrder.getOrderIds().size(); i++) {
 
-                                                            OrderC orderC = CDBHelper.getObjById(getApplicationContext(),checkOrderC.getOrderList().get(i),OrderC.class);
-                                                            orderC.setOrderState(1);
-                                                            CDBHelper.createAndUpdate(getApplicationContext(), orderC);
+                                                            Order order = CDBHelper.getObjById(getApplicationContext(),checkOrder.getOrderIds().get(i),Order.class);
+                                                            order.setState(1);
+                                                            CDBHelper.createAndUpdate(getApplicationContext(), order);
                                                         }
 
                                                         //删除之前的checkorder记录
-                                                        CDBHelper.deleDocumentById(getApplicationContext(),checkOrderC.get_id());
+                                                        CDBHelper.deleDocumentById(getApplicationContext(),checkOrder.getId());
 
-                                                        tableC.setState(2);
-                                                        CDBHelper.createAndUpdate(getApplicationContext(), tableC);
+                                                        table.setState(2);
+                                                        CDBHelper.createAndUpdate(getApplicationContext(), table);
 
                                                     }else {
 
@@ -585,23 +573,23 @@ public class DeskActivity extends AppCompatActivity {
 
                                                     //新数据查询
 
-                                                    checkOrderC = CDBHelper.getObjById(getApplicationContext(),tableC.getLastCheckOrderId(),CheckOrderC.class);
-                                                    if (checkOrderC == null&&checkOrderC.getOrderList().size()==0){
+                                                    checkOrder = CDBHelper.getObjById(getApplicationContext(),table.getLastCheckOrderId(),CheckOrder.class);
+                                                    if (checkOrder == null&&checkOrder.getOrderIds().size()==0){
                                                         return;
                                                     }
 
-                                                    for (int i = 0; i < checkOrderC.getOrderList().size(); i++) {
+                                                    for (int i = 0; i < checkOrder.getOrderIds().size(); i++) {
 
-                                                        OrderC orderC = CDBHelper.getObjById(getApplicationContext(),checkOrderC.getOrderList().get(i),OrderC.class);
-                                                        orderC.setOrderState(1);
-                                                        CDBHelper.createAndUpdate(getApplicationContext(), orderC);
+                                                        Order order = CDBHelper.getObjById(getApplicationContext(),checkOrder.getOrderIds().get(i),Order.class);
+                                                        order.setState(1);
+                                                        CDBHelper.createAndUpdate(getApplicationContext(), order);
 
                                                     }
 
                                                     //删除之前的checkorder记录
-                                                    CDBHelper.deleDocumentById(getApplicationContext(),checkOrderC.get_id());
-                                                    tableC.setState(2);
-                                                    CDBHelper.createAndUpdate(getApplicationContext(), tableC);
+                                                    CDBHelper.deleDocumentById(getApplicationContext(),checkOrder.getId());
+                                                    table.setState(2);
+                                                    CDBHelper.createAndUpdate(getApplicationContext(), table);
 
                                                 }
 
@@ -633,14 +621,14 @@ public class DeskActivity extends AppCompatActivity {
 
 
                 }
-                else if(tableC.getState()==2)//开台中
+                else if(table.getState()==2)//开台中
                 {
                     //使用&&预定状态
                  final   List<String> orderCList = CDBHelper.getIdsByWhere(getApplicationContext(),
-                            Expression.property("className").equalTo(Expression.string("OrderC"))
-                                    .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getTableNum())))
-                                    .and(Expression.property("orderState").equalTo(Expression.intValue(1)))
-                                    .and(Expression.property("orderCType").notEqualTo(Expression.intValue(1)))
+                            Expression.property("className").equalTo(Expression.string("Order"))
+                                    .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))
+                                    .and(Expression.property("state").equalTo(Expression.intValue(1)))
+                                    .and(Expression.property("orderType").notEqualTo(Expression.intValue(1)))
                             ,null);
 
                     if(orderCList.size()>0)//有未买单订单，可以买单
@@ -671,7 +659,7 @@ public class DeskActivity extends AppCompatActivity {
                                     for (int i = 0; i< freeTableList.size();i++){
                                         Document selectTable = freeTableList.get(i);
                                         Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
-                                        String areaName = document.getString("areaName");
+                                        String areaName = document.getString("name");
                                         areaTable[i] = areaName+" : "+tablesName[i];
                                     }
                                     AlertDialog.Builder builder = new AlertDialog.Builder(DeskActivity.this);
@@ -698,8 +686,9 @@ public class DeskActivity extends AppCompatActivity {
                                             changeOldTable(tableId);
                                             //3\改变原桌位下订单为该桌位下
                                             List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                                                    Expression.property("className").equalTo(Expression.string("OrderC")).and(Expression.property("orderState").equalTo(Expression.intValue(1))
-                                                            .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getTableNum())))),
+                                                    Expression.property("className").equalTo(Expression.string("Order"))
+                                                            .and(Expression.property("state").equalTo(Expression.intValue(1))
+                                                            .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))),
                                                     null);
                                             for (Document doc : documentList)
                                             {
@@ -746,9 +735,9 @@ public class DeskActivity extends AppCompatActivity {
                         }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                tableC.setState(0);
-                                CDBHelper.createAndUpdate(getApplicationContext(),tableC);
-                                myapp.setTable_sel_obj(tableC);
+                                table.setState(0);
+                                CDBHelper.createAndUpdate(getApplicationContext(),table);
+                                myapp.setTable_sel_obj(table);
                                 dialog.dismiss();
                             }
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -838,9 +827,9 @@ private void cancelTableOrder(String Id,List<String> orderList)
         String[] freetables=null;
         freeTableList.clear();
         List<Document> tableDocList= CDBHelper.getDocmentsByWhere(getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("TableC"))
+                , Expression.property("className").equalTo(Expression.string("Table"))
                         .and(Expression.property("state").equalTo(Expression.intValue(0)))
-                , Ordering.property("tableNum").ascending()
+                , Ordering.property("num").ascending()
         );
         Log.e("Desk","table---"+tableDocList.size());
         if(tableDocList.size()>0)
@@ -852,8 +841,8 @@ private void cancelTableOrder(String Id,List<String> orderList)
             {
 
                 freeTableList.add(doc);
-                freetables[i] = doc.getString("tableName");
-                tablesNos[i]=doc.getString("tableNum");
+                freetables[i] = doc.getString("name");
+                tablesNos[i]=doc.getString("num");
                 i++;
 
             }
@@ -943,31 +932,32 @@ private void cancelTableOrder(String Id,List<String> orderList)
                 dishesObjectCollection = new HashMap<>();
 
                 dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                        , Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                                .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false)))
-                        ,null, DishesKindC.class);
+                        , Expression.property("className").equalTo(Expression.string("DishesKind"))
+                        ,null, DishesKind.class);
                 Log.e("DeskA",""+dishesKindCList.size());
 
                 //1、初始化菜品数量维护映射表
-                for (DishesKindC dishesKindC : dishesKindCList) {
+                for (DishesKind dishesKind : dishesKindCList) {
+                    List<String> dishesIds = CDBHelper.getIdsByWhere(getApplicationContext(),
+                            Expression.property("className").equalTo(Expression.string("Dishes")).
+                                    add(Expression.string("kindId").equalTo(Expression.string(dishesKind.getId()))),
+                            null);
 
-                    int count = dishesKindC.getDishesListId().size();
-
-                    List<String> disheList = dishesKindC.getDishesListId();
+                    int count = dishesIds.size();
 
                     List<Document> dishesCS = new ArrayList<>();
 
                     for (int i = 0; i < count; i++) {
 
-                        Document dishesC = CDBHelper.getDocByID(getApplicationContext(), disheList.get(i));
+                        Document dishesC = CDBHelper.getDocByID(getApplicationContext(), dishesIds.get(i));
                         if (dishesC != null){
                             dishesCS.add(dishesC);
                         }
 
                     }
-                    if (dishesCS != null && disheList.size() != 0) {
+                    if (dishesCS != null && dishesIds.size() != 0) {
                         //初始化disheKind对应的dishes实体类映射
-                        dishesObjectCollection.put(dishesKindC.get_id(), dishesCS);
+                        dishesObjectCollection.put(dishesKind.getId(), dishesCS);
                     }
                 }
                 myapp.setDishesKindCList(dishesKindCList);

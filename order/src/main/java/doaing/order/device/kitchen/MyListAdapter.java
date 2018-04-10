@@ -4,27 +4,22 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
-import com.gprinter.command.GpCom;
 import com.gprinter.io.PortParameters;
 import com.gprinter.save.PortParamDataBase;
 
 import java.util.List;
 
-import bean.kitchenmanage.kitchen.KitchenClientC;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import bean.kitchenmanage.kitchen.KitchenClient;
 import doaing.order.R;
 import tools.CDBHelper;
 
@@ -86,7 +81,6 @@ public class MyListAdapter extends BaseAdapter {
             viewHolder.itemKitchenPStatus.setTextColor(color);
         }
 
-        Log.e("Port","---"+document.getString("kitchenAdress"));
         viewHolder.itemKitchenDelete.setOnClickListener(new OnDeleteButtonClick(position));
 
         viewHolder.itemKitchenBianji.setOnClickListener(new OnEditorButtonClick(position));
@@ -144,31 +138,6 @@ public class MyListAdapter extends BaseAdapter {
 
     }
 
-    private void setKitchenCfg(int pos){
-        KitchenClientC kitchen;
-        PortParamDataBase database = new PortParamDataBase(activity);
-        mPortParam = new PortParameters();
-
-            for (int j = pos; j < list.size()-1;j++) {
-
-
-                Log.e("PortType", "" + j + "------" + database.queryPortParamDataBase("" + 0).getPortType());
-                mPortParam = database.queryPortParamDataBase("" + (j + 1));
-                database.deleteDataBase(""+j);
-                database.insertPortParam(j, mPortParam);
-
-                Log.e("PortType", "" + (j) + "------" + database.queryPortParamDataBase("" + (1 + j)).getPortType());
-                kitchen = CDBHelper.getObjById(activity.getApplicationContext(), list.get(j + 1), KitchenClientC.class);
-                if (kitchen != null) {
-                    kitchen.setKitchenAdress("" + (j + 1));
-                    CDBHelper.createAndUpdate(activity.getApplicationContext(), kitchen);
-                }
-            }
-            database.close();
-
-        //list = CDBHelper.getIdsByClass(activity.getApplicationContext(),KitchenClientC.class);
-    }
-
     private void deleteOneItemFromDatabase(int position) {
         PortParamDataBase database = new PortParamDataBase(activity);
         mPortParam = new PortParameters();
@@ -198,7 +167,7 @@ public class MyListAdapter extends BaseAdapter {
         public void onClick(View view) {
             Document doc=CDBHelper.getDocByID(activity,list.get(mPosition));
             Intent intent1=new Intent(activity,AddkitchenActivity.class);
-            intent1.putExtra("indexPrinter",  doc.getInt("indexPrinter"));
+            intent1.putExtra("indexPrinter",  doc.getInt("printerId"));
 
             intent1.putExtra("clientName", ""+doc.getString("name"));
             intent1.putExtra("docId",list.get(mPosition));

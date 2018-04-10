@@ -79,10 +79,10 @@ public class AreaAdapter extends ArrayAdapter<String> {
 	}
 	private Query listsLiveQuery() {
 		return QueryBuilder.select(SelectResult.expression(Meta.id)
-				, SelectResult.expression(Expression.property("areaName")))
+				, SelectResult.expression(Expression.property("name")))
 				.from(DataSource.database(db))
-				.where(Expression.property("className").equalTo(Expression.string("AreaC")))
-				.orderBy(Ordering.property("areaNum").ascending())
+				.where(Expression.property("className").equalTo(Expression.string("Area")))
+				.orderBy(Ordering.property("num").ascending())
 				 ;
 	}
 
@@ -112,7 +112,7 @@ public class AreaAdapter extends ArrayAdapter<String> {
 			convertView.setBackgroundResource(R.drawable.animtablenoclick);
 			viewHolder.areaname.setTextColor(context.getResources().getColor(R.color.md_black_1000));
 		}
-		viewHolder.areaname.setText(doc.getString("areaName"));
+		viewHolder.areaname.setText(doc.getString("name"));
 
 		return convertView;
 	}

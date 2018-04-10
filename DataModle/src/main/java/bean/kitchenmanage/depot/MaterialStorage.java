@@ -3,7 +3,6 @@ package bean.kitchenmanage.depot;
 import java.io.Serializable;
 import java.util.List;
 
-import bean.kitchenmanage.user.UsersC;
 
 /**
  * @ClassName: MaterialStorage
@@ -56,7 +55,7 @@ public class MaterialStorage implements Serializable
     public MaterialStorage() {
     }
 
-    public MaterialStorage(String id, String storageTime, UsersC manager, float totalValue, String note, int state, List<MaterialStorageItem> materialStorageItemList) {
+    public MaterialStorage(String id, String storageTime,  float totalValue, String note, int state, List<MaterialStorageItem> materialStorageItemList) {
         this.id = id;
         this.storageTime = storageTime;
         this.totalValue = totalValue;

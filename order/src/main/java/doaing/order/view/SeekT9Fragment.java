@@ -22,8 +22,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,12 +33,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.order.GoodsC;
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
+import bean.kitchenmanage.dishes.Dishes;
+import bean.kitchenmanage.order.Goods;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
@@ -71,7 +65,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
     private float tmpAllPrice;
 
     private SeekT9Adapter seekT9Adapter;
-    private List<GoodsC> t9GoodsList;
+    private List<Goods> t9GoodsList;
 
     private List<String> tasteList;
 
@@ -223,7 +217,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
         final TextView price_tv = view.findViewById(R.id.price);
 
-        final DishesC dishesC = CDBHelper.getObjById(getActivity().getApplicationContext(), t9GoodsList.get(selGoodsPos).getDishesId(), DishesC.class);
+        final Dishes dishes = CDBHelper.getObjById(getActivity().getApplicationContext(), t9GoodsList.get(selGoodsPos).getDishesId(), Dishes.class);
         final AmountView amountView = view.findViewById(R.id.amount_view);
         final  float  sourceCount = t9GoodsList.get(selGoodsPos).getDishesCount();
         if (sourceCount == 0.0)
@@ -249,11 +243,11 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
             }
         });
-        if (dishesC.getTasteList() != null)
+        if (dishes.getTasteIds() != null)
         {
-            for (int i = 0; i < dishesC.getTasteList().size(); i++) {
-                Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishesC.getTasteList().get(i).toString());
-                tasteList.add(document.getString("tasteName"));
+            for (int i = 0; i < dishes.getTasteIds().size(); i++) {
+                Document document = CDBHelper.getDocByID(getActivity().getApplicationContext(), dishes.getTasteIds().get(i).toString());
+                tasteList.add(document.getString("name"));
             }
 
         }
@@ -291,20 +285,20 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                 t9GoodsList.get(selGoodsPos).setDishesCount(destCount);
                 seekT9Adapter.notifyDataSetChanged();
 
-                GoodsC goodsC = new GoodsC(myapp.getCompany_ID());
-                goodsC.setDishesName(name);
+                Goods goods = new Goods(myapp.getCompany_ID());
+                goods.setDishesName(name);
                 if (tasteList.size() == 0) {
-                    goodsC.setDishesTaste(null);
+                    goods.setDishesTaste(null);
                 } else {
-                    goodsC.setDishesTaste(tasteList.get(tastePos));
+                    goods.setDishesTaste(tasteList.get(tastePos));
                 }
-                goodsC.setDishesCount(destCount);
-                goodsC.setPrice(price);
-                goodsC.setGoodsType(0);
-                goodsC.setCreatedTime(getFormatDate());
-                goodsC.setDishesId(dishesC.get_id());
-                goodsC.setDishesKindId(dishesC.getDishesKindId());
-                ((MainActivity) getActivity()).changeOrderGoodsByT9(goodsC);
+                goods.setDishesCount(destCount);
+                goods.setPrice(price);
+                goods.setGoodsType(0);
+                goods.setCreatedTime(getFormatDate());
+                goods.setDishesId(dishes.getId());
+                goods.setDishesKindId(dishes.getKindId());
+                ((MainActivity) getActivity()).changeOrderGoodsByT9(goods);
                 activitySeekEdit.setText("");
             }
         });
@@ -348,16 +342,16 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             @Override
             public void run() {
                 List<Document> documentList = CDBHelper.getDocmentsByWhere(getActivity().getApplicationContext()
-                        , Expression.property("className").equalTo(Expression.string("DishesC"))
-                                .and(Expression.property("dishesNameCode9").like(Expression.string("%" + search + "%")))
+                        , Expression.property("className").equalTo(Expression.string("Dishes"))
+                                .and(Expression.property("code9").like(Expression.string("%" + search + "%")))
                         , null);
                 for (Document doc : documentList) {
-                    GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
+                    Goods goodsObj = new Goods(myapp.getCompany_ID());
                     try {
                         if (doc.getInt("state") == 1){
-                                goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")+"(估清)"));
+                                goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("name")+"(估清)"));
                         }else {
-                                goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")));
+                                goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("name")));
                         }
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -365,7 +359,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                     goodsObj.setDishesCount(0);
                     goodsObj.setPrice(doc.getFloat("price"));
                     goodsObj.setDishesId(doc.getId());
-                    goodsObj.setDishesKindId(doc.getString("dishesKindId"));
+                    goodsObj.setDishesKindId(doc.getString("kindId"));
                     t9GoodsList.add(goodsObj);
 
                 }
@@ -387,17 +381,17 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             public void run() {
 
                 List<Document> documentList = CDBHelper.getDocmentsByWhere(getActivity().getApplicationContext()
-                        , Expression.property("className").equalTo(Expression.string("DishesC"))
-                                .and(Expression.property("dishesNameCode26").like(Expression.string("%"+search + "%")))
-                        , Ordering.property("dishesName").ascending());
+                        , Expression.property("className").equalTo(Expression.string("Dishes"))
+                                .and(Expression.property("code26").like(Expression.string("%"+search + "%")))
+                        , Ordering.property("name").ascending());
 
                 for (Document doc : documentList) {
-                    GoodsC goodsObj = new GoodsC(myapp.getCompany_ID());
+                    Goods goodsObj = new Goods(myapp.getCompany_ID());
                     try {
                         if (doc.getInt("state") == 1){
-                            goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")+"(估清)"));
+                            goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("name")+"(估清)"));
                         }else {
-                            goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("dishesName")));
+                            goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("name")));
                         }
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -405,7 +399,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                     goodsObj.setDishesCount(0);
                     goodsObj.setPrice(doc.getFloat("price"));
                     goodsObj.setDishesId(doc.getId());
-                    goodsObj.setDishesKindId(doc.getString("dishesKindId"));
+                    goodsObj.setDishesKindId(doc.getString("kindId"));
                     t9GoodsList.add(goodsObj);
                 }
                 seekT9Adapter.notifyDataSetChanged();
@@ -422,8 +416,8 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
     private  String findZDCKindId()
     {
         List<String> zdcIdList = CDBHelper.getIdsByWhere(getActivity().getApplicationContext()
-                , Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                 .and(Expression.property("kindName").equalTo(Expression.string("自点菜")))
+                , Expression.property("className").equalTo(Expression.string("DishesKind"))
+                 .and(Expression.property("name").equalTo(Expression.string("自点菜")))
                 ,null);
         Log.e("SeekT9",""+zdcIdList.size());
         if(zdcIdList.size()>0) {
@@ -514,7 +508,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             btn_comfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    GoodsC obj = new GoodsC(myapp.getCompany_ID());
+                    Goods obj = new Goods(myapp.getCompany_ID());
                     if (TextUtils.isEmpty(f_count.getText().toString())) {
                         Toast.makeText(getActivity(), "数量不能为空或者.", Toast.LENGTH_LONG).show();
                         return;

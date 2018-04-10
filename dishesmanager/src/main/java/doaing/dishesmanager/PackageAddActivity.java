@@ -38,8 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bean.kitchenmanage.dishes.DishesC;
-import bean.kitchenmanage.dishes.DishesKindC;
 import butterknife.BindView;
 
 import doaing.dishesmanager.adapter.PackageDishesKindAdapter;

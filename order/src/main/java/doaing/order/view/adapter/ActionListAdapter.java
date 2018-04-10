@@ -11,9 +11,11 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import bean.kitchenmanage.promotion.PromotionC;
+import bean.kitchenmanage.promotion.Promotion;
+import bean.kitchenmanage.promotion.PromotionRule;
 import doaing.order.R;
 import doaing.order.view.PayActivity;
+import tools.CDBHelper;
 
 /*
 *
@@ -87,18 +89,23 @@ public class ActionListAdapter extends BaseAdapter {
 
             viewHold = (ViewHold) view.getTag();
         }
-        PromotionC promotionC = (PromotionC) list.get(i);
-        viewHold.actionName.setText(promotionC.getPromotionName());
-        viewHold.actionTime.setText(promotionC.getStartTime() + "    /     " + promotionC.getEndTime());
+        Promotion promotion = (Promotion) list.get(i);
+        viewHold.actionName.setText(promotion.getName());
+        viewHold.actionTime.setText(promotion.getStartTime() + "    /     " + promotion.getEndTime());
+        for (int p = 0 ; p < promotion.getPromotionRuleIds().size();p++) {
+            PromotionRule promotionRules = CDBHelper.getObjById(payActivity.getApplicationContext(), promotion.getPromotionRuleIds().get(p), PromotionRule.class);
+            if (promotionRules.getMode() == 1) {
 
-        if (promotionC.getPromotionType() == 1) {
+                viewHold.actionType.setText("打折");
 
-            viewHold.actionType.setText("打折");
+            } else if (promotionRules.getMode() == 2) {
 
-        } else if (promotionC.getPromotionType() == 2) {
+                viewHold.actionType.setText("满赠");
 
-            viewHold.actionType.setText("赠券");
+            }else if (promotionRules.getMode() == 3){
 
+                viewHold.actionType.setText("满减");
+            }
         }
 
 

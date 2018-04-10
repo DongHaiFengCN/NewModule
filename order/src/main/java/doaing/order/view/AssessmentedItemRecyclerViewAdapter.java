@@ -54,7 +54,8 @@ public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<As
         ResultSet results = null;
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("DishesC")).and(Expression.property("state").equalTo(Expression.intValue(1))));
+                        .equalTo(Expression.string("Dishes"))
+                        .and(Expression.property("sell").equalTo(Expression.booleanValue(true))));
         try {
             results = query.execute();
         } catch (CouchbaseLiteException e) {
@@ -86,7 +87,7 @@ public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<As
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
         final Document document = database.getDocument(mValues.get(position));
-        holder.mIdView.setText(document.getString("dishesName"));
+        holder.mIdView.setText(document.getString("name"));
 
         holder.mContentCk.setChecked(flag[position]);
 
@@ -174,11 +175,11 @@ public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<As
 
             if(flag[i]){
 
-                document.setInt("state",1);
+                document.setBoolean("sell",true);
 
             }else {
 
-                document.setInt("state",0);
+                document.setBoolean("sell",false);
             }
 
             try {

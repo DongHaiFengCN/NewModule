@@ -45,26 +45,26 @@ public class AssessmentSelectItemRecyclerViewAdapter extends RecyclerView.Adapte
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final com.couchbase.lite.Document mDocument = database.getDocument(mDocumentList.get(position));
         holder.mItem = mDocument.getId();
-        holder.mIdView.setText(mDocument.getString("dishesName"));
-        final int state = mDocument.getInt("state");
-        if (state == 0) {
+        holder.mIdView.setText(mDocument.getString("name"));
+        final boolean sell = mDocument.getBoolean("sell");
+        if (!sell) {
             holder.mContentView.setText("正常");
-        } else if (state == 1) {
+        } else if (sell) {
             holder.mContentView.setText("已估清");
         }
         holder.mContentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     MutableDocument mutableDocument = mDocument.toMutable();
-                    if (state == 0) {
-                        mutableDocument.setInt("state", 1);
+                    if (!sell) {
+                        mutableDocument.setBoolean("sell", true);
                         try {
                             database.save(mutableDocument);
                             notifyDataSetChanged();
                         } catch (CouchbaseLiteException e) {
                             e.printStackTrace();
                         }
-                    }else if(state == 1){
+                    }else if(sell){
 
                         Toast.makeText(context,"已经估清",Toast.LENGTH_SHORT).show();
                     }

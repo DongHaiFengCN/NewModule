@@ -50,10 +50,10 @@ import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import bean.kitchenmanage.kitchen.KitchenClientC;
-import bean.kitchenmanage.order.GoodsC;
-import bean.kitchenmanage.order.OrderC;
-import bean.kitchenmanage.qrcode.qrcodeC;
+import bean.kitchenmanage.kitchen.KitchenClient;
+import bean.kitchenmanage.order.Goods;
+import bean.kitchenmanage.order.Order;
+import bean.kitchenmanage.qrcode.Qrcode;
 import doaing.mylibrary.MyApplication;
 import doaing.order.untils.GlobalConstant;
 import doaing.order.untils.MyBigDecimal;
@@ -70,12 +70,12 @@ public class NewOrderService extends Service {
     //打印机连接
     private GpService mGpService = null;
     private ExecutorService myExecutor;
-    private Map<Integer, ArrayList<GoodsC>> allKitchenClientGoods = new HashMap<Integer, ArrayList<GoodsC>>();
+    private Map<Integer, ArrayList<Goods>> allKitchenClientGoods = new HashMap<Integer, ArrayList<Goods>>();
     private Map<Integer, String> allKitchenClientPrintNames = new HashMap<Integer, String>();
     private String tableName, areaName, currentPersions, serNum,gOrderId;
-    private List<GoodsC> goodsList;
-    private List<KitchenClientC> kitchenClientList;
-    private Map<Integer ,KitchenClientC> kitchenClientMap=new HashMap<>();
+    private List<Goods> goodsList;
+    private List<KitchenClient> kitchenClientList;
+    private Map<Integer ,KitchenClient> kitchenClientMap=new HashMap<>();
 
     private String Tag = "NewOrderService";;
 
@@ -88,10 +88,10 @@ public class NewOrderService extends Service {
     private Query listsLiveQuery() {
         return QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
-                .where(Expression.property("className").equalTo(Expression.string("OrderC"))
+                .where(Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("printFlag").equalTo(Expression.intValue(0)))//未打印
                         .and(Expression.property("deviceType").equalTo(Expression.intValue(2)))//手机点餐
-                        .and(Expression.property("orderState").equalTo(Expression.intValue(1))))//未结账)
+                        .and(Expression.property("state").equalTo(Expression.intValue(1))))//未结账)
          ;
     }
 
@@ -123,7 +123,6 @@ public class NewOrderService extends Service {
         myExecutor   = Executors.newScheduledThreadPool(1);
 
         db = CDBHelper.getDatabase();
-
         Query myquery = listsLiveQuery();
         myquery.addChangeListener(new QueryChangeListener() {
             @Override
@@ -179,18 +178,18 @@ public class NewOrderService extends Service {
     private void connectAllPrinter()
     {
 
-         kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClientC.class);
+         kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClient.class);
 
         if (kitchenClientList.size() <= 0)
         {
             MyLog.e(Tag,"未配置厨房数据");
             return;
         }
-        for (KitchenClientC kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
+        for (KitchenClient kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
         {
             String clientKtname = "" + kitchenClientObj.getName();//厨房名称
 
-            int printerId = kitchenClientObj.getIndexPrinter();
+            int printerId = kitchenClientObj.getPrinterId();
             kitchenClientMap.put(printerId,kitchenClientObj);
             if (!isPrinterConnected(printerId)) // 未连接
             {
@@ -201,7 +200,7 @@ public class NewOrderService extends Service {
 
                 } else {
                     MyLog.e("printCMD","***********打印机连接命令发送失败");
-                    kitchenClientObj.setStatePrinter(false);
+                    //kitchenClientObj.setStatePrinter(false);
                     CDBHelper.createAndUpdate(null,kitchenClientObj);
                 }
             }
@@ -214,8 +213,8 @@ public class NewOrderService extends Service {
     private void changeTableState( String tableNo)
     {
         List<Document> documentList = CDBHelper.getDocmentsByWhere(getApplicationContext(),
-                Expression.property("className").equalTo(Expression.string("TableC"))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(tableNo)))
+                Expression.property("className").equalTo(Expression.string("Table"))
+                        .and(Expression.property("num").equalTo(Expression.string(tableNo)))
                 ,null);
 
         if(documentList.size()>0)
@@ -239,16 +238,16 @@ public class NewOrderService extends Service {
 
     {
         //判断此设备是否支持接收微信点餐打印
-        List<qrcodeC> qrCodeList = CDBHelper.getObjByClass(getApplicationContext(),qrcodeC.class);
+        List<Qrcode> qrCodeList = CDBHelper.getObjByClass(getApplicationContext(),Qrcode.class);
         if(qrCodeList.size()>0)
         {
-            qrcodeC qrCode = qrCodeList.get(0);
-            if(!qrCode.isWxReceiveFlag())
+            //Qrcode qrCode = qrCodeList.get(0);
+            if(!MyApplication.WX_RECEIVE_FLAG)
                 return;
         }
 
-        OrderC obj= CDBHelper.getObjById(getApplicationContext(),order_id,OrderC.class);
-        goodsList.addAll(obj.getGoodsList());// = obj.getGoodsList();
+        Order obj= CDBHelper.getObjById(getApplicationContext(),order_id,Order.class);
+        goodsList.addAll(obj.getGoods());// = obj.getGoodsList();
         areaName = obj.getAreaName();
         tableName = obj.getTableName();
         if (obj.getOrderNum() == 1)//第一次下单
@@ -263,7 +262,7 @@ public class NewOrderService extends Service {
 
         //1\ 查询出所有厨房,并分配菜品
 
-        List<KitchenClientC> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClientC.class);
+        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass(getApplicationContext(), KitchenClient.class);
 
         if (kitchenClientList.size() <= 0)
 
@@ -276,13 +275,17 @@ public class NewOrderService extends Service {
 
         allKitchenClientPrintNames.clear();
 
-        for (KitchenClientC kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
+        for (KitchenClient kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
         {
             boolean findflag = false;
-            ArrayList<GoodsC> oneKitchenClientGoods = new ArrayList<GoodsC>();
-            for (String dishKindId : kitchenClientObj.getDishesKindIDList())//2 for 遍历厨房下所含菜系
+            ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
+            List<String> dishesKindId = CDBHelper.getIdsByWhere(getApplicationContext(),
+                    Expression.property("className").equalTo(Expression.string("Dishes")
+                    .add(Expression.property("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
+                    null);
+            for (String dishKindId : dishesKindId)//2 for 遍历厨房下所含菜系
             {
-                for (GoodsC goodsC : goodsList)//3 for 该厨房下所应得商品
+                for (Goods goodsC : goodsList)//3 for 该厨房下所应得商品
                 {
                     if (dishKindId.equals(goodsC.getDishesKindId())) {
 
@@ -300,7 +303,7 @@ public class NewOrderService extends Service {
 
                 String clientKtname = "" + kitchenClientObj.getName();//厨房名称
 
-                int printerId = kitchenClientObj.getIndexPrinter();
+                int printerId = kitchenClientObj.getPrinterId();
 
                 allKitchenClientGoods.put( printerId, oneKitchenClientGoods);
 
@@ -342,7 +345,7 @@ public class NewOrderService extends Service {
     {
         //1、程序连接上厨房端打印机后要进行分厨房打印
 
-        ArrayList<GoodsC> myshangpinlist = allKitchenClientGoods.get( printerId);
+        ArrayList<Goods> myshangpinlist = allKitchenClientGoods.get( printerId);
         if (myshangpinlist == null){
             return;
         }
@@ -374,7 +377,7 @@ public class NewOrderService extends Service {
     }
     private void setOrderPrintState(String orderId) {
 
-        OrderC obj = CDBHelper.getObjById(getApplicationContext(), orderId, OrderC.class);
+        Order obj = CDBHelper.getObjById(getApplicationContext(), orderId, Order.class);
 
         obj.setPrintFlag(1);
 
@@ -635,7 +638,7 @@ public class NewOrderService extends Service {
 
 
 
-    private String getPrintContentforClient(ArrayList<GoodsC> myshangpinlist, String clientname)
+    private String getPrintContentforClient(ArrayList<Goods> myshangpinlist, String clientname)
 
     {
 
