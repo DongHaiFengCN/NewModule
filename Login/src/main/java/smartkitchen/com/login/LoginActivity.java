@@ -174,8 +174,9 @@ public class LoginActivity extends AppCompatActivity  {
         progressInfo= findViewById(R.id.login_sync_info);
 
         String mobile = getIntent().getStringExtra("mobile");
-        if(TextUtils.isEmpty(mobile))
-        getShareData();
+        if(TextUtils.isEmpty(mobile)){
+            getShareData();
+        }
         else
         {
             mTelView.setText(mobile);
@@ -257,8 +258,10 @@ public class LoginActivity extends AppCompatActivity  {
             {
                mBtnLogin.setEnabled(true);
             }
-            else
+            else{
                 mBtnLogin.setEnabled(false);
+            }
+
         }
     };
 //
@@ -426,13 +429,8 @@ public class LoginActivity extends AppCompatActivity  {
                                     .commit();
                         }
                         //跳转界面
-                        ARouter.getInstance()
-                            .build("/order/DeskActivity")
-                            .withString("mobile",mTelView.getText().toString())
-                            .withString("channelId",userName)
-                            .navigation();
-                        finish();
-                    }//r
+
+                    }
                     else {
 
                         showProgress(false);
@@ -505,26 +503,6 @@ public class LoginActivity extends AppCompatActivity  {
                  finish();
             }
         }
-    }
-
-
-    public void sendCode(Context context)
-    {
-        RegisterPage page = new RegisterPage();
-        page.setRegisterCallback(new EventHandler() {
-            public void afterEvent(int event, int result, Object data) {
-                if (result == SMSSDK.RESULT_COMPLETE) {
-                    // 处理成功的结果
-                    HashMap<String,Object> phoneMap = (HashMap<String, Object>) data;
-                    String country = (String) phoneMap.get("country"); // 国家代码，如“86”
-                    String phone = (String) phoneMap.get("phone"); // 手机号码，如“13800138000”
-                    // TODO 利用国家代码和手机号码进行后续的操作
-                } else{
-                    // TODO 处理错误的结果
-                }
-            }
-        });
-        page.show(context);
     }
 
     private boolean isEmailValid(String email) {
