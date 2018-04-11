@@ -151,6 +151,7 @@ public class MyListAdapter extends BaseAdapter {
             CDBHelper.getDatabase().delete(doc);
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
+
         }
 
     }
