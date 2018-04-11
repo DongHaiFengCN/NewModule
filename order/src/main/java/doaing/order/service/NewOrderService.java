@@ -78,7 +78,8 @@ public class NewOrderService extends Service {
     private List<KitchenClient> kitchenClientList;
     private Map<Integer ,KitchenClient> kitchenClientMap=new HashMap<>();
 
-    private String Tag = "NewOrderService";;
+    private String Tag = "NewOrderService";
+    private boolean isFlag;
 
     private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
 
@@ -240,11 +241,13 @@ public class NewOrderService extends Service {
     {
         //判断此设备是否支持接收微信点餐打印
         List<Qrcode> qrCodeList = CDBHelper.getObjByClass(Qrcode.class);
+        SharedPreferences sharedPreferences = getSharedPreferences("WxReceiveFlag", 0);
+
+        isFlag = sharedPreferences.getBoolean("isFlag",true);
         if(qrCodeList.size()>0)
         {
-            SharedPreferences sharedPreferences = getSharedPreferences("WxReceiveFlag", 0);
 
-            boolean isFlag = sharedPreferences.getBoolean("isFlag",true);
+            MyLog.e("PrinterNew",""+isFlag);
             //Qrcode qrCode = qrCodeList.get(0);
             if(!isFlag) {
                 return;

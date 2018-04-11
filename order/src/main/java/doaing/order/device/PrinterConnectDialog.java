@@ -24,6 +24,7 @@ import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.view.ScanActivity;
 import tools.CDBHelper;
+import tools.MyLog;
 import view.BaseToobarActivity;
 
 /*
@@ -67,8 +68,8 @@ public class PrinterConnectDialog extends BaseToobarActivity {
         Log.e(DEBUG_TAG, "onCreate ");
         myapp = (MyApplication) getApplication();
         SharedPreferences sharedPreferences = getSharedPreferences("WxReceiveFlag", 0);
-
-        isFlag = sharedPreferences.getBoolean("isFlag",true);
+        isFlag = sharedPreferences.getBoolean("isFlag",false);
+        MyLog.e("Printer",""+isFlag);
         initView();
         initQrPay();
     }
@@ -119,11 +120,7 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             }else {
                 ifqrcodeprint2.setChecked(false);
             }
-            if (isFlag){
-                cboxWxYao.setChecked(true);
-            }else{
-                cboxWxYao.setChecked(false);
-            }
+
             if (obj_qrcodepay.getNumbers() == 0){
                 printnums.setText("1");
             }else {
@@ -135,6 +132,12 @@ public class PrinterConnectDialog extends BaseToobarActivity {
             Log.e("test","find null");
             obj_qrcodepay = new Qrcode();
             obj_qrcodepay.setChannelId(myapp.getCompany_ID());
+        }
+
+        if (isFlag){
+            cboxWxYao.setChecked(true);
+        }else{
+            cboxWxYao.setChecked(false);
         }
 
 
@@ -267,10 +270,8 @@ public class PrinterConnectDialog extends BaseToobarActivity {
                 SharedPreferences settings = getSharedPreferences("WxReceiveFlag", 0);
 
                 SharedPreferences.Editor editor = settings.edit();
-
-                editor.clear();
-
                 editor.putBoolean("isFlag",isChecked);
+                MyLog.e("Printer",""+isChecked);
 
                 editor.commit();
             }
