@@ -36,10 +36,6 @@ public class KitchenClient {
      */
     private int printerId;
 
-    /**
-     * 是否接收微信小程序订单并打印
-     */
-    private boolean wxReceiveFlag;
 
     public KitchenClient()
     {
@@ -89,15 +85,6 @@ public class KitchenClient {
     public int getPrinterId() {
         return printerId;
     }
-
-    public boolean isWxReceiveFlag() {
-        return wxReceiveFlag;
-    }
-
-    public void setWxReceiveFlag(boolean wxReceiveFlag) {
-        this.wxReceiveFlag = wxReceiveFlag;
-    }
-
     public void setPrinterId(int printerId) {
         this.printerId = printerId;
     }

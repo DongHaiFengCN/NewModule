@@ -240,18 +240,11 @@ public class NewOrderService extends Service {
 
     {
         //判断此设备是否支持接收微信点餐打印
-        List<Qrcode> qrCodeList = CDBHelper.getObjByClass(Qrcode.class);
+
         SharedPreferences sharedPreferences = getSharedPreferences("WxReceiveFlag", 0);
-
-        isFlag = sharedPreferences.getBoolean("isFlag",true);
-        if(qrCodeList.size()>0)
-        {
-
-            MyLog.e("PrinterNew",""+isFlag);
-            //Qrcode qrCode = qrCodeList.get(0);
-            if(!isFlag) {
-                return;
-            }
+        isFlag = sharedPreferences.getBoolean("isFlag", true);
+        if (!isFlag) {
+            return;
         }
 
         Order obj= CDBHelper.getObjById(order_id,Order.class);

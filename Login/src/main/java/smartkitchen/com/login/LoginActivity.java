@@ -399,18 +399,15 @@ public class LoginActivity extends AppCompatActivity  {
                 {
                     Gson gson = new Gson();
                     responseModle obj = gson.fromJson(data, new TypeToken<responseModle>() {}.getType());
-                    if(!TextUtils.isEmpty(obj.getData()))//
+                    if(!TextUtils.isEmpty(obj.getData()))
                     {
-
                         String userName = obj.getData();
                         String pwd =  mPasswordView.getText().toString();
                         CDBHelper.dbName = userName;
                         //开始同步
                         CDBHelper.getSharedInstance(getApplicationContext());
                         CDBHelper.startPushAndPullReplicationForCurrentUser(userName,pwd);
-
                         myapp.setCompany_ID(userName);
-
                         progressInfo.setText("数据更新中...");
                         MyLog.e("login*********","channeldId="+myapp.getCompany_ID());
 

@@ -209,7 +209,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         return toolbar;
     }
 
-
+@Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -220,7 +220,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         return false;
 
     }
-
+    @Override
     public void onClick(View view) {
         int i1 = view.getId();
         if (i1 == R.id.selectall) {
