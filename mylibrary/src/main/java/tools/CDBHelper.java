@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.couchbase.lite.BasicAuthenticator;
@@ -85,11 +86,12 @@ public class CDBHelper implements ReplicatorChangeListener {
     //private final static String mSyncGatewayEndpoint = "ws://60.208.74.139:4984/kitchen/";
     private static boolean firstReplicator = true;
     private static Context mcontext;
-
+    private static LocalBroadcastManager localBroadcastManager ;
     public static CDBHelper getSharedInstance(Context context) {
         if (instance == null) {
             instance = new CDBHelper(context);
             mcontext = context;
+            localBroadcastManager = LocalBroadcastManager.getInstance( mcontext ) ;
         }
         return instance;
     }
@@ -162,13 +164,14 @@ public class CDBHelper implements ReplicatorChangeListener {
                 if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.IDLE)) {
                     Intent intent = new Intent();
                     intent.setAction("sync_complete");
-                    mcontext.sendBroadcast(intent);
+
+                    localBroadcastManager.sendBroadcast(intent);
                 }
                 if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.STOPPED) || change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.OFFLINE)) {
                     //stopReplication();
                     Intent intent = new Intent();
                     intent.setAction("sync_complete");
-                    mcontext.sendBroadcast(intent);
+                    localBroadcastManager.sendBroadcast(intent);
                     MyLog.e("Rep schedular  Log", "ReplicationTag Stopped");
 
                 }

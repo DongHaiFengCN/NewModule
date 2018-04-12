@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
@@ -95,7 +96,8 @@ public class LoginActivity extends AppCompatActivity  {
 
     private MyApplication myapp;
     private Toolbar toolbar;
-    private mBroadcastReceiver mBroadcastReceiver;
+    private LocalBroadcastManager localBroadcastManager ;
+    private MyBroadcastReceiver mBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,6 +183,7 @@ public class LoginActivity extends AppCompatActivity  {
         {
             mTelView.setText(mobile);
         }
+        localBroadcastManager = LocalBroadcastManager.getInstance( this ) ;
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -457,21 +460,21 @@ public class LoginActivity extends AppCompatActivity  {
         super.onResume();
 
         // 1. 实例化BroadcastReceiver子类 &  IntentFilter
-         mBroadcastReceiver = new mBroadcastReceiver();
+         mBroadcastReceiver = new MyBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
 
         // 2. 设置接收广播的类型
         intentFilter.addAction("sync_complete");
 
         // 3. 动态注册：调用Context的registerReceiver（）方法
-        registerReceiver(mBroadcastReceiver, intentFilter);
+        localBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         //销毁在onResume()方法中的广播
-        unregisterReceiver(mBroadcastReceiver);
+        localBroadcastManager.unregisterReceiver(mBroadcastReceiver);
         MyLog.e("LoginActivity","onPause");
     }
 
@@ -482,7 +485,7 @@ public class LoginActivity extends AppCompatActivity  {
     }
 
     // 继承BroadcastReceivre基类
-    public class mBroadcastReceiver extends BroadcastReceiver {
+    public class MyBroadcastReceiver extends BroadcastReceiver {
 
         // 复写onReceive()方法
         // 接收到广播后，则自动调用该方法
