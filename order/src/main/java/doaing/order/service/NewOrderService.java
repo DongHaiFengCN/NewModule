@@ -113,7 +113,7 @@ public class NewOrderService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         MyLog.e(Tag,"onStartCommand");
-
+        CDBHelper.copyDataBase();
         registerPrinterBroadcast();
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_pause));
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_resum));
