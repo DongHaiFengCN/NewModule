@@ -11,7 +11,7 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.1'
         classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
         // 注册MobSDK
         classpath 'com.mob.sdk:MobSDK:+'
@@ -27,6 +27,7 @@ allprojects {
         maven {
             /// url "http://files.couchbase.com/maven2/"
             url "http://mobile.maven.couchbase.com/maven2/dev/"
+
         }
     }
 
@@ -105,7 +106,7 @@ ext{
 
     gson                      ="com.google.code.gson:gson:${gsonVersion}"
     Json                      ="com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3"
-    couchbase                 = "com.couchbase.lite:couchbase-lite-android:2.0.0-DB023"
+    couchbase                   = "com.couchbase.lite:couchbase-lite-android-ee:2.0.0"
 
 }
 
