@@ -95,13 +95,15 @@ public class PackageEditActivity extends BaseToobarActivity {
         listAdapter = new ListAdapter();
 
         dishesLv.setAdapter(listAdapter);
-        Array array = secondLevel.getArray("dishesIdList");
-
+        Array array = secondLevel.getArray("dishesIds");
+        if (array == null){
+            return;
+        }
         int length = array.count();
         Document temporary;
         for (int i = 0; i < length; i++) {
             temporary = database.getDocument(array.getString(i));
-            if (temporary.getString("dishesName") != null) {
+            if (temporary.getString("name") != null) {
                 list.add(temporary);
                 sum += temporary.getFloat("price");
             }
@@ -160,7 +162,7 @@ public class PackageEditActivity extends BaseToobarActivity {
 
                                 array.addString(list.get(i).getId());
                             }
-                            secondLevelMuDoc.setArray("dishesIdList", array);
+                            secondLevelMuDoc.setArray("dishesIds", array);
                             database.save(secondLevelMuDoc);
                             finish();
                             Toast.makeText(PackageEditActivity.this,"修改成功！",Toast.LENGTH_SHORT).show();
@@ -199,24 +201,9 @@ public class PackageEditActivity extends BaseToobarActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    MutableDocument mutableDocument = oneLevel.toMutable();
-
-                    MutableArray array = mutableDocument.getArray("dishesListId");
-                    int length = array.count();
-
-                    for (int i = 0; i < length; i++) {
-
-                        if (secondLevel.getId().equals(array.getString(i))) {
-
-                            array.remove(i);
-                            break;
-                        }
-
-                    }
 
                     try {
                         database.delete(secondLevel);
-                        database.save(mutableDocument);
 
                         EventBus.getDefault().postSticky(Integer.valueOf(kindPosition));
                         finish();
@@ -263,7 +250,7 @@ public class PackageEditActivity extends BaseToobarActivity {
                         R.layout.package_edit_list_item, null);
             }
             final TextView tvName = view.findViewById(R.id.tv_name);
-            tvName.setText(list.get(arg0).getString("dishesName"));
+            tvName.setText(list.get(arg0).getString("name"));
             final TextView tvPrice = view.findViewById(R.id.tv_price);
             tvPrice.setText("¥" + list.get(arg0).getFloat("price"));
 

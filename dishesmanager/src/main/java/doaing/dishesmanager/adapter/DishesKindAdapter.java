@@ -41,6 +41,7 @@ import java.util.List;
 import doaing.dishesmanager.DishesActivity;
 import doaing.dishesmanager.R;
 import doaing.mylibrary.MyApplication;
+import tools.CDBHelper;
 import tools.MyLog;
 import tools.ToolUtil;
 
@@ -81,6 +82,7 @@ public class DishesKindAdapter extends BaseAdapter {
 
         this.database = database;
         this.context = context;
+        MyLog.e("Kind","1");
         disheKindQuery();
     }
 
@@ -148,26 +150,13 @@ public class DishesKindAdapter extends BaseAdapter {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                Document document = database.getDocument(names.get(i));
-                                Array array = document.getArray("dishesListId");
-                                int length = array.count();
-                                for (int j = 0; j < length; j++) {
-
-                                    Document document1 = database.getDocument(array.getString(j));
-
-                                    if (document1 != null) {
-
-                                        try {
-                                            database.delete(document1);
-                                        } catch (CouchbaseLiteException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                }
+                                List<Document> documents = CDBHelper.getDocmentsByWhere(
+                                        Expression.property("className").equalTo(Expression.string("Dishes"))
+                                        .add(Expression.property("kindId").equalTo(Expression.string(names.get(i))))
+                                        ,null);
 
                                 try {
-                                    database.delete(document);
+                                    database.delete(documents.get(i));
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
                                 }
@@ -189,7 +178,7 @@ public class DishesKindAdapter extends BaseAdapter {
 
                                 if (kindNameEt.getText().length() > 0) {
                                     MutableDocument document = database.getDocument(names.get(i)).toMutable();
-                                    document.setString("kindName", kindNameEt.getText().toString());
+                                    document.setString("name", kindNameEt.getText().toString());
                                     try {
                                         database.save(document);
                                     } catch (CouchbaseLiteException e) {
@@ -253,12 +242,10 @@ public class DishesKindAdapter extends BaseAdapter {
                         public void onClick(View v) {
 
                             if (kindNameEt.getText().length() > 0) {
-                                MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
+                                MutableDocument document = new MutableDocument("DishesKind." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
-                                document.setString("className", "DishesKindC");
-                                document.setBoolean("setMenu", false);
-                                document.setString("kindName", kindNameEt.getText().toString());
-                                document.setArray("dishesListId", new MutableArray());
+                                document.setString("className", "DishesKind");
+                                document.setString("name", kindNameEt.getText().toString());
                                 try {
                                     database.save(document);
                                 } catch (CouchbaseLiteException e) {
@@ -291,7 +278,7 @@ public class DishesKindAdapter extends BaseAdapter {
 
             listItemView.kindView.setVisibility(View.GONE);
             listItemView.tvTitle.setVisibility(View.VISIBLE);
-            listItemView.tvTitle.setText(database.getDocument(names.get(i)).getString("kindName"));
+            listItemView.tvTitle.setText(database.getDocument(names.get(i)).getString("name"));
 
         }
 
@@ -317,9 +304,9 @@ public class DishesKindAdapter extends BaseAdapter {
         //动态监听DishesKind信息
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(this.database))
-                .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false))));
+                .where(Expression.property("className").equalTo(Expression.string("DishesKind")));
 
+        MyLog.e("Kind","2");
         try {
             ResultSet rows = query.execute();
             Result row;
@@ -332,7 +319,7 @@ public class DishesKindAdapter extends BaseAdapter {
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-
+        MyLog.e("Kind","3");
     }
 }
 

@@ -202,14 +202,14 @@ DisheEditActivity extends BaseToobarActivity {
                     disheName.setError("菜品名称不能为空");
                     return;
 
-                } else if (!dishesName.equals(document.getString("dishesName"))) {
+                } else if (!dishesName.equals(document.getString("name"))) {
 
-                    disheMuDoc.setString("dishesName", dishesName);
+                    disheMuDoc.setString("name", dishesName);
                     String dishesNameCode9 = ToolUtil.ChangeSZ(ToolUtil.getFirstSpell(dishesName));
-                    disheMuDoc.setString("dishesNameCode9", dishesNameCode9);
+                    disheMuDoc.setString("code9", dishesNameCode9);
 
                     String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
-                    disheMuDoc.setString("dishesNameCode26", dishesNameCode26);
+                    disheMuDoc.setString("code26", dishesNameCode26);
 
                 }
                 String price = dishePriceEt.getText().toString();
@@ -229,7 +229,7 @@ DisheEditActivity extends BaseToobarActivity {
 
                 //附加图片到Docment，允许图片为空
                 disheMuDoc = attachImage(disheMuDoc, bitmap);
-                disheMuDoc.setString("dishesKindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
+                disheMuDoc.setString("kindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
 
                 //更新添加口味
                 MutableArray array = new MutableArray();
@@ -237,25 +237,22 @@ DisheEditActivity extends BaseToobarActivity {
 
                     array.addString(tasteList.get(i).getId());
                 }
-                disheMuDoc.setArray("tasteList", array);
+                disheMuDoc.setArray("tasteIds", array);
 
                 //选择加入新的菜品中
                 MutableDocument newMukindDoc = newKind.toMutable();
                 if (!newKind.getId().equals(oldKind.getId())) {
 
-                    //1.删除oldkind list中的dishesId 并保存
-                    removeDisheIdFromDishesKindList();
-
                     //2.dishes的 kindId 重新覆盖成newDocument的id
-                    disheMuDoc.setString("dishesKindId", newKind.getId());
+                    disheMuDoc.setString("kindId", newKind.getId());
 
-                    //3.dishes id 加入新的newDocument list中
-
-
-                    newMukindDoc.getArray("dishesListId").addString(document.getId());
+                    List<Document> documents = CDBHelper.getDocmentsByWhere(
+                            Expression.property("className").equalTo(Expression.string("Dishes"))
+                            .add(Expression.property("").equalTo(Expression.string(newKind.getId()))),
+                            null);
 
                     //4.设置排列数
-                    disheMuDoc.setInt("orderId", newKind.getArray("dishesListId").count());
+                    disheMuDoc.setInt("sortNum", documents.size());
 
                 }
 
@@ -416,7 +413,7 @@ DisheEditActivity extends BaseToobarActivity {
         tasteAllList = new ArrayList<>();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo(Expression.string("DishesTasteC")));
+                .where(Expression.property("className").equalTo(Expression.string("Taste")));
         try {
             results = query.execute();
         } catch (CouchbaseLiteException e) {
@@ -435,7 +432,7 @@ DisheEditActivity extends BaseToobarActivity {
 
         strings = new String[tasteAllList.size()];
         for (int i = 0; i < strings.length; i++) {
-            strings[i] = tasteAllList.get(i).getString("tasteName");
+            strings[i] = tasteAllList.get(i).getString("name");
         }
 
         tasteImBt.setOnClickListener(new View.OnClickListener() {
@@ -483,7 +480,7 @@ DisheEditActivity extends BaseToobarActivity {
 
 
         //得到当前菜品所属菜类
-        oldKind = database.getDocument(document.getString("dishesKindId"));
+        oldKind = database.getDocument(document.getString("kindId"));
 
         //1.添加图片
         Blob blob = document.getBlob("image");
@@ -492,14 +489,14 @@ DisheEditActivity extends BaseToobarActivity {
         }
 
         //2.添加名称
-        disheName.setText(document.getString("dishesName"));
+        disheName.setText(document.getString("name"));
 
         //3.添加价格
         dishePriceEt.setText(String.valueOf(document.getFloat("price")));
 
         //4.添加口味
         Array array;
-        array = document.getArray("tasteList");
+        array = document.getArray("tasteIds");
         initTasteAdapter(array);
 
         //5.指定选择种类
@@ -571,8 +568,6 @@ DisheEditActivity extends BaseToobarActivity {
                     .setMessage("确定删除当前菜品吗？").setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //移除菜类下菜品的关联
-                    removeDisheIdFromDishesKindList();
 
                     try {
                         database.delete(document);
@@ -633,29 +628,6 @@ DisheEditActivity extends BaseToobarActivity {
                 Toast.makeText(DisheEditActivity.this, "请求访问失败！", Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    private void removeDisheIdFromDishesKindList() {
-
-        MutableDocument mutableDocument = oldKind.toMutable();
-        MutableArray oldArry = mutableDocument.getArray("dishesListId");
-
-        for (int i = 0; i < oldArry.count(); i++) {
-
-
-            if (oldArry.getString(i).equals(document.getId())) {
-
-                oldArry.remove(i);
-
-                try {
-                    database.save(mutableDocument);
-                } catch (CouchbaseLiteException e) {
-                    e.printStackTrace();
-                }
-                break;
-
-            }
-        }
     }
 }
 

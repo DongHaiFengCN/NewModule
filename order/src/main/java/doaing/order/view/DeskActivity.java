@@ -104,6 +104,7 @@ public class DeskActivity extends AppCompatActivity {
     private TextView msg_point;
     private ImageView msg_printer;
     List<DishesKind> dishesKindCList;
+    List<Document> dishes;
     private Map<String, List<Document>> dishesObjectCollection;
     public GpService mGpService;
     private PrinterServiceConnection conn = null;
@@ -193,9 +194,9 @@ public class DeskActivity extends AppCompatActivity {
         bindPrinterService();
         initDishesData();
 
-
         getPrinterStatus();
     }
+
 
     private void getPrinterStatus()
     {
@@ -939,38 +940,22 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
                 //1、初始化菜品数量维护映射表
                 for (DishesKind dishesKind : dishesKindCList) {
-                    List<String> dishesIds = CDBHelper.getIdsByWhere(
-                            Expression.property("className").equalTo(Expression.string("Dishes")).
-                                    add(Expression.string("kindId").equalTo(Expression.string(dishesKind.getId()))),
-                            null);
 
-                    int count = dishesIds.size();
+                    dishes = CDBHelper.getDocmentsByWhere(
+                            Expression.property("className").equalTo(Expression.string("Dishes"))
+                                    .and(Expression.property("kindId").equalTo(Expression.string(dishesKind.getId())))
+                            ,null);
 
-                    List<Document> dishesCS = new ArrayList<>();
+                    dishesObjectCollection.put(dishesKind.getId(),dishes);
 
-                    for (int i = 0; i < count; i++) {
-
-                        Document dishesC = CDBHelper.getDocByID(dishesIds.get(i));
-                        if (dishesC != null){
-                            dishesCS.add(dishesC);
-                        }
-
-                    }
-                    if (dishesCS != null && dishesIds.size() != 0) {
-                        //初始化disheKind对应的dishes实体类映射
-                        dishesObjectCollection.put(dishesKind.getId(), dishesCS);
-                    }
                 }
                 myapp.setDishesKindCList(dishesKindCList);
                 myapp.setDishesObjectCollection(dishesObjectCollection);
-
-
 
             }
         });
 
     }
-
 
     private void bindPrinterService()
     {

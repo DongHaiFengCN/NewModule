@@ -73,7 +73,7 @@ public class Dishes implements Serializable {
 	/**
 	 * 入库图片
 	 */
-	private Blob image;
+	//private Blob image;
 	/**
 	 *所属菜品类名称
 	 */
@@ -212,13 +212,13 @@ public class Dishes implements Serializable {
 		this.description = description;
 	}
 
-	public Blob getImage() {
-		return image;
-	}
-
-	public void setImage(Blob image) {
-		this.image = image;
-	}
+//	public Blob getImage() {
+//		return image;
+//	}
+//
+//	public void setImage(Blob image) {
+//		this.image = image;
+//	}
 
 	public String getKindId() {
 		return kindId;

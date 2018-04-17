@@ -1,11 +1,9 @@
 package doaing.dishesmanager;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,16 +16,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.couchbase.lite.Array;
 import com.couchbase.lite.Blob;
 import com.couchbase.lite.Database;
+import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -54,8 +52,6 @@ public class DishesActivity extends BaseToobarActivity {
     private DishesKindAdapter dishesKindAdapter;
 
     private DishesAdapter dishesAdapter;
-    private List dishesList = new ArrayList<Document>();
-
     private int dishePosition = 0;
 
     private int kindPosition = 0;
@@ -110,8 +106,9 @@ public class DishesActivity extends BaseToobarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Document dishes = ((Document) dishesList.get(position));
-                if (dishes.getArray("dishesIdList") == null) {
+                Document dishes = dishesAdapter.getList().get(position);
+
+                if (dishes.getArray("dishesIds") == null || dishes.getArray("dishesIds").count() == 0) {
 
                     Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
                     intent1.putExtra("dishes", dishes.getId());
@@ -160,19 +157,29 @@ public class DishesActivity extends BaseToobarActivity {
 
         private List<Document> list;
 
-        DishesAdapter(List<Document> list) {
+        public List<Document> getList(){
+            if (list != null){
+                return list;
+            }
+            return null;
+        }
+        public void setList(String kindId) {
 
-            this.list = list;
+            list = CDBHelper.getDocmentsByWhere(
+                    Expression.property("className").equalTo(Expression.string("Dishes"))
+                            .and(Expression.property("kindId").equalTo(Expression.string(kindId)))
+                    ,null);
+            notifyDataSetChanged();
         }
 
         @Override
         public int getCount() {
-            return list.size();
+            return list == null ? 0 : list.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return list.get(position);
         }
 
         @Override
@@ -198,13 +205,22 @@ public class DishesActivity extends BaseToobarActivity {
                 viewHolder = (ViewHolder) convertView.getTag();
 
             }
-            viewHolder.dishenameTv.setText(list.get(position).getString("dishesName"));
+            viewHolder.dishenameTv.setText(list.get(position).getString("name"));
+
             Blob taskBlob = list.get(position).getBlob("image");
+
+
             if (taskBlob != null) {
+
                 Glide.with(DishesActivity.this).load(taskBlob.getContent()).into(viewHolder.disheIm);
 
             } else {
                 Glide.with(DishesActivity.this).load(R.mipmap.ic_launcher).into(viewHolder.disheIm);
+            }
+            Dictionary attachments = list.get(position).getDictionary("_attachments");
+            if (attachments != null) {
+                Blob blob = attachments.getBlob("blob_1");
+                Glide.with(DishesActivity.this).load(blob.getContent()).into(viewHolder.disheIm);
             }
             return convertView;
         }
@@ -225,7 +241,7 @@ public class DishesActivity extends BaseToobarActivity {
         dishekindLv.setAdapter(dishesKindAdapter);
 
         //默认绑定dishes
-        dishesAdapter = new DishesAdapter(dishesList);
+        dishesAdapter = new DishesAdapter();
         dishesLv.setAdapter(dishesAdapter);
         //kind的点击事件
         dishekindLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -236,30 +252,9 @@ public class DishesActivity extends BaseToobarActivity {
                     dishesKindAdapter.changeSelected(position);
 
                     kindPosition = position;
-
-                    Document document = database.getDocument(dishesKindAdapter.getNames().get(position));
-                    document = database.getDocument(document.getId());
-                    Array array = document.getArray("dishesListId");
-                    if (array == null) {
-                        return;
-                    }
-                    if (dishesList.size() > 0) {
-                        dishesList.clear();
-                    }
-
-                    for (int i = 0; i < array.count(); i++) {
-                        if (database.getDocument(array.getString(i)) != null) {
-                            dishesList.add(database.getDocument(array.getString(i)));
-                        }
-
-                    }
-
-                    dishesAdapter.notifyDataSetChanged();
-
+                    dishesAdapter.setList(dishesKindAdapter.getNames().get(position));
                 } else if (dishesKindAdapter.getNames().size() == 0) {
 
-
-                    dishesList.clear();
                     dishesAdapter.notifyDataSetChanged();
                 }
 

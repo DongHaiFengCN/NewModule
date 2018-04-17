@@ -1972,7 +1972,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        MyLog.e("Main activity onDestroy");
+        MyLog.e("Main activity onStop");
         EventBus.getDefault().unregister(this);
         unregisterReceiver(PrinterStatusBroadcastReceiver);
         // 2、注销打印消息

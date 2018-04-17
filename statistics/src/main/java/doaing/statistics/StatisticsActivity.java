@@ -40,6 +40,7 @@ import java.util.Map;
 import doaing.test.R;
 import tools.CDBHelper;
 import tools.MyBigDecimal;
+import tools.MyLog;
 import view.BaseToobarActivity;
 
 /**
@@ -60,6 +61,7 @@ public class StatisticsActivity extends BaseToobarActivity {
     private float elm;
     private float mt;
     private float gz;
+    private float tg;
 
 
     private TextView dateTv;
@@ -143,7 +145,7 @@ public class StatisticsActivity extends BaseToobarActivity {
 
         month1 = String.format("%02d", (month + 1));
         day1 = String.format("%02d", day);*/
-        if (monetary != 0 && realIncome != 0) {
+        if (monetary != 0 || realIncome != 0) {
             monetary = 0f;
             realIncome = 0f;
             cash = 0f;
@@ -239,17 +241,18 @@ public class StatisticsActivity extends BaseToobarActivity {
 
         Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("CheckOrderC"))
+                        .equalTo(Expression.string("CheckOrder"))
                         .and(Expression.property("checkTime")
                                 .greaterThanOrEqualTo(Expression.string(start)))
                 );
 
         Query query2 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("OnOrderC"))
-                        .and(Expression.property("onTime")
-                                .greaterThanOrEqualTo(Expression.string(start)))
-                );
+                        .equalTo(Expression.string("CheckOrder"))
+                        .and(Expression.property("hangInfo").notNullOrMissing())
+                        .and(Expression.property("checkTime")
+                                .greaterThanOrEqualTo(Expression.string(start))));
+
         queryBody(query1, query2);
 
     }
@@ -263,14 +266,15 @@ public class StatisticsActivity extends BaseToobarActivity {
         dateTv.setText((new StringBuilder()).append(date));
         Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("CheckOrderC"))
+                        .equalTo(Expression.string("CheckOrder"))
                         .and(Expression.property("checkTime")
                                 .greaterThanOrEqualTo(Expression.string(date)))
                 );
         Query query2 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("OnOrderC"))
-                        .and(Expression.property("onTime")
+                        .equalTo(Expression.string("CheckOrder"))
+                        .and(Expression.property("hangInfo").notNullOrMissing())
+                        .and(Expression.property("checkTime")
                                 .greaterThanOrEqualTo(Expression.string(date)))
                 );
 
@@ -286,14 +290,15 @@ public class StatisticsActivity extends BaseToobarActivity {
         dateTv.setText(date);
         Query query1 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("CheckOrderC"))
+                        .equalTo(Expression.string("CheckOrder"))
                         .and(Expression.property("checkTime")
                                 .like(Expression.string(date + "%")))
                 );
         Query query2 = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("CheckOrderC"))
-                        .and(Expression.property("onTime")
+                        .equalTo(Expression.string("CheckOrder"))
+                        .and(Expression.property("hangInfo").notNullOrMissing())
+                        .and(Expression.property("checkTime")
                                 .like(Expression.string(date + "%")))
                 );
         queryBody(query1, query2);
@@ -313,10 +318,12 @@ public class StatisticsActivity extends BaseToobarActivity {
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
                 Document document1 = database.getDocument(id);
-                monetary = MyBigDecimal.add(monetary, document1.getFloat("pay"), 2);
+                monetary = MyBigDecimal.add(monetary, document1.getFloat("lastPay"), 2);
                 realIncome = MyBigDecimal.add(realIncome, document1.getFloat("needPay"), 2);
-                Dictionary promotionDetail = document1.getDictionary("promotionDetail");
-                Array payDetailList = promotionDetail.getArray("payDetailList");
+                Array payDetailList = document1.getArray("payDetailList");
+                if (payDetailList == null){
+                    continue;
+                }
                 for (int i = 0; i < payDetailList.count(); i++) {
                     Dictionary paydetailc = payDetailList.getDictionary(i);
                     int payType = paydetailc.getInt("payTypes");
@@ -349,6 +356,9 @@ public class StatisticsActivity extends BaseToobarActivity {
                         case 9:
                             elm = MyBigDecimal.add(elm, subtotal, 2);
                             break;
+                        case 11:
+                            tg = MyBigDecimal.add(elm, subtotal, 2);
+                            break;
                         default:
                             break;
 
@@ -369,6 +379,7 @@ public class StatisticsActivity extends BaseToobarActivity {
         Result row;
         while ((row = resultSet.next()) != null) {
             String id = row.getString(0);
+            MyLog.e("id------"+id);
             Document document2 = database.getDocument(id);
             gz = MyBigDecimal.add(document2.getFloat("needPay"), gz, 2);
 

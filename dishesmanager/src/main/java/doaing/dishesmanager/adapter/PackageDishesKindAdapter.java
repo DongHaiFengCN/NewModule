@@ -124,7 +124,7 @@ public class PackageDishesKindAdapter extends BaseAdapter {
             listItemView.tvTitle.setTextColor(context.getResources().getColor(R.color.md_black_1000));
 
         }
-        listItemView.tvTitle.setText(database.getDocument(names.get(i)).getString("kindName"));
+        listItemView.tvTitle.setText(database.getDocument(names.get(i)).getString("name"));
         return view;
 
     }
@@ -146,8 +146,7 @@ public class PackageDishesKindAdapter extends BaseAdapter {
         //动态监听DishesKind信息
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(this.database))
-                .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(false))));
+                .where(Expression.property("className").equalTo(Expression.string("DishesKind")));
 
         try {
             ResultSet rows = query.execute();

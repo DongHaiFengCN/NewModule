@@ -34,7 +34,6 @@ import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DatabaseConfiguration;
-import com.couchbase.lite.DatabaseEndpoint;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Endpoint;
@@ -184,25 +183,6 @@ public class CDBHelper implements ReplicatorChangeListener {
         replicator.start();
     }
 
-    public static void copyDataBase()
-    {
-        DatabaseConfiguration config0 = new DatabaseConfiguration(mcontext);
-        File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
-        config0.setDirectory(folder.getAbsolutePath());
-        Database  dbTarget=null;
-        try {
-            dbTarget = new Database("copyDB", config0);
-        } catch (CouchbaseLiteException e) {
-            MyLog.e("Database Init"+e.toString());
-            e.printStackTrace();
-        }
-      DatabaseEndpoint databaseEndpoint = new DatabaseEndpoint(dbTarget);
-        ReplicatorConfiguration config1 = new ReplicatorConfiguration(db, databaseEndpoint)
-                .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH)
-                .setContinuous(false);
-        Replicator replicator1 = new Replicator(config1);
-        replicator1.start();
-    }
     public static Database getDatabase() {
         if (instance == null) {
         }

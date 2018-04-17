@@ -65,6 +65,7 @@ import doaing.order.view.adapter.ActionListAdapter;
 import doaing.order.view.adapter.MemberDishesListAdapter;
 import tools.CDBHelper;
 import tools.MyLog;
+import tools.ToolUtil;
 
 /**
  * @author 董海峰
@@ -562,7 +563,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
                             //会员消费记录
                             //setConsumLog(members, remainder);
-
                             //消费支付细节 6会员消费,计算剩余部分
                             total = total - remainder;
 
@@ -1037,6 +1037,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                             }
                         }
                         checkOrder.setHangInfo(hangInfo);
+                        setPayDetail(10, total);
                         try {
                             submitCheckOrder();
                         } catch (CouchbaseLiteException e) {
@@ -1044,19 +1045,20 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         }
                         isGuaZ = true;
                     }
+                    alertDialog.dismiss();
                 }
             });
         }else if (i == R.id.tg){
-            AlertDialog.Builder gzDialog = new AlertDialog.Builder(PayActivity.this);
-            gzDialog.setTitle("团购支付");
+            AlertDialog.Builder tgDialog = new AlertDialog.Builder(PayActivity.this);
+            tgDialog.setTitle("团购支付");
 
-            gzDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+            tgDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
 
                 }
             });
-            gzDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
+            tgDialog.setNegativeButton("确定支付", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -1073,7 +1075,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                 }
             });
 
-            gzDialog.show();
+            tgDialog.show();
         }
     }
 
@@ -1378,11 +1380,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         float all = Float.valueOf(totalTv.getText().toString());
         checkOrder.setChannelId(myApplication.getCompany_ID());
         checkOrder.setCheckTime(formatter.format(date));
-        checkOrder.setClassName("CheckOrderC");
+        checkOrder.setClassName("CheckOrder");
         checkOrder.setLastPay(all);
         checkOrder.setNeedPay(total);
         checkOrder.setTableNum(myApplication.getTable_sel_obj().getNum());
         checkOrder.setCreatedYear("2018");
+        checkOrder.setEmployeeName(myApplication.getEmployee().getName());
+        checkOrder.setPayDetailList(payDetailList);
+
         Database database = CDBHelper.getDatabase();
         for (String orderC : checkOrder.getOrderIds()) {
 
@@ -1396,6 +1401,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             // Log.e("DOAING","修改的后"+ database.getDocument(orderC).getInt("orderState"));
 
         }
+        CDBHelper.createAndUpdate(checkOrder);
         //turnDesk();
 
         //  show();

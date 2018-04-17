@@ -98,9 +98,10 @@ public class TasteActivity extends BaseToobarActivity {
 
         database = CDBHelper.getDatabase();
 
-        Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("tasteName")))
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id),SelectResult.expression(Expression.property("name")))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo(Expression.string("DishesTasteC")));
+                .where(Expression.property("className").
+                        equalTo(Expression.string("Taste")));
 
         query.addChangeListener(new QueryChangeListener() {
             @Override
@@ -181,12 +182,12 @@ public class TasteActivity extends BaseToobarActivity {
     }
     private void addTasteInfo(SearchView.SearchAutoComplete mSearchAutoComplete) {
         //1.添加数据到数据库
-        MutableDocument document = new MutableDocument("DishesTasteC." + ToolUtil.getUUID());
+        MutableDocument document = new MutableDocument("Taste." + ToolUtil.getUUID());
         document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
-        document.setString("className", "DishesTasteC");
+        document.setString("className", "Taste");
         document.setString("dataType","BaseData");
         try {
-            document.setString("tasteName",ToolUtil.emojiConvert1(mSearchAutoComplete.getText().toString()));
+            document.setString("name",ToolUtil.emojiConvert1(mSearchAutoComplete.getText().toString()));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -226,7 +227,7 @@ public class TasteActivity extends BaseToobarActivity {
 
 
             try {
-                tvName.setText(ToolUtil.emojiRecovery2(list.get(arg0).getString("tasteName")));
+                tvName.setText(ToolUtil.emojiRecovery2(list.get(arg0).getString("name")));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -253,7 +254,7 @@ public class TasteActivity extends BaseToobarActivity {
 
 
                                     String a = editText.getText().toString();
-                                    document.setString("tasteName",a);
+                                    document.setString("name",a);
 
                                     try {
                                         database.save(document);

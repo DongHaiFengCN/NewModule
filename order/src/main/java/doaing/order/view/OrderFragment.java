@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.couchbase.lite.Document;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,6 +36,7 @@ import doaing.order.module.DishesMessage;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.view.adapter.MyGridAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
 
 /*
 *
@@ -206,7 +208,7 @@ public class OrderFragment extends Fragment {
                 for (int i = 0; i < dishesCList.size(); i++) {
 
                     //找到对应的位置
-                    if (dishesCList.get(i).getString("dishesName").equals(goods.getDishesName())) {
+                    if (dishesCList.get(i).getString("name").equals(goods.getDishesName())) {
                         //   Log.e("DOAING", "修改前的数据：" + floats[i]);
 
                         //   Log.e("DOAING", "添加的数据：" + goodsC.getDishesCount());

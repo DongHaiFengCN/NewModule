@@ -125,9 +125,9 @@ public class BestSellersActivity extends BaseToobarActivity {
      */
     private void getStartSingleDateInfo(String date) {
 
-        Query query = QueryBuilder.select(SelectResult.expression(Expression.property("goodsList")))
+        Query query = QueryBuilder.select(SelectResult.expression(Expression.property("goods")))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("OrderC")).and(Expression.property("orderState").equalTo(Expression.intValue(0)))
+                        .equalTo(Expression.string("Order")).and(Expression.property("state").equalTo(Expression.intValue(0)))
                         .and(Expression.property("createdTime")
                                 .greaterThanOrEqualTo(Expression.string(date)))
 
@@ -155,7 +155,7 @@ public class BestSellersActivity extends BaseToobarActivity {
 
             Result result = list.get(i);
 
-            Array array = result.getArray("goodsList");
+            Array array = result.getArray("goods");
 
             for (int j = 0; j < array.count(); j++) {
 

@@ -41,6 +41,7 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
+import bean.kitchenmanage.table.Table;
 import doaing.mylibrary.MyApplication;
 import doaing.tablemanager.adapter.AreaAdapter;
 import tools.CDBHelper;
@@ -60,11 +61,11 @@ public class TableManagerActivity extends BaseToobarActivity {
     private AreaAdapter areaAdapter;
     private RecyclerView tableRc;
     private TableRecycleAdapter tableRecycleAdapter;
-    Document areaDocment;
     EditText tableNameEt;
     EditText minmunNumberEt;
     EditText maxmunNumberEt;
     EditText minimunConsumptionEt;
+    private String areaId;
 
     @Override
     protected int setMyContentView() {
@@ -94,14 +95,14 @@ public class TableManagerActivity extends BaseToobarActivity {
                     tableRecycleAdapter.setArray(null);
                     return;
                 }
-                areaDocment = database.getDocument(areaAdapter.getAreaId().get(pos));
 
-                List<Document> doc = CDBHelper.getDocmentsByWhere(
-                        Expression.property("className").equalTo(Expression.string("Table"))
-                        .add(Expression.property("areaId").equalTo(Expression.string(areaDocment.getId())))
-                        ,null);
+                areaId = areaAdapter.getAreaId().get(pos);
+                MyLog.e("Teble",""+areaId);
 
-                tableRecycleAdapter.setArray(doc);
+
+                tableRecycleAdapter.setArray(areaId);
+
+
 
             }
         });
@@ -125,8 +126,11 @@ public class TableManagerActivity extends BaseToobarActivity {
             return super.getItemViewType(position);
         }
 
-        private void setArray(List<Document> docList) {
-            this.docList = docList;
+        private void setArray(String areaId) {
+            docList = CDBHelper.getDocmentsByWhere(
+                    Expression.property("className").equalTo(Expression.string("Table"))
+                            .and(Expression.property("areaId").equalTo(Expression.string(areaId)))
+                    ,null);
             notifyDataSetChanged();
         }
 
@@ -179,7 +183,6 @@ public class TableManagerActivity extends BaseToobarActivity {
                                 }).setNeutralButton("删除餐桌", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        MutableDocument mutableDocument = areaDocment.toMutable();
                                         //获取需要删除的餐桌id
                                         String id = tableDoc.getId();
                                         int count = docList.size();
@@ -192,7 +195,6 @@ public class TableManagerActivity extends BaseToobarActivity {
                                         }
                                         try {
                                             database.delete(tableDoc);
-                                            database.save(mutableDocument);
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
@@ -316,7 +318,7 @@ public class TableManagerActivity extends BaseToobarActivity {
                                     //id
                                     mutableDocument.setInt("state", 0);
                                     mutableDocument.setString("num", getMaxTableNum());
-                                    mutableDocument.setString("areaId", areaDocment.getId());
+                                    mutableDocument.setString("areaId", areaId);
                                     if (TextUtils.isEmpty(maxmunNumberEt.getText().toString())){
                                         mutableDocument.setInt("maxPersons", 0);
                                     }else{

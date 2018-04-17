@@ -113,7 +113,7 @@ public class NewOrderService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         MyLog.e(Tag,"onStartCommand");
-        CDBHelper.copyDataBase();
+
         registerPrinterBroadcast();
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_pause));
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_resum));
@@ -126,22 +126,31 @@ public class NewOrderService extends Service {
 
         db = CDBHelper.getDatabase();
         Query myquery = listsLiveQuery();
-        myquery.addChangeListener(new QueryChangeListener() {
-            @Override
-            public void changed(QueryChange change)
-            {
-                ResultSet rs = change.getResults();
-                Result result;
-                while ((result = rs.next()) != null)
+        if (db!= null){
+            myquery.addChangeListener(new QueryChangeListener() {
+                @Override
+                public void changed(QueryChange change)
                 {
-                    String id=result.getString(0);
-                    Log.e(Tag,"orderId="+id);
-                    printNewOrder(id);
+                    ResultSet rs = change.getResults();
+                    Result result;
+                    while ((result = rs.next()) != null)
+                    {
+                        String id=result.getString(0);
+                        Log.e(Tag,"orderId="+id);
+                        printNewOrder(id);
+                    }
                 }
-            }
-        });
+            });
 
-        connectAllPrinter();
+            connectAllPrinter();
+        }else {
+            if(PrinterStatusBroadcastReceiver!=null)
+            {
+                unregisterReceiver(PrinterStatusBroadcastReceiver);
+            }
+            unregisterReceiver(CmdBroadcastReceiver);
+        }
+
 
         return super.onStartCommand(intent, flags, startId);
     }

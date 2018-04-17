@@ -131,13 +131,12 @@ public class PackageActivity1 extends BaseToobarActivity {
 
     private void addPackageInfo(SearchView.SearchAutoComplete mSearchAutoComplete) {
         //1.添加数据到数据库
-        MutableDocument document = new MutableDocument("DishesKindC." + ToolUtil.getUUID());
+        MutableDocument document = new MutableDocument("DishesKind." + ToolUtil.getUUID());
         document.setString("channelId", ((MyApplication) getApplicationContext()).getCompany_ID());
-        document.setString("className", "DishesKindC");
-        document.setString("kindName", mSearchAutoComplete.getText().toString());
-        document.setBoolean("setMenu", true);
+        document.setString("className", "DishesKind");
+        document.setString("name", mSearchAutoComplete.getText().toString());
         document.setString("dataType", "BaseData");
-        document.setArray("dishesListId", new MutableArray());
+        //document.setArray("dishesListId", new MutableArray());
         try {
             database.save(document);
             list.add(document.getId());
@@ -155,7 +154,7 @@ public class PackageActivity1 extends BaseToobarActivity {
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
                 .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression.booleanValue(true))));
+                        );
 
         ResultSet results = null;
 
@@ -208,7 +207,7 @@ public class PackageActivity1 extends BaseToobarActivity {
             }
             final TextView tvName = view.findViewById(R.id.package_tv);
 
-            tvName.setText(document.getString("kindName"));
+            tvName.setText(document.getString("name"));
 
 
             final MySwipeListLayout sllMain = view.findViewById(R.id.package_sll_main);

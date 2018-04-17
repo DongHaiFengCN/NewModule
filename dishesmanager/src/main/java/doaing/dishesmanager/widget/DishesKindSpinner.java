@@ -70,8 +70,7 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
         final Database database = CDBHelper.getDatabase();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database))
-                .where(Expression.property("className").equalTo(Expression.string("DishesKindC"))
-                        .and(Expression.property("setMenu").equalTo(Expression. booleanValue(false))));
+                .where(Expression.property("className").equalTo(Expression.string("DishesKind")));
 
         try {
             if (!dishesKindList.isEmpty()){
@@ -86,7 +85,7 @@ public class DishesKindSpinner extends android.support.v7.widget.AppCompatSpinne
                 String id = row.getString(0);
                 Document doc = database.getDocument(id);
                 dishesKindList.add(doc);
-                dishesKindAdapter.add(doc.getString("kindName"));
+                dishesKindAdapter.add(doc.getString("name"));
             }
             dishesKindAdapter.notifyDataSetChanged();
 

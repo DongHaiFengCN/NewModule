@@ -134,7 +134,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.selectCommand(PrintUtils.NORMAL);
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
             Order orderC = CDBHelper.getObjById(checkOrderC.getOrderIds().get(0),Order.class);
-            PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getOrderNum()+"\n"));
+            PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getSerialNum()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("下单时间", checkOrderC.getCheckTime()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getCurrentPersions(), "收银员："+waiter+"\n"));
             PrintUtils.printText("--------------------------------\n");
@@ -208,7 +208,9 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
                         case 8:
                             stringBuffer.append("赠卷 ");
                             break;
-
+                        case 10:
+                            stringBuffer.append("挂账 ");
+                            break;
                         case 11:
                             stringBuffer.append("团购 ");
                             break;
@@ -221,7 +223,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             }
             PrintUtils.printText("支付方式："+stringBuffer.toString());
             PrintUtils.printText("\n\n\n\n\n");
-            PrintUtils.closeOutputStream();
+
             if (checkOrderC.getHangInfo() != null){
                 PrintUtils.printText("支付方式："+"挂账");
                 PrintUtils.printText("\n\n");
@@ -235,6 +237,7 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
                 }
                 PrintUtils.closeOutputStream();
             }
+            PrintUtils.closeOutputStream();
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {

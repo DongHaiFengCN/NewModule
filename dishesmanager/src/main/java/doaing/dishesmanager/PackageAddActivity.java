@@ -28,6 +28,7 @@ import com.couchbase.lite.Array;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 
@@ -45,6 +46,7 @@ import doaing.dishesmanager.widget.DishesKindListView;
 import doaing.mylibrary.MyApplication;
 import tools.CDBHelper;
 import tools.MyBigDecimal;
+import tools.MyLog;
 import tools.ToolUtil;
 import view.BaseToobarActivity;
 
@@ -132,11 +134,8 @@ public class PackageAddActivity extends BaseToobarActivity {
 
         if(document == null){
 
-            secondDocment = new MutableDocument("DishesC." + ToolUtil.getUUID());
-            secondDocment.setString("dataType", "BaseData");
-            secondDocment.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
-            secondDocment.setString("className", "DishesC");
-            secondDocment.setArray("dishesIdList", new MutableArray());
+            secondDocment = new MutableDocument();
+            secondDocment.setArray("dishesIds", new MutableArray());
 
         }else {
             secondDocment = document.toMutable();
@@ -152,19 +151,15 @@ public class PackageAddActivity extends BaseToobarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 packageDishesKindAdapter.changeSelected(position);
-                Document dishesKind = CDBHelper.getDatabase().getDocument((String) packageDishesKindAdapter.getItem(position));
-
-                Array array = dishesKind.getArray("dishesListId");
 
 
                 if (!dishesList.isEmpty()) {
                     dishesList.clear();
                 }
-
-                for (int i = 0; i < array.count(); i++) {
-
-                    dishesList.add(database.getDocument(array.getString(i)));
-                }
+                dishesList = CDBHelper.getDocmentsByWhere(
+                        Expression.property("className").equalTo(Expression.string("Dishes"))
+                                .and(Expression.property("kindId").equalTo(Expression.string((String) packageDishesKindAdapter.getItem(position))))
+                        ,null);
                 //初始化菜品选择map
                 if (listMap.get(position) == null) {
 
@@ -177,7 +172,7 @@ public class PackageAddActivity extends BaseToobarActivity {
         });
 
         final Spinner spinner = findViewById(R.id.dishes_discount_sp);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter(PackageAddActivity.this, android.R.layout.simple_list_item_1);
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter(PackageAddActivity.this, android.R.layout.simple_list_item_1);
         arrayAdapter.add("价格");
         arrayAdapter.add("折扣");
         spinner.setAdapter(arrayAdapter);
@@ -225,19 +220,27 @@ public class PackageAddActivity extends BaseToobarActivity {
                     secondDocment.setFloat("price", Float.valueOf(packagePriceEt.getText().toString()));
                 }
 
-                try {
+//                try {
+//
+//                    Log.e("DOAING", "保存的价格 " + secondDocment.getFloat("price"));
+//
+//                    database.save(secondDocment);
+//
+//                } catch (CouchbaseLiteException e) {
+//
+//                    e.printStackTrace();
+//                }
 
-                    Log.e("DOAING", "保存的价格 " + secondDocment.getFloat("price"));
+                //EventBus.getDefault().postSticky(secondDocment.getId());
+                if (discount) {
 
-                    database.save(secondDocment);
+                    EventBus.getDefault().postSticky(Float.valueOf(MyBigDecimal.mul(String.valueOf(sum), MyBigDecimal.div(packagePriceEt.getText().toString(),String.valueOf(100),2), 2)));
 
-                } catch (CouchbaseLiteException e) {
-
-                    e.printStackTrace();
+                } else {
+                    EventBus.getDefault().postSticky(Float.valueOf(packagePriceEt.getText().toString()));
                 }
 
-                EventBus.getDefault().postSticky(secondDocment.getId());
-
+                EventBus.getDefault().postSticky(secondDocment.getArray("dishesIds"));
                 finish();
 
             }
@@ -252,9 +255,9 @@ public class PackageAddActivity extends BaseToobarActivity {
         float sum = 0;
         int size = packageDishesKindAdapter.getCount();
 
-        if (secondDocment.getArray("dishesIdList").count() > 0) {
+        if (secondDocment.getArray("dishesIds").count() > 0) {
 
-            secondDocment.setArray("dishesIdList", new MutableArray());
+            secondDocment.setArray("dishesIds", new MutableArray());
         }
 
         for (int i = 0; i < size; i++) {
@@ -266,7 +269,6 @@ public class PackageAddActivity extends BaseToobarActivity {
                 continue;
 
             }
-            Document document = CDBHelper.getDatabase().getDocument((String) packageDishesKindAdapter.getItem(i));
 
             int length = booleans.length;
 
@@ -274,9 +276,9 @@ public class PackageAddActivity extends BaseToobarActivity {
 
 
                 if (booleans[j]) {
-                    Document dishe = database.getDocument(document.getArray("dishesListId").getString(j));
+                    Document dishe = dishesList.get(j);
                     sum += dishe.getFloat("price");
-                    secondDocment.getArray("dishesIdList").addString(dishe.getId());
+                    secondDocment.getArray("dishesIds").addString(dishe.getId());
                 }
             }
         }
@@ -335,7 +337,7 @@ public class PackageAddActivity extends BaseToobarActivity {
 
             if (document != null) {
 
-                listItemView.disheNameTv.setText(document.getString("dishesName"));
+                listItemView.disheNameTv.setText(document.getString("name"));
                 listItemView.dishePriceTv.setText("¥" + document.getFloat("price"));
                 listItemView.dishesCk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override

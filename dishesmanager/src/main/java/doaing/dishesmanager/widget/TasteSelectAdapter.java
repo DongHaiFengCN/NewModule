@@ -58,7 +58,7 @@ public class TasteSelectAdapter extends RecyclerView.Adapter<TasteSelectAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") final int position) {
 
-        holder.mTxt.setText(list.get(position).getString("tasteName"));
+        holder.mTxt.setText(list.get(position).getString("name"));
         holder.mImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
