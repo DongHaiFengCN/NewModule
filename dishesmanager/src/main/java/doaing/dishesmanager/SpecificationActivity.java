@@ -43,7 +43,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dishes.Dishes;
+import bean.kitchenmanage.dish.Dish;
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.ListAdapter;
 import doaing.mylibrary.MyApplication;
@@ -90,7 +90,7 @@ public class SpecificationActivity extends BaseToobarActivity {
         mHandle.post(new Runnable() {
             @Override
             public void run() {
-                dishesCList = CDBHelper.getDocmentsByClass(Dishes.class);
+                dishesCList = CDBHelper.getDocmentsByClass(Dish.class);
                 HaveDishesSupList = CDBHelper.getDocmentsByWhere(
                         Expression.property("className").equalTo(Expression.string("Dishes"))
                                 .and(Expression.property("supDishesId").notNullOrMissing())

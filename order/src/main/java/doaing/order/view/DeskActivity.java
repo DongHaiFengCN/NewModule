@@ -69,7 +69,7 @@ import java.util.Map;
 import java.util.TimerTask;
 
 
-import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.dish.DishKind;
 import bean.kitchenmanage.kitchen.KitchenClient;
 import bean.kitchenmanage.order.CheckOrder;
 import bean.kitchenmanage.order.Order;
@@ -103,7 +103,7 @@ public class DeskActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView msg_point;
     private ImageView msg_printer;
-    List<DishesKind> dishesKindCList;
+    List<DishKind> dishesKindCList;
     List<Document> dishes;
     private Map<String, List<Document>> dishesObjectCollection;
     public GpService mGpService;
@@ -935,11 +935,11 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
                 dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
                         , Expression.property("className").equalTo(Expression.string("DishKind"))
-                        ,null, DishesKind.class);
+                        ,null, DishKind.class);
                 Log.e("DeskA",""+dishesKindCList.size());
 
                 //1、初始化菜品数量维护映射表
-                for (DishesKind dishesKind : dishesKindCList) {
+                for (DishKind dishesKind : dishesKindCList) {
 
                     dishes = CDBHelper.getDocmentsByWhere(
                             Expression.property("className").equalTo(Expression.string("Dish"))

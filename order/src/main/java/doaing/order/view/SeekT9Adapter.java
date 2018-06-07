@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
-import bean.kitchenmanage.dishes.Dishes;
+import bean.kitchenmanage.dish.Dish;
 import bean.kitchenmanage.order.Goods;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
@@ -94,7 +94,7 @@ public class SeekT9Adapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
         final ViewHolder viewHolder;
-        final Dishes dishes;
+        final Dish dishes;
         if (convertView == null) {
 
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_item_seek, parent, false);
@@ -104,7 +104,7 @@ public class SeekT9Adapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        dishes = CDBHelper.getObjById( mGoodsList.get(position).getDishesId(), Dishes.class);
+        dishes = CDBHelper.getObjById( mGoodsList.get(position).getDishesId(), Dish.class);
         if (dishes.isSell()){
             viewHolder.viewTj.setVisibility(View.INVISIBLE);
             isSell = true;

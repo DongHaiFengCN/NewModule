@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import bean.kitchenmanage.dishes.Dishes;
-import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.dish.Dish;
+import bean.kitchenmanage.dish.DishKind;
 import bean.kitchenmanage.order.Goods;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
@@ -57,7 +57,7 @@ public class OrderFragment extends Fragment {
     private Map<String, float[]> dishesCollection = new HashMap<>();
     private Map<String, List<Document>> dishesObjectCollection;
     private boolean[] booleans;
-    List<DishesKind> dishesKindCList;
+    List<DishKind> dishesKindCList;
 
     String kindId;
 
@@ -133,8 +133,8 @@ public class OrderFragment extends Fragment {
 
                 Document document = (Document) orderDragAdapter.getItem(position);
 
-                Dishes dishes = CDBHelper.getObjById(document.getId()
-                        , Dishes.class);
+                Dish dishes = CDBHelper.getObjById(document.getId()
+                        , Dish.class);
             if (!dishes.isSell()){
                 showDialog(dishes, position, orderDragAdapter.getNumbers()[position]);
             }
@@ -299,7 +299,7 @@ public class OrderFragment extends Fragment {
 *
      * 菜品选择弹出框编辑模块
 */
-    private void showDialog(final Dishes dishes, final int position, float number) {
+    private void showDialog(final Dish dishes, final int position, float number) {
 
         final DishesMessage dishesMessage = new DishesMessage();
 
@@ -443,12 +443,12 @@ public class OrderFragment extends Fragment {
 
         boolean aBoolean[];
 
-        public void setNames(List<DishesKind> names) {
+        public void setNames(List<DishKind> names) {
             this.names = names;
         }
 
 
-        private List<DishesKind> names;
+        private List<DishKind> names;
 
         public DishesKindAdapter() {
         }
@@ -498,7 +498,7 @@ public class OrderFragment extends Fragment {
 
                 listItemView.imagePoint.setVisibility(View.VISIBLE);
 
-                DishesKind dishesKindC = dishesKindCList.get(i);
+                DishKind dishesKindC = dishesKindCList.get(i);
 
                 String id = dishesKindC.getId();
                 int count = 0;

@@ -19,8 +19,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
-import bean.kitchenmanage.dishes.Dishes;
-import bean.kitchenmanage.dishes.Taste;
+import bean.kitchenmanage.dish.Dish;
+import bean.kitchenmanage.dish.Taste;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
 import tools.CDBHelper;
@@ -150,7 +150,7 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                Dishes dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dishes.class);
+                Dish dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dish.class);
 
                 setMessage(dishes, true, position);
 
@@ -162,7 +162,7 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                Dishes dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dishes.class);
+                Dish dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dish.class);
                 setMessage(dishes, false, position);
 
             }
@@ -182,7 +182,7 @@ public class OrderDragAdapter extends BaseAdapter {
      */
 
 
-    private void setMessage(final Dishes dishesC, final boolean flag, final int position) {
+    private void setMessage(final Dish dishesC, final boolean flag, final int position) {
 
         final DishesMessage dishesMessage = new DishesMessage();
 

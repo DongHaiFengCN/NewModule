@@ -33,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dishes.Dishes;
+import bean.kitchenmanage.dish.Dish;
 import bean.kitchenmanage.order.Goods;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
@@ -217,7 +217,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
 
         final TextView price_tv = view.findViewById(R.id.price);
 
-        final Dishes dishes = CDBHelper.getObjById( t9GoodsList.get(selGoodsPos).getDishesId(), Dishes.class);
+        final Dish dishes = CDBHelper.getObjById( t9GoodsList.get(selGoodsPos).getDishesId(), Dish.class);
         final AmountView amountView = view.findViewById(R.id.amount_view);
         final  float  sourceCount = t9GoodsList.get(selGoodsPos).getDishesCount();
         if (sourceCount == 0.0)

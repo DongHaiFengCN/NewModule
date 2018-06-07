@@ -38,7 +38,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.dish.DishKind;
 import bean.kitchenmanage.kitchen.KitchenClient;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
@@ -185,7 +185,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         findViewById(R.id.btn_kcsave).setOnClickListener(this);
         spPrinter.setOnClickListener(this);
 
-        allDishKindIdList = CDBHelper.getIdsByClass(DishesKind.class);
+        allDishKindIdList = CDBHelper.getIdsByClass(DishKind.class);
         addKitchenAdapter = new AddKitchenAdapter(AddkitchenActivity.this, allDishKindIdList);
         listViewCk.setAdapter(addKitchenAdapter);
         listViewCk.setOnItemClickListener(new AdapterView.OnItemClickListener() {
