@@ -140,7 +140,7 @@ public class SpecificationActivity extends BaseToobarActivity {
         }
         document.setString("supDishesId",supDishesId);
         document.setFloat("supCount",Float.parseFloat(dishesSupCount));
-        CDBHelper.saveDocument(getApplicationContext(),document);
+        CDBHelper.saveDocument(document);
 
     }
 
