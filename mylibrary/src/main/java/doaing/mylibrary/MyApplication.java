@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import bean.kitchenmanage.dishes.DishesKind;
+import bean.kitchenmanage.dish.DishKind;
 import bean.kitchenmanage.table.Table;
 import bean.kitchenmanage.user.Employee;
 import tools.PriorityExecutor;
@@ -47,14 +47,14 @@ public class MyApplication extends Application  {
 
     private Map<String, List<Document>> dishesObjectCollection = new HashMap<>();
 
-    public List<DishesKind> getDishesKindCList() {
+    public List<DishKind> getDishesKindCList() {
         return dishesKindCList;
     }
 
-    public void setDishesKindCList(List<DishesKind> dishesKindCList) {
+    public void setDishesKindCList(List<DishKind> dishesKindCList) {
         this.dishesKindCList = dishesKindCList;
     }
-    List<DishesKind> dishesKindCList;
+    List<DishKind> dishesKindCList;
     private String Company_ID = "gysz";
     private Table table_sel_obj;
     private Employee employee;
