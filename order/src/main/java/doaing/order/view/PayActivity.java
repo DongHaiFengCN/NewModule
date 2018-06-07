@@ -105,7 +105,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private List<Document> orderList;
     private IDBManager idbManager;
     private MyApplication myApplication;
-
+    private int isDiscount = 0;//1,营销、2会员、3、抹零
     //折扣率
     private int disrate;
 
@@ -116,7 +116,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private CheckOrder checkOrder = new CheckOrder();
     //每增加一种支付方式创建一个支付详情，例如充值卡余额不足，剩下的部分用的现金。
     private List<PayDetail> payDetailList = new ArrayList<>();
-
+    private float allTotal = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,7 +161,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         //获取包含桌号xx的所有订单
         List<Order> orderCList = CDBHelper.getObjByWhere(getApplicationContext(), Expression.property("className")
                         .equalTo(Expression.string("Order"))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(tableC.getNum())))
+                        .and(Expression.property("tableId").equalTo(Expression.string(tableC.getId())))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").ascending()
                 , Order.class);
@@ -174,14 +174,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             }
             orderId.add(orderC.getId());
             //获取当前订单下goods集合下所有的菜品
-            for (Goods o : orderC.getGoods()) {
+            for (Goods o : orderC.getGoodsList()) {
 
                 orderDishesList.add(o);
             }
 
         }
         if (orderId.size() > 0){
-            checkOrder.setOrderIds(orderId);
+            checkOrder.setOrderId(orderId);
         }
         //显示原价
         totalTv.setText(total + "");
@@ -376,29 +376,15 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         Margin = ""+data.getFloatExtra("Margin", 0);
         //界面展示实际处理后的价格
         factTv.setText("实际支付：" + total + "元");
-
-        //设置会员按钮不可用
-        associatorNotDisplay();
-        //活动不可用
-        actionNotDisplay();
-
+        isDiscount = 3;
     }
 
-    private void actionNotDisplay() {
-        //设置活动不可用
-        action.setEnabled(false);
-        if (TextUtils.isEmpty(actionTv.getText().toString())) {
-
-            actionTv.setText("不可选");
-        }
-    }
-
-/*
-*
-     * 会员折扣卡处理逻辑
-     *
-     * @param data
-*/
+    /*
+    *
+    * 会员折扣卡处理逻辑
+    *
+    * @param data
+    */
 
 
     private void turnSale(Intent data) {
@@ -649,7 +635,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
     private void turnRechange(Intent data) {
-
+        total = Float.parseFloat(totalTv.getText().toString());
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         View view = getLayoutInflater().inflate(R.layout.view_payactivity_memberdishes_rechange_dialog, null);
@@ -765,6 +751,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
                     Toast.makeText(PayActivity.this, "请充值！", Toast.LENGTH_SHORT).show();
                 }
+                isDiscount = 2;
+                allTotal = total;
             }
 
         });
@@ -815,7 +803,11 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
          * 跳转抹零功能界面
     */
     private void turnDiscount() {
-
+        if (allTotal == 0) {
+            total = Float.parseFloat(totalTv.getText().toString());
+        }else{
+            total = allTotal;
+        }
         Intent discount = new Intent();
         discount.setClass(PayActivity.this, DiscountActivity.class);
         discount.putExtra("Total", total);
@@ -829,7 +821,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
     private void turnSale() {
 
-
         Intent sale = new Intent();
         sale.setClass(PayActivity.this, SaleActivity.class);
         startActivityForResult(sale, SALE);
@@ -840,19 +831,72 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View view) {
         int i = view.getId();
         if (i == R.id.associator) {
-            turnSale();
+
+            if (isDiscount == 0){
+                turnSale();
+            }else{
+                if(isDiscount != 2){
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PayActivity.this);
+                    builder.setTitle("是否切换会员活动！！！");
+                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            total = Float.parseFloat(totalTv.getText().toString());
+                            discountTv.setText("");
+
+                            turnSale();
+
+                        }
+                    });
+                    builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    builder.show();
+                }else{
+                    total = Float.parseFloat(totalTv.getText().toString());
+                    turnSale();
+                }
+            }
 
 
         } else if (i == R.id.discount) {
-            //抹零
 
+
+            //抹零
             turnDiscount();
 
 
         } else if (i == R.id.action) {
             //活动
-            setAction();
+            if (isDiscount == 0){
+                setAction();
+            }else{
+                if(isDiscount != 1){
 
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PayActivity.this);
+                    builder.setTitle("是否切换营销活动！！！");
+                    builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            discountTv.setText("");
+                            setAction();
+                        }
+                    });
+                    builder.setNegativeButton("否", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    builder.show();
+                }else{
+                    setAction();
+                }
+            }
 
         } else if (i == R.id.ivalipay) {
             //支付宝支付
@@ -1026,7 +1070,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         hangInfo.setName(nameEt.getText().toString());
                         hangInfo.setMobile(contactWayEt.getText().toString());
                         Database database = CDBHelper.getDatabase();
-                        for (String id : checkOrder.getOrderIds()) {
+                        for (String id : checkOrder.getOrderId()) {
                             Document document = database.getDocument(id);
                             MutableDocument mutableDocument = document.toMutable();
                             mutableDocument.setInt("state", 0);
@@ -1079,15 +1123,13 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-/*
-*
-     * 活动扣款
-*/
-
-
+    /*
+    *
+    * 活动扣款
+    */
     private void setAction() {
 
-
+        total = Float.parseFloat(totalTv.getText().toString());
         final Promotion[] promotion = {null};
         //加载活动
 
@@ -1118,8 +1160,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
                 if (promotion[0] != null) {
-                    for (int ps = 0; ps < promotion[0].getPromotionRuleIds().size(); ps++) {
-                        PromotionRule promotionRule = CDBHelper.getObjById( promotion[0].getPromotionRuleIds().get(ps), PromotionRule.class);
+                    for (int ps = 0; ps < promotion[0].getPromotionRuleList().size(); ps++) {
+                        PromotionRule promotionRule = promotion[0].getPromotionRuleList().get(ps);
                         if (promotionRule.getMode() == 1) {     //打折状态
 
                             total = MyBigDecimal.sub(total, copy, 1);
@@ -1133,7 +1175,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                             total = copy;
 
                         }
-
+                        isDiscount = 1;
+                        allTotal = total;
                         dialog.dismiss();
                     }
                     factTv.setText("实际支付：" + total + "元");
@@ -1151,8 +1194,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                 //规则详情
                 promotion[0] = promotionCList.get(p);
 
-                for (int ps = 0; ps < promotion[0].getPromotionRuleIds().size(); ps++ ){
-                    PromotionRule promotionRule = CDBHelper.getObjById(promotion[0].getPromotionRuleIds().get(ps),PromotionRule.class);
+                for (int ps = 0; ps < promotion[0].getPromotionRuleList().size(); ps++ ){
+                    PromotionRule promotionRule = promotion[0].getPromotionRuleList().get(ps);
                     if (promotionRule.getMode() == 1){
                         copy = 0f;
 
@@ -1335,6 +1378,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
     }
 
+
+
     private void associatorNotDisplay() {
         //设置会员按钮不可用
         associator.setEnabled(false);
@@ -1383,13 +1428,13 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         checkOrder.setClassName("CheckOrder");
         checkOrder.setLastPay(all);
         checkOrder.setNeedPay(total);
-        checkOrder.setTableNum(myApplication.getTable_sel_obj().getNum());
+        checkOrder.setTableId(myApplication.getTable_sel_obj().getId());
         checkOrder.setCreatedYear("2018");
-        checkOrder.setEmployeeName(myApplication.getEmployee().getName());
+        checkOrder.setOperator(myApplication.getEmployee().getName());
         checkOrder.setPayDetailList(payDetailList);
 
         Database database = CDBHelper.getDatabase();
-        for (String orderC : checkOrder.getOrderIds()) {
+        for (String orderC : checkOrder.getOrderId()) {
 
             //  Log.e("DOAING","修改的order id"+orderC);
             Document document = database.getDocument(orderC);
@@ -1488,7 +1533,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         List<Order> orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(myApplication.getTable_sel_obj().getNum())))
+                        .and(Expression.property("tableNum").equalTo(Expression.intValue(myApplication.getTable_sel_obj().getNum())))
                 , Ordering.property("createdTime").descending()
                 , Order.class);
 

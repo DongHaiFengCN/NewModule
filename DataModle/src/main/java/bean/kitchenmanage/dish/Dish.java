@@ -1,8 +1,7 @@
-package bean.kitchenmanage.dishes;
+package bean.kitchenmanage.dish;
 
 import java.io.Serializable;
 import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +12,7 @@ import java.util.List;
  * @Description: 菜品类文件
  * @date 2014 -7-29 上午1:06:02
  */
-public class Dishes implements Serializable {
+public class Dish implements Serializable {
 	/**
 	 *对象id,等于docmentid,一般用于Pojo操作时使用。
 	 */

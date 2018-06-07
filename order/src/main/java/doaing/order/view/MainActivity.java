@@ -80,6 +80,7 @@ import bean.kitchenmanage.order.Goods;
 import bean.kitchenmanage.order.Order;
 import bean.kitchenmanage.order.OrderNum;
 import bean.kitchenmanage.table.Area;
+import bean.kitchenmanage.table.Table;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
@@ -1121,7 +1122,7 @@ public class MainActivity extends AppCompatActivity {
             // esc.addSetLeftMargin((short)10);
             esc.addText("流水号:" + serNum + "\n");//流水号生成机制开发
             esc.addText("房间:" + areaName + "   " + "桌位：" + tableName + "\n");// 打印文字
-            esc.addText("人数:" + myApp.getTable_sel_obj().getCurrentPersions() + "\n");//流水号生成机制开发
+            esc.addText("人数:" + myApp.getTable_sel_obj().getCurrentPersons() + "\n");//流水号生成机制开发
             esc.addText("时间:" + date + " " + endtime + "\n"); // 时间
             esc.addText("--------------------------------\n");
             esc.addText("------------------------------------------\n");
@@ -1179,7 +1180,7 @@ public class MainActivity extends AppCompatActivity {
         {
             esc.addText("流水号:" + serNum + "\n");//流水号生成机制开发
             esc.addText("房间:" + areaName + "   " + "桌位：" + tableName + "\n");// 打印文字
-            esc.addText("人数:" + myApp.getTable_sel_obj().getCurrentPersions() + "\n");//流水号生成机制开发
+            esc.addText("人数:" + myApp.getTable_sel_obj().getCurrentPersons() + "\n");//流水号生成机制开发
             esc.addText("时间:" + date + " " + endtime + "\n"); // 时间
             esc.addText("--------------------------------\n"); //32横线==16个汉字
             esc.addText("菜品名称                数量    \n"); // 菜品名称+16个空格即占12个汉字长度；  数量+4个空格即占4个汉字长度 )
@@ -1252,112 +1253,6 @@ public class MainActivity extends AppCompatActivity {
         return str;
 
     }
-
-    private void saveOrder1(){
-        String newId = "OrderC."+ ToolUtil.getUUID();
-        MutableDocument newOrderDoc = new MutableDocument(newId);
-        Log.e("Main",newId);
-        String zcId = "OrderC."+ ToolUtil.getUUID();
-        MutableDocument zcOrderDoc = new MutableDocument(zcId);
-        List<Document> orderCList = CDBHelper.getDocmentsByWhere(
-                Expression.property("className").equalTo(Expression.string("Order"))
-                        .and(Expression.property("state").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getNum())))
-                , Ordering.property("createdTime").descending()
-
-        );
-        if (orderCList.size() > 0) {
-            newOrderDoc.setInt("orderNum",orderCList.get(0).getInt("orderNum") + 1);
-            newOrderDoc.setString("serialNum",orderCList.get(0).getString("serialNum"));
-        } else {
-            newOrderDoc.setInt("orderNum", 1);
-            newOrderDoc.setString("serialNum",getOrderSerialNum());
-        }
-
-        for (int i = 0; i < goodsList.size(); i++) {
-            Goods obj = goodsList.get(i);
-            if (obj.getGoodsType() == 2) {
-                zcGoodsList.add(obj);
-                goodsList.remove(i);
-                i--;
-                continue;
-            }
-            obj.setOrderId(newId);
-        }
-
-        MutableArray array = new MutableArray();
-        for (int i = 0;i < goodsList.size();i++){
-            Goods obj = goodsList.get(i);
-            ObjectMapper m = new ObjectMapper();
-            Map<String, Object> props = m.convertValue(obj, Map.class);
-            array.addValue(props);
-        }
-        newOrderDoc.setString("className", "OrderC");
-        newOrderDoc.setString("channelId",myApp.getCompany_ID());
-        newOrderDoc.setString("dataType", "UserData");
-        newOrderDoc.setArray("goodsList",array);
-       // newOrderDoc.setValue("goodsList",goodsList);
-        newOrderDoc.setFloat("allPrice",total);
-        newOrderDoc.setInt("orderState",1);//未买单
-        newOrderDoc.setInt("orderCType",0);//正常
-        newOrderDoc.setInt("deviceType",1);//点餐宝
-        newOrderDoc.setString("createdTime",getFormatDate());
-        newOrderDoc.setString("tableNum",myApp.getTable_sel_obj().getNum());
-        newOrderDoc.setString("tableName",myApp.getTable_sel_obj().getName());
-        Area area = CDBHelper.getObjById( myApp.getTable_sel_obj().getAreaId(), Area.class);
-        newOrderDoc.setString("areaName",area.getName());
-        try {
-            if (CDBHelper.getDatabase() != null){
-                CDBHelper.getDatabase().save(newOrderDoc);
-            }else{
-                Log.e("Main","数据库为空");
-            }
-
-        } catch (CouchbaseLiteException e) {
-            e.printStackTrace();
-        }
-        if (zcGoodsList.size() > 0) {
-            newOrderDoc.setString("className", "OrderC");
-            newOrderDoc.setString("channelId",myApp.getCompany_ID());
-            newOrderDoc.setString("dataType", "UserData");
-            zcOrderDoc.setString("serialNum",newOrderDoc.getString("serialNum"));
-            zcOrderDoc.setInt("orderState",1);//未买单
-            zcOrderDoc.setInt("orderCType",2);//赠菜
-            zcOrderDoc.setInt("deviceType",1);//点餐宝
-            zcOrderDoc.setString("createdTime",newOrderDoc.getString("createdTime"));
-            zcOrderDoc.setString("tableNum",newOrderDoc.getString("tableNum"));
-            zcOrderDoc.setString("tableName",newOrderDoc.getString("tableName"));
-            zcOrderDoc.setString("areaName",newOrderDoc.getString("areaName"));
-            MutableArray zcArray = new MutableArray();
-            for (Goods obj : zcGoodsList) {
-                obj.setOrderId(zcId);
-                zcArray.addValue(obj);
-            }
-
-            zcOrderDoc.setArray("goodsList",zcArray);
-            try {
-                if (CDBHelper.getDatabase() != null){
-                    CDBHelper.getDatabase().save(zcOrderDoc);
-                }else{
-                    Log.e("Main","数据库为空");
-                }
-
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }
-        }
-        areaName = newOrderDoc.getString("areaName");
-        tableName = newOrderDoc.getString("tableName");
-        currentPersions = "" + myApp.getTable_sel_obj().getCurrentPersions();
-        if (newOrderDoc.getInt("orderNum") == 1)//第一次下单
-            serNum = newOrderDoc.getString("serialNum");//流水号
-        else //多次下单
-            serNum = newOrderDoc.getString("serialNum") + "_"
-                    + newOrderDoc.getString("orderNum");
-    }
-
-
-
     private void saveOrder()
     {
 
@@ -1373,7 +1268,7 @@ public class MainActivity extends AppCompatActivity {
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(myApp.getTable_sel_obj().getNum())))
+                        .and(Expression.property("tableId").equalTo(Expression.string(myApp.getTable_sel_obj().getId())))
                 , Ordering.property("createdTime").descending()
 
         );
@@ -1393,19 +1288,15 @@ public class MainActivity extends AppCompatActivity {
                 i--;
                 continue;
             }
-            obj.setOrderId(gOrderId);
         }
-        newOrderObj.setGoods(goodsList);
+        newOrderObj.setGoodsList(goodsList);
         newOrderObj.setTotalPrice(total);
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
-        newOrderObj.setTableNum(myApp.getTable_sel_obj().getNum());
-        newOrderObj.setTableName(myApp.getTable_sel_obj().getName());
-        Area area = CDBHelper.getObjById( myApp.getTable_sel_obj().getAreaId(), Area.class);
-        newOrderObj.setAreaName(area.getName());
+        newOrderObj.setTableId(myApp.getTable_sel_obj().getId());
         if (!TextUtils.isEmpty(editText.getText().toString())){
             newOrderObj.setDescription(editText.getText().toString());
         }
@@ -1415,22 +1306,18 @@ public class MainActivity extends AppCompatActivity {
             zcOrderObj.setState(1);//未买单
             zcOrderObj.setOrderType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
             zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
-            zcOrderObj.setTableNum(newOrderObj.getTableNum());
-            zcOrderObj.setTableName(newOrderObj.getTableName());
-            zcOrderObj.setAreaName(newOrderObj.getAreaName());
+            zcOrderObj.setTableId(newOrderObj.getTableId());
             zcOrderObj.setCreatedYear("2018");
             String id = CDBHelper.createAndUpdate( zcOrderObj);
-            for (Goods obj : zcGoodsList) {
-                obj.setOrderId(id);
-            }
-            zcOrderObj.setGoods(zcGoodsList);
+            zcOrderObj.setGoodsList(zcGoodsList);
             zcOrderObj.setId(id);
             CDBHelper.createAndUpdate( zcOrderObj);
         }
-
-        areaName = newOrderObj.getAreaName();
-        tableName = newOrderObj.getTableName();
-        currentPersions = "" + myApp.getTable_sel_obj().getCurrentPersions();
+        Table table = CDBHelper.getObjById(newOrderObj.getTableId(), Table.class);
+        Area area = CDBHelper.getObjById(table.getAreaId(),Area.class);
+        areaName = area.getName();
+        tableName = table.getName();
+        currentPersions = "" + myApp.getTable_sel_obj().getCurrentPersons();
         if (newOrderObj.getOrderNum() == 1)//第一次下单
             serNum = newOrderObj.getSerialNum();//流水号
         else //多次下单
@@ -1744,11 +1631,7 @@ public class MainActivity extends AppCompatActivity {
         if (!isDishes && dishesMessage.isOperation()) {
 
             Goods goods = new Goods();
-
-            goods.setChannelId(myApp.getCompany_ID());
-
             goods.setDishesKindId(dishesMessage.getDishKindId());
-
             goods.setDishesTaste(dishesMessage.getDishesTaste());
 
             goods.setDishesName(dishesMessage.getName());
@@ -1764,8 +1647,6 @@ public class MainActivity extends AppCompatActivity {
             goods.setPrice(dishesMessage.getDishes().getPrice());
 
             goodsList.add(goods);
-
-
 
         }
 

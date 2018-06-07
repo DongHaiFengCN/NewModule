@@ -55,6 +55,8 @@ import bean.kitchenmanage.kitchen.KitchenClient;
 import bean.kitchenmanage.order.Goods;
 import bean.kitchenmanage.order.Order;
 import bean.kitchenmanage.qrcode.Qrcode;
+import bean.kitchenmanage.table.Area;
+import bean.kitchenmanage.table.Table;
 import doaing.mylibrary.MyApplication;
 import doaing.order.untils.GlobalConstant;
 import doaing.order.untils.MyBigDecimal;
@@ -221,11 +223,11 @@ public class NewOrderService extends Service {
             }
         }
     }
-    private void changeTableState( String tableNo)
+    private void changeTableState( int tableNo)
     {
         List<Document> documentList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Table"))
-                        .and(Expression.property("num").equalTo(Expression.string(tableNo)))
+                        .and(Expression.property("num").equalTo(Expression.intValue(tableNo)))
                 ,null);
 
         if(documentList.size()>0)
@@ -257,9 +259,11 @@ public class NewOrderService extends Service {
         }
 
         Order obj= CDBHelper.getObjById(order_id,Order.class);
-        goodsList.addAll(obj.getGoods());// = obj.getGoodsList();
-        areaName = obj.getAreaName();
-        tableName = obj.getTableName();
+        goodsList.addAll(obj.getGoodsList());// = obj.getGoodsList();
+        Table table = CDBHelper.getObjById(obj.getTableId(),Table.class);
+        Area area = CDBHelper.getObjById(table.getAreaId(),Area.class);
+        areaName = area.getName();
+        tableName = table.getName();
         if (obj.getOrderNum() == 1)//第一次下单
 
             serNum = obj.getSerialNum();//流水号
@@ -267,7 +271,7 @@ public class NewOrderService extends Service {
         else //多次下单
             serNum = obj.getSerialNum() + "_" + obj.getOrderNum();
         gOrderId = order_id;
-        String tableNo = obj.getTableNum();
+        int tableNo = table.getNum();
         changeTableState(tableNo);
 
         //1\ 查询出所有厨房,并分配菜品

@@ -8,6 +8,7 @@
 */
 package bean.kitchenmanage.user;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Station {
@@ -49,10 +50,22 @@ public class Station {
 	 *员工ids
 	 */
 	private List<String> userIds;
+
+	public List<String> getRoleIds() {
+		if (roleIds == null) {
+			return new ArrayList<>();
+		}
+		return roleIds;
+	}
+
+	public void setRoleIds(List<String> roleIds) {
+		this.roleIds = roleIds;
+	}
+
 	/**
 	 *对应角色
 	 */
-	private String roleId;
+	private List<String> roleIds;
 
 	public Station() {
 	}
@@ -129,11 +142,5 @@ public class Station {
 		this.userIds = userIds;
 	}
 
-	public String getRoleId() {
-		return roleId;
-	}
 
-	public void setRoleId(String roleId) {
-		this.roleId = roleId;
-	}
 }

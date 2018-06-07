@@ -52,9 +52,17 @@ public class Members {
 	 */
 	private String cardNum;
 	/**
-	 *余额
+	 *	 *该会员下赠送的总额，是在memberLogs变化 的时候更新的
+
 	 */
-	private float remainder;
+	private float chargeTotal;
+
+	/**
+	 *该会员下赠送的总额，是在memberLogs变化 的时候更新的
+	 */
+	private float chargePresentTotal;
+
+
 	/**
 	 *卡状态 0、 正常 1、已挂失 2、已消卡
 	 */
@@ -68,17 +76,14 @@ public class Members {
 	 */
 	private Employee creator;
 	/**
-	 *卡类型id
+	 *拥有的营销类型
 	 */
- 	private String  cardTypeId;
+	private String promotionId;
 	/**
-	 *充值记录
+	 * 会员注销时为false
 	 */
-	private List<String> rechargeLogIds;
-	/**
-	 *注销记录
-	 */
-	private String  cancelCardLogId;
+	private boolean valid;
+
 
 	public Members() {
 	}
@@ -163,12 +168,28 @@ public class Members {
 		this.cardNum = cardNum;
 	}
 
-	public float getRemainder() {
-		return remainder;
+	public float getChargeTotal() {
+		return chargeTotal;
 	}
 
-	public void setRemainder(float remainder) {
-		this.remainder = remainder;
+	public void setChargeTotal(float chargeTotal) {
+		this.chargeTotal = chargeTotal;
+	}
+
+	public float getChargePresentTotal() {
+		return chargePresentTotal;
+	}
+
+	public void setChargePresentTotal(float chargePresentTotal) {
+		this.chargePresentTotal = chargePresentTotal;
+	}
+
+	public boolean isValid() {
+		return valid;
+	}
+
+	public void setValid(boolean valid) {
+		this.valid = valid;
 	}
 
 	public int getState() {
@@ -195,27 +216,11 @@ public class Members {
 		this.creator = creator;
 	}
 
-	public String getCardTypeId() {
-		return cardTypeId;
+	public String getPromotionId() {
+		return promotionId;
 	}
 
-	public void setCardTypeId(String cardTypeId) {
-		this.cardTypeId = cardTypeId;
-	}
-
-	public List<String> getRechargeLogIds() {
-		return rechargeLogIds;
-	}
-
-	public void setRechargeLogIds(List<String> rechargeLogIds) {
-		this.rechargeLogIds = rechargeLogIds;
-	}
-
-	public String getCancelCardLogId() {
-		return cancelCardLogId;
-	}
-
-	public void setCancelCardLogId(String cancelCardLogId) {
-		this.cancelCardLogId = cancelCardLogId;
+	public void setPromotionId(String promotionId) {
+		this.promotionId = promotionId;
 	}
 }

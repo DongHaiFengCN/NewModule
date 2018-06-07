@@ -1,4 +1,4 @@
-package bean.kitchenmanage.dishes;
+package bean.kitchenmanage.dish;
 
 import java.io.Serializable;
 

@@ -285,7 +285,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
                 t9GoodsList.get(selGoodsPos).setDishesCount(destCount);
                 seekT9Adapter.notifyDataSetChanged();
 
-                Goods goods = new Goods(myapp.getCompany_ID());
+                Goods goods = new Goods();
                 goods.setDishesName(name);
                 if (tasteList.size() == 0) {
                     goods.setDishesTaste(null);
@@ -342,11 +342,11 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             @Override
             public void run() {
                 List<Document> documentList = CDBHelper.getDocmentsByWhere(
-                        Expression.property("className").equalTo(Expression.string("Dishes"))
+                        Expression.property("className").equalTo(Expression.string("Dish"))
                                 .and(Expression.property("code9").like(Expression.string("%" + search + "%")))
                         , null);
                 for (Document doc : documentList) {
-                    Goods goodsObj = new Goods(myapp.getCompany_ID());
+                    Goods goodsObj = new Goods();
                     try {
                         if (doc.getInt("state") == 1){
                                 goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("name")+"(估清)"));
@@ -381,12 +381,12 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             public void run() {
 
                 List<Document> documentList = CDBHelper.getDocmentsByWhere(
-                        Expression.property("className").equalTo(Expression.string("Dishes"))
+                        Expression.property("className").equalTo(Expression.string("Dish"))
                                 .and(Expression.property("code26").like(Expression.string("%"+search + "%")))
                         , Ordering.property("name").ascending());
 
                 for (Document doc : documentList) {
-                    Goods goodsObj = new Goods(myapp.getCompany_ID());
+                    Goods goodsObj = new Goods();
                     try {
                         if (doc.getInt("state") == 1){
                             goodsObj.setDishesName(ToolUtil.emojiRecovery2(doc.getString("name")+"(估清)"));
@@ -416,7 +416,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
     private  String findZDCKindId()
     {
         List<String> zdcIdList = CDBHelper.getIdsByWhere(
-                Expression.property("className").equalTo(Expression.string("DishesKind"))
+                Expression.property("className").equalTo(Expression.string("DishKind"))
                  .and(Expression.property("name").equalTo(Expression.string("自点菜")))
                 ,null);
         Log.e("SeekT9",""+zdcIdList.size());
@@ -508,7 +508,7 @@ public class SeekT9Fragment extends Fragment implements View.OnClickListener{
             btn_comfirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Goods obj = new Goods(myapp.getCompany_ID());
+                    Goods obj = new Goods();
                     if (TextUtils.isEmpty(f_count.getText().toString())) {
                         Toast.makeText(getActivity(), "数量不能为空或者.", Toast.LENGTH_LONG).show();
                         return;

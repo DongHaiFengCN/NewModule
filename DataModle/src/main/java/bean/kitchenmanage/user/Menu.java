@@ -1,54 +1,34 @@
 package bean.kitchenmanage.user;
-/**
- * @ClassName: MenuModel
- * @Description: 菜单类文件
- * @author loongsun
- * @date 2014-7-29 上午1:06:02
- *
- */
 
-public class Menu {
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.List;
 
-	/**
-	 * 公司唯一身份id,用于数据同步,做为唯一管道符
-	 */
-	private  String id;
-	/**
-	 * 公司唯一身份id,用于数据同步,做为唯一管道符
-	 */
-	private String channelId;
-	/**
-	 * 类名，用于数据库查询类过滤
-	 */
-	private String className = "Menu";
-	/**
-	 * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
-	 */
-	private String dataType = "BaseData";
+public class Menu implements Serializable {
 
-	/**
-	 * 菜单名称
-	 */
-	private String name;
-	/**
-	 * 菜单描述
-	 */
+	private static final long serialVersionUID = 1L;
+
+	private String name = "菜品管理";
 	private String description;
-	/**
-	 * 父菜单ID
-	 */
-	private String parentId;
+	private boolean enable;
+	private List<Menu> menuList;
+	private String dataType = "BaseData";
+	private String channelId = "2";
+	private boolean valid;
+	private int key;
 
-	public Menu() {
+	public int getKey() {
+		return key;
 	}
 
-	public String getId() {
-		return id;
+	public void setKey(int key) {
+		this.key = key;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getChannelId() {
 		return channelId;
@@ -66,6 +46,16 @@ public class Menu {
 		this.className = className;
 	}
 
+	private String className ="Menu";
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getDataType() {
 		return dataType;
 	}
@@ -74,12 +64,12 @@ public class Menu {
 		this.dataType = dataType;
 	}
 
-	public String getName() {
-		return name;
+	public boolean isValid() {
+		return valid;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setValid(boolean valid) {
+		this.valid = valid;
 	}
 
 	public String getDescription() {
@@ -90,11 +80,41 @@ public class Menu {
 		this.description = description;
 	}
 
-	public String getParentId() {
-		return parentId;
+	public boolean isEnable() {
+		return enable;
 	}
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
+	public void setEnable(boolean enable) {
+		this.enable = enable;
+	}
+
+	public List<Menu> getMenuList() {
+		return menuList;
+	}
+
+	public void setMenuList(List<Menu> menuList) {
+		this.menuList = menuList;
+	}
+
+	public Menu myclone() {
+		Menu outer = null;
+		try {
+
+			// 将该对象序列化成流,因为写在流里的是对象的一个拷贝，而原对象仍然存在于JVM里面。所以利用这个特性可以实现对象的深拷贝
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(baos);
+			oos.writeObject(this);
+
+			// 将流序列化成对象
+			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+			ObjectInputStream ois = new ObjectInputStream(bais);
+			outer = (Menu) ois.readObject();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return outer;
 	}
 }

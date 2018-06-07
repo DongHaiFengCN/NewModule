@@ -1,9 +1,6 @@
-package bean.kitchenmanage.dishes;
+package bean.kitchenmanage.dish;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * The type Dishes kind c.
@@ -13,7 +10,7 @@ import java.util.List;
  * @Description: 菜品类文件
  * @date 2017 -7-29 上午1:06:02
  */
-public class DishesKind implements Serializable
+public class DishKind implements Serializable
 {
 	/**
 	 * 公司唯一身份id,用于数据同步,做为唯一管道符
@@ -22,7 +19,7 @@ public class DishesKind implements Serializable
 	/**
 	 * 类名，用于数据库查询类过滤
 	 */
-	private String className="DishesKind";
+	private String className="DishKind";
 	/**
 	 * 对象id,等于docmentid,一般用于Pojo操作时使用。
 	 */
@@ -43,7 +40,7 @@ public class DishesKind implements Serializable
 	/**
 	 * Instantiates a new Dishes kind c.
 	 */
-	public DishesKind()
+	public DishKind()
 	{
 	}
 	public String getChannelId() {

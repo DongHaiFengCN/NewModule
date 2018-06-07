@@ -12,17 +12,9 @@ import java.io.Serializable;
 public class InventoryItem implements Serializable {
 
     /**
-     * 公司唯一身份id,用于数据同步,做为唯一管道符
-     */
-    private String channelId;
-    /**
-     * 所属的盘点类
-     */
-    private String  inventory;
-    /**
      * 盘点的源料
      */
-    private String material;
+    private Material material;
     /**
      * 理论剩余源料量
      */
@@ -36,13 +28,16 @@ public class InventoryItem implements Serializable {
      */
     private float compare;//盘点差异数
 
-    public InventoryItem(Inventory inventory, MaterialC material, float remainder, float count, float compare) {
-        this.remainder = remainder;
-        this.count = count;
-        this.compare = compare;
+    public InventoryItem() {
     }
 
+    public Material getMaterial() {
+        return material;
+    }
 
+    public void setMaterial(Material material) {
+        this.material = material;
+    }
 
     public float getRemainder() {
         return remainder;

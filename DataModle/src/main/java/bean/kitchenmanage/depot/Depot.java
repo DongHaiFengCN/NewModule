@@ -1,16 +1,14 @@
 package bean.kitchenmanage.depot;
 
-import java.io.Serializable;
-
 /**
- * 供应商.
+ * Class description goes here.
  *
- * Created by loongsun on 17/1/8.
- *
+ * @author loongsun
+ * Created  on 2018/5/15.
+ * <p>
  * email: 125736964@qq.com
  */
-
-public class Provider implements Serializable {
+public class Depot {
     /**
      *对象id,等于docmentid,一般用于Pojo操作时使用。
      */
@@ -22,29 +20,25 @@ public class Provider implements Serializable {
     /**
      * 类名，用于数据库查询类过滤
      */
-    private String className = "Provider";
+    private String className = "Depot";
     /**
      * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
      */
     private String dataType = "BaseData";
     /**
-     * 公司名称
+     * 仓库名称
      */
     private String name;
     /**
-     * 电话
+     * 创建时间
      */
-    private String tel;
+    private String createdTime;
     /**
-     *  地址
+     * 出库方式：1，点餐出库；2，人工出库
      */
-    private String address;
-    /**
-     * 联系人
-     */
-    private String contactor;
+    private int mode;
 
-    public Provider() {
+    public Depot() {
     }
 
     public String getId() {
@@ -87,27 +81,19 @@ public class Provider implements Serializable {
         this.name = name;
     }
 
-    public String getTel() {
-        return tel;
+    public String getCreatedTime() {
+        return createdTime;
     }
 
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setCreatedTime(String createdTime) {
+        this.createdTime = createdTime;
     }
 
-    public String getAddress() {
-        return address;
+    public int getMode() {
+        return mode;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getContactor() {
-        return contactor;
-    }
-
-    public void setContactor(String contactor) {
-        this.contactor = contactor;
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }

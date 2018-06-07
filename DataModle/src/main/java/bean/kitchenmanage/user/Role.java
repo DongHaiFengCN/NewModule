@@ -5,83 +5,76 @@ import java.util.List;
 
 
 /**
- * 
- * 
- * @author sdses1
- * 
- */
+ * 项目名称：T
+ * 类描述：
+ * 创建人：donghaifeng
+ * 创建时间：2018/4/18 9:44
+ * 修改人：donghaifeng
+ * 修改时间：2018/4/18 9:44
+ * 修改备注：*/
+
+
+
 public class Role {
-	/**
-	 * 角色id
-	 */
-	private String id;
-	/**
-	 * 公司唯一身份id,用于数据同步,做为唯一管道符
-	 */
-	private String channelId;
-	/**
-	 * 类名，用于数据库查询类过滤
-	 */
-	private String className = "Role";
+
 	/**
 	 * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
 	 */
 	private String dataType = "BaseData";
 	/**
-	 *父角色id
-	 */
-	private String parentId;
-	/**
-	 *角色名称
-	 */
-	private String name;
-	/**
 	 *角色描述
 	 */
 	private String description;
 
-	public Role() {
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getChannelId() {
-		return channelId;
-	}
-
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
 	public String getDataType() {
-		return dataType;
+		return dataType == null ? "" : dataType;
 	}
 
 	public void setDataType(String dataType) {
 		this.dataType = dataType;
 	}
 
-	public String getParentId() {
-		return parentId;
+
+	public void setChannleId(String channleId) {
+		this.channleId = channleId;
 	}
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
+	/**
+	 * 公司唯一身份id,用于数据同步,做为唯一管道符
+	 */
+	private String channleId;
+
+	public String getId() {
+		return id == null ? "" : id;
 	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	private String id;
+	/**
+	 *角色名称
+	 */
+	private String name;
+
+	private List<Menu> menuList;
+
+	public String getClassName() {
+		return className == null ? "" : className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	private String className;
+
+
+	public void setMenuList(List<Menu> menuList) {
+		this.menuList = menuList;
+	}
+
 
 	public String getName() {
 		return name;
@@ -90,12 +83,15 @@ public class Role {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public void addMenu(Menu menu) {
 
-	public String getDescription() {
-		return description;
+		if(menuList == null){
+
+			menuList = new ArrayList<>();
+		}
+		menuList.add(menu);
 	}
-
-	public void setDescription(String description) {
-		this.description = description;
+	public List<Menu> getMenuList() {
+		return menuList;
 	}
 }
