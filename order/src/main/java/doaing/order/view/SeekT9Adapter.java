@@ -32,7 +32,7 @@ import doaing.order.view.adapter.SeekT9DialogAdapter;
 import tools.CDBHelper;
 import tools.ToolUtil;
 
-import static tools.CDBHelper.getFormatDate;
+import static tools.Method.getNewFormatDate;
 
 
 
@@ -280,7 +280,7 @@ public class SeekT9Adapter extends BaseAdapter {
         goodsObj.setGoodsType(0);
         goodsObj.setDishesId(mGoodsList.get(position).getDishesId());
         goodsObj.setDishesKindId(mGoodsList.get(position).getDishesKindId());
-        goodsObj.setCreatedTime(getFormatDate());
+        goodsObj.setCreatedTime(getNewFormatDate());
         if (!viewHolder.viewShu.getText().toString().equals("0")) {
             viewHolder.viewShu.setVisibility(View.VISIBLE);
             viewHolder.viewJian.setVisibility(View.VISIBLE);

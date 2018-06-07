@@ -527,8 +527,8 @@ public class DeskActivity extends AppCompatActivity {
                                                     Date date = new Date();
                                                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
                                                     //查询当日的订单
-                                                    List<CheckOrder> checkOrderCS = CDBHelper.getObjByWhere(getApplicationContext()
-                                                            , Expression.property("className").equalTo(Expression.string("CheckOrder"))
+                                                    List<CheckOrder> checkOrderCS = CDBHelper.getObjByWhere(
+                                                             Expression.property("className").equalTo(Expression.string("CheckOrder"))
                                                                     .and(Expression.property("checkTime").like(Expression.string(formatter.format(date)+"%")))
                                                             , null, CheckOrder.class);
 
@@ -683,7 +683,7 @@ public class DeskActivity extends AppCompatActivity {
                                             //1\改变所选桌位对象状态为使用
                                             MutableDocument selectTable = freeTableList.get(pos).toMutable();
                                             selectTable.setInt("state",2);
-                                            CDBHelper.saveDocument(getApplicationContext(),selectTable);
+                                            CDBHelper.saveDocument(selectTable);
                                             //2\改变原桌位对象状态为空闲
                                             changeOldTable(tableId);
                                             //3\改变原桌位下订单为该桌位下
@@ -696,7 +696,7 @@ public class DeskActivity extends AppCompatActivity {
                                             {
                                                 MutableDocument mDoc = doc.toMutable();
                                                 mDoc.setString("tableNum",tableNum);
-                                                CDBHelper.saveDocument(getApplicationContext(),mDoc);
+                                                CDBHelper.saveDocument(mDoc);
                                             }
                                             dialog.dismiss();
                                             pos = 0;
@@ -765,7 +765,7 @@ public class DeskActivity extends AppCompatActivity {
         Document doc = CDBHelper.getDocByID(tableId);
         MutableDocument mDoc = doc.toMutable();
         mDoc.setInt("state",0);
-        CDBHelper.saveDocument(getApplicationContext(),mDoc);
+        CDBHelper.saveDocument(mDoc);
 
     }
 private void cancelTableOrder(String Id,List<String> orderList)
@@ -798,14 +798,14 @@ private void cancelTableOrder(String Id,List<String> orderList)
                                     mDoc.setString("cancelReason",input);
 
                                 mDoc.setInt("orderState",2);
-                                CDBHelper.saveDocument(null,mDoc);
+                                CDBHelper.saveDocument(mDoc);
                             }
                         }
 
                         Document tabDoc = CDBHelper.getDocByID(tableId);
                         MutableDocument tabmDoc = tabDoc.toMutable();
                         tabmDoc.setInt("state",0);
-                        CDBHelper.saveDocument(null,tabmDoc);
+                        CDBHelper.saveDocument(tabmDoc);
                     }
                 });
             } catch (CouchbaseLiteException e)
@@ -933,8 +933,8 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
                 dishesObjectCollection = new HashMap<>();
 
-                dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                        , Expression.property("className").equalTo(Expression.string("DishKind"))
+                dishesKindCList = CDBHelper.getObjByWhere(
+                        Expression.property("className").equalTo(Expression.string("DishKind"))
                         ,null, DishKind.class);
                 Log.e("DeskA",""+dishesKindCList.size());
 

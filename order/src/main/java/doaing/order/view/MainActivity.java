@@ -91,8 +91,9 @@ import tools.ToolUtil;
 
 
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
-import static tools.CDBHelper.getFormatDate;
-import static tools.CDBHelper.getNianDate;
+import static tools.Method.getFormatDate;
+import static tools.Method.getNewFormatDate;
+import static tools.Method.getNianDate;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -785,7 +786,7 @@ public class MainActivity extends AppCompatActivity {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(getApplicationContext(),
+        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(
 
                 Expression.property("className").equalTo(Expression.string("OrderNum"))
 
@@ -1294,7 +1295,7 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
-        newOrderObj.setCreatedTime(getFormatDate());
+        newOrderObj.setCreatedTime(getNewFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
         newOrderObj.setTableId(myApp.getTable_sel_obj().getId());
         if (!TextUtils.isEmpty(editText.getText().toString())){

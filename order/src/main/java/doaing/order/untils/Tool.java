@@ -228,7 +228,8 @@ public class Tool {
         String orderNum=null;
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
 
-        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(context.getApplicationContext(), Expression.property("className").equalTo(Expression.string("OrderNum"))
+        List<OrderNum> orderNumList = CDBHelper.getObjByWhere(
+                Expression.property("className").equalTo(Expression.string("OrderNum"))
                 ,null
                 ,OrderNum.class);
         if(orderNumList.size()<=0)//第一次使用

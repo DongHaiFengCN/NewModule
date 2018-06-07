@@ -159,7 +159,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         StringBuilder stringBuilder = new StringBuilder("实际支付：");
 
         //获取包含桌号xx的所有订单
-        List<Order> orderCList = CDBHelper.getObjByWhere(getApplicationContext(), Expression.property("className")
+        List<Order> orderCList = CDBHelper.getObjByWhere( Expression.property("className")
                         .equalTo(Expression.string("Order"))
                         .and(Expression.property("tableId").equalTo(Expression.string(tableC.getId())))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
@@ -1530,7 +1530,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
     private boolean ifChangeTable() {
-        List<Order> orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
+        List<Order> orderCList = CDBHelper.getObjByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
                         .and(Expression.property("tableNum").equalTo(Expression.intValue(myApplication.getTable_sel_obj().getNum())))

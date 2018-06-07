@@ -364,7 +364,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
             muDoc.setInt("printerId",mPrinterId);
             //muDoc.setBoolean("statePrinter",state);
             muDoc.setValue("kindIds",dishKindIdArray);
-            CDBHelper.saveDocument(getApplicationContext(),muDoc);
+            CDBHelper.saveDocument(muDoc);
         }
 
     }
@@ -637,7 +637,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                         Document doc  = docList.get(0);
                         MutableDocument mutableDocument = doc.toMutable();
                         mutableDocument.setBoolean("statePrinter",false);
-                        CDBHelper.saveDocument(null,mutableDocument);
+                        CDBHelper.saveDocument(mutableDocument);
                     }
 
                     setProgressBarIndeterminateVisibility(false);
@@ -657,7 +657,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
                         Document doc  = docList.get(0);
                         MutableDocument mutableDocument = doc.toMutable();
                         mutableDocument.setBoolean("statePrinter",true);
-                        CDBHelper.saveDocument(null,mutableDocument);
+                        CDBHelper.saveDocument(mutableDocument);
                     }
 
                     setProgressBarIndeterminateVisibility(false);

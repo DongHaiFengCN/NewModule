@@ -43,7 +43,8 @@ import tools.CDBHelper;
 import tools.MyLog;
 import tools.ToolUtil;
 
-import static tools.CDBHelper.getFormatDate;
+import static tools.Method.getFormatDate;
+
 
 
 

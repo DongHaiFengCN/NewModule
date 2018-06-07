@@ -84,8 +84,8 @@ import tools.CDBHelper;
 import tools.MyLog;
 
 import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
-import static tools.CDBHelper.getFormatDate;
-import static tools.CDBHelper.getNianDate;
+import static tools.Method.getFormatDate;
+import static tools.Method.getNianDate;
 
 /*
 *
@@ -507,7 +507,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                             j--;
                             if (orderObj.getGoodsList().size() == 0)
                             {
-                                CDBHelper.deleteObj( getApplicationContext(),orderObj);
+                                CDBHelper.deleteObj( orderObj);
                             } else {
                                 float lastPrice = MyBigDecimal.sub(orderObj.getTotalPrice(), retreatePrice, 1);
                                 orderObj.setTotalPrice(lastPrice);
@@ -538,7 +538,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                             j--;
                             if (orderObj.getGoodsList().size() == 0)
                             {
-                                CDBHelper.deleteObj(getApplicationContext(), orderObj);
+                                CDBHelper.deleteObj( orderObj);
                             } else {
                                 float lastPrice = MyBigDecimal.sub(orderObj.getTotalPrice(), retreatePrice, 1);
                                 orderObj.setTotalPrice(lastPrice);
@@ -1057,7 +1057,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                 List<Order> orderCList1 =new ArrayList<>();//
                 List<Order> orderCList2 =new ArrayList<>();//
 
-                orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
+                orderCList = CDBHelper.getObjByWhere(
                         Expression.property("className").equalTo(Expression.string("Order"))
                                 .and(Expression.property("tableId").equalTo(Expression.string(myapp.getTable_sel_obj().getId())))
                                 .and(Expression.property("state").equalTo(Expression.intValue(1)))
@@ -1163,7 +1163,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         List<Order> orderCList1 =new ArrayList<>();//
         List<Order> orderCList2 =new ArrayList<>();//
 
-        orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
+        orderCList = CDBHelper.getObjByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("tableId").equalTo(Expression.string(myapp.getTable_sel_obj().getId())))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))

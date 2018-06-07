@@ -240,7 +240,7 @@ public class NewOrderService extends Service {
             if(state!=2)//没有置成使用状态
             {
                 mDoc.setInt("state",2);
-                CDBHelper.saveDocument(getApplicationContext(),mDoc);
+                CDBHelper.saveDocument(mDoc);
             }
         }
 
@@ -461,7 +461,7 @@ public class NewOrderService extends Service {
                        Document doc  = docList.get(0);
                        MutableDocument mutableDocument = doc.toMutable();
                        mutableDocument.setBoolean("statePrinter",false);
-                       CDBHelper.saveDocument(null,mutableDocument);
+                       CDBHelper.saveDocument(mutableDocument);
                    }
 
                    //对连接失败的打印机，移除本次打印内容
@@ -488,7 +488,7 @@ public class NewOrderService extends Service {
                         Document doc  = docList.get(0);
                         MutableDocument mutableDocument = doc.toMutable();
                         mutableDocument.setBoolean("statePrinter",true);
-                        CDBHelper.saveDocument(null,mutableDocument);
+                        CDBHelper.saveDocument(mutableDocument);
                     }
                     //1、程序连接上厨房端打印机后要进行分厨房打印
 
