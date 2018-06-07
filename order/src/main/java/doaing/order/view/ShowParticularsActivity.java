@@ -288,7 +288,6 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         try {
             newGoods = (Goods) oldGoods.clone();//向下转型----P2没有被实例化
             newGoods.setDishesCount(counts);
-            newGoods.setOrderId(orderId);
         } catch (CloneNotSupportedException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -306,13 +305,11 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
-        newOrderObj.setTableName(tableName);
-        newOrderObj.setAreaName(areaName);
+        newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear("2018");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoods(tmpList);
+        newOrderObj.setGoodsList(tmpList);
         CDBHelper.createAndUpdate( newOrderObj);
     }
     //退菜
@@ -346,16 +343,13 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
-        newOrderObj.setTableName(tableName);
-        newOrderObj.setAreaName(areaName);
+        newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(退)");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoods(tmpList);
+        newOrderObj.setGoodsList(tmpList);
         CDBHelper.createAndUpdate( newOrderObj);
 
     }
@@ -389,16 +383,13 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderType(2);//赠菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
-        newOrderObj.setTableName(tableName);
-        newOrderObj.setAreaName(areaName);
+        newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(2);//置成赠菜类型
         newGoods.setDishesName(oldGoods.getDishesName() + "(赠)");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoods(tmpList);
+        newOrderObj.setGoodsList(tmpList);
         CDBHelper.createAndUpdate( newOrderObj);
 
     }
@@ -431,11 +422,8 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderType(0);//添菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
-        newOrderObj.setTableName(tableName);
-        newOrderObj.setAreaName(areaName);
+        newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(0);
 
         String dishesName = oldGoods.getDishesName();
@@ -443,7 +431,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newGoods.setDishesName(dishesName);
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoods(tmpList);
+        newOrderObj.setGoodsList(tmpList);
         CDBHelper.createAndUpdate( newOrderObj);
     }
 
@@ -475,18 +463,15 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setOrderType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
-        newOrderObj.setTableNum(myapp.getTable_sel_obj().getNum());
-        newOrderObj.setTableName(tableName);
-        newOrderObj.setAreaName(areaName);
+        newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());
-        newGoods.setOrderId(orderId);
         newGoods.setGoodsType(1);//置成退菜类型
         String dishesName = oldGoods.getDishesName();
         dishesName = dishesName.substring(0, dishesName.length() - 3);
         newGoods.setDishesName(dishesName + "(退)");
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
-        newOrderObj.setGoods(tmpList);
+        newOrderObj.setGoodsList(tmpList);
         CDBHelper.createAndUpdate( newOrderObj);
     }
 
@@ -503,7 +488,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             if (orderObj.getOrderType() != type)
                 continue;
 
-            List<Goods> oldGoodsList = orderObj.getGoods();
+            List<Goods> oldGoodsList = orderObj.getGoodsList();
             for (int j = 0; j < oldGoodsList.size(); j++)
             {
                 if(retreateCounts<=0)
@@ -518,9 +503,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                         if (retreateCounts >= oldGoods.getDishesCount())//退出菜品数量超出原有数量
                         {
                             float retreatePrice = MyBigDecimal.mul(oldGoods.getPrice(), oldGoods.getDishesCount(), 1);
-                            orderObj.getGoods().remove(oldGoods);
+                            orderObj.getGoodsList().remove(oldGoods);
                             j--;
-                            if (orderObj.getGoods().size() == 0)
+                            if (orderObj.getGoodsList().size() == 0)
                             {
                                 CDBHelper.deleteObj( getApplicationContext(),orderObj);
                             } else {
@@ -549,9 +534,9 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                         if (retreateCounts >= oldGoods.getDishesCount())//退出菜品数量超出原有数量
                         {
                             float retreatePrice = MyBigDecimal.mul(oldGoods.getPrice(), oldGoods.getDishesCount(), 1);
-                            orderObj.getGoods().remove(oldGoods);
+                            orderObj.getGoodsList().remove(oldGoods);
                             j--;
-                            if (orderObj.getGoods().size() == 0)
+                            if (orderObj.getGoodsList().size() == 0)
                             {
                                 CDBHelper.deleteObj(getApplicationContext(), orderObj);
                             } else {
@@ -703,7 +688,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                                                              if (orderC.getOrderType() != 0){
                                                                  continue;
                                                              }
-                                                             for (Goods goodsObj : orderC.getGoods())
+                                                             for (Goods goodsObj : orderC.getGoodsList())
                                                              {
                                                                  if (goodsObj.getDishesId() ==null){
                                                                      continue;
@@ -1074,7 +1059,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
                 orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
                         Expression.property("className").equalTo(Expression.string("Order"))
-                                .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getNum())))
+                                .and(Expression.property("tableId").equalTo(Expression.string(myapp.getTable_sel_obj().getId())))
                                 .and(Expression.property("state").equalTo(Expression.intValue(1)))
                         , Ordering.property("createdTime").descending()
                         , Order.class);
@@ -1103,7 +1088,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
                  //
                   for (Order orderC : orderCList)
                   {
-                      List<Goods> goodsCList1 = orderC.getGoods();
+                      List<Goods> goodsCList1 = orderC.getGoodsList();
                       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                       Goods temp ;
 
@@ -1180,7 +1165,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
 
         orderCList = CDBHelper.getObjByWhere(getApplicationContext(),
                 Expression.property("className").equalTo(Expression.string("Order"))
-                        .and(Expression.property("tableNum").equalTo(Expression.string(myapp.getTable_sel_obj().getNum())))
+                        .and(Expression.property("tableId").equalTo(Expression.string(myapp.getTable_sel_obj().getId())))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").descending()
                 , Order.class);
@@ -1205,7 +1190,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         orderCList.addAll(orderCList0);
         for (Order orderC : orderCList) {
 
-            List<Goods> goodsCList1 = orderC.getGoods();
+            List<Goods> goodsCList1 = orderC.getGoodsList();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             Goods temp ;
             for (int i = 0 ; i < goodsCList1.size()-1 ;i++){
@@ -1337,7 +1322,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderCList.get(0).getSerialNum() + "\n"));
         PrintUtils.printText(PrintUtils.printTwoData("下单时间", getFormatDate() + "\n"));
 
-        PrintUtils.printText(PrintUtils.printTwoData("人数：" + myapp.getTable_sel_obj().getCurrentPersions(), "收银员：" + waiter + "\n"));
+        PrintUtils.printText(PrintUtils.printTwoData("人数：" + myapp.getTable_sel_obj().getCurrentPersons(), "收银员：" + waiter + "\n"));
         PrintUtils.printText("--------------------------------\n");
         PrintUtils.selectCommand(PrintUtils.BOLD);
         PrintUtils.printText(PrintUtils.printThreeData("项目", "数量", "金额\n"));
@@ -1656,7 +1641,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
             // esc.addSetLeftMargin((short)10);
             esc.addText("流水号:" + orderCList.get(0).getSerialNum() + "\n");//流水号生成机制开发
             esc.addText("房间:" + areaName + "   " + "桌位：" + tableName + "\n");// 打印文字
-            esc.addText("人数:" + myapp.getTable_sel_obj().getCurrentPersions() + "\n");//流水号生成机制开发
+            esc.addText("人数:" + myapp.getTable_sel_obj().getCurrentPersons() + "\n");//流水号生成机制开发
             esc.addText("时间:" + date + " " + endtime + "\n"); // 时间
             esc.addText("--------------------------------\n");
             esc.addText("------------------------------------------\n");
@@ -1714,7 +1699,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         {
             esc.addText("流水号:" + orderCList.get(0).getSerialNum() + "\n");//流水号生成机制开发
             esc.addText("房间:" + areaName + "   " + "桌位：" + tableName + "\n");// 打印文字
-            esc.addText("人数:" + myapp.getTable_sel_obj().getCurrentPersions() + "\n");//流水号生成机制开发
+            esc.addText("人数:" + myapp.getTable_sel_obj().getCurrentPersons() + "\n");//流水号生成机制开发
             esc.addText("时间:" + date + " " + endtime + "\n"); // 时间
             esc.addText("--------------------------------\n"); //32横线==16个汉字
             esc.addText("菜品名称                数量    \n"); // 菜品名称+16个空格即占12个汉字长度；  数量+4个空格即占4个汉字长度 )

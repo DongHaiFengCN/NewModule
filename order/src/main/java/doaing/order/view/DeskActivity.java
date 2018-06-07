@@ -430,7 +430,7 @@ public class DeskActivity extends AppCompatActivity {
                                 //设置就餐人数，转跳
 
                                 table.setState(2);
-                                table.setCurrentPersions(Integer.valueOf(editText.getText().toString()));
+                                table.setCurrentPersons(Integer.valueOf(editText.getText().toString()));
                                 //设置全局Table
                                 myapp.setTable_sel_obj(table);
                                 CDBHelper.createAndUpdate(table);
@@ -464,7 +464,7 @@ public class DeskActivity extends AppCompatActivity {
                 }else {
                     List<String> orderCList= CDBHelper.getIdsByWhere(
                             Expression.property("className").equalTo(Expression.string("Order"))
-                                    .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))
+                                    .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))
                                     .and(Expression.property("state").equalTo(Expression.intValue(1)))
                             ,null
                     );
@@ -537,7 +537,7 @@ public class DeskActivity extends AppCompatActivity {
                                                     //移除不是当前桌的订单
                                                     while (iterator.hasNext()){
                                                         CheckOrder c = iterator.next();
-                                                        if(!c.getTableNum().equals(table.getNum())){
+                                                        if(!c.getTableId().equals(table.getId())){
                                                             iterator.remove();
                                                         }
                                                     }
@@ -551,9 +551,9 @@ public class DeskActivity extends AppCompatActivity {
                                                         //得到最近订单的坐标
                                                         int f =  Tool.getLastCheckOrder(dateList);
                                                         checkOrder = checkOrderCS.get(f);
-                                                        for (int i = 0; i < checkOrder.getOrderIds().size(); i++) {
+                                                        for (int i = 0; i < checkOrder.getOrderId().size(); i++) {
 
-                                                            Order order = CDBHelper.getObjById(checkOrder.getOrderIds().get(i),Order.class);
+                                                            Order order = CDBHelper.getObjById(checkOrder.getOrderId().get(i),Order.class);
                                                             order.setState(1);
                                                             CDBHelper.createAndUpdate( order);
                                                         }
@@ -576,13 +576,13 @@ public class DeskActivity extends AppCompatActivity {
                                                     //新数据查询
 
                                                     checkOrder = CDBHelper.getObjById(table.getLastCheckOrderId(),CheckOrder.class);
-                                                    if (checkOrder == null&&checkOrder.getOrderIds().size()==0){
+                                                    if (checkOrder == null&&checkOrder.getOrderId().size()==0){
                                                         return;
                                                     }
 
-                                                    for (int i = 0; i < checkOrder.getOrderIds().size(); i++) {
+                                                    for (int i = 0; i < checkOrder.getOrderId().size(); i++) {
 
-                                                        Order order = CDBHelper.getObjById(checkOrder.getOrderIds().get(i),Order.class);
+                                                        Order order = CDBHelper.getObjById(checkOrder.getOrderId().get(i),Order.class);
                                                         order.setState(1);
                                                         CDBHelper.createAndUpdate( order);
 
@@ -628,7 +628,7 @@ public class DeskActivity extends AppCompatActivity {
                     //使用&&预定状态
                  final   List<String> orderCList = CDBHelper.getIdsByWhere(
                             Expression.property("className").equalTo(Expression.string("Order"))
-                                    .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))
+                                    .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))
                                     .and(Expression.property("state").equalTo(Expression.intValue(1)))
                                     .and(Expression.property("orderType").notEqualTo(Expression.intValue(1)))
                             ,null);
@@ -690,7 +690,7 @@ public class DeskActivity extends AppCompatActivity {
                                             List<Document> documentList = CDBHelper.getDocmentsByWhere(
                                                     Expression.property("className").equalTo(Expression.string("Order"))
                                                             .and(Expression.property("state").equalTo(Expression.intValue(1))
-                                                            .and(Expression.property("tableNum").equalTo(Expression.string(table.getNum())))),
+                                                            .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))),
                                                     null);
                                             for (Document doc : documentList)
                                             {
@@ -934,7 +934,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
                 dishesObjectCollection = new HashMap<>();
 
                 dishesKindCList = CDBHelper.getObjByWhere(getApplicationContext()
-                        , Expression.property("className").equalTo(Expression.string("DishesKind"))
+                        , Expression.property("className").equalTo(Expression.string("DishKind"))
                         ,null, DishesKind.class);
                 Log.e("DeskA",""+dishesKindCList.size());
 
@@ -942,7 +942,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
                 for (DishesKind dishesKind : dishesKindCList) {
 
                     dishes = CDBHelper.getDocmentsByWhere(
-                            Expression.property("className").equalTo(Expression.string("Dishes"))
+                            Expression.property("className").equalTo(Expression.string("Dish"))
                                     .and(Expression.property("kindId").equalTo(Expression.string(dishesKind.getId())))
                             ,null);
 

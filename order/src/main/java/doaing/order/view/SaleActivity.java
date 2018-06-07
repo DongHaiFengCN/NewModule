@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.couchbase.lite.Array;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.Expression;
 
 import org.json.JSONObject;
 
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import bean.kitchenmanage.promotion.Promotion;
+import bean.kitchenmanage.promotion.PromotionRule;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -34,6 +37,8 @@ import doaing.order.R;
 import doaing.order.module.DatabaseSource;
 import doaing.order.module.IDBManager;
 import doaing.order.untils.Tool;
+import tools.CDBHelper;
+import tools.MyBigDecimal;
 import tools.MyLog;
 
 
@@ -58,17 +63,19 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     EditText etAmountphone;
     EditText etcode;
     TextView name;
-    TextView number;
+    TextView tv_discounts;
     TextView type;
     TextView status;
-    TextView discount;
+    TextView tv_mode;
     Button submitArea;
     TextView balance;
-
-    private int STATUS;
+    private float chargeTotal,chargePresentTotal;
+    private boolean STATUS;
     private Array array;
     private IDBManager idbManager;
-
+    private int mode_type;
+    private  float discounts;
+    private float counts;
     private int CardTypeFlag;
 
     private int disrate = 0;
@@ -164,10 +171,10 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
          etAmountphone = findViewById(R.id.etAmountphone);
          etcode = findViewById(R.id.etcode);
          name = findViewById(R.id.name);
-         number = findViewById(R.id.number);
+        tv_discounts = findViewById(R.id.discounts);
          type = findViewById(R.id.type);
          status = findViewById(R.id.status);
-         discount = findViewById(R.id.discount);
+        tv_mode = findViewById(R.id.mode);
          submitArea = findViewById(R.id.submit_area);
          balance = findViewById(R.id.balance);
 
@@ -189,105 +196,61 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
         etcode.setCursorVisible(false);
 
         //获取会员信息
-          Document members = idbManager.getMembers(etAmountphone.getText().toString());
+        List<Document> documents = CDBHelper.getDocmentsByWhere(
+                Expression.property("className").equalTo(Expression.string("Member"))
+                        .and(Expression.property("mobile").equalTo(Expression.string(etAmountphone.getText().toString().trim()))),
+                null);
 
+        if (documents.size() == 0){
+            Toast.makeText(SaleActivity.this,"会员不存在",Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Document members = documents.get(0);
         if (Tool.isNotEmpty(members)) {
 
             Tool.bindView(name, members.getString("name"));
-
-            Tool.bindView(number, members.getString("cardNum"));
-
-            if (!TextUtils.isEmpty(members.getString("cardTypeId"))) {
-
-                Document card = idbManager.getCard(members.getString("cardTypeId"));
-
-                //获取卡类型数据
-                if (members != null) {
-
-
-                    //cardType 1,折扣卡,2,充赠卡
-
-                    CardTypeFlag = card.getInt("cardType");
-
-                    if (CardTypeFlag == 1) {
-
-                        Tool.bindView(type, "折扣卡");
-
-                        disrate = card.getInt("disrate");
-
-                        //充值卡金额返回支付界面
-                        remainder = members.getFloat("remainder");
-                        Tool.bindView(balance,remainder+"元");
-
-
-                        array = card.getArray("cardDishesKindList");
-
-                        List<Object> list = array.toList();
-
-                        //便利当前会员包含的会员菜类
-                        for (int i = 0; i < list.size(); i++) {
-
-                            HashMap c = (HashMap) list.get(i);
-
-                            //菜类启用
-
-                            if ("1".equals(c.get("ischecked").toString())) {
-
-                                List<HashMap> cardDishesList = (List<HashMap>) c.get("cardDishesList");
-
-                                //遍历当前菜类下的菜品
-
-                                for (HashMap cardDishesC : cardDishesList) {
-
-                                    //当前菜品启用
-
-                                    if ("1".equals(cardDishesC.get("ischecked").toString())) {
-
-                                        DishesIdList.add(cardDishesC.get("dishesId").toString());
-
-
-                                    }
-
-                                }
-
-                            }
-                        }
-
-                    } else if (CardTypeFlag == 2) {
-
-
-                        Tool.bindView(type, "充值卡");
-
-                        //充值卡金额返回支付界面
-                        remainder = members.getFloat("remainder");
-                        Tool.bindView(balance,remainder+"元");
-
-                    }
-
-                    Tool.bindView(discount, card.getInt("disrate") + "/折");
-
-                }
-
-            }
-
-            STATUS = members.getInt("status");
-            if (STATUS == 1) {
+            Tool.bindView(type, "充值卡");
+            //充值卡金额返回支付界面
+            chargeTotal = members.getFloat("chargeTotal");//本金
+            chargePresentTotal = members.getFloat("chargePresentTotal");//增额
+            Tool.bindView(balance, MyBigDecimal.add(chargeTotal,chargePresentTotal,2)+"元");
+            STATUS = members.getBoolean("valid");
+            if (STATUS) {
 
                 Tool.bindView(status, "正常");
 
-            } else if (STATUS == 2) {
-
-                Tool.bindView(status, "已挂失");
-
-            } else if (STATUS == 3) {
+            } else {
 
                 Tool.bindView(status, "已销卡");
-
             }
+
+            if (members.getString("promotionId") == null){
+                return;
+            }
+            String promotionId = members.getString("promotionId");
+            Promotion promotion = CDBHelper.getObjById(promotionId, Promotion.class);
+
+            PromotionRule promotionRule = promotion.getPromotionRuleList().get(0);
+
+            mode_type = promotionRule.getMode();
+            discounts = promotionRule.getDiscounts();
+            counts = promotionRule.getCounts();
+            if (mode_type == 1){
+                Tool.bindView(tv_mode,"满折");
+                Tool.bindView(tv_discounts,"满"+promotionRule.getCounts()+"元，打"+promotionRule.getDiscounts()+"折");
+            }else if (mode_type  == 2){
+                Tool.bindView(tv_mode,"满赠");
+                Tool.bindView(tv_discounts,"满"+promotionRule.getCounts()+"元，赠"+promotionRule.getDiscounts());
+            }else if (mode_type  == 3){
+                Tool.bindView(tv_mode,"满减");
+                Tool.bindView(tv_discounts,"满"+promotionRule.getCounts()+"元，减"+promotionRule.getDiscounts());
+            }
+
+
 
         } else {
 
-            Toast.makeText(SaleActivity.this, "用户不存在！", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SaleActivity.this, "会员不存在！", Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -330,51 +293,25 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             }
 
         }else if (i == R.id.submit_area) {
-            if (STATUS == 1) {
-
+            if (STATUS) {
                 Intent intent = new Intent();
-
-                //设置会员卡类型
-
-                intent.putExtra("CardTypeFlag", CardTypeFlag);
-
                 if(TextUtils.isEmpty(etAmountphone.getText().toString())){
-
-                    etAmountphone.setError("数据为空");
-
+                    Toast.makeText(SaleActivity.this,"手机号不能为空",Toast.LENGTH_SHORT).show();
                     return;
-
                 }
-
+                if (etAmountphone.getText().toString().length() != 11){
+                    Toast.makeText(SaleActivity.this,"手机号错误",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 intent.putExtra("tel", etAmountphone.getText().toString());
-                // intent.putExtra("tel", "8888");
-                //折扣卡返回折扣率及支持的菜品列表
-
-                if (CardTypeFlag == 1) {
-
-                    MyLog.e("折扣");
-
-                    intent.putExtra("disrate", disrate);
-
-                    intent.putParcelableArrayListExtra("DishseList", DishesIdList);
-
-
-                } else if (CardTypeFlag == 2) {
-
-
-                    MyLog.e("充值");
-
-                    intent.putExtra("remainder", remainder);
-
-                }
-
-
+                intent.putExtra("chargeTotal", chargeTotal);
+                intent.putExtra("chargePresentTotal",chargePresentTotal);
+                intent.putExtra("mode",mode_type);
+                intent.putExtra("discounts",discounts);
+                intent.putExtra("counts",counts);
                 //返回支持打折菜品id
-
                 setResult(RESULT_OK, intent);
-
                 finish();
-
             } else {
                 Toast.makeText(SaleActivity.this, "当前会员无效", Toast.LENGTH_SHORT).show();
             }

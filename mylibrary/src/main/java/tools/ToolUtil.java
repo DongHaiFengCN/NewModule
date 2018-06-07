@@ -117,8 +117,6 @@ public class ToolUtil {
             file1.mkdir();
         }
     }
-
-
     /**
      * @param pinyin
      * @return

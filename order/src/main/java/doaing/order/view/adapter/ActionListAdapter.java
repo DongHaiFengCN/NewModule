@@ -92,8 +92,8 @@ public class ActionListAdapter extends BaseAdapter {
         Promotion promotion = (Promotion) list.get(i);
         viewHold.actionName.setText(promotion.getName());
         viewHold.actionTime.setText(promotion.getStartTime() + "    /     " + promotion.getEndTime());
-        for (int p = 0 ; p < promotion.getPromotionRuleIds().size();p++) {
-            PromotionRule promotionRules = CDBHelper.getObjById( promotion.getPromotionRuleIds().get(p), PromotionRule.class);
+        for (int p = 0 ; p < promotion.getPromotionRuleList().size();p++) {
+            PromotionRule promotionRules = promotion.getPromotionRuleList().get(p);
             if (promotionRules.getMode() == 1) {
 
                 viewHold.actionType.setText("打折");

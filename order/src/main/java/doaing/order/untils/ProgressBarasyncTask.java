@@ -133,10 +133,10 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
             PrintUtils.printText(areaCs.getName()+"/"+m.getTable_sel_obj().getName()+"\n\n");
             PrintUtils.selectCommand(PrintUtils.NORMAL);
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
-            Order orderC = CDBHelper.getObjById(checkOrderC.getOrderIds().get(0),Order.class);
+            Order orderC = CDBHelper.getObjById(checkOrderC.getOrderId().get(0),Order.class);
             PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getSerialNum()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("下单时间", checkOrderC.getCheckTime()+"\n"));
-            PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getCurrentPersions(), "收银员："+waiter+"\n"));
+            PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getCurrentPersons(), "收银员："+waiter+"\n"));
             PrintUtils.printText("--------------------------------\n");
             PrintUtils.selectCommand(PrintUtils.BOLD);
             PrintUtils.printText(PrintUtils.printThreeData("项目", "数量", "金额\n"));
@@ -279,9 +279,9 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
     private void setAll() {
         boolean flag ;
 
-        for (String orderCId: checkOrderC.getOrderIds()) {
+        for (String orderCId: checkOrderC.getOrderId()) {
             Order orderC = CDBHelper.getObjById(orderCId,Order.class);
-            for (Goods goodsb : orderC.getGoods()) {
+            for (Goods goodsb : orderC.getGoodsList()) {
                 flag = false;
                 for (Goods goodsC : goodsCList) {
 

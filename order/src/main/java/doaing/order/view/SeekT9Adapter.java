@@ -268,7 +268,7 @@ public class SeekT9Adapter extends BaseAdapter {
         mGoodsList.get(position).setDishesCount(mGoodsList.get(position).getDishesCount() + 1);
         viewHolder.viewShu.setText(mGoodsList.get(position).getDishesCount() + "");
 
-        Goods goodsObj = new Goods(myapp.getCompany_ID());
+        Goods goodsObj = new Goods();
         try {
             goodsObj.setDishesName(ToolUtil.emojiConvert1(mGoodsList.get(position).getDishesName()));
         } catch (UnsupportedEncodingException e) {
