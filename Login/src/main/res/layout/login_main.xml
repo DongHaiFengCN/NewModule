@@ -114,13 +114,23 @@
                     android:theme="@style/LoginMy_CheckBox" />
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="8dp"
                     android:gravity="center|left"
                     android:text="记住密码"
                     android:textColor="@color/black90"
                     android:typeface="monospace" />
+
+                <TextView
+                    android:id="@+id/login_tv_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right|center_vertical"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:onClick="onSetLoginType"
+                    android:text="管理员登录模式"
+                    android:textColor="@color/colorPrimary" />
             </LinearLayout>
 
             <Button

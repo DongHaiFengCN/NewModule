@@ -127,23 +127,8 @@ public class NewPswActivity extends AppCompatActivity {
                 {
                     Gson gson = new Gson();
                     responseModle obj = gson.fromJson(data, new TypeToken<responseModle>() {}.getType());
-                    if(TextUtils.isEmpty(obj.getStatusCode()))//
+                    if("ok".equals(obj.getStatus()))
                     {
-                        String userName = obj.getData();
-                        String psw =  mPsw1.getText().toString();
-                        //开始同步
-//                        CDBHelper.getSharedInstance(getApplicationContext());
-//                        CDBHelper.startPushAndPullReplicationForCurrentUser(userName,psw);
-//                        ((MyApplication)getApplicationContext()).setCompany_ID(userName);
-//
-//                        //跳转界面
-//                        ARouter
-//                                .getInstance()
-//                                .build("/order/DeskActivity")
-//                                .withString("mobile",mPointName.getText().toString())
-//                                .withString("channelId",userName)
-//                                .navigation();
-
                         Intent intent = new Intent(NewPswActivity.this, LoginActivity.class);
                         intent.putExtra("mobile",mobileNum);
                         startActivity(intent);
@@ -154,7 +139,7 @@ public class NewPswActivity extends AppCompatActivity {
                     {
                         // mPsw1.setError(getString(R.string.login_error_incorrect_password));
                         // mPsw1.requestFocus();
-                        Toast.makeText(getApplicationContext(),""+ obj.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),""+ obj.getMsg(), Toast.LENGTH_SHORT).show();
                     }
 
 
@@ -166,7 +151,6 @@ public class NewPswActivity extends AppCompatActivity {
                 }
             }
         });
-
 
 
     }

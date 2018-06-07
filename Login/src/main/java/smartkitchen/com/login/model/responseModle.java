@@ -10,33 +10,19 @@ package smartkitchen.com.login.model;
 
 public class responseModle
 {
-    private String statusCode;
-    private String message;
-    private String data;
+    private String status;
     private String msg;
-    private String code;
-    public String getStatusCode() {
-        return statusCode;
+    private channleData data;
+
+    public responseModle() {
     }
 
-    public void setStatusCode(String statusCode) {
-        this.statusCode = statusCode;
+    public String getStatus() {
+        return status;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getMsg() {
@@ -47,11 +33,11 @@ public class responseModle
         this.msg = msg;
     }
 
-    public String getCode() {
-        return code;
+    public channleData getData() {
+        return data;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setData(channleData data) {
+        this.data = data;
     }
 }

@@ -15,6 +15,8 @@ public class constant {
     public static String modifyPswUrl = "https://www.yaodiandian.net/modifypwd";
     public static String rebindUrl = "https://www.yaodiandian.net/rebindtel";
 
+    public static String unRegister= "https://www.yaodiandian.net/auth/del_user";
+
     /////variable
     public static  String MOBILE = "mobileNum";
     public static  String OPENTYPE = "type";

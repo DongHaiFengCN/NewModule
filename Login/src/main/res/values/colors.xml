@@ -3,7 +3,7 @@
 
 
     <!-- Customize your theme here. -->
-    <color name="login_colorPrimary">#3F51B5</color>
+    <color name="login_colorPrimary">#00c4df</color>
     <color name="login_colorPrimaryDark">#00c4df</color>
     <color name="login_colorAccent">#FF4081</color>
 

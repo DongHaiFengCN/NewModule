@@ -68,8 +68,12 @@ import tools.MyLog;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
+ /**
+ *@date    2018/6/7
+ *@autor   loongsun
+ *@email   125736964@qq.com
+ *@description
+ *@vertion
  */
 public class LoginActivity extends AppCompatActivity  {
 
@@ -399,10 +403,16 @@ public class LoginActivity extends AppCompatActivity  {
                 {
                     Gson gson = new Gson();
                     responseModle obj = gson.fromJson(data, new TypeToken<responseModle>() {}.getType());
-                    if(!TextUtils.isEmpty(obj.getData()))
+                  //  if(!TextUtils.isEmpty(obj.getData()))
+                        if("ok".equals(obj.getStatus()))
                     {
-                        String userName = obj.getData();
+
+                        String userName = obj.getData().getChannelId();
                         String pwd =  mPasswordView.getText().toString();
+
+
+
+
                         CDBHelper.dbName = userName;
                         //开始同步
                         CDBHelper.getSharedInstance(getApplicationContext());

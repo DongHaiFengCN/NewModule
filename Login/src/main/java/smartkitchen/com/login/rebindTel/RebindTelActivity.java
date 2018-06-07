@@ -140,10 +140,8 @@ public class RebindTelActivity extends AppCompatActivity {
                 {
                     Gson gson = new Gson();
                     responseModle obj = gson.fromJson(data, new TypeToken<responseModle>() {}.getType());
-                    if(TextUtils.isEmpty(obj.getStatusCode()))//
+                    if("ok".equals(obj.getStatus()))
                     {
-                        String userName = obj.getData();
-                        String psw =  mPsw1.getText().toString();
 
 
                         Intent intent = new Intent(RebindTelActivity.this, LoginActivity.class);
@@ -155,7 +153,7 @@ public class RebindTelActivity extends AppCompatActivity {
                     else
                     {
 
-                        Toast.makeText(getApplicationContext(),""+ obj.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),""+ obj.getMsg(), Toast.LENGTH_SHORT).show();
                     }
 
 
