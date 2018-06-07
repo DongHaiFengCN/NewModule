@@ -51,5 +51,6 @@ dependencies {
     //Database依赖
     compile rootProject.ext.couchbase
     compile rootProject.ext.Json
+    api 'com.alibaba:fastjson:1.1.64.android'
     implementation files('libs/commons-io-2.6.jar')
 }

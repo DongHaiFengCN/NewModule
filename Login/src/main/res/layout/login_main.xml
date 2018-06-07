@@ -49,20 +49,19 @@
             android:orientation="vertical">
 
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                app:counterEnabled="true"
-                app:counterMaxLength="11"
-                app:hintEnabled="true">
+                >
 
                 <AutoCompleteTextView
                     android:id="@+id/telephone"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:background="@color/login_md_white_1000"
-                    android:drawableLeft="@drawable/login_tel"
+                    android:drawableLeft="@drawable/ic_supervisor_account_black_24dp"
                     android:drawablePadding="16dp"
                     android:hint="@string/login_prompt_telephone"
                     android:inputType="phone"
@@ -72,20 +71,19 @@
                     android:paddingRight="16dp"
                     android:singleLine="true" />
 
-            </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:counterEnabled="true"
-                app:counterMaxLength="16">
+                android:layout_marginTop="8dp">
 
                 <EditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:background="@color/login_md_white_1000"
-                    android:drawableLeft="@drawable/login_psw"
+                    android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
                     android:drawablePadding="16dp"
                     android:hint="@string/login_prompt_password"
                     android:imeActionId="6"
@@ -98,11 +96,11 @@
                     android:paddingRight="16dp"
                     android:singleLine="true" />
 
-            </android.support.design.widget.TextInputLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:orientation="horizontal">
 
                 <CheckBox
@@ -123,14 +121,21 @@
                     android:typeface="monospace" />
 
                 <TextView
+                    android:id="@+id/login_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
                     android:id="@+id/login_tv_type"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="right|center_vertical"
+                    android:layout_marginRight="16dp"
                     android:gravity="center_vertical|center_horizontal"
                     android:onClick="onSetLoginType"
                     android:text="管理员登录模式"
-                    android:textColor="@color/colorPrimary" />
+                    android:textColor="@color/login_colorPrimary" />
             </LinearLayout>
 
             <Button
@@ -138,9 +143,11 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@color/login_colorPrimaryDark"
-                android:enabled="false"
                 android:text="@string/login_action_sign_in"
                 android:textStyle="bold" />
 

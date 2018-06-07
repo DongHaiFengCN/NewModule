@@ -26,9 +26,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Environment;
-import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.couchbase.lite.BasicAuthenticator;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
@@ -39,10 +41,7 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.Endpoint;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Function;
-//import com.couchbase.lite.LogDomain;
-//import com.couchbase.lite.LogLevel;
 import com.couchbase.lite.Meta;
-import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
@@ -55,10 +54,6 @@ import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.URLEndpoint;
-import com.couchbase.litecore.fleece.MValue;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.apache.commons.io.IOUtils;
 
@@ -67,52 +62,83 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//import com.couchbase.lite.LogDomain;
+//import com.couchbase.lite.LogLevel;
 
-public class CDBHelper implements ReplicatorChangeListener {
+
+public class CDBHelper
+{
     private static Database db;
     private static CDBHelper instance = null;
-    public static String dbName = "GuestDB";
+    private static String dbName="kitchendb";
     private final static String mSyncGatewayEndpoint = "ws://123.207.174.171:4984/kitchen/";
     //private final static String mSyncGatewayEndpoint = "wss://www.yaodiandian.net:4984/kitchen/";
-    //private final static String mSyncGatewayEndpoint = "ws://60.208.74.139:4984/kitchen/";
+    //private final static String mSyncGatewayEndpoint = "wss://123.207.174.171:4984/kitchen/";
     private static boolean firstReplicator = true;
     private static Context mcontext;
-    private static LocalBroadcastManager localBroadcastManager ;
-    public static CDBHelper getSharedInstance(Context context) {
+    public static CDBHelper getSharedInstance(Context context)
+    {
         if (instance == null) {
             instance = new CDBHelper(context);
             mcontext = context;
-            localBroadcastManager = LocalBroadcastManager.getInstance( mcontext ) ;
         }
         return instance;
     }
 
-    protected CDBHelper(Context context) {
+    public static String getDbName() {
+        return dbName;
+    }
+
+    public static void setDbName(String dbName) {
+        CDBHelper.dbName = dbName;
+    }
+
+
+    protected CDBHelper(Context context)
+    {
 
         DatabaseConfiguration config = new DatabaseConfiguration(context);
         File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
         config.setDirectory(folder.getAbsolutePath());
-
         try {
-            Log.e("dbName", "" + dbName);
             db = new Database(dbName, config);
-
-        } catch (CouchbaseLiteException e) {
-            MyLog.e("CDBHelper", "dbinit exception=" + e.toString());
+        } catch (CouchbaseLiteException e)
+        {
+            MyLog.e("CDBHelper","dbinit exception="+e.toString());
             e.printStackTrace();
         }
 
-    }
 
+    }
+    public static void deleteDB(){
+        try{
+            db.delete();
+            db=null;
+        }
+        catch (CouchbaseLiteException e){
+            e.printStackTrace();
+        }
+
+
+    }
+    public static void reCreateDB(){
+
+        DatabaseConfiguration config = new DatabaseConfiguration(mcontext);
+        File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
+        config.setDirectory(folder.getAbsolutePath());
+        try {
+            db = new Database(dbName, config);
+        } catch (CouchbaseLiteException e)
+        {
+            MyLog.e("CDBHelper","dbinit exception="+e.toString());
+            e.printStackTrace();
+        }
+    }
 
     private static byte[] getPinnedCertFile(Context context) {
         AssetManager assetManager = context.getAssets();
@@ -127,55 +153,68 @@ public class CDBHelper implements ReplicatorChangeListener {
         return null;
 
     }
-
     public static void startPushAndPullReplicationForCurrentUser(String username, String password) {
 
-        Log.e("startReplication", "channelId=" + username + "-----pwd=" + password);
-        if (db == null) {
-            Log.e("startReplication", "db=null");
+
+        if(db==null)
+        {
+
             return;
         }
+
+        //   db.setLogLevel( LogDomain.REPLICATOR,  LogLevel.ERROR);
 
         URI url = null;
         try {
             url = new URI(mSyncGatewayEndpoint);
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e)
+        {
             e.printStackTrace();
         }
         Endpoint endpoint = new URLEndpoint(url);
-
         ReplicatorConfiguration config = new ReplicatorConfiguration(db, endpoint)
                 .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL)
                 .setContinuous(true);
 
-        List<String> channels = new ArrayList<>();
+        List<String> channels =new ArrayList<>();
         channels.add(username);
         config.setChannels(channels);
 
         config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
         config.setContinuous(true);
         config.setAuthenticator(new BasicAuthenticator(username, password));
-        //需要加入https安全访问时再展开使用
-        //byte[] pinnedServerCert = getPinnedCertFile(mcontext);
+
+
+
+        byte[] pinnedServerCert = getPinnedCertFile(mcontext);
         // Set pinned certificate.
         // config.setPinnedServerCertificate(pinnedServerCert);
 
         Replicator replicator = new Replicator(config);
+
         replicator.addChangeListener(new ReplicatorChangeListener() {
             @Override
-            public void changed(ReplicatorChange change) {
-                if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.IDLE)) {
+            public void changed(ReplicatorChange change)
+            {
+
+                if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.IDLE))
+                {
+
                     Intent intent = new Intent();
                     intent.setAction("sync_complete");
+                    mcontext.sendBroadcast(intent);
+                    Log.e("Replication Comp Log", "Schedular Completed");
 
-                    localBroadcastManager.sendBroadcast(intent);
                 }
                 if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.STOPPED) || change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.OFFLINE)) {
-                    //stopReplication();
+                    // stopReplication();
+
                     Intent intent = new Intent();
                     intent.setAction("sync_complete");
-                    localBroadcastManager.sendBroadcast(intent);
-                    MyLog.e("Rep schedular  Log", "ReplicationTag Stopped");
+                    mcontext.sendBroadcast(intent);
+
+                    Log.e("Rep schedular  Log", "ReplicationTag Stopped");
 
                 }
             }
@@ -183,51 +222,81 @@ public class CDBHelper implements ReplicatorChangeListener {
         replicator.start();
     }
 
+
+
     public static Database getDatabase() {
-        if (instance == null) {
+        if (instance == null)
+        {
         }
         return db;
     }
 
     public static void setDatabase() {
 
-        db = null;
+        db =null;
     }
-
     // --------------------------------------------------
     // ReplicatorChangeListener implementation
     // --------------------------------------------------
-    @Override
-    public void changed(ReplicatorChange change) {
 
-        if (change.getStatus().getError() != null && change.getStatus().getError().getCode() == 401) {
-            //Toast.makeText(getApplicationContext(), "Authentication Error: Your username or password is not correct.", Toast.LENGTH_LONG).show();
-            //  logout();
-        }
-    }
     //*************************对象操作********************************************************
 
     /**
      * 1.1
      * 接口描述：数据存储或更新
+     *
+     *
      * @param object  需要保存或更新的类对象，这地方是object,不是document,目的兼容一些界面中原来的类对象生成保存
      *                返回：生成或更新docment的id号
      */
     public static String createAndUpdate(Object object) {
+    //1\
+   //String tmp =  JSON.toJSONString(object);
+    String tmp =  JSON.toJSONString(object,SerializerFeature.WriteNullNumberAsZero, SerializerFeature.NotWriteDefaultValue);
+
+    Map props = (Map) JSON.parse(tmp);
+    String id = (String) props.get("id");
+    MutableDocument mDocument;
+
+    if (TextUtils.isEmpty(id)) {
+        MyLog.e("save obj","obj="+tmp);
+        id = props.get("className") + "." + java.util.UUID.randomUUID().toString();
+        mDocument = new MutableDocument(id);
+    } else {
+        mDocument = db.getDocument(id).toMutable();
+        MyLog.e("update obj","obj="+tmp);
+    }
+    try {
+
+        mDocument.setData(props);
+        db.save(mDocument);
+
+    } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+    }
+    return id;
+}
+
+    public static String createAndUpdateDefalut(Object object) {
         //1\
-        ObjectMapper m = new ObjectMapper();
-        Map<String, Object> props = m.convertValue(object, Map.class);
+        String tmp =  JSON.toJSONString(object);
+        MyLog.e("save obj","obj="+tmp);
+        Map props = (Map) JSON.parse(tmp);
         String id = (String) props.get("id");
         MutableDocument mDocument;
-        if (id == null || "".equals(id)) {
+
+        if (TextUtils.isEmpty(id)) {
             id = props.get("className") + "." + java.util.UUID.randomUUID().toString();
             mDocument = new MutableDocument(id);
         } else {
             mDocument = db.getDocument(id).toMutable();
         }
         try {
+
             mDocument.setData(props);
+
             db.save(mDocument);
+
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
@@ -236,31 +305,36 @@ public class CDBHelper implements ReplicatorChangeListener {
 
     /**
      * 1.2 通过id 查寻doc 转成对象
+     *
+     *
      * @param id
      * @param aClass
      * @param <T>
      * @return
      */
-    public static <T> T getObjById( String id, Class<T> aClass) {
+    public static <T> T getObjById(String id, Class<T> aClass) {
 
         Document document = db.getDocument(id);
         if (document == null) {
-            // TODO: error handling
             return null;
         }
 
-        ObjectMapper m = new ObjectMapper();
-        m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        m.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//        ObjectMapper m = new ObjectMapper();
+//        m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        m.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS,false);
 
         Map<String, Object> map = document.toMap();
         map.put("id", id);
+        String json=JSON.toJSONString(map);
+        return JSON.parseObject(json, aClass);
 
-        return m.convertValue(map, aClass);
+        //return m.convertValue(map, aClass);
     }
 
     /**
      * 1.3
+     *
+     *
      * @param aClass
      * @param <E>
      * @return
@@ -269,9 +343,9 @@ public class CDBHelper implements ReplicatorChangeListener {
         final String classname = aClass.getSimpleName();
         List<E> objList = new ArrayList<>();
 
-        if (classname == null || classname.equals("")) {
+        if (classname == null || classname.equals(""))
             return null;
-        }
+        // 1
 
 
         Query query = QueryBuilder.select(SelectResult.all(), SelectResult.expression(Meta.id))
@@ -280,73 +354,51 @@ public class CDBHelper implements ReplicatorChangeListener {
         try {
             ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                // Ignore undeclared properties
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            while ((row = resultSet.next()) != null)
+            {
                 Map<String, Object> map;
                 Dictionary valueMap = row.getDictionary(db.getName());
                 // Convert from dictionary to corresponding University object
                 map = valueMap.toMap();
                 map.put("id", row.getString("id"));
-                E obj = objectMapper.convertValue(map, aClass);
+
+                String json=JSON.toJSONString(map);
+                E obj= JSON.parseObject(json, aClass);
+
                 objList.add(obj);
             }
 
         } catch (CouchbaseLiteException e) {
-            MyLog.e("getDocmentsByClass", "Exception=", e);
+            Log.e("getDocmentsByClass", "Exception=", e);
         }
         return objList;
     }
 
-    /**
-     * @return 时间格式 yyyy-MM-dd HH:mm:ss
-     */
-    public static String getFormatDate() {
-        Date date = new Date();
-        if (date != null) {
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            return formatter.format(date);
-        }
 
-        return null;
-    }
-
-    /**
-     * @return 时间格式 yyyy-MM-dd HH:mm:ss
-     */
-    public static String getNianDate() {
-        final Calendar c = Calendar.getInstance();
-        if (c == null) {
-            return "";
-        }
-        return "" + c.get(Calendar.YEAR);
-    }
 
     /**
      * 1.4
      *
-     * @param context
+     *
      * @param where
      * @param orderBy
      * @param aClass
      * @param <T>
      * @return
      */
-    public static <T> List<T> getObjByWhere(Context context, Expression where, Ordering orderBy, Class<T> aClass) {
+    public static <T> List<T> getObjByWhere(Expression where, Ordering orderBy, Class<T> aClass) {
         // 1
         List<T> documentList = new ArrayList<>();
 
         Query query;
-        if (where == null) {
+        if (where == null){
             return null;
         }
-
-        if (orderBy == null) {
+        if (orderBy == null){
             query = QueryBuilder.select(SelectResult.all(), SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
-        } else {
+        }
+        else {
             query = QueryBuilder.select(SelectResult.all(), SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
-
         }
 
 
@@ -354,15 +406,14 @@ public class CDBHelper implements ReplicatorChangeListener {
             ResultSet resultSet = query.execute();
             Result row;
             while ((row = resultSet.next()) != null) {
-                ObjectMapper objectMapper = new ObjectMapper();
-                // Ignore undeclared properties
-                objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Map<String, Object> map;
                 Dictionary valueMap = row.getDictionary(db.getName());
-                // Convert from dictionary to corresponding University object
                 map = valueMap.toMap();
                 map.put("id", row.getString("id"));
-                T obj = objectMapper.convertValue(map, aClass);
+
+                String json=JSON.toJSONString(map);
+                T obj= JSON.parseObject(json, aClass);
+
                 documentList.add(obj);
             }
         } catch (CouchbaseLiteException e) {
@@ -375,14 +426,14 @@ public class CDBHelper implements ReplicatorChangeListener {
     /**
      * 1.5
      *
-     * @param context
-     * @param obj
+     *
+     * @param object
      * @return
      */
-    public static boolean deleteObj(Context context, Object obj) {
+    public static boolean deleteObj( Object object) {
 
-        ObjectMapper m = new ObjectMapper();
-        Map<String, Object> props = m.convertValue(obj, Map.class);
+        String tmp =  JSON.toJSONString(object, SerializerFeature.NotWriteDefaultValue);
+        Map props = (Map) JSON.parse(tmp);
         String id = (String) props.get("id");
         if (id == null || "".equals(id)) {
             return false;
@@ -397,6 +448,7 @@ public class CDBHelper implements ReplicatorChangeListener {
             }
             return false;
         }
+
     }
 
 //**************************************************docment操作**************************************
@@ -406,12 +458,13 @@ public class CDBHelper implements ReplicatorChangeListener {
     /**
      * 2.1
      *
-     * @param context
+     *
      * @param document
      */
-    public static void saveDocument(Context context, MutableDocument document) {
+    public static void saveDocument( MutableDocument document) {
 
         try {
+
             db.save(document);
         } catch (CouchbaseLiteException e) {
             Log.e("saveDocument", "Exception=", e);
@@ -421,6 +474,7 @@ public class CDBHelper implements ReplicatorChangeListener {
 
     /**
      * 2.2
+     *
      * @param id
      * @return
      */
@@ -433,6 +487,7 @@ public class CDBHelper implements ReplicatorChangeListener {
     /**
      * 2.3
      * 接口描述：通过类名称查询所有类对象（其实是Document)
+     *
      * @param aClass  class类
      * @return 返回 Document序列
      */
@@ -440,10 +495,8 @@ public class CDBHelper implements ReplicatorChangeListener {
         final String classname = aClass.getSimpleName();
         List<Document> documentList = new ArrayList<>();
 
-        if (classname == null || classname.equals("")) {
+        if (classname == null || classname.equals(""))
             return null;
-        }
-
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
                 .where(Expression.property("className").equalTo(Expression.string(classname)));
@@ -456,14 +509,17 @@ public class CDBHelper implements ReplicatorChangeListener {
                 documentList.add(doc);
             }
         } catch (CouchbaseLiteException e) {
-            MyLog.e("getDocmentsByClass", "Exception=", e);
+            Log.e("getDocmentsByClass", "Exception=", e);
         }
         return documentList;
     }
 
 
+
+
     /**
      * 2.4
+     *
      * @param where
      * @param orderBy
      * @return
@@ -473,17 +529,13 @@ public class CDBHelper implements ReplicatorChangeListener {
         List<Document> documentList = new ArrayList<>();
 
         Query query;
-        if (where == null){
+        if (where == null)
             return null;
-        }
 
-
-        if (orderBy == null){
+        if (orderBy == null)
             query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
-        }
-        else {
+        else
             query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
-        }
 
         try {
             ResultSet resultSet = query.execute();
@@ -491,10 +543,11 @@ public class CDBHelper implements ReplicatorChangeListener {
             while ((row = resultSet.next()) != null) {
                 String id = row.getString(0);
                 Document doc = db.getDocument(id);
+
                 documentList.add(doc);
             }
         } catch (CouchbaseLiteException e) {
-            MyLog.e("getDocmentsByWhere", "Exception=", e);
+            Log.e("getDocmentsByWhere", "Exception=", e);
         }
 
         return documentList;
@@ -503,9 +556,10 @@ public class CDBHelper implements ReplicatorChangeListener {
 
     /**
      * 2.5
+     *
      * @param document
      */
-    public static void deleteDocument(Document document) {
+    public static void deleDocument( Document document) {
 
         try {
             db.delete(document);
@@ -518,13 +572,13 @@ public class CDBHelper implements ReplicatorChangeListener {
 
     /**
      * 2.6
+     *
      * @param id
      */
-    public static void deleDocumentById(String id) {
+    public static void deleDocumentById( String id) {
 
         try {
             Document document = db.getDocument(id);
-
             db.delete(document);
         } catch (CouchbaseLiteException e) {
             Log.e("deleDocument", "Exception=", e);
@@ -538,6 +592,7 @@ public class CDBHelper implements ReplicatorChangeListener {
     /**
      * 3.1
      * 接口描述：通过类名称查询所有类对象（其实是Document)
+     *
      * @param aClass  class类
      * @return 返回 Document序列
      */
@@ -545,21 +600,22 @@ public class CDBHelper implements ReplicatorChangeListener {
         final String classname = aClass.getSimpleName();
         List<String> documentList = new ArrayList<>();
 
-        if (classname == null || classname.equals("")){
+        if (classname == null || classname.equals(""))
             return null;
-        }
+        // 1
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
                 .where(Expression.property("className").equalTo(Expression.string(classname)));
         try {
             ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
+            while ((row = resultSet.next()) != null)
+            {
                 String id = row.getString(0);
                 documentList.add(id);
             }
         } catch (CouchbaseLiteException e) {
-            MyLog.e("getDocmentsByClass", "Exception=", e);
+            Log.e("getDocmentsByClass", "Exception=", e);
         }
         return documentList;
     }
@@ -568,6 +624,7 @@ public class CDBHelper implements ReplicatorChangeListener {
     /**
      * 3.2
      * 接口描述：通过查询条件查询数据库中符合条件的Document
+     *
      * @param
      * @return
      */
@@ -577,26 +634,26 @@ public class CDBHelper implements ReplicatorChangeListener {
 
         //2
         Query query;
-        if (where == null){
+        if (where == null)
             return null;
-        }
-        if (orderBy == null){
+
+        if (orderBy == null)
             query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where);
-        }
-        else{
+        else
             query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db)).where(where).orderBy(orderBy);
-        }
 
         try {
             ResultSet resultSet = query.execute();
             Result row;
-            while ((row = resultSet.next()) != null) {
+            while ((row = resultSet.next()) != null)
+            {
 
                 String id = row.getString(0);
                 documentList.add(id);
+
             }
         } catch (CouchbaseLiteException e) {
-            MyLog.e("getDocmentsByClass", "Exception=", e);
+            Log.e("getDocmentsByClass", "Exception=", e);
         }
 
         return documentList;
@@ -608,6 +665,7 @@ public class CDBHelper implements ReplicatorChangeListener {
     /**
      * 4.1
      * 接口描述：通过查询条件查询数据库中符合条件的Document
+     *
      * @param
      * @return
      */
@@ -648,9 +706,12 @@ public class CDBHelper implements ReplicatorChangeListener {
 
     /**
      * 4.2
+     *
      * @param document
      */
-    public static void purge(Document document) {
+    public static void purge( Document document) {
+
+
         try {
             db.purge(document);
         } catch (CouchbaseLiteException e) {
@@ -669,9 +730,12 @@ public class CDBHelper implements ReplicatorChangeListener {
      * @return
      */
     public static <T> T modelForDocument(Document document, Class<T> aClass) {
-        ObjectMapper m = new ObjectMapper();
-        m.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return m.convertValue(document.toMap(), aClass);
+        Map<String, Object> map = document.toMap();
+
+        String json=JSON.toJSONString(map);
+        return JSON.parseObject(json, aClass);
+
+
     }
 
 }

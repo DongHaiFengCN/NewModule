@@ -61,6 +61,8 @@ dependencies {
 
     implementation rootProject.ext.libAlibaba
     annotationProcessor libArouter_compiler
+    //bugly
+    //implementation rootProject.ext.bugly
 
     implementation rootProject.ext.okhttp3
     implementation rootProject.ext.gson
