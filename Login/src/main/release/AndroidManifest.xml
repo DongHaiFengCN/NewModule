@@ -14,7 +14,7 @@
 
     <application
          >
-        <activity android:name="smartkitchen.com.login.LoginActivity"
+        <activity android:name=".LoginActivity"
             android:theme="@style/LoginAppTheme"
             android:windowSoftInputMode="adjustPan">
         </activity>
@@ -30,7 +30,7 @@
         <activity android:name=".rebindTel.RebindTelActivity"
             android:theme="@style/LoginAppTheme"></activity>
 
-        <activity android:name="smartkitchen.com.login.register.RegisterActivity"
+        <activity android:name=".register.RegisterActivity"
             android:theme="@style/LoginAppTheme"
             >
         </activity>

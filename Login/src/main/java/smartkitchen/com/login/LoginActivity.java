@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private MyApplication myapp;
     private Toolbar toolbar;
-    private LocalBroadcastManager localBroadcastManager;
+   // private LocalBroadcastManager localBroadcastManager;
     private MyBroadcastReceiver mBroadcastReceiver;
 
     @Override
@@ -158,7 +158,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        localBroadcastManager = LocalBroadcastManager.getInstance(this);
+
     }
 public void initWidget(){
     // Set up the login form.
@@ -704,14 +704,14 @@ public void initWidget(){
         intentFilter.addAction("sync_complete");
 
         // 3. 动态注册：调用Context的registerReceiver（）方法
-        localBroadcastManager.registerReceiver(mBroadcastReceiver, intentFilter);
+         registerReceiver(mBroadcastReceiver, intentFilter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         //销毁在onResume()方法中的广播
-        localBroadcastManager.unregisterReceiver(mBroadcastReceiver);
+       unregisterReceiver(mBroadcastReceiver);
         MyLog.e("LoginActivity", "onPause");
     }
 
