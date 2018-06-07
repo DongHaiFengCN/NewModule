@@ -1,1 +1,1 @@
-include ':app', ':DataModle',':order', ':mylibrary', ':dishesmanager', ':tablemanager', ':Login', ':statistics'
+include ':app',':order', ':mylibrary', ':dishesmanager', ':tablemanager', ':Login', ':statistics',':DataModle'
