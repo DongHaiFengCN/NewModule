@@ -11,6 +11,9 @@ package bean.kitchenmanage.order;
 
 import java.util.List;
 
+import bean.kitchenmanage.member.Members;
+import bean.kitchenmanage.promotion.Promotion;
+
 /**
  * @ClassName: CheckOrder 
  * @Description 买单类
@@ -43,7 +46,7 @@ public class CheckOrder {
 	/**
 	 * 包含的订单
 	 */
-	private List<String> orderIds;
+	private List<String> orderId;
 	/**
 	 * 结账日期
 	 *  yyyy-MM-dd HH:mm:ss
@@ -51,9 +54,9 @@ public class CheckOrder {
 	 */
 	private String checkTime;
 	/**
-	 * 所属桌位号
+	 * 所属桌位Id
 	 */
-    private String tableNum;
+    private String tableId;
 	/**
 	 *实收
 	 */
@@ -65,15 +68,15 @@ public class CheckOrder {
 	/**
 	 * 活动docId;活动优惠怎么处理，需要注意
 	 */
-	private String promotionId;
+	private Promotion promotion;
 	/**
-	 * 活动优惠值
+	 * 操作员名称
 	 */
-	private float  promotionDiscount;
+	private Members member;
 	/**
-	 * 会员手机号码；会员优惠怎么查询，需注意
+	 * 会员优惠或活动优惠详情
 	 */
-	private String memberMobile;
+	private List<PromotionDiscountDetail> promotionDiscountDetailList;
 	/**
 	 * 支付细节
 	 */
@@ -85,7 +88,8 @@ public class CheckOrder {
 	/**
 	 * 操作员名称
 	 */
-	private String employeeName;
+	private String operator;
+
 
 	public CheckOrder() {
 	}
@@ -130,13 +134,14 @@ public class CheckOrder {
 		this.createdYear = createdYear;
 	}
 
-	public List<String> getOrderIds() {
-		return orderIds;
+	public List<String> getOrderId() {
+		return orderId;
 	}
 
-	public void setOrderIds(List<String> orderIds) {
-		this.orderIds = orderIds;
+	public void setOrderId(List<String> orderId) {
+		this.orderId = orderId;
 	}
+
 	public String getCheckTime() {
 		return checkTime;
 	}
@@ -145,13 +150,6 @@ public class CheckOrder {
 		this.checkTime = checkTime;
 	}
 
-	public String getTableNum() {
-		return tableNum;
-	}
-
-	public void setTableNum(String tableNum) {
-		this.tableNum = tableNum;
-	}
 
 	public float getLastPay() {
 		return lastPay;
@@ -169,28 +167,20 @@ public class CheckOrder {
 		this.needPay = needPay;
 	}
 
-	public String getPromotionId() {
-		return promotionId;
+	public String getTableId() {
+		return tableId;
 	}
 
-	public void setPromotionId(String promotionId) {
-		this.promotionId = promotionId;
+	public void setTableId(String tableId) {
+		this.tableId = tableId;
 	}
 
-	public float getPromotionDiscount() {
-		return promotionDiscount;
+	public Promotion getPromotion() {
+		return promotion;
 	}
 
-	public void setPromotionDiscount(float promotionDiscount) {
-		this.promotionDiscount = promotionDiscount;
-	}
-
-	public String getMemberMobile() {
-		return memberMobile;
-	}
-
-	public void setMemberMobile(String memberMobile) {
-		this.memberMobile = memberMobile;
+	public void setPromotion(Promotion promotion) {
+		this.promotion = promotion;
 	}
 
 	public List<PayDetail> getPayDetailList() {
@@ -209,11 +199,27 @@ public class CheckOrder {
 		this.hangInfo = hangInfo;
 	}
 
-	public String getEmployeeName() {
-		return employeeName;
+	public String getOperator() {
+		return operator;
 	}
 
-	public void setEmployeeName(String employeeName) {
-		this.employeeName = employeeName;
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	public Members getMember() {
+		return member;
+	}
+
+	public void setMember(Members member) {
+		this.member = member;
+	}
+
+	public List<PromotionDiscountDetail> getPromotionDiscountDetailList() {
+		return promotionDiscountDetailList;
+	}
+
+	public void setPromotionDiscountDetailList(List<PromotionDiscountDetail> promotionDiscountDetailList) {
+		this.promotionDiscountDetailList = promotionDiscountDetailList;
 	}
 }

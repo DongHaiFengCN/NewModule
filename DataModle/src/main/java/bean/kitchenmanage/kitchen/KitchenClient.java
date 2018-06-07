@@ -35,7 +35,10 @@ public class KitchenClient {
      * 打印机序号
      */
     private int printerId;
-
+    /**
+     * 打印机状态
+     */
+    private boolean statePrinter;
 
     public KitchenClient()
     {
@@ -87,5 +90,13 @@ public class KitchenClient {
     }
     public void setPrinterId(int printerId) {
         this.printerId = printerId;
+    }
+
+    public boolean isStatePrinter() {
+        return statePrinter;
+    }
+
+    public void setStatePrinter(boolean statePrinter) {
+        this.statePrinter = statePrinter;
     }
 }

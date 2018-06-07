@@ -40,7 +40,7 @@ public class Table implements Serializable{
 	/**
 	 *桌位序号  001，三位数
 	 */
-	private String num;
+	private int num;
 
 	/**
 	 *容纳最大人数
@@ -49,11 +49,11 @@ public class Table implements Serializable{
 	/**
 	 * 允许最少人数
 	 */
-	private int minPersions;
+	private int minPersons;
 	/**
 	 *当前人数(针对正在使用的)
 	 */
-	private int currentPersions;
+	private int currentPersons;
 	/**
 	 *最低消费金额
 	 */
@@ -123,11 +123,11 @@ public class Table implements Serializable{
 		this.name = name;
 	}
 
-	public String getNum() {
+	public int getNum() {
 		return num;
 	}
 
-	public void setNum(String num) {
+	public void setNum(int num) {
 		this.num = num;
 	}
 
@@ -139,20 +139,20 @@ public class Table implements Serializable{
 		this.maxPersons = maxPersons;
 	}
 
-	public int getMinPersions() {
-		return minPersions;
+	public int getMinPersons() {
+		return minPersons;
 	}
 
-	public void setMinPersions(int minPersions) {
-		this.minPersions = minPersions;
+	public void setMinPersons(int minPersons) {
+		this.minPersons = minPersons;
 	}
 
-	public int getCurrentPersions() {
-		return currentPersions;
+	public int getCurrentPersons() {
+		return currentPersons;
 	}
 
-	public void setCurrentPersions(int currentPersions) {
-		this.currentPersions = currentPersions;
+	public void setCurrentPersons(int currentPersons) {
+		this.currentPersons = currentPersons;
 	}
 
 	public int getMinConsum() {

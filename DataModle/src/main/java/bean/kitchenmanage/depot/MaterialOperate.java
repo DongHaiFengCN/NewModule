@@ -1,21 +1,19 @@
 package bean.kitchenmanage.depot;
 
-
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import bean.kitchenmanage.user.Employee;
 
 
 /**
- * @ClassName: Inventory
- * @Description: 盘点类
+ * @ClassName: MaterialStorage
+ * @Description: 源料入库类文件
  * @author loongsun
  * @date 2016-01-01 上午1:19:08
  *
  */
-public class Inventory implements Serializable
+public class MaterialOperate implements Serializable
 {
     /**
      *对象id,等于docmentid,一般用于Pojo操作时使用。
@@ -28,37 +26,45 @@ public class Inventory implements Serializable
     /**
      * 类名，用于数据库查询类过滤
      */
-    private String className = "Inventory";
+    private String className = "MaterialOperate";
     /**
      * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
      */
     private String dataType = "BaseData";
     /**
-     * 盘点编号
+     * 入库单号
      */
     private String num;
     /**
-     * 创建日期
+     *入库时间
      */
-    private String createdTime;
+    private String  createdTime;
     /**
-     * 盘点人
+     *系统操作者
      */
     private Employee operator;
     /**
-     * 备注
+     * 申请者
+     */
+    private Employee applicant;
+    /**
+     *备注
      */
     private String note;
     /**
-     * 状态 1、草稿；2、提交
+     *状态 1、草稿；2、提交
      */
     private int state;
     /**
-     * 每个源料的盘点记录
+     *该次入库的源料列表
      */
-    private List<InventoryItem> inventoryItemList;
+    private List<MaterialOperateItem> materialStorageItemList;
+    /**
+     * 入库是1、出库是2
+     */
+    private int mode;
 
-    public Inventory() {
+    public MaterialOperate() {
     }
 
     public String getId() {
@@ -117,6 +123,14 @@ public class Inventory implements Serializable
         this.operator = operator;
     }
 
+    public Employee getApplicant() {
+        return applicant;
+    }
+
+    public void setApplicant(Employee applicant) {
+        this.applicant = applicant;
+    }
+
     public String getNote() {
         return note;
     }
@@ -133,11 +147,19 @@ public class Inventory implements Serializable
         this.state = state;
     }
 
-    public List<InventoryItem> getInventoryItemList() {
-        return inventoryItemList;
+    public List<MaterialOperateItem> getMaterialStorageItemList() {
+        return materialStorageItemList;
     }
 
-    public void setInventoryItemList(List<InventoryItem> inventoryItemList) {
-        this.inventoryItemList = inventoryItemList;
+    public void setMaterialStorageItemList(List<MaterialOperateItem> materialStorageItemList) {
+        this.materialStorageItemList = materialStorageItemList;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 }

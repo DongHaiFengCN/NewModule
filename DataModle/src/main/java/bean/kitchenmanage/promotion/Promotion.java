@@ -1,5 +1,6 @@
 package bean.kitchenmanage.promotion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,6 +32,10 @@ public class Promotion {
      */
     private String name;
     /**
+     * 描述
+     */
+    private String description;
+    /**
      *开始时间
      */
     private String startTime;
@@ -39,13 +44,16 @@ public class Promotion {
      */
     private String endTime;
     /**
-     *支持的消费规则，比如是消费多少打几折，还是消费多少优惠多少
+     *支持的优惠级别，比如是消费多少打几折，还是消费多少优惠多少
      */
-    private List<String> promotionRuleIds;
+    private List<PromotionRule> promotionRuleList;
+
+
     /**
-     * 支持哪些卡类
+     * 活动类型：1、会员的活动 2、营销活动 3、自定义套餐
      */
-    private List<String> cardTypeIds;
+    private int promotionType;
+
     /**
      *所支持的菜品品类
      */
@@ -111,12 +119,17 @@ public class Promotion {
         this.endTime = endTime;
     }
 
-    public List<String> getPromotionRuleIds() {
-        return promotionRuleIds;
+    public List<PromotionRule> getPromotionRuleList() {
+        return promotionRuleList;
     }
 
-    public void setPromotionRuleIds(List<String> promotionRuleIds) {
-        this.promotionRuleIds = promotionRuleIds;
+    public void setPromotionRuleList(List<PromotionRule> promotionRuleList) {
+        this.promotionRuleList = promotionRuleList;
+    }
+    public void addRule(PromotionRule obj){
+        if(promotionRuleList ==null)
+            promotionRuleList = new ArrayList<>();
+        promotionRuleList.add(obj);
     }
 
     public List<PromotionDishesKind> getPromotionDishesKindList() {
@@ -125,5 +138,29 @@ public class Promotion {
 
     public void setPromotionDishesKindList(List<PromotionDishesKind> promotionDishesKindList) {
         this.promotionDishesKindList = promotionDishesKindList;
+    }
+
+
+
+    public void addPromotionDishesKind(PromotionDishesKind obj){
+        if(promotionDishesKindList==null)
+            promotionDishesKindList = new ArrayList<PromotionDishesKind>();
+        promotionDishesKindList.add(obj);
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getPromotionType() {
+        return promotionType;
+    }
+
+    public void setPromotionType(int promotionType) {
+        this.promotionType = promotionType;
     }
 }

@@ -3,14 +3,13 @@ package bean.kitchenmanage.depot;
 import java.io.Serializable;
 
 /**
- * 供应商.
+ * @ClassName: DishesConsume
+ * @Description: 菜品消费量
+ * @author loongsun
+ * @date 2016-01-01 上午1:19:08
  *
- * Created by loongsun on 17/1/8.
- *
- * email: 125736964@qq.com
  */
-
-public class Provider implements Serializable {
+public class DishConsum implements Serializable {
     /**
      *对象id,等于docmentid,一般用于Pojo操作时使用。
      */
@@ -22,29 +21,23 @@ public class Provider implements Serializable {
     /**
      * 类名，用于数据库查询类过滤
      */
-    private String className = "Provider";
+    private String className = "DishConsum";
     /**
      * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
      */
     private String dataType = "BaseData";
     /**
-     * 公司名称
+     * 菜品id
      */
-    private String name;
+    private String dishId;
     /**
-     * 电话
+     * 消耗数量
      */
-    private String tel;
-    /**
-     *  地址
-     */
-    private String address;
-    /**
-     * 联系人
-     */
-    private String contactor;
+    private float consums;
 
-    public Provider() {
+
+    public DishConsum()
+    {
     }
 
     public String getId() {
@@ -79,35 +72,20 @@ public class Provider implements Serializable {
         this.dataType = dataType;
     }
 
-    public String getName() {
-        return name;
+
+    public float getConsums() {
+        return consums;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setConsums(float consums) {
+        this.consums = consums;
     }
 
-    public String getTel() {
-        return tel;
+    public String getDishId() {
+        return dishId;
     }
 
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getContactor() {
-        return contactor;
-    }
-
-    public void setContactor(String contactor) {
-        this.contactor = contactor;
+    public void setDishId(String dishId) {
+        this.dishId = dishId;
     }
 }

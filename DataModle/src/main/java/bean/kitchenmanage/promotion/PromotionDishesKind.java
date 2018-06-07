@@ -1,5 +1,6 @@
 package bean.kitchenmanage.promotion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,5 +49,11 @@ public class PromotionDishesKind {
 
     public void setPromotionDishesList(List<PromotionDishes> promotionDishesList) {
         this.promotionDishesList = promotionDishesList;
+    }
+    public void addPromotionDish(PromotionDishes obj)
+    {
+        if(this.promotionDishesList==null)
+            this.promotionDishesList = new ArrayList<>();
+        this.promotionDishesList.add(obj);
     }
 }

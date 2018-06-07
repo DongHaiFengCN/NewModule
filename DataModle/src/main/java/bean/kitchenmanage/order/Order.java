@@ -76,23 +76,11 @@ public class Order {
 	/**
 	 * 所点商品列表
 	 */
-	private List<Goods> goods;
+	private List<Goods> goodsList;
 	/**
-	 * 网点名称
+	 * 桌位Id
 	 */
-	private String companyName;
-	/**
-	 * 区域名称
-	 */
-	private String areaName;
-	/**
-	 * 桌位名称
-	 */
-	private String tableName;
-	/**
-	 *桌位号
-	 */
-	private String tableNum;
+	private String tableId;
 	/**
 	 * 操作员员工号
 	 */
@@ -121,6 +109,11 @@ public class Order {
 	 * 消台原因
 	 */
 	private String cancelReason;
+
+	/**
+	 * 消台时间
+	 */
+	private String cancelTime;
 
 	public Order() {
 	}
@@ -245,44 +238,21 @@ public class Order {
 		this.orderType = orderType;
 	}
 
-	public List<Goods> getGoods() {
-		return goods;
+	public List<Goods> getGoodsList() {
+		return goodsList;
 	}
 
-	public void setGoods(List<Goods> goods) {
-		this.goods = goods;
+	public void setGoodsList(List<Goods> goodsList) {
+		this.goodsList = goodsList;
 	}
 
-	public String getCompanyName() {
-		return companyName;
+
+	public String getTableId() {
+		return tableId;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
-
-	public String getAreaName() {
-		return areaName;
-	}
-
-	public void setAreaName(String areaName) {
-		this.areaName = areaName;
-	}
-
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	public String getTableNum() {
-		return tableNum;
-	}
-
-	public void setTableNum(String tableNum) {
-		this.tableNum = tableNum;
+	public void setTableId(String tableId) {
+		this.tableId = tableId;
 	}
 
 	public String getEmployeeNum() {
@@ -339,5 +309,13 @@ public class Order {
 
 	public void setCancelReason(String cancelReason) {
 		this.cancelReason = cancelReason;
+	}
+
+	public String getCancelTime() {
+		return cancelTime;
+	}
+
+	public void setCancelTime(String cancelTime) {
+		this.cancelTime = cancelTime;
 	}
 }

@@ -9,23 +9,7 @@ package bean.kitchenmanage.order;
  *
  */
 public class Goods implements Cloneable {
-	/**
-	 * 公司唯一身份id,用于数据同步,做为唯一管道符
-	 */
-	private String channelId;
-	/**
-	 * 类名，用于数据库查询类过滤
-	 */
-	private String className;
-	/**
-	 * docId
-	 */
-	private String id;
 
-	/**
-	 * 所属订单对象
-	 */
-	private String orderId;//订单号
 	/**
 	 * 所包含菜品对象
 	 */
@@ -44,7 +28,7 @@ public class Goods implements Cloneable {
 	 */
 	private float price;
 	/**
-	 *会员价格
+	 *会员价格,点餐时要显示会员价格
 	 */
 	private float memberPrice;
 	/**
@@ -68,46 +52,16 @@ public class Goods implements Cloneable {
 	 */
 	private String createdTime;
 
-
+	/**
+	 * 菜品是否生成订单、 1、生成订单   2、未生成订单
+	 */
+	private int state;
+	/**
+	 * 订单备注
+	 */
+	private String description;
 
 	public Goods() {
-	}
-
-	public Goods(String company_id) {
-		this.channelId = company_id;
-		this.className="GoodsC";
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getChannelId() {
-		return channelId;
-	}
-
-	public void setChannelId(String channelId) {
-		this.channelId = channelId;
-	}
-
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
-	public String getOrderId() {
-		return orderId;
-	}
-
-	public void setOrderId(String orderId) {
-		this.orderId = orderId;
 	}
 
 	public String getDishesKindId() {
@@ -193,5 +147,21 @@ public class Goods implements Cloneable {
 
 	public void setMemberPrice(float memberPrice) {
 		this.memberPrice = memberPrice;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }
