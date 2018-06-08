@@ -11,10 +11,20 @@ import java.util.List;
  */
 
 public class KitchenClient {
+
     /**
      * docId
      */
     private String id;
+    /**
+     * 公司唯一身份id,用于数据同步,做为唯一管道符
+     */
+    private String channelId;
+
+    /**
+     * 数据分两大类，一个是基础数据 BaseData，一个业务实时数据 UserData
+     */
+    private String dataType = "BaseData";
     /**
      * 类名称
      */
@@ -98,5 +108,21 @@ public class KitchenClient {
 
     public void setStatePrinter(boolean statePrinter) {
         this.statePrinter = statePrinter;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
     }
 }

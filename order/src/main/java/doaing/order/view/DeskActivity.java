@@ -192,7 +192,7 @@ public class DeskActivity extends AppCompatActivity {
         orderIntent = new Intent( this, NewOrderService.class);
         //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
         bindPrinterService();
-        initDishesData();
+       // initDishesData();
 
         getPrinterStatus();
     }
@@ -270,7 +270,7 @@ public class DeskActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        initDishesData();
+        //initDishesData();
     }
 
     @Override
