@@ -110,7 +110,7 @@
                 android:contentDescription="@string/todo"
                 android:focusable="true"
                 android:padding="15dp"
-                android:src="@drawable/animcppackage" />
+               />
 
         </LinearLayout>
 
@@ -138,7 +138,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/taocan"
                 android:textSize="@dimen/text_size"
                 />
         </LinearLayout>

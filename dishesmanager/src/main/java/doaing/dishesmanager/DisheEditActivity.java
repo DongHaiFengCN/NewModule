@@ -247,7 +247,7 @@ DisheEditActivity extends BaseToobarActivity {
                     disheMuDoc.setString("kindId", newKind.getId());
 
                     List<Document> documents = CDBHelper.getDocmentsByWhere(
-                            Expression.property("className").equalTo(Expression.string("Dishes"))
+                            Expression.property("className").equalTo(Expression.string("Dish"))
                             .add(Expression.property("").equalTo(Expression.string(newKind.getId()))),
                             null);
 

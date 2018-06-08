@@ -121,7 +121,7 @@ public class AssessmentSelectItemFragment extends Fragment {
             ResultSet results = null;
             Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                     .from(DataSource.database(database)).where(Expression.property("className")
-                            .equalTo(Expression.string("Dishes"))
+                            .equalTo(Expression.string("Dish"))
                             .and(Expression.property("name")
                                     .like(Expression.string("%"+queryData +"%"))));
             try {
