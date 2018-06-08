@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -108,43 +109,12 @@ public class ActionListAdapter extends BaseAdapter {
             }
         }
 
-
-        viewHold.actionIsCheck_ck.setOnClickListener(new View.OnClickListener() {
+        viewHold.actionIsCheck_ck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View view) {
-
-                if (flag[i] == 0) {
-
-                    callback.click(i);
-
-                    flag[i] = 1;
-
-                    for (int j = 0; j < flag.length; j++) {
-
-                        if (j != i && flag[j] == 1) {
-
-                            flag[j] = 0;
-
-                        }
-
-                    }
-                    notifyDataSetChanged();
-
-                } else {
-
-                    flag[i] = 0;
-                }
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                callback.click(i,isChecked);
             }
         });
-
-        if (flag[i] == 1) {
-
-            viewHold.actionIsCheck_ck.setChecked(true);
-
-        } else {
-
-            viewHold.actionIsCheck_ck.setChecked(false);
-        }
 
         return view;
     }
@@ -174,6 +144,6 @@ public class ActionListAdapter extends BaseAdapter {
     Callback callback;
 
     public interface Callback {
-        public void click(int p);
+        public void click(int p,boolean flag);
     }
 }
