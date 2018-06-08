@@ -191,10 +191,16 @@ public class DeskActivity extends AppCompatActivity {
         initWidget();
         orderIntent = new Intent( this, NewOrderService.class);
         //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
+
+        long startTime=System.currentTimeMillis();   //获取开始时间
+
         bindPrinterService();
         initDishesData();
-
         getPrinterStatus();
+
+        long endTime=System.currentTimeMillis(); //获取结束时间
+        Log.e("DOAING","程序运行时间： "+(endTime-startTime)+"ms");
+
     }
 
 
