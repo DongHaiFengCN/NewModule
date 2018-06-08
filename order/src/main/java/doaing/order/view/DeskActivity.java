@@ -106,14 +106,14 @@ public class DeskActivity extends AppCompatActivity {
     List<DishKind> dishesKindCList;
     List<Document> dishes;
     private Map<String, List<Document>> dishesObjectCollection;
-    public GpService mGpService;
-    private PrinterServiceConnection conn = null;
+    //public GpService mGpService;
+    //private PrinterServiceConnection conn = null;
 
     private String Tag = "DeskActivity";
     private MyApplication myapp;
     private long mExitTime = 0;
     private long boo;
-    private Intent orderIntent;
+   // private Intent orderIntent;
     private Handler uiHandler = new Handler()
     {
         @Override
@@ -131,7 +131,7 @@ public class DeskActivity extends AppCompatActivity {
                     break;
                 case 3: //打印机服务初始化完成，可以启动打印机状态检测程序以及订单监听程序
 
-                    startService(orderIntent);
+                    //startService(orderIntent);
                     break;
                 default:
                     break;
@@ -187,14 +187,15 @@ public class DeskActivity extends AppCompatActivity {
         obj.setChannelId(channelId);
         obj.setName("管理员");
         myapp.setEmployee(obj);
-        //  myapp.initDishesData();
-        initWidget();
-        orderIntent = new Intent( this, NewOrderService.class);
-        //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
-        bindPrinterService();
-       // initDishesData();
 
-        getPrinterStatus();
+        initWidget();
+        //orderIntent = new Intent( this, NewOrderService.class);
+        //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
+       // bindPrinterService();
+        initDishesData();
+
+        //getPrinterStatus();
+        msg_point.setVisibility(View.INVISIBLE);
     }
 
 
@@ -270,7 +271,7 @@ public class DeskActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        //initDishesData();
+        initDishesData();
     }
 
     @Override
@@ -304,10 +305,10 @@ public class DeskActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
 
         // 注销打印消息
-        if (conn != null) {
-            unbindService(conn); // unBindService
-        }
-        stopService(orderIntent);
+//        if (conn != null) {
+//            unbindService(conn); // unBindService
+//        }
+        //stopService(orderIntent);
     }
     //点击返回键
     @Override
@@ -957,29 +958,29 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
     }
 
-    private void bindPrinterService()
-    {
-        conn = new PrinterServiceConnection();
-        Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
-        intent.setPackage(getPackageName());
-        boolean ret = bindService(intent, conn, Context.BIND_AUTO_CREATE);
-    }
+//    private void bindPrinterService()
+//    {
+//        conn = new PrinterServiceConnection();
+//        Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
+//        intent.setPackage(getPackageName());
+//        boolean ret = bindService(intent, conn, Context.BIND_AUTO_CREATE);
+//    }
 
-    //打印机初始化
-    class PrinterServiceConnection implements ServiceConnection {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-            Log.i(DEBUG_TAG, "onServiceDisconnected() called");
-            mGpService = null;
-        }
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mGpService = GpService.Stub.asInterface(service);
-            setmGpService(mGpService);
-        }
-    }
+//    //打印机初始化
+//    class PrinterServiceConnection implements ServiceConnection {
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//
+//            Log.i(DEBUG_TAG, "onServiceDisconnected() called");
+//            mGpService = null;
+//        }
+//
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder service) {
+//            mGpService = GpService.Stub.asInterface(service);
+//            setmGpService(mGpService);
+//        }
+//    }
 
     public static GpService getmGpService() {
         return smGpService;

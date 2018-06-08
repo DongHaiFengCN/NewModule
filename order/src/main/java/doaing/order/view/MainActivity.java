@@ -202,9 +202,9 @@ public class MainActivity extends AppCompatActivity {
         isFlag = sharedPreferences.getBoolean("isFlag",true);
         initView();
         select(isFlag);
-        //连接打印机服务
-        registerPrinterBroadcast();
-        connectPrinter();
+        //连接打印机服务暂时去掉
+        //registerPrinterBroadcast();
+        //connectPrinter();
         MyLog.d("onCreate");
         Handler mHandler = new Handler();
         mHandler.post(new Runnable() {
@@ -686,7 +686,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             deductMaterial();
                             saveOrder();
-                            printOrderToKitchen(goodsList);
+                           // printOrderToKitchen(goodsList);
                             Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
                             startActivity(intent);
                             finish();
@@ -1417,8 +1417,8 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setChannelId(myApp.getCompany_ID());
         Order zcOrderObj = new Order();
         zcOrderObj.setChannelId(myApp.getCompany_ID());
-        gOrderId = CDBHelper.createAndUpdate( newOrderObj);
-        newOrderObj.setId(gOrderId);
+      //  gOrderId = CDBHelper.createAndUpdate( newOrderObj);
+      //  newOrderObj.setId(gOrderId);
 
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
@@ -1448,6 +1448,7 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setTotalPrice(total);
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(0);//正常
+        newOrderObj.setPrintFlag(0);
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getNewFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
@@ -1455,15 +1456,18 @@ public class MainActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(editText.getText().toString())){
             newOrderObj.setDescription(editText.getText().toString());
         }
-        CDBHelper.createAndUpdate(newOrderObj);
+        String idss=CDBHelper.createAndUpdateDefalut(newOrderObj);
+        MyLog.e("ddddd="+idss);
+
         if (zcGoodsList.size() > 0) {
             zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
             zcOrderObj.setState(1);//未买单
+            zcOrderObj.setPrintFlag(0);
             zcOrderObj.setOrderType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
             zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
             zcOrderObj.setTableId(newOrderObj.getTableId());
             zcOrderObj.setCreatedYear("2018");
-            String id = CDBHelper.createAndUpdate( zcOrderObj);
+            String id = CDBHelper.createAndUpdateDefalut( zcOrderObj);
             zcOrderObj.setGoodsList(zcGoodsList);
             zcOrderObj.setId(id);
             CDBHelper.createAndUpdate( zcOrderObj);
