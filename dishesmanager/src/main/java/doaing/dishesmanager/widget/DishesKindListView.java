@@ -2,7 +2,6 @@
 package doaing.dishesmanager.widget;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.widget.ListView;
 
@@ -22,9 +21,7 @@ import com.couchbase.lite.SelectResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import doaing.dishesmanager.R;
 import doaing.dishesmanager.adapter.DishesKindAdapter;
-import doaing.dishesmanager.adapter.PackageDishesKindAdapter;
 import tools.CDBHelper;
 
 
@@ -65,8 +62,6 @@ public class DishesKindListView extends ListView {
         database = CDBHelper.getDatabase();
         disheKindQuery();
 
-        PackageDishesKindAdapter packageDishesKindAdapter = new PackageDishesKindAdapter(getContext(),database);
-        setAdapter(packageDishesKindAdapter);
 
     }
 

@@ -3,6 +3,7 @@ package doaing.tablemanager.adapter;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,8 +121,11 @@ public class AreaAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
 
+                    View view1 = getLinearLayOfEditView(i);
+                    final MutableDocument document = database.getDocument(areaId.get(i)).toMutable();
+                    editText.setText(document.getString("name"));
                     final AlertDialog alertDialog = new AlertDialog.Builder(context)
-                            .setTitle("房间编辑").setView(getLinearLayOfEditView(i))
+                            .setTitle("房间编辑").setView(view1)
                             .setPositiveButton("确认修改房间名称", null).setNegativeButton("", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -130,10 +134,11 @@ public class AreaAdapter extends BaseAdapter {
                             }).setNeutralButton("删除房间", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    List<Document> doc = CDBHelper.getDocmentsByWhere(
-                                            Expression.parameter("className").equalTo(Expression.string("Table")
-                                            .add(Expression.property("areaId").equalTo(Expression.string(areaId.get(i))))),
-                                            null);
+                                    List<Document> doc =  CDBHelper.getDocmentsByWhere(
+                                            Expression.property("className").equalTo(Expression.string("Table"))
+                                                    .and(Expression.property("areaId").equalTo(Expression.string(areaId.get(i))))
+                                            , null);
+
                                     int count = doc.size();
                                     if (count != 0){
                                         Toast.makeText(context,"区域下有桌位,不可删除。",Toast.LENGTH_SHORT).show();
@@ -143,9 +148,10 @@ public class AreaAdapter extends BaseAdapter {
                                         } catch (CouchbaseLiteException e) {
                                             e.printStackTrace();
                                         }
+                                        updata();
+                                        context.setAreaListViewItemPosition(0);
                                     }
-                                    updata();
-                                    context.setAreaListViewItemPosition(0);
+
                                 }
                             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                 @Override
@@ -161,8 +167,6 @@ public class AreaAdapter extends BaseAdapter {
                                 editText.setError("不能为空！");
                             } else {
                                 //修改房间名字
-                                MutableDocument document = database.getDocument(areaId.get(i)).toMutable();
-
                                 document.setString("name", editText.getText().toString());
 
                                 try {

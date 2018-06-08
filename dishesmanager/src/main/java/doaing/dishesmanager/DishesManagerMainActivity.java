@@ -70,15 +70,6 @@ public class DishesManagerMainActivity extends BaseToobarActivity {
             }
         });
 
-        packageImBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                startActivity(new Intent(DishesManagerMainActivity.this, PackageActivity1.class));
-                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-            }
-        });
-
     }
 
 }
