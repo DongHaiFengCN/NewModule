@@ -530,9 +530,6 @@ public class DisheAddActivity extends BaseToobarActivity {
 
         if (item.getItemId() == R.id.menu_send) {
 
-            Intent intent = new Intent(DisheAddActivity.this, PackageAddActivity.class);
-            intent.putExtra("id", disheDocument.getId());
-            startActivity(intent);
 
 
         }

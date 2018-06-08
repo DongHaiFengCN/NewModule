@@ -31,25 +31,6 @@
             android:name=".DisheEditActivity"
             android:label="@string/title_activity_dishe_edit"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".PackageActivity"
-            android:label="@string/taocan"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".PackageAddActivity"
-            android:label="@string/packageadd"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".PackageEditActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".PackageActivity1"
-            android:label="@string/title_activity_package1"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".SecondPackageActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

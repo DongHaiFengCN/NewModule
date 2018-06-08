@@ -115,14 +115,6 @@ public class DishesActivity extends BaseToobarActivity {
                     intent1.putExtra("position", kindPosition);
                     startActivity(intent1);
 
-                }else {
-
-                    Intent intent2 = new Intent(DishesActivity.this, PackageEditActivity.class);
-                    intent2.putExtra("disheId", dishes.getId());
-                    String kind = (String) dishesKindAdapter.getItem(kindPosition);
-                    intent2.putExtra("kindId",kind);
-                    intent2.putExtra("position",kindPosition);
-                    startActivity(intent2);
                 }
 
 
