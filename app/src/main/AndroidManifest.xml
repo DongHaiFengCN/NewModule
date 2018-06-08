@@ -7,20 +7,13 @@
     tools:replace="android:name"
     android:icon="@mipmap/icon"
      >
-    <!--<activity android:name="smartkitchen.com.login.LoginActivity"-->
-        <!--android:theme="@style/LoginAppTheme">-->
-        <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-        <!--</intent-filter>-->
-    <!--</activity>-->
-
-    <activity android:name="doaing.order.view.DeskActivity"
-        >
+    <activity android:name="smartkitchen.com.login.LoginActivity"
+        android:theme="@style/LoginAppTheme">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
     </activity>
+
 </application>
 </manifest>

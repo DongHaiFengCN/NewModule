@@ -202,9 +202,9 @@ public class MainActivity extends AppCompatActivity {
         isFlag = sharedPreferences.getBoolean("isFlag",true);
         initView();
         select(isFlag);
-        //连接打印机服务暂时去掉
-        //registerPrinterBroadcast();
-        //connectPrinter();
+        //连接打印机服务
+        registerPrinterBroadcast();
+        connectPrinter();
         MyLog.d("onCreate");
         Handler mHandler = new Handler();
         mHandler.post(new Runnable() {
@@ -686,11 +686,12 @@ public class MainActivity extends AppCompatActivity {
                         {
                             deductMaterial();
                             saveOrder();
-                           // printOrderToKitchen(goodsList);
+                            printOrderToKitchen(goodsList);
                             Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
                             startActivity(intent);
                             finish();
                             dialog.dismiss();
+
                         }
                     });
 
@@ -861,37 +862,6 @@ public class MainActivity extends AppCompatActivity {
         return orderNum;
 
     }
-    private void printGoodsAtRomoteByIndex(int printerId)
-    {
-        //1、程序连接上厨房端打印机后要进行分厨房打印
-        ArrayList<Goods> myshangpinlist = allKitchenClientGoods.get("" + printerId);
-
-        //2、获得该打印机内容 打印机名称
-        String printname = allKitchenClientPrintNames.get("" + printerId);
-        String printcontent = getPrintContentforClient(myshangpinlist, printname);
-        if (printContent(printcontent, printerId) == 0)//打印成功，使用打印完成回调
-        {
-            MyLog.d(printname + "分单打印完成");
-            Toast.makeText(MainActivity.this,"分单打印完成",Toast.LENGTH_SHORT).show();
-
-            PortParamDataBase database = new PortParamDataBase(this);
-            PortParameters mp =  database.queryPortParamDataBase(""+printerId);
-            if(mp.getPortType()==PortParameters.ETHERNET){
-                try {
-                    mGpService.closePort(printerId);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-        else
-        {
-            MyLog.d("厨房打印失败");
-            Toast.makeText(MainActivity.this,"厨房打印失败",Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
     private void printOrderToKitchen(List<Goods> list)
     {
@@ -908,28 +878,22 @@ public class MainActivity extends AppCompatActivity {
         for (KitchenClient kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
         {
             boolean findflag = false;
-
             ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
+            List<String> dishesIds = CDBHelper.getIdsByWhere(
+                    Expression.property("className").equalTo(Expression.string("Dishes").
+                            add(Expression.string("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
+                    null);
 
-            List<String> dishIds =new ArrayList<>();
-            List<String> dishKindIds = kitchenClientObj.getKindIds();
-            for(String kindId:dishKindIds){
-                List<String> dishesIds = CDBHelper.getIdsByWhere(
-                        Expression.property("className").equalTo(Expression.string("Dish"))
-                                .and(Expression.property("kindId").equalTo(Expression.string( kindId)))
-                        , null);
-
-                dishIds.addAll(dishesIds);
-            }
-
-
-            for (String dishId : dishIds)//2 for 遍历厨房下所含菜系
+            for (String dishKindId : dishesIds)//2 for 遍历厨房下所含菜系
             {
+
                 //3 for 该厨房下所应得商品
                 for (Goods goods : list) {
 
-                    if (dishId.equals(goods.getDishesId())) {
+                    if (dishKindId.equals(goods.getDishesKindId())) {
                         findflag = true;
+                        // g_printGoodsList.remove(goods);
+                        // 为了降低循环次数，因为菜品只可能在一个厨房打印分发，故分发完后移除掉。
                         oneKitchenClientGoods.add(goods);
                     }
                 } //end for 3
@@ -940,9 +904,10 @@ public class MainActivity extends AppCompatActivity {
             {
 
 
-                String clientKtname = "" + kitchenClientObj.getName();//厨房名称
-                int printerId  =  kitchenClientObj.getPrinterId();//打印机名称
-
+                String clientKtname = "" + kitchenClientObj.getName()+hintDishes;//厨房名称
+                String printname = "" + kitchenClientObj.getPrinterId();//打印机名称
+                Log.e("Port",""+printname);
+                int printerId = Integer.parseInt(printname);
 
                 allKitchenClientGoods.put("" + printerId, oneKitchenClientGoods);
                 allKitchenClientPrintNames.put("" + printerId, clientKtname);
@@ -969,7 +934,7 @@ public class MainActivity extends AppCompatActivity {
             }
             else//不分发打印，就直接跳转
             {
-                //Toast.makeText(MainActivity1.this,"不属于厨房打印菜品",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"不属于厨房打印菜品",Toast.LENGTH_SHORT).show();
             }
 
         }//end for1
@@ -979,86 +944,6 @@ public class MainActivity extends AppCompatActivity {
         //3\如果是连接状态  直接判断打印
         //4\如果未连接  ，连接打印机  并在打印机连接成功信息接收后打印
     }
-//    private void printOrderToKitchen(List<Goods> list)
-//    {
-//        //1\ 查询出所有厨房,并分配菜品
-//        List<KitchenClient> kitchenClientList = CDBHelper.getObjByClass( KitchenClient.class);
-//        if (kitchenClientList.size() <= 0)
-//        {
-//            Toast.makeText(getApplicationContext(), "未配置厨房数据", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//
-//        allKitchenClientGoods.clear();
-//        allKitchenClientPrintNames.clear();
-//        for (KitchenClient kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
-//        {
-//            boolean findflag = false;
-//            ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
-//            List<String> dishesIds = CDBHelper.getIdsByWhere(
-//                    Expression.property("className").equalTo(Expression.string("Dishes").
-//                            add(Expression.string("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
-//                    null);
-//
-//            for (String dishKindId : dishesIds)//2 for 遍历厨房下所含菜系
-//            {
-//                //3 for 该厨房下所应得商品
-//                for (Goods goods : list) {
-//
-//                    if (dishKindId.equals(goods.getDishesKindId())) {
-//                        findflag = true;
-//                        // g_printGoodsList.remove(goods);
-//                        // 为了降低循环次数，因为菜品只可能在一个厨房打印分发，故分发完后移除掉。
-//                        oneKitchenClientGoods.add(goods);
-//                    }
-//                } //end for 3
-//
-//            }//end for 2
-//
-//            if (findflag)  //如果有所属菜品，就去打印
-//            {
-//
-//
-//                String clientKtname = "" + kitchenClientObj.getName()+hintDishes;//厨房名称
-//                String printname = "" + kitchenClientObj.getPrinterId();//打印机名称
-//                Log.e("Port",""+printname);
-//                int printerId = Integer.parseInt(printname);
-//
-//                allKitchenClientGoods.put("" + printerId, oneKitchenClientGoods);
-//                allKitchenClientPrintNames.put("" + printerId, clientKtname);
-//
-//                if (!isPrinterConnected(printerId)) // 未连接
-//                {
-//                    if (connectClientPrint(printerId) == 0)
-//                    {
-//                        MyLog.d("***********打印机连接命令发送成功");
-//                        //proDialog.setMessage("打印机连接命令发送成功");
-//                        //uiHandler.obtainMessage(4).sendToTarget();
-//                    } else {
-//                        MyLog.d("***********打印机连接命令发送失败");
-//                        Toast.makeText(MainActivity.this,"打印机连接命令发送失败",Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//                else//已连接
-//                {
-//
-//                    printGoodsAtRomoteByIndex(printerId);
-//
-//
-//                }
-//            }
-//            else//不分发打印，就直接跳转
-//            {
-//                Toast.makeText(MainActivity.this,"不属于厨房打印菜品",Toast.LENGTH_SHORT).show();
-//            }
-//
-//        }//end for1
-//
-//
-//        //2\判断厨房打印机状态是否连接
-//        //3\如果是连接状态  直接判断打印
-//        //4\如果未连接  ，连接打印机  并在打印机连接成功信息接收后打印
-//    }
 
     private int connectClientPrint(int index) {
         if (mGpService != null) {
@@ -1171,8 +1056,26 @@ public class MainActivity extends AppCompatActivity {
         return status == GpDevice.STATE_CONNECTED;
     }
 
+    private void printGoodsAtRomoteByIndex(int printerId)
+    {
+        //1、程序连接上厨房端打印机后要进行分厨房打印
+        ArrayList<Goods> myshangpinlist = allKitchenClientGoods.get("" + printerId);
 
+        //2、获得该打印机内容 打印机名称
+        String printname = allKitchenClientPrintNames.get("" + printerId);
+        String printcontent = getPrintContentforClient(myshangpinlist, printname);
+        if (printContent(printcontent, printerId) == 0)//打印成功，使用打印完成回调
+        {
+            MyLog.d(printname + "分单打印完成");
+            Toast.makeText(MainActivity.this,"分单打印完成",Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            MyLog.d("厨房打印失败");
+            Toast.makeText(MainActivity.this,"厨房打印失败",Toast.LENGTH_SHORT).show();
+        }
 
+    }
 
     private void setOrderPrintState(String orderId) {
 
@@ -1417,8 +1320,8 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setChannelId(myApp.getCompany_ID());
         Order zcOrderObj = new Order();
         zcOrderObj.setChannelId(myApp.getCompany_ID());
-      //  gOrderId = CDBHelper.createAndUpdate( newOrderObj);
-      //  newOrderObj.setId(gOrderId);
+        gOrderId = CDBHelper.createAndUpdate( newOrderObj);
+        newOrderObj.setId(gOrderId);
 
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
@@ -1448,7 +1351,6 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setTotalPrice(total);
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(0);//正常
-        newOrderObj.setPrintFlag(0);
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getNewFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
@@ -1456,18 +1358,15 @@ public class MainActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(editText.getText().toString())){
             newOrderObj.setDescription(editText.getText().toString());
         }
-        String idss=CDBHelper.createAndUpdateDefalut(newOrderObj);
-        MyLog.e("ddddd="+idss);
-
+        CDBHelper.createAndUpdate(newOrderObj);
         if (zcGoodsList.size() > 0) {
             zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
             zcOrderObj.setState(1);//未买单
-            zcOrderObj.setPrintFlag(0);
             zcOrderObj.setOrderType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
             zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
             zcOrderObj.setTableId(newOrderObj.getTableId());
-            zcOrderObj.setCreatedYear("2018");
-            String id = CDBHelper.createAndUpdateDefalut( zcOrderObj);
+            zcOrderObj.setCreatedYear(getNianDate());
+            String id = CDBHelper.createAndUpdate( zcOrderObj);
             zcOrderObj.setGoodsList(zcGoodsList);
             zcOrderObj.setId(id);
             CDBHelper.createAndUpdate( zcOrderObj);

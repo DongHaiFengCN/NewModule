@@ -260,8 +260,8 @@ public class CDBHelper
      */
     public static String createAndUpdate(Object object) {
     //1\
-   //String tmp =  JSON.toJSONString(object);
-    String tmp =  JSON.toJSONString(object,SerializerFeature.WriteNullNumberAsZero, SerializerFeature.NotWriteDefaultValue);
+   String tmp =  JSON.toJSONString(object);
+    //String tmp =  JSON.toJSONString(object,SerializerFeature.WriteNullNumberAsZero, SerializerFeature.NotWriteDefaultValue);
 
     Map props = (Map) JSON.parse(tmp);
     String id = (String) props.get("id");
