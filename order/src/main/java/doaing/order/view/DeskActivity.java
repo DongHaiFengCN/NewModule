@@ -167,8 +167,12 @@ public class DeskActivity extends AppCompatActivity {
 
             }
         });
+
+        CDBHelper.getSharedInstance(getApplicationContext());
         msg_point = findViewById(R.id.msg_point);
         msg_point.setVisibility(View.INVISIBLE);
+
+
         msg_printer = findViewById(R.id.icon_printer);
         msg_printer.setOnClickListener(new View.OnClickListener()
         {
@@ -195,7 +199,6 @@ public class DeskActivity extends AppCompatActivity {
         initDishesData();
 
         //getPrinterStatus();
-        msg_point.setVisibility(View.INVISIBLE);
     }
 
 
