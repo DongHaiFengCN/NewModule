@@ -30,7 +30,8 @@
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/print" />
+                    android:src="@drawable/print"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/msg_point"
@@ -46,7 +47,7 @@
                     android:text="0"
                     android:textColor="@color/md_white_1000"
                     android:textSize="12sp"
-                    android:visibility="invisible" />
+                    android:visibility="gone" />
 
             </RelativeLayout>
         </LinearLayout>
