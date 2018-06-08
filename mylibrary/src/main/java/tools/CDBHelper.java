@@ -120,7 +120,6 @@ public class CDBHelper
             e.printStackTrace();
         }
 
-
     }
     public static void deleteDB(){
         try{

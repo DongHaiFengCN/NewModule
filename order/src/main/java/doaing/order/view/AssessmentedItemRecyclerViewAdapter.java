@@ -54,7 +54,7 @@ public class AssessmentedItemRecyclerViewAdapter extends RecyclerView.Adapter<As
         ResultSet results = null;
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("Dishes"))
+                        .equalTo(Expression.string("Dish"))
                         .and(Expression.property("sell").equalTo(Expression.booleanValue(true))));
         try {
             results = query.execute();

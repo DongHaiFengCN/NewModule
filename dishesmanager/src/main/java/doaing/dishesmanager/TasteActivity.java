@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
@@ -43,6 +44,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import bean.kitchenmanage.dish.Taste;
 import butterknife.BindView;
 import doaing.dishesmanager.view.MySwipeListLayout;
 
@@ -150,7 +152,7 @@ public class TasteActivity extends BaseToobarActivity {
         searchButton.setImageResource(R.mipmap.icon_add);
         mSearchAutoComplete.setBackgroundColor(ContextCompat.getColor(this, R.color.md_white));
         //设置Hint文字颜色
-        mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this, android.R.color.darker_gray));
+        mSearchAutoComplete.setHintTextColor(ContextCompat.getColor(this, R.color.md_white));
         mSearchView.setQueryHint("添加口味");
         //设置输入文字颜色
         mSearchAutoComplete.setTextColor(ContextCompat.getColor(this, R.color.md_blue_grey_700));
@@ -181,6 +183,10 @@ public class TasteActivity extends BaseToobarActivity {
         return super.onOptionsItemSelected(item);
     }
     private void addTasteInfo(SearchView.SearchAutoComplete mSearchAutoComplete) {
+        if(mSearchAutoComplete.getText().toString().isEmpty()){
+            Toast.makeText(TasteActivity.this,"不能为空",Toast.LENGTH_SHORT).show();
+            return;
+        }
         //1.添加数据到数据库
         MutableDocument document = new MutableDocument("Taste." + ToolUtil.getUUID());
         document.setString("channelId", ((MyApplication)getApplicationContext()).getCompany_ID());
@@ -241,18 +247,14 @@ public class TasteActivity extends BaseToobarActivity {
 
                 @Override
                 public void onClick(View view) {
-
+                    final MutableDocument document = list.get(arg0).toMutable();
                     final EditText editText = new EditText(TasteActivity.this);
-
+                    editText.setText(document.getString("name"));
                     new AlertDialog.Builder(TasteActivity.this).setTitle("修改口味名称")
                             .setView(editText)
                             .setNegativeButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-
-                                    MutableDocument document = list.get(arg0).toMutable();
-
-
                                     String a = editText.getText().toString();
                                     document.setString("name",a);
 

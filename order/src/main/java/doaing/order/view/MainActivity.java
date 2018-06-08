@@ -46,12 +46,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.couchbase.lite.Array;
+import com.couchbase.lite.ArrayExpression;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.VariableExpression;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.EscCommand;
@@ -75,6 +77,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import bean.kitchenmanage.depot.DishConsum;
+import bean.kitchenmanage.depot.Material;
 import bean.kitchenmanage.kitchen.KitchenClient;
 import bean.kitchenmanage.order.Goods;
 import bean.kitchenmanage.order.Order;
@@ -147,11 +151,11 @@ public class MainActivity extends AppCompatActivity {
     private List<Goods> goodsList = new ArrayList<>();
 
     private List<Goods> zcGoodsList = new ArrayList<>();
-
+    private List<Goods> ylGoodsList = new ArrayList<>();
     private String gOrderId;
     private EditText editText;
     private Document document;
-
+    private StringBuffer materialStr = new StringBuffer();
     private String tableName, areaName, currentPersions, serNum;
     private Map<String, ArrayList<Goods>> allKitchenClientGoods = new HashMap<String, ArrayList<Goods>>();
     private Map<String, String> allKitchenClientPrintNames = new HashMap<String, String>();
@@ -192,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         myApp = (MyApplication) getApplicationContext();
+        getGoodsList().clear();
         SharedPreferences sharedPreferences = getSharedPreferences("T9andOrder", 0);
 
         isFlag = sharedPreferences.getBoolean("isFlag",true);
@@ -679,6 +684,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v)
                         {
+                            deductMaterial();
                             saveOrder();
                             printOrderToKitchen(goodsList);
                             Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
@@ -1351,6 +1357,57 @@ public class MainActivity extends AppCompatActivity {
         return str;
 
     }
+
+    private void deductMaterial(){
+        for (Goods goods : getGoodsList()) {
+            VariableExpression DISHID = ArrayExpression.variable("dishesConsumList.dishId");
+            VariableExpression DISHCONSUM = ArrayExpression.variable("dishesConsumList");
+            List<Material> documents = CDBHelper.getObjByWhere(
+                    Expression.property("className").equalTo(Expression.string("Material"))
+                            .and(ArrayExpression.any(DISHCONSUM).in(Expression.property("dishesConsumList"))
+                                    .satisfies(DISHID.equalTo(Expression.string(goods.getDishesId()))))
+                    , null,Material.class);
+            if (documents.size() == 0){
+                ylGoodsList.add(goods);
+                continue;
+            }
+            //遍历原料
+            for (Material material : documents){
+                Document document = CDBHelper.getDocByID(material.getDepotId());
+                //查看是否为点餐厂库
+                if (document.getInt("mode") == 1){
+                    //判断原理是否为空
+                    if (material.getStock() > 0){
+                        for (DishConsum dishConsum : material.getDishesConsumList()){
+                            Document dish = CDBHelper.getDocByID(dishConsum.getDishId());
+                            //判断剩下是原理是否够
+                            if (material.getStock() - dishConsum.getConsums() > 0){
+                                material.setStock(MyBigDecimal.sub(material.getStock(),dishConsum.getConsums(),1));
+                                CDBHelper.createAndUpdate(material);
+                                if (material.getStock() - dishConsum.getConsums() <= material.getStockAlert()){
+                                    materialStr.append(dish.getString("name")+ "原料剩余不多，请采购！\n");
+                                }
+                                ylGoodsList.add(goods);
+                            }else{
+                                materialStr.append(dish.getString("name")+ "原料不足\n");
+                                continue;
+                            }
+                        }
+                    }else{
+                        materialStr.append(material.getName()+"原料不足\n");
+                        continue;
+                    }
+
+                }
+
+            }
+        }
+        if (materialStr.length() > 0) {
+            Toast.makeText(MainActivity.this, materialStr.toString(), Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
     private void saveOrder()
     {
 
@@ -1378,16 +1435,16 @@ public class MainActivity extends AppCompatActivity {
             newOrderObj.setSerialNum(getOrderSerialNum());
         }
 
-        for (int i = 0; i < goodsList.size(); i++) {
-            Goods obj = goodsList.get(i);
+        for (int i = 0; i < ylGoodsList.size(); i++) {
+            Goods obj = ylGoodsList.get(i);
             if (obj.getGoodsType() == 2) {
                 zcGoodsList.add(obj);
-                goodsList.remove(i);
+                ylGoodsList.remove(i);
                 i--;
                 continue;
             }
         }
-        newOrderObj.setGoodsList(goodsList);
+        newOrderObj.setGoodsList(ylGoodsList);
         newOrderObj.setTotalPrice(total);
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(0);//正常

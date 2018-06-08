@@ -82,7 +82,6 @@ public class DishesKindAdapter extends BaseAdapter {
 
         this.database = database;
         this.context = context;
-        MyLog.e("Kind","1");
         disheKindQuery();
     }
 
@@ -126,7 +125,7 @@ public class DishesKindAdapter extends BaseAdapter {
             //选中项背景
             listItemView.linearLayout.setBackgroundResource(R.drawable.animtableclick);
             listItemView.tvTitle.setTextColor(context.getResources().getColor(R.color.white));
-            if(flag){
+            if (flag) {
 
                 listItemView.kindEdit.setVisibility(View.VISIBLE);
                 listItemView.kindEdit.setOnClickListener(new View.OnClickListener() {
@@ -149,21 +148,24 @@ public class DishesKindAdapter extends BaseAdapter {
                         builder.setNeutralButton("删除菜类", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                                List<Document> documents = CDBHelper.getDocmentsByWhere(
-                                        Expression.property("className").equalTo(Expression.string("Dishes"))
-                                        .add(Expression.property("kindId").equalTo(Expression.string(names.get(i))))
+                              List<Document>  list = CDBHelper.getDocmentsByWhere(
+                                        Expression.property("className").equalTo(Expression.string("Dish"))
+                                                .add(Expression.property("kindId").equalTo(Expression.string(names.get(i))))
                                         ,null);
+                              if(list.size()>0){
+                                  Toast.makeText(context,"先移除菜类下的菜品！",Toast.LENGTH_SHORT).show();
+                                  return;
+                              }
 
+                                Document document = database.getDocument(names.get(i));
                                 try {
-                                    database.delete(documents.get(i));
+                                    database.delete(document);
                                 } catch (CouchbaseLiteException e) {
                                     e.printStackTrace();
                                 }
-                                names.remove(i);
+
+                                disheKindQuery();
                                 notifyDataSetChanged();
-
-
                                 EventBus.getDefault().postSticky(0);
 
 
@@ -194,16 +196,11 @@ public class DishesKindAdapter extends BaseAdapter {
                                     kindNameEt.setError("空值");
                                 }
 
-
                             }
                         });
-
-
                     }
                 });
-
             }
-
 
         } else {
             //其他项背景
@@ -242,9 +239,9 @@ public class DishesKindAdapter extends BaseAdapter {
                         public void onClick(View v) {
 
                             if (kindNameEt.getText().length() > 0) {
-                                MutableDocument document = new MutableDocument("DishesKind." + ToolUtil.getUUID());
+                                MutableDocument document = new MutableDocument("DishKind." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
-                                document.setString("className", "DishesKind");
+                                document.setString("className", "DishKind");
                                 document.setString("name", kindNameEt.getText().toString());
                                 try {
                                     database.save(document);
@@ -252,13 +249,10 @@ public class DishesKindAdapter extends BaseAdapter {
                                     e.printStackTrace();
                                 }
 
-                                names.add(document.getId());
+                                disheKindQuery();
                                 notifyDataSetChanged();
-
                                 alertDialog.dismiss();
-
-
-                                EventBus.getDefault().postSticky(names.size()-1);
+                                EventBus.getDefault().postSticky(names.size() - 1);
 
 
                             } else {
@@ -301,12 +295,16 @@ public class DishesKindAdapter extends BaseAdapter {
     }
 
     private void disheKindQuery() {
+
+        if (names != null) {
+            names.clear();
+        }
         //动态监听DishesKind信息
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(this.database))
-                .where(Expression.property("className").equalTo(Expression.string("DishesKind")));
+                .where(Expression.property("className").equalTo(Expression.string("DishKind")));
 
-        MyLog.e("Kind","2");
+
         try {
             ResultSet rows = query.execute();
             Result row;
@@ -319,7 +317,7 @@ public class DishesKindAdapter extends BaseAdapter {
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-        MyLog.e("Kind","3");
+
     }
 }
 
