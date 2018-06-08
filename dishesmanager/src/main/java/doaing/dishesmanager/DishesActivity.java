@@ -55,11 +55,6 @@ public class DishesActivity extends BaseToobarActivity {
     private int dishePosition = 0;
 
     private int kindPosition = 0;
-
-    public Database getDatabase() {
-        return database;
-    }
-
     private Database database;
 
     @Override
@@ -108,23 +103,16 @@ public class DishesActivity extends BaseToobarActivity {
 
                 Document dishes = dishesAdapter.getList().get(position);
 
-                if (dishes.getArray("dishesIds") == null || dishes.getArray("dishesIds").count() == 0) {
-
-                    Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
-                    intent1.putExtra("dishes", dishes.getId());
-                    intent1.putExtra("position", kindPosition);
-                    startActivity(intent1);
-
-                }
-
-
+                Intent intent1 = new Intent(DishesActivity.this, DisheEditActivity.class);
+                intent1.putExtra("dishes", dishes.getId());
+                intent1.putExtra("position", kindPosition);
+                startActivity(intent1);
 
             }
         });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(DishesActivity.this, DisheAddActivity.class);
                 intent.putExtra("kindPosition", kindPosition);
                 startActivity(intent);
@@ -158,8 +146,8 @@ public class DishesActivity extends BaseToobarActivity {
         public void setList(String kindId) {
 
             list = CDBHelper.getDocmentsByWhere(
-                    Expression.property("className").equalTo(Expression.string("Dishes"))
-                            .and(Expression.property("kindId").equalTo(Expression.string(kindId)))
+                    Expression.property("className").equalTo(Expression.string("Dish"))
+                            .add(Expression.property("kindId").equalTo(Expression.string(kindId)))
                     ,null);
             notifyDataSetChanged();
         }
@@ -241,10 +229,13 @@ public class DishesActivity extends BaseToobarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if (dishesKindAdapter.getNames().size() > 0 && position < dishesKindAdapter.getNames().size()) {
+
                     dishesKindAdapter.changeSelected(position);
 
                     kindPosition = position;
+
                     dishesAdapter.setList(dishesKindAdapter.getNames().get(position));
+
                 } else if (dishesKindAdapter.getNames().size() == 0) {
 
                     dishesAdapter.notifyDataSetChanged();
@@ -254,12 +245,12 @@ public class DishesActivity extends BaseToobarActivity {
         });
 
         //默认选中第一项
-        updataPosition(0);
+        updatePosition(0);
 
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void updataPosition(Integer integer) {
+    public void updatePosition(Integer integer) {
         if (dishesKindAdapter.getNames().size() == 0) {
 
             Toast.makeText(DishesActivity.this, "请添加菜类！", Toast.LENGTH_SHORT).show();

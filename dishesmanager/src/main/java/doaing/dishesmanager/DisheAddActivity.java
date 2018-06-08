@@ -112,8 +112,6 @@ public class DisheAddActivity extends BaseToobarActivity {
     private int position = 0;
     private int sortNum;
     private float price = -1;
-    private MutableArray dishesIds = new MutableArray();
-
 
     @Override
     protected int setMyContentView() {
@@ -126,36 +124,29 @@ public class DisheAddActivity extends BaseToobarActivity {
 
         setToolbarName("添加菜品");
 
-
-        EventBus.getDefault().register(this);
         database = CDBHelper.getDatabase();
 
-        disheDocument = new MutableDocument("Dishes." + ToolUtil.getUUID());
-
+        disheDocument = new MutableDocument("Dish." + ToolUtil.getUUID());
         disheDocument.setString("dataType", "BaseData");
         disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
-        disheDocument.setString("className", "Dishes");
+        disheDocument.setString("className", "Dish");
 
 
         //初始化口味
         initTasteData();
 
+
         disheKindSp.setSelection(intent.getIntExtra("kindPosition", 0));
+
         disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
 
-                position = p;
-
-                //添加菜品到选择的菜类菜品集合下
-                newKindDocument = disheKindSp.getDishesKindList().get(position);
-
                 //KindId保存到菜品中
                 disheDocument.setString("kindId", newKindDocument.getId());
 
-               // Log.e("DOAING", " ==== " + newKindDocument.getId());
                 List<Document> documents = CDBHelper.getDocmentsByWhere(
-                        Expression.property("className").equalTo(Expression.string("Dishes"))
+                        Expression.property("className").equalTo(Expression.string("Dish"))
                                 .add(Expression.property("kindId").equalTo(Expression.string(newKindDocument.getId())))
                         ,null);
                 sortNum = documents.size();
@@ -180,7 +171,7 @@ public class DisheAddActivity extends BaseToobarActivity {
             }
         });
 
-
+        Log.e("DOAING","22222222222");
         //提交菜品所有信息
         RxView.clicks(disheSubmitBt).throttleFirst(300, TimeUnit.MILLISECONDS).subscribe(new Action1<Void>() {
             @Override
@@ -213,9 +204,7 @@ public class DisheAddActivity extends BaseToobarActivity {
 
                     disheDocument.setFloat("price", Float.valueOf(dishePriceEt.getText().toString()));
                 }
-                if (dishesIds != null){
-                    disheDocument.setArray("dishesIds", dishesIds);
-                }
+
                 //判断菜类是否存在
                 if (disheKindSp.getDishesKindList().isEmpty()) {
 
@@ -242,7 +231,6 @@ public class DisheAddActivity extends BaseToobarActivity {
                 try {
                     database.save(disheDocument);
                 } catch (CouchbaseLiteException e) {
-                    Log.e("DishesAdd", e.toString());
                     e.printStackTrace();
                 }
 
@@ -256,50 +244,15 @@ public class DisheAddActivity extends BaseToobarActivity {
             }
         });
 
-        super.setNavigationOnClickListener(new NavigationOnClickListener() {
-            @Override
-            public void setNavigationOnClickListener() {
-
-
-                Document document = database.getDocument(disheDocument.getId());
-
-                if (document != null) {
-
-                    try {
-
-                        database.delete(document);
-
-                    } catch (CouchbaseLiteException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-            }
-        });
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-
-        EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void setInfo(Float price){
-        this.price = price;
-        dishePriceEt.setText(""+price);
-        MyLog.e("DOAING","price----"+price);
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void setInfo(MutableArray array){
-        dishesIds = array;
-
-        MyLog.e("DOAING","array---"+dishesIds.count());
-    }
 
     /**
      * 加载口味选择器
@@ -528,11 +481,6 @@ public class DisheAddActivity extends BaseToobarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-//        if (item.getItemId() == R.id.menu_send) {
-//
-//
-//
-//        }
         return super.onOptionsItemSelected(item);
     }
 

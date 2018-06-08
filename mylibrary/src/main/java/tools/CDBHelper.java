@@ -196,7 +196,7 @@ public class CDBHelper
 
 
 
-        byte[] pinnedServerCert = getPinnedCertFile(mcontext);
+      //  byte[] pinnedServerCert = getPinnedCertFile(mcontext);
         // Set pinned certificate.
         // config.setPinnedServerCertificate(pinnedServerCert);
 
