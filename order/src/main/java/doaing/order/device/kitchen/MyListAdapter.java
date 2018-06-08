@@ -168,9 +168,6 @@ public class MyListAdapter extends BaseAdapter {
         public void onClick(View view) {
             Document doc=CDBHelper.getDocByID(list.get(mPosition));
             Intent intent1=new Intent(activity,AddkitchenActivity.class);
-            intent1.putExtra("indexPrinter",  doc.getInt("printerId"));
-
-            intent1.putExtra("clientName", ""+doc.getString("name"));
             intent1.putExtra("docId",list.get(mPosition));
             activity.startActivityForResult(intent1, 2016);//startActivityForResult(intent1, 2016);
         }

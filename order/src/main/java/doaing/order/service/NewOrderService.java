@@ -2,17 +2,14 @@ package doaing.order.service;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
@@ -20,7 +17,6 @@ import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
-import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
 import com.couchbase.lite.QueryBuilder;
 import com.couchbase.lite.QueryChange;
@@ -28,7 +24,6 @@ import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
-import com.google.zxing.qrcode.encoder.QRCode;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.EscCommand;
 import com.gprinter.command.GpCom;
@@ -46,7 +41,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,15 +48,12 @@ import java.util.concurrent.Executors;
 import bean.kitchenmanage.kitchen.KitchenClient;
 import bean.kitchenmanage.order.Goods;
 import bean.kitchenmanage.order.Order;
-import bean.kitchenmanage.qrcode.Qrcode;
 import bean.kitchenmanage.table.Area;
 import bean.kitchenmanage.table.Table;
-import doaing.mylibrary.MyApplication;
 import doaing.order.untils.GlobalConstant;
-import doaing.order.untils.MyBigDecimal;
 import doaing.order.view.DeskActivity;
-import doaing.order.view.MainActivity;
 import tools.CDBHelper;
+import tools.MyBigDecimal;
 import tools.MyLog;
 
 import static com.gprinter.command.GpCom.ACTION_CONNECT_STATUS;
@@ -75,7 +66,7 @@ public class NewOrderService extends Service {
     private ExecutorService myExecutor;
     private Map<Integer, ArrayList<Goods>> allKitchenClientGoods = new HashMap<Integer, ArrayList<Goods>>();
     private Map<Integer, String> allKitchenClientPrintNames = new HashMap<Integer, String>();
-    private String tableName, areaName, currentPersions, serNum,gOrderId;
+    private String tableName,areaName, currentPersions, serNum,gOrderId;
     private List<Goods> goodsList;
     private List<KitchenClient> kitchenClientList;
     private Map<Integer ,KitchenClient> kitchenClientMap=new HashMap<>();
@@ -95,8 +86,7 @@ public class NewOrderService extends Service {
                 .where(Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("printFlag").equalTo(Expression.intValue(0)))//未打印
                         .and(Expression.property("deviceType").equalTo(Expression.intValue(2)))//手机点餐
-                        .and(Expression.property("state").equalTo(Expression.intValue(1))))//未结账)
-         ;
+                        .and(Expression.property("state").equalTo(Expression.intValue(1))));//未结账)
     }
 
 
@@ -123,6 +113,7 @@ public class NewOrderService extends Service {
 
         MyLog.e(Tag,"************NewOrderService   started*********");
         mGpService = DeskActivity.getmGpService();
+
         //只执行一个，后面的排队
         myExecutor   = Executors.newScheduledThreadPool(1);
 
@@ -144,7 +135,7 @@ public class NewOrderService extends Service {
                 }
             });
 
-            connectAllPrinter();
+            //connectAllPrinter();
         }else {
             if(PrinterStatusBroadcastReceiver!=null)
             {
@@ -174,7 +165,7 @@ public class NewOrderService extends Service {
     private void printNewOrder(String orderId)
     {
 
-        final  String orderIdStr=orderId;
+        final String orderIdStr=orderId;
         myExecutor.execute( new Runnable() {
             @Override
             public void run()
@@ -203,6 +194,7 @@ public class NewOrderService extends Service {
             String clientKtname = "" + kitchenClientObj.getName();//厨房名称
 
             int printerId = kitchenClientObj.getPrinterId();
+            MyLog.e("printerId=","-"+printerId);
             kitchenClientMap.put(printerId,kitchenClientObj);
             if (!isPrinterConnected(printerId)) // 未连接
             {
@@ -214,7 +206,7 @@ public class NewOrderService extends Service {
                 } else {
                     MyLog.e("printCMD","***********打印机连接命令发送失败");
                     //kitchenClientObj.setStatePrinter(false);
-                    CDBHelper.createAndUpdate(kitchenClientObj);
+                    //CDBHelper.createAndUpdate(kitchenClientObj);
                 }
             }
             else
@@ -223,26 +215,18 @@ public class NewOrderService extends Service {
             }
         }
     }
-    private void changeTableState( int tableNo)
+    private void changeTableState( String tableId)
     {
-        List<Document> documentList = CDBHelper.getDocmentsByWhere(
-                Expression.property("className").equalTo(Expression.string("Table"))
-                        .and(Expression.property("num").equalTo(Expression.intValue(tableNo)))
-                ,null);
 
-        if(documentList.size()>0)
-        {
-            Document doc = documentList.get(0);
+            Document doc = CDBHelper.getDocByID(tableId);
             currentPersions= ""+doc.getInt("currentPersions");
             MutableDocument mDoc = doc.toMutable();
             int state  = doc.getInt("state");
-            Log.e(Tag,"this table state is"+state);
             if(state!=2)//没有置成使用状态
             {
                 mDoc.setInt("state",2);
                 CDBHelper.saveDocument(mDoc);
             }
-        }
 
     }
     // 厨房分单打印
@@ -261,9 +245,9 @@ public class NewOrderService extends Service {
         Order obj= CDBHelper.getObjById(order_id,Order.class);
         goodsList.addAll(obj.getGoodsList());// = obj.getGoodsList();
         Table table = CDBHelper.getObjById(obj.getTableId(),Table.class);
+        tableName = table.getName();
         Area area = CDBHelper.getObjById(table.getAreaId(),Area.class);
         areaName = area.getName();
-        tableName = table.getName();
         if (obj.getOrderNum() == 1)//第一次下单
 
             serNum = obj.getSerialNum();//流水号
@@ -271,8 +255,8 @@ public class NewOrderService extends Service {
         else //多次下单
             serNum = obj.getSerialNum() + "_" + obj.getOrderNum();
         gOrderId = order_id;
-        int tableNo = table.getNum();
-        changeTableState(tableNo);
+        String tableId = obj.getTableId();
+        changeTableState(tableId);
 
         //1\ 查询出所有厨房,并分配菜品
 
@@ -294,7 +278,7 @@ public class NewOrderService extends Service {
             boolean findflag = false;
             ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
             List<String> dishesKindId = CDBHelper.getIdsByWhere(
-                    Expression.property("className").equalTo(Expression.string("Dishes")
+                    Expression.property("className").equalTo(Expression.string("Dish")
                     .add(Expression.property("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
                     null);
             for (String dishKindId : dishesKindId)//2 for 遍历厨房下所含菜系
@@ -382,13 +366,13 @@ public class NewOrderService extends Service {
         {
             MyLog.e("厨房打印失败");
         }
-
         setOrderPrintState(gOrderId);
         allKitchenClientGoods.remove(printerId);//移除
         allKitchenClientPrintNames.remove(printerId);//移除
 
 
     }
+
     private void setOrderPrintState(String orderId) {
 
         Order obj = CDBHelper.getObjById( orderId, Order.class);
@@ -451,9 +435,9 @@ public class NewOrderService extends Service {
                 {
 
 
-                   List<Document>    docList  = CDBHelper.getDocmentsByWhere(
-                             Expression.property("className").equalTo(Expression.string("KitchenClientC"))
-                                     .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                   List<Document> docList  = CDBHelper.getDocmentsByWhere(
+                             Expression.property("className").equalTo(Expression.string("KitchenClient"))
+                                     .and(Expression.property("printerId").equalTo(Expression.intValue(id))),
                     null);
 
                    if(docList.size()>0)
@@ -478,9 +462,9 @@ public class NewOrderService extends Service {
                 {
                     MyLog.e(Tag,id+"-打印机连接成功");
 
-                    List<Document>    docList  = CDBHelper.getDocmentsByWhere(
-                            Expression.property("className").equalTo(Expression.string("KitchenClientC"))
-                                    .and(Expression.property("indexPrinter").equalTo(Expression.intValue(id))),
+                    List<Document> docList  = CDBHelper.getDocmentsByWhere(
+                            Expression.property("className").equalTo(Expression.string("KitchenClient"))
+                                    .and(Expression.property("printerId").equalTo(Expression.intValue(id))),
                             null);
 
                     if(docList.size()>0)
@@ -489,6 +473,7 @@ public class NewOrderService extends Service {
                         MutableDocument mutableDocument = doc.toMutable();
                         mutableDocument.setBoolean("statePrinter",true);
                         CDBHelper.saveDocument(mutableDocument);
+                        MyLog.e("kitchenDoc","---"+mutableDocument.toMap().toString());
                     }
                     //1、程序连接上厨房端打印机后要进行分厨房打印
 
@@ -735,8 +720,6 @@ public class NewOrderService extends Service {
 
                     } catch (UnsupportedEncodingException e) {
 
-                        // TODO Auto-generated catch block
-
                         e.printStackTrace();
 
                     }
@@ -755,7 +738,7 @@ public class NewOrderService extends Service {
 
                     } catch (UnsupportedEncodingException e) {
 
-                        // TODO Auto-generated catch block
+
 
                         e.printStackTrace();
 
@@ -975,8 +958,6 @@ public class NewOrderService extends Service {
 
                         } catch (RemoteException e) {
 
-                            // TODO Auto-generated catch block
-
                             e.printStackTrace();
 
                         }
@@ -1026,8 +1007,6 @@ public class NewOrderService extends Service {
 
 
             } catch (Exception e) {
-
-                // TODO Auto-generated catch block
 
                 e.printStackTrace();
 

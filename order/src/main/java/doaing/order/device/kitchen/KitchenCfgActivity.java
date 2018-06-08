@@ -83,11 +83,8 @@ public class KitchenCfgActivity extends BaseToobarActivity implements View.OnCli
             finish();
 
         } else if (i == R.id.activity_kitchen_tj) {
-            Bundle bundle = new Bundle();
-            infomations = CDBHelper.getIdsByClass( KitchenClient.class);
             Intent intent = new Intent(KitchenCfgActivity.this, AddkitchenActivity.class);
-            bundle.putSerializable("infomations", (Serializable) infomations);
-            intent.putExtras(bundle);
+
             startActivityForResult(intent, 2015);
 
         }else{

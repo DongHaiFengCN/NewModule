@@ -34,11 +34,10 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
             android:padding="4dp"
-            android:src="@drawable/animadd"
-            android:layout_centerVertical="true"
-            />
+            android:src="@drawable/animadd" />
     </RelativeLayout>
 
     <LinearLayout

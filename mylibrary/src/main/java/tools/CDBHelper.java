@@ -103,8 +103,15 @@ public class CDBHelper
     {
 
         DatabaseConfiguration config = new DatabaseConfiguration(context);
-        File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
-        config.setDirectory(folder.getAbsolutePath());
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+        {
+            File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
+            config.setDirectory(folder.getAbsolutePath());
+        }
+
+
+        MyLog.e("Environment.getExternalStorageState()=",Environment.getExternalStorageState()+"getExternalStorageDirectory= ="+Environment.getExternalStorageDirectory());
+
         try {
             db = new Database(dbName, config);
         } catch (CouchbaseLiteException e)
@@ -128,8 +135,15 @@ public class CDBHelper
     public static void reCreateDB(){
 
         DatabaseConfiguration config = new DatabaseConfiguration(mcontext);
-        File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
-        config.setDirectory(folder.getAbsolutePath());
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+        {
+            File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
+            config.setDirectory(folder.getAbsolutePath());
+        }
+
+
+        MyLog.e("Environment.getExternalStorageState()=",Environment.getExternalStorageState()+"getExternalStorageDirectory= ="+Environment.getExternalStorageDirectory());
+
         try {
             db = new Database(dbName, config);
         } catch (CouchbaseLiteException e)
