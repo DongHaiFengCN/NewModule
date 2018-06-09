@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/DataModle/DataModle.iml" filepath="$PROJECT_DIR$/DataModle/DataModle.iml" />
       <module fileurl="file://$PROJECT_DIR$/Login/Login.iml" filepath="$PROJECT_DIR$/Login/Login.iml" />
       <module fileurl="file://$PROJECT_DIR$/NewModule.iml" filepath="$PROJECT_DIR$/NewModule.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/NewModule.iml" filepath="$PROJECT_DIR$/.idea/NewModule.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/dishesmanager/dishesmanager.iml" filepath="$PROJECT_DIR$/dishesmanager/dishesmanager.iml" />
       <module fileurl="file://$PROJECT_DIR$/mylibrary/mylibrary.iml" filepath="$PROJECT_DIR$/mylibrary/mylibrary.iml" />

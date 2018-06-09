@@ -233,17 +233,15 @@ public class DishAddActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
 
-
-               // Log.e("DOAING","选择的id"+disheKindSp.getDishesKindList().get(p).getId());
                 position = p;
                 //KindId保存到菜品中
-               /* List<Document> documents = CDBHelper.getDocmentsByWhere(
+               List<Document> documents = CDBHelper.getDocmentsByWhere(
                         Expression.property("className").equalTo(Expression.string("Dish"))
-                                .and(Expression.property("kindId").equalTo(Expression.string(newKindDocument.getId())))
+                                .and(Expression.property("kindId").equalTo(Expression.string(disheKindSp.getDishesKindList().get(p).getId())))
                         , null);
-                sortNum = documents.size();*/
+                sortNum = documents.size();
                 //默认依次添加到队尾
-               // disheDocument.setInt("sortNum", sortNum);
+                disheDocument.setInt("sortNum", sortNum);
 
             }
 

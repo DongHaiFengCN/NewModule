@@ -1,5 +1,4 @@
 package doaing.dishesmanager;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
@@ -18,26 +17,16 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.couchbase.lite.Blob;
-import com.couchbase.lite.CouchbaseLiteException;
-import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
-import com.couchbase.lite.Meta;
-import com.couchbase.lite.Query;
-import com.couchbase.lite.QueryBuilder;
-import com.couchbase.lite.Result;
-import com.couchbase.lite.ResultSet;
-import com.couchbase.lite.SelectResult;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.DishesKindAdapter;
@@ -162,6 +151,12 @@ public class DishesActivity extends BaseToobarActivity {
                             .and(Expression.property("kindId").equalTo(Expression.string(kindId)))
                     , null);
              notifyDataSetChanged();
+
+
+            for (Document document:list) {
+                Log.e("DOAING",document.getString("name")+"");
+                Log.e("DOAING",document.getInt("sortNum")+"");
+            }
         }
 
         @Override
@@ -202,7 +197,6 @@ public class DishesActivity extends BaseToobarActivity {
             }
 
             viewHolder.dishenameTv.setText(list.get(position).getString("name"));
-
             Blob taskBlob = list.get(position).getBlob("image");
 
             if (taskBlob != null) {
@@ -249,8 +243,6 @@ public class DishesActivity extends BaseToobarActivity {
                     dishesKindAdapter.changeSelected(position);
 
                     kindPosition = position;
-
-                    Log.e("DOAING", "选择的 kind id " + dishesKindAdapter.getNames().get(position));
 
                     dishesAdapter.setList(dishesKindAdapter.getNames().get(position));
 

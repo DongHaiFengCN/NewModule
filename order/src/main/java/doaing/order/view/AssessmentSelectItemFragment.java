@@ -41,9 +41,6 @@ public class AssessmentSelectItemFragment extends Fragment {
     private OnListenerDataBase mListener;
     private AssessmentSelectItemRecyclerViewAdapter assessmentSelectItemRecyclerViewAdapter;
 
-
-
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
