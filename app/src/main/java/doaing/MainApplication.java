@@ -3,6 +3,7 @@ package doaing;
 import com.mob.MobSDK;
 
 import doaing.mylibrary.MyApplication;
+import tools.CrashHandler;
 
 
 /**
@@ -22,5 +23,8 @@ public class MainApplication extends MyApplication {
         super.onCreate();
 
         MobSDK.init(this);
+
+        CrashHandler.getInstance().init(getApplicationContext());
+
     }
 }

@@ -1,15 +1,11 @@
-//apply plugin: 'com.android.application'
 apply plugin: 'com.android.library'
-
 android {
     compileSdkVersion 26
-
     defaultConfig {
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
-
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         //获取路由模块名称
         javaCompileOptions {
@@ -17,7 +13,6 @@ android {
                 arguments = [moduleName: project.getName()]
             }
         }
-
     }
 
     buildTypes {
@@ -26,9 +21,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
-
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation rootProject.ext.libSupportAppcompat

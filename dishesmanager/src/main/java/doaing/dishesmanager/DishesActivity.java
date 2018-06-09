@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.DishesKindAdapter;
+import doaing.dishesmanager.widget.DishAddActivity;
 import tools.CDBHelper;
 import view.BaseToobarActivity;
 
@@ -113,7 +115,7 @@ public class DishesActivity extends BaseToobarActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DishesActivity.this, DisheAddActivity.class);
+                Intent intent = new Intent(DishesActivity.this, DishAddActivity.class);
                 intent.putExtra("kindPosition", kindPosition);
                 startActivity(intent);
             }
@@ -145,10 +147,15 @@ public class DishesActivity extends BaseToobarActivity {
         }
         public void setList(String kindId) {
 
+
+            Log.e("DOAING","kindId "+kindId);
+
             list = CDBHelper.getDocmentsByWhere(
                     Expression.property("className").equalTo(Expression.string("Dish"))
                             .add(Expression.property("kindId").equalTo(Expression.string(kindId)))
                     ,null);
+            Log.e("DOAING","list "+list.size() );
+
             notifyDataSetChanged();
         }
 
@@ -173,8 +180,11 @@ public class DishesActivity extends BaseToobarActivity {
             LayoutInflater layoutInflater;
 
             layoutInflater = LayoutInflater.from(DishesActivity.this);
+
             ViewHolder viewHolder;
+
             if (convertView == null) {
+
                 viewHolder = new ViewHolder();
                 convertView = layoutInflater.inflate(R.layout.dishe_list_item, null);
                 viewHolder.disheIm = convertView.findViewById(R.id.dishe_im);
@@ -185,10 +195,10 @@ public class DishesActivity extends BaseToobarActivity {
                 viewHolder = (ViewHolder) convertView.getTag();
 
             }
+
             viewHolder.dishenameTv.setText(list.get(position).getString("name"));
 
             Blob taskBlob = list.get(position).getBlob("image");
-
 
             if (taskBlob != null) {
 
@@ -223,6 +233,7 @@ public class DishesActivity extends BaseToobarActivity {
         //默认绑定dishes
         dishesAdapter = new DishesAdapter();
         dishesLv.setAdapter(dishesAdapter);
+
         //kind的点击事件
         dishekindLv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -233,6 +244,9 @@ public class DishesActivity extends BaseToobarActivity {
                     dishesKindAdapter.changeSelected(position);
 
                     kindPosition = position;
+
+                    Log.e("DOAING","kind "+kindPosition);
+
 
                     dishesAdapter.setList(dishesKindAdapter.getNames().get(position));
 

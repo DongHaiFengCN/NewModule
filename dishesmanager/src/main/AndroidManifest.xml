@@ -31,6 +31,9 @@
             android:name=".DisheEditActivity"
             android:label="@string/title_activity_dishe_edit"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".widget.DishAddActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            ></activity>
     </application>
 
 </manifest>

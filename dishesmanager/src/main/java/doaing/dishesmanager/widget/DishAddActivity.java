@@ -1,4 +1,4 @@
-package doaing.dishesmanager;
+package doaing.dishesmanager.widget;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -11,12 +11,12 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -44,9 +44,6 @@ import com.couchbase.lite.SelectResult;
 import com.jakewharton.rxbinding.view.RxView;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-import org.greenrobot.eventbus.util.ThrowableFailureEvent;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -54,11 +51,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import butterknife.BindView;
-import doaing.dishesmanager.widget.DishesKindSpinner;
-import doaing.dishesmanager.widget.TasteSelectAdapter;
+import doaing.dishesmanager.DisheAddActivity;
+import doaing.dishesmanager.FileAddService;
+import doaing.dishesmanager.R;
 import doaing.mylibrary.MyApplication;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -71,16 +69,9 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.functions.Action1;
 import tools.CDBHelper;
-import tools.MyLog;
 import tools.ToolUtil;
-import view.BaseToobarActivity;
 
-
-/**
- * @author donghaifeng
- */
-
-public class DisheAddActivity extends BaseToobarActivity {
+public class DishAddActivity extends AppCompatActivity {
 
     private Document newKindDocument;
     private Database database;
@@ -99,170 +90,17 @@ public class DisheAddActivity extends BaseToobarActivity {
 
     ImageView tasteImBt;
     MutableDocument disheDocument;
-    MutableDocument dishesDoc;
+  //  MutableDocument dishesDoc;
     String[] strings;
     private int position = 0;
     private int sortNum;
-    private float price = -1;
 
     @Override
-    protected int setMyContentView() {
-
-
-        return R.layout.activity_dish_add;
-    }
-
-    @Override
-    public void initData(Intent intent) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dish_add);
         initView();
-        //setToolbarName("添加菜品");
-
-
-
-        database = CDBHelper.getDatabase();
-        disheDocument = new MutableDocument("Dish." + ToolUtil.getUUID());
-        disheDocument.setString("dataType", "BaseData");
-        disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
-        disheDocument.setString("className", "Dish");
-
-        //初始化口味
-        initTasteData();
-
-        int p = intent.getIntExtra("kindPosition", 0);
-        disheKindSp.setSelection(intent.getIntExtra("kindPosition", 0));
-
-        disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
-
-                //KindId保存到菜品中
-                disheDocument.setString("kindId", newKindDocument.getId());
-
-                List<Document> documents = CDBHelper.getDocmentsByWhere(
-                        Expression.property("className").equalTo(Expression.string("Dish"))
-                                .add(Expression.property("kindId").equalTo(Expression.string(newKindDocument.getId())))
-                        , null);
-                sortNum = documents.size();
-                //默认依次添加到队尾
-                disheDocument.setInt("sortNum", sortNum);
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-        RxView.clicks(disheIm).throttleFirst(300, TimeUnit.MILLISECONDS).subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 1);
-
-            }
-        });
-
-
-        //提交菜品所有信息
-        RxView.clicks(disheSubmitBt).throttleFirst(300, TimeUnit.MILLISECONDS).subscribe(new Action1<Void>() {
-            @Override
-            public void call(Void aVoid) {
-                if ("".equals(disheName.getText().toString())) {
-
-                    disheName.setError("菜品名称不能为空");
-
-                    return;
-
-                } else {
-
-                    String dishesName = disheName.getText().toString();
-                    disheDocument.setString("name", dishesName);
-
-                    String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
-                    disheDocument.setString("code26", dishesNameCode26);
-
-                    String dishesNameCode9 = ToolUtil.ChangeSZ(dishesNameCode26);
-                    disheDocument.setString("code9", dishesNameCode9);
-
-                }
-                if ("".equals(dishePriceEt.getText().toString())) {
-
-                    dishePriceEt.setError("价格不能为空");
-
-                    return;
-
-                } else {
-
-                    disheDocument.setFloat("price", Float.valueOf(dishePriceEt.getText().toString()));
-                }
-
-                //判断菜类是否存在
-                if (disheKindSp.getDishesKindList().isEmpty()) {
-
-                    Toast.makeText(DisheAddActivity.this, "请先添加菜类信息！", Toast.LENGTH_LONG).show();
-
-                    return;
-                }
-
-                //附加图片到Docment，允许图片为空
-                disheDocument = attachImage(disheDocument, bitmap);
-                disheDocument.setString("kindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
-                //添加口味
-                MutableArray array = new MutableArray();
-                if (list.size() > 0) {
-
-                    for (int i = 0; i < list.size(); i++) {
-
-                        array.addString(list.get(i).getId());
-                    }
-
-                }
-                disheDocument.setArray("tasteIds", array);
-                disheDocument.setInt("sortNum", sortNum);
-                try {
-                    database.save(disheDocument);
-                } catch (CouchbaseLiteException e) {
-                    e.printStackTrace();
-                }
-
-                EventBus.getDefault().postSticky(position);
-                //提交静态图片
-                if (newFileUrl != null && !newFileUrl.isEmpty()) {
-                    upDataPicture(new File(newFileUrl));
-                }
-                finish();
-
-            }
-        });
-
     }
-
-    private void initView() {
-
-       // toolbar = findViewById(R.id.toolbar);
-
-        disheName = findViewById(R.id.dishe_name);
-
-        dishePriceEt = findViewById(R.id.dishe_price_et);
-
-        disheKindSp = findViewById(R.id.disheKind_sp);
-
-        disheSubmitBt = findViewById(R.id.dishe_submit_bt);
-
-        disheIm = findViewById(R.id.dishe_im);
-
-        tasteImBt = findViewById(R.id.taste_im_bt);
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-    }
-
 
     /**
      * 加载口味选择器
@@ -308,7 +146,7 @@ public class DisheAddActivity extends BaseToobarActivity {
             @Override
             public void onClick(View v) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(DisheAddActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(DishAddActivity.this);
                 builder.setMultiChoiceItems(strings, new boolean[strings.length], new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
@@ -353,11 +191,183 @@ public class DisheAddActivity extends BaseToobarActivity {
         recyclerView.setAdapter(oap);
     }
 
-    @Override
-    protected Toolbar setToolBarInfo() {
-        return toolbar;
+    private void initView() {
+        database = CDBHelper.getDatabase();
+
+        disheDocument = new MutableDocument("Dish." + ToolUtil.getUUID());
+        disheDocument.setString("dataType", "BaseData");
+        disheDocument.setString("channelId", ((MyApplication) getApplication()).getCompany_ID());
+        disheDocument.setString("className", "Dish");
+
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        disheName = findViewById(R.id.dishe_name);
+
+        dishePriceEt = findViewById(R.id.dishe_price_et);
+
+        disheKindSp = findViewById(R.id.disheKind_sp);
+
+        disheSubmitBt = findViewById(R.id.dishe_submit_bt);
+
+        disheIm = findViewById(R.id.dishe_im);
+
+        tasteImBt = findViewById(R.id.taste_im_bt);
+        //初始化口味
+        initTasteData();
+
+
+        int p = getIntent().getIntExtra("kindPosition", 0);
+        disheKindSp.setSelection(p);
+
+
+
+
+
+        //newKindDocument = disheKindSp.getDishesKindList().get(p);
+
+        disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int p, long id) {
+
+
+                disheDocument.setString("kindId",newKindDocument.getId());
+            /*    try{
+                    disheDocument.setString("kindId",newKindDocument.getId());
+
+                }catch (Exception e){
+
+                    e.printStackTrace();
+                }*/
+
+                position = p;
+                //KindId保存到菜品中
+
+
+                List<Document> documents = CDBHelper.getDocmentsByWhere(
+                        Expression.property("className").equalTo(Expression.string("Dish"))
+                                .and(Expression.property("kindId").equalTo(Expression.string(newKindDocument.getId())))
+                        , null);
+                sortNum = documents.size();
+                //默认依次添加到队尾
+                disheDocument.setInt("sortNum", sortNum);
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        RxView.clicks(disheIm).throttleFirst(300, TimeUnit.MILLISECONDS).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 1);
+
+            }
+        });
+
+        //提交菜品所有信息
+        RxView.clicks(disheSubmitBt).throttleFirst(300, TimeUnit.MILLISECONDS).subscribe(new Action1<Void>() {
+            @Override
+            public void call(Void aVoid) {
+                if ("".equals(disheName.getText().toString())) {
+
+                    disheName.setError("菜品名称不能为空");
+
+                    return;
+
+                } else {
+
+                    String dishesName = disheName.getText().toString();
+                    disheDocument.setString("name", dishesName);
+
+                    String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
+                    disheDocument.setString("code26", dishesNameCode26);
+
+                    String dishesNameCode9 = ToolUtil.ChangeSZ(dishesNameCode26);
+                    disheDocument.setString("code9", dishesNameCode9);
+
+                }
+                if ("".equals(dishePriceEt.getText().toString())) {
+
+                    dishePriceEt.setError("价格不能为空");
+
+                    return;
+
+                } else {
+
+                    disheDocument.setFloat("price", Float.valueOf(dishePriceEt.getText().toString()));
+                }
+
+                //判断菜类是否存在
+                if (disheKindSp.getDishesKindList().isEmpty()) {
+
+                    Toast.makeText(DishAddActivity.this, "请先添加菜类信息！", Toast.LENGTH_LONG).show();
+
+                    return;
+                }
+
+                //附加图片到Docment，允许图片为空
+                disheDocument = attachImage(disheDocument, bitmap);
+                disheDocument.setString("kindId", disheKindSp.getDishesKindList().get(disheKindSp.getSelectedItemPosition()).getId());
+                //添加口味
+                MutableArray array = new MutableArray();
+                if (list.size() > 0) {
+
+                    for (int i = 0; i < list.size(); i++) {
+
+                        array.addString(list.get(i).getId());
+                    }
+
+                }
+                disheDocument.setArray("tasteIds", array);
+                disheDocument.setInt("sortNum", sortNum);
+                try {
+                    database.save(disheDocument);
+                } catch (CouchbaseLiteException e) {
+                    e.printStackTrace();
+                }
+
+                EventBus.getDefault().postSticky(position);
+                //提交静态图片
+                if (newFileUrl != null && !newFileUrl.isEmpty()) {
+                    upDataPicture(new File(newFileUrl));
+                }
+                finish();
+
+            }
+        });
     }
 
+    /**
+     * document附加图片上去
+     */
+
+    private MutableDocument attachImage(MutableDocument task, Bitmap image) {
+
+        if (image != null) {
+            Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            thumbnail.compress(Bitmap.CompressFormat.JPEG, 70, out);
+            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+            Blob blob = new Blob("image/jpg", in);
+            task.setBlob("image", blob);
+
+        }
+        return task;
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -394,26 +404,6 @@ public class DisheAddActivity extends BaseToobarActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
-    /**
-     * document附加图片上去
-     */
-
-    private MutableDocument attachImage(MutableDocument task, Bitmap image) {
-
-        if (image != null) {
-            Bitmap thumbnail = ThumbnailUtils.extractThumbnail(image, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            thumbnail.compress(Bitmap.CompressFormat.JPEG, 70, out);
-            ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-            Blob blob = new Blob("image/jpg", in);
-            task.setBlob("image", blob);
-
-        }
-        return task;
-    }
-
-
     /**
      * 获取图片的绝对路径
      *
@@ -423,13 +413,12 @@ public class DisheAddActivity extends BaseToobarActivity {
 
     private String getRealPathFromURI(Uri contentUri) {
         String[] prob = {MediaStore.Images.Media.DATA};
-        CursorLoader loader = new CursorLoader(DisheAddActivity.this, contentUri, prob, null, null, null);
+        CursorLoader loader = new CursorLoader(DishAddActivity.this, contentUri, prob, null, null, null);
         Cursor cursor = loader.loadInBackground();
         int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(columnIndex);
     }
-
 
     /**
      * 上传图片静态资源
@@ -462,22 +451,19 @@ public class DisheAddActivity extends BaseToobarActivity {
                 flag[0] = response.isSuccessful();
 
                 if (flag[0]) {
-                    Toast.makeText(DisheAddActivity.this, "图片上传成功！", Toast.LENGTH_LONG).show();
+                    Toast.makeText(DishAddActivity.this, "图片上传成功！", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(DisheAddActivity.this, "图片上传失败！", Toast.LENGTH_LONG).show();
+                    Toast.makeText(DishAddActivity.this, "图片上传失败！", Toast.LENGTH_LONG).show();
                 }
 
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(DisheAddActivity.this, "请求访问失败！", Toast.LENGTH_LONG).show();
+                Toast.makeText(DishAddActivity.this, "请求访问失败！", Toast.LENGTH_LONG).show();
 
             }
         });
 
     }
-
-
 }
-
