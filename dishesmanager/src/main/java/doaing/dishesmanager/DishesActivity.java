@@ -18,20 +18,29 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.couchbase.lite.Blob;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import doaing.dishesmanager.adapter.DishesKindAdapter;
-import doaing.dishesmanager.widget.DishAddActivity;
 import tools.CDBHelper;
 import view.BaseToobarActivity;
 
@@ -139,24 +148,20 @@ public class DishesActivity extends BaseToobarActivity {
 
         private List<Document> list;
 
-        public List<Document> getList(){
-            if (list != null){
+        public List<Document> getList() {
+            if (list != null) {
                 return list;
             }
             return null;
         }
+
         public void setList(String kindId) {
-
-
-            Log.e("DOAING","kindId "+kindId);
 
             list = CDBHelper.getDocmentsByWhere(
                     Expression.property("className").equalTo(Expression.string("Dish"))
-                            .add(Expression.property("kindId").equalTo(Expression.string(kindId)))
-                    ,null);
-            Log.e("DOAING","list "+list.size() );
-
-            notifyDataSetChanged();
+                            .and(Expression.property("kindId").equalTo(Expression.string(kindId)))
+                    , null);
+             notifyDataSetChanged();
         }
 
         @Override
@@ -245,8 +250,7 @@ public class DishesActivity extends BaseToobarActivity {
 
                     kindPosition = position;
 
-                    Log.e("DOAING","kind "+kindPosition);
-
+                    Log.e("DOAING", "选择的 kind id " + dishesKindAdapter.getNames().get(position));
 
                     dishesAdapter.setList(dishesKindAdapter.getNames().get(position));
 

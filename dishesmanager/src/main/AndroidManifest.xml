@@ -23,15 +23,10 @@
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".DisheAddActivity"
-            android:label="@string/DishesAddActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".DisheEditActivity"
             android:label="@string/title_activity_dishe_edit"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".widget.DishAddActivity"
+        <activity android:name=".DishAddActivity"
             android:theme="@style/AppTheme.NoActionBar"
             ></activity>
     </application>
