@@ -233,7 +233,7 @@ public class DishAddActivity extends AppCompatActivity {
 
 
 
-        //newKindDocument = disheKindSp.getDishesKindList().get(p);
+        newKindDocument = disheKindSp.getDishesKindList().get(p);
 
         disheKindSp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -241,13 +241,6 @@ public class DishAddActivity extends AppCompatActivity {
 
 
                 disheDocument.setString("kindId",newKindDocument.getId());
-            /*    try{
-                    disheDocument.setString("kindId",newKindDocument.getId());
-
-                }catch (Exception e){
-
-                    e.printStackTrace();
-                }*/
 
                 position = p;
                 //KindId保存到菜品中
