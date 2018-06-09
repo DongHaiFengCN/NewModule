@@ -135,6 +135,9 @@ public class DishesKindAdapter extends BaseAdapter {
                         View view = LayoutInflater.from(context).inflate(R.layout.dishekind_add_dialog_item, null);
 
                         final EditText kindNameEt = view.findViewById(R.id.kindname_et);
+
+                        kindNameEt.setText(database.getDocument(names.get(i)).getString("name"));
+
                         AlertDialog.Builder builder = new AlertDialog.Builder(context);
                         builder.setView(view);
                         builder.setTitle("菜类编辑");
@@ -148,14 +151,14 @@ public class DishesKindAdapter extends BaseAdapter {
                         builder.setNeutralButton("删除菜类", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                              List<Document>  list = CDBHelper.getDocmentsByWhere(
+                                List<Document> list = CDBHelper.getDocmentsByWhere(
                                         Expression.property("className").equalTo(Expression.string("Dish"))
-                                                .add(Expression.property("kindId").equalTo(Expression.string(names.get(i))))
-                                        ,null);
-                              if(list.size()>0){
-                                  Toast.makeText(context,"先移除菜类下的菜品！",Toast.LENGTH_SHORT).show();
-                                  return;
-                              }
+                                                .and(Expression.property("kindId").equalTo(Expression.string(names.get(i))))
+                                        , null);
+                                if (list.size() > 0) {
+                                    Toast.makeText(context, "先移除菜类下的菜品！", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
 
                                 Document document = database.getDocument(names.get(i));
                                 try {
