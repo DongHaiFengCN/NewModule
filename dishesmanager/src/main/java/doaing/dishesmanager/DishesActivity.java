@@ -132,7 +132,6 @@ public class DishesActivity extends BaseToobarActivity {
         EventBus.getDefault().unregister(this);
     }
 
-
     public class DishesAdapter extends BaseAdapter {
 
         private List<Document> list;
@@ -152,11 +151,6 @@ public class DishesActivity extends BaseToobarActivity {
                     , null);
              notifyDataSetChanged();
 
-
-            for (Document document:list) {
-                Log.e("DOAING",document.getString("name")+"");
-                Log.e("DOAING",document.getInt("sortNum")+"");
-            }
         }
 
         @Override
