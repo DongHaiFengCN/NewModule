@@ -161,9 +161,11 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         myApplication = (MyApplication) getApplication();
         //获取餐桌编号
         tableC = myApplication.getTable_sel_obj();
-        Area areaCs = CDBHelper.getObjById(tableC.getAreaId(), Area.class);
+        if(tableC != null) {
+            Area areaCs = CDBHelper.getObjById(tableC.getAreaId(), Area.class);
 
-        tableNumber.setText(areaCs.getName() + "桌/牌:" + tableC.getName());
+            tableNumber.setText(areaCs.getName() + "桌/牌:" + tableC.getName());
+        }
 
         getAll();
 
@@ -290,19 +292,28 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         while (iterator.hasNext()) {
 
             Promotion promotion = (Promotion) iterator.next();
+            if (promotion.getStartTime() == null||promotion.getStartTime().length()<10){
+                continue;
+            }
+            if (promotion.getEndTime() == null||promotion.getEndTime().length()<10){
+                continue;
+            }
             String start = promotion.getStartTime();
             String end = promotion.getEndTime();
+
+            MyLog.e("starttime=",""+start+"endtime="+end);
+            start = start.substring(0, 10);
+            end = end.substring(0, 10);
             start = start.replaceAll("-", "");
             end = end.replaceAll("-", "");
-
             int s = Integer.valueOf(start);
             int e = Integer.valueOf(end);
             Date d = new Date();
             System.out.println(d);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String dateNowStr = sdf.format(d);
-            int now = Integer.valueOf(dateNowStr);
-
+            Long now = Long.valueOf(dateNowStr);
+            MyLog.e(""+s+"---"+now+"----"+e);
             if (s > now || now > e) {
 
                 iterator.remove();

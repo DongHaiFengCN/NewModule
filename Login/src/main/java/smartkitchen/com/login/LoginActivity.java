@@ -738,7 +738,7 @@ public void initWidget(){
                         .withString("mobile", mNameView.getText().toString())
                         .withString("channelId", myapp.getCompany_ID())
                         .navigation();
-                finish();
+                //finish();
             }
         }
     }

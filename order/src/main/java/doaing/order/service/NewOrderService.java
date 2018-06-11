@@ -277,11 +277,17 @@ public class NewOrderService extends Service {
         {
             boolean findflag = false;
             ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
-            List<String> dishesKindId = CDBHelper.getIdsByWhere(
-                    Expression.property("className").equalTo(Expression.string("Dish")
-                    .add(Expression.property("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
-                    null);
-            for (String dishKindId : dishesKindId)//2 for 遍历厨房下所含菜系
+            List<String> dishIds =new ArrayList<>();
+            List<String> dishKindIds = kitchenClientObj.getKindIds();
+            for(String kindId:dishKindIds){
+                List<String> dishesIds = CDBHelper.getIdsByWhere(
+                        Expression.property("className").equalTo(Expression.string("Dish"))
+                                .and(Expression.property("kindId").equalTo(Expression.string( kindId)))
+                        , null);
+
+                dishIds.addAll(dishesIds);
+            }
+            for (String dishKindId : dishIds)//2 for 遍历厨房下所含菜系
             {
                 for (Goods goodsC : goodsList)//3 for 该厨房下所应得商品
                 {

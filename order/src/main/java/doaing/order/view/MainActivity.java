@@ -879,18 +879,24 @@ public class MainActivity extends AppCompatActivity {
         {
             boolean findflag = false;
             ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
-            List<String> dishesIds = CDBHelper.getIdsByWhere(
-                    Expression.property("className").equalTo(Expression.string("Dishes").
-                            add(Expression.string("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
-                    null);
+            List<String> dishIds =new ArrayList<>();
+            List<String> dishKindIds = kitchenClientObj.getKindIds();
+            for(String kindId:dishKindIds){
+                List<String> dishesIds = CDBHelper.getIdsByWhere(
+                        Expression.property("className").equalTo(Expression.string("Dish"))
+                                .and(Expression.property("kindId").equalTo(Expression.string( kindId)))
+                        , null);
 
-            for (String dishKindId : dishesIds)//2 for 遍历厨房下所含菜系
+                dishIds.addAll(dishesIds);
+            }
+
+            for (String dishKindId : dishIds)//2 for 遍历厨房下所含菜系
             {
 
                 //3 for 该厨房下所应得商品
                 for (Goods goods : list) {
 
-                    if (dishKindId.equals(goods.getDishesKindId())) {
+                    if (dishKindId.equals(goods.getDishesId())) {
                         findflag = true;
                         // g_printGoodsList.remove(goods);
                         // 为了降低循环次数，因为菜品只可能在一个厨房打印分发，故分发完后移除掉。
@@ -1284,7 +1290,7 @@ public class MainActivity extends AppCompatActivity {
                         for (DishConsum dishConsum : material.getDishesConsumList()){
                             Document dish = CDBHelper.getDocByID(dishConsum.getDishId());
                             //判断剩下是原理是否够
-                            if (material.getStock() - dishConsum.getConsums() > 0){
+                            if (material.getStock() - dishConsum.getConsums() > -1){
                                 material.setStock(MyBigDecimal.sub(material.getStock(),dishConsum.getConsums(),1));
                                 CDBHelper.createAndUpdate(material);
                                 if (material.getStock() - dishConsum.getConsums() <= material.getStockAlert()){
@@ -1320,8 +1326,6 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setChannelId(myApp.getCompany_ID());
         Order zcOrderObj = new Order();
         zcOrderObj.setChannelId(myApp.getCompany_ID());
-        gOrderId = CDBHelper.createAndUpdate( newOrderObj);
-        newOrderObj.setId(gOrderId);
 
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
@@ -1352,24 +1356,25 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(0);//正常
         newOrderObj.setDeviceType(1);//点餐宝
+        newOrderObj.setPrintFlag(0);
         newOrderObj.setCreatedTime(getNewFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
         newOrderObj.setTableId(myApp.getTable_sel_obj().getId());
         if (!TextUtils.isEmpty(editText.getText().toString())){
             newOrderObj.setDescription(editText.getText().toString());
         }
-        CDBHelper.createAndUpdate(newOrderObj);
+        CDBHelper.createAndUpdateDefalut(newOrderObj);
         if (zcGoodsList.size() > 0) {
             zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
             zcOrderObj.setState(1);//未买单
-            zcOrderObj.setOrderType(2);//赠菜zcOrderObj.setDeviceType(1);//点餐宝
+            zcOrderObj.setOrderType(2);//赠菜
+            zcOrderObj.setDeviceType(1);//点餐宝
+            zcOrderObj.setPrintFlag(0);
             zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
             zcOrderObj.setTableId(newOrderObj.getTableId());
             zcOrderObj.setCreatedYear(getNianDate());
-            String id = CDBHelper.createAndUpdate( zcOrderObj);
             zcOrderObj.setGoodsList(zcGoodsList);
-            zcOrderObj.setId(id);
-            CDBHelper.createAndUpdate( zcOrderObj);
+            CDBHelper.createAndUpdateDefalut( zcOrderObj);
         }
         Table table = CDBHelper.getObjById(newOrderObj.getTableId(), Table.class);
         Area area = CDBHelper.getObjById(table.getAreaId(),Area.class);

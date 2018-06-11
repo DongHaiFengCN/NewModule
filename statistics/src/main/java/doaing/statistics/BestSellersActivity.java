@@ -125,9 +125,11 @@ public class BestSellersActivity extends BaseToobarActivity {
      */
     private void getStartSingleDateInfo(String date) {
 
-        Query query = QueryBuilder.select(SelectResult.expression(Expression.property("goods")))
+        Query query = QueryBuilder.select(SelectResult.expression(Expression.property("goodsList")))
                 .from(DataSource.database(database)).where(Expression.property("className")
-                        .equalTo(Expression.string("Order")).and(Expression.property("state").equalTo(Expression.intValue(0)))
+                        .equalTo(Expression.string("Order"))
+                        .and(Expression.property("state").equalTo(Expression.intValue(0)))
+                        .add(Expression.property("goodsList").isNot(Expression.string(null)))
                         .and(Expression.property("createdTime")
                                 .greaterThanOrEqualTo(Expression.string(date)))
 
@@ -139,57 +141,54 @@ public class BestSellersActivity extends BaseToobarActivity {
     private void queryBody(Query orderQuery) {
 
         HashMap<String, Float> hmap = new HashMap<>();
-        ResultSet resultSet = null;
+
 
         try {
-            resultSet = orderQuery.execute();
+            ResultSet  resultSet = orderQuery.execute();
+            List<Result> list = resultSet.allResults();
+            int size = list.size();
+
+            for (int i = 0; i < size; i++) {
+
+                Result result = list.get(i);
+
+                Array array = result.getArray("goodsList");
+
+                for (int j = 0; j < array.count(); j++) {
+
+                    Dictionary dictionary = array.getDictionary(j);
+
+
+                    if (hmap.containsKey(dictionary.getString("dishesName"))) {
+
+                        hmap.put(dictionary.getString("dishesName")
+                                , hmap.get(dictionary.getString("dishesName"))
+                                        + dictionary.getFloat("dishesCount"));
+                    } else {
+                        hmap.put(dictionary.getString("dishesName")
+                                , dictionary.getFloat("dishesCount"));
+                    }
+                }
+            }
+            List<Map.Entry<String, Float>> mapList = new ArrayList<>(hmap.entrySet());
+            Collections.sort(mapList, new Comparator<Map.Entry<String, Float>>() {
+                @Override
+                public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
+                    return o2.getValue().compareTo(o1.getValue());
+                }
+            });
+
+            if (bestSellersAdapter == null) {
+
+                bestSellersAdapter = new BestSellersAdapter(BestSellersActivity.this, mapList);
+                listView.setAdapter(bestSellersAdapter);
+            } else {
+                bestSellersAdapter.setMapList(mapList);
+            }
+
         } catch (CouchbaseLiteException e) {
             e.printStackTrace();
         }
-
-        List<Result> list = resultSet.allResults();
-
-        int size = list.size();
-
-        for (int i = 0; i < size; i++) {
-
-            Result result = list.get(i);
-
-            Array array = result.getArray("goods");
-
-            for (int j = 0; j < array.count(); j++) {
-
-                Dictionary dictionary = array.getDictionary(j);
-
-
-                if (hmap.containsKey(dictionary.getString("dishesName"))) {
-
-                    hmap.put(dictionary.getString("dishesName")
-                            , hmap.get(dictionary.getString("dishesName"))
-                                    + dictionary.getFloat("dishesCount"));
-                } else {
-                    hmap.put(dictionary.getString("dishesName")
-                            , dictionary.getFloat("dishesCount"));
-                }
-            }
-        }
-        List<Map.Entry<String, Float>> mapList = new ArrayList<>(hmap.entrySet());
-        Collections.sort(mapList, new Comparator<Map.Entry<String, Float>>() {
-            @Override
-            public int compare(Map.Entry<String, Float> o1, Map.Entry<String, Float> o2) {
-                return o2.getValue().compareTo(o1.getValue());
-            }
-        });
-
-        if (bestSellersAdapter == null) {
-
-            bestSellersAdapter = new BestSellersAdapter(BestSellersActivity.this, mapList);
-            listView.setAdapter(bestSellersAdapter);
-        } else {
-            bestSellersAdapter.setMapList(mapList);
-        }
-
-
     }
 
 }

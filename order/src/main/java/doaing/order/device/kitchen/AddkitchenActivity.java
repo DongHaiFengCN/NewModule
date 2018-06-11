@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,10 +21,19 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.couchbase.lite.Array;
+import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 import com.gprinter.aidl.GpService;
 import com.gprinter.command.GpCom;
 import com.gprinter.io.GpDevice;
@@ -70,7 +80,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     //支持的菜类
     ListView listViewDishKind;
     private AddKitchenAdapter addKitchenAdapter;
-    private List<String> allDishKindIdList;
+    private List<String> allDishKindIdList = new ArrayList<>();
     private List<String> listSelectedDocId;
     private static final int INTENT_PORT_SETTINGS = 0;
 
@@ -125,12 +135,11 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     {
         etClientname.setText(gObj.getName());
         mPrinterId = gObj.getPrinterId();
-
         PortParamDataBase database = new PortParamDataBase(this);
         mPortParam = database.queryPortParamDataBase("" +mPrinterId);
 
         try {
-            if (mGpService.getPrinterConnectStatus(mPrinterId) == GpDevice.STATE_CONNECTED)
+            if (mGpService.getPrinterConnectStatus(0) == GpDevice.STATE_CONNECTED)
             {
                 btnConnectPrinter.setText("连接成功");
                 mPortParam.setPortOpenState(true);
@@ -155,8 +164,24 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         findViewById(R.id.bt_deselectall).setOnClickListener(this);
         findViewById(R.id.btn_kcsave).setOnClickListener(this);
         btnConnectPrinter.setOnClickListener(this);
+        Database db = CDBHelper.getDatabase();
+        Query query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db))
+                .where(Expression.property("className").equalTo(Expression.string("DishKind")));
 
-        allDishKindIdList = CDBHelper.getIdsByClass(DishKind.class);
+        try {
+            ResultSet resultSet = query.execute();
+            Result row;
+            while ((row = resultSet.next()) != null)
+            {
+
+                String id = row.getString(0);
+                //documentList.add(id);
+                allDishKindIdList.add(id);
+
+            }
+        } catch (CouchbaseLiteException e) {
+            Log.e("getDocmentsByClass", "Exception=", e);
+        }
         addKitchenAdapter = new AddKitchenAdapter(AddkitchenActivity.this, allDishKindIdList);
         listViewDishKind.setAdapter(addKitchenAdapter);
         listViewDishKind.setOnItemClickListener(new AdapterView.OnItemClickListener() {

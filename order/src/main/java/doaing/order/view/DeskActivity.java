@@ -187,7 +187,7 @@ public class DeskActivity extends AppCompatActivity {
         obj.setChannelId(channelId);
         obj.setName("管理员");
         myapp.setEmployee(obj);
-        //  myapp.initDishesData();
+         // myapp.initDishesData();
         initWidget();
         orderIntent = new Intent( this, NewOrderService.class);
         //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
@@ -286,7 +286,7 @@ public class DeskActivity extends AppCompatActivity {
         if(isFinishing())
         {
             MyLog.e(Tag," on Stop isFinishing");
-            releaseResource();
+            //releaseResource();
         }
         MyLog.e(Tag," on Stop");
 
@@ -627,11 +627,10 @@ public class DeskActivity extends AppCompatActivity {
                 {
                     //使用&&预定状态
                  final   List<String> orderCList = CDBHelper.getIdsByWhere(
-                            Expression.property("className").equalTo(Expression.string("Order"))
-                                    .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))
-                                    .and(Expression.property("state").equalTo(Expression.intValue(1)))
-                                    .and(Expression.property("orderType").notEqualTo(Expression.intValue(1)))
-                            ,null);
+                         Expression.property("className").equalTo(Expression.string("Order"))
+                                 .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))
+                                 .and(Expression.property("state").equalTo(Expression.intValue(1)))
+                         ,null);
 
                     if(orderCList.size()>0)//有未买单订单，可以买单
                     {
