@@ -1,12 +1,15 @@
 package doaing.order.device.kitchen;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v7.widget.Toolbar;
@@ -85,6 +88,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     private static final int INTENT_PORT_SETTINGS = 0;
 
     private MyApplication myapp;
+    private PrinterServiceConnection conn;
 
 
     @Override
@@ -97,9 +101,11 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         myapp = (MyApplication)getApplicationContext();
-        if (mGpService == null){
-            mGpService = DeskActivity.getmGpService();
-        }
+
+        registerBroadcast();
+        this.sendBroadcast(new Intent(GlobalConstant.printer_msg_pause));
+        bindPrinterService();
+
         mPortParam = new PortParameters();
         listSelectedDocId = new ArrayList<>();
 
@@ -119,7 +125,27 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         }
     }
 
+    private void bindPrinterService() {
+        conn = new PrinterServiceConnection();
+        Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
+        intent.setPackage(getPackageName());
+        boolean ret = bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    }
 
+    //打印机初始化
+    class PrinterServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+            MyLog.e("DEBUG_TAG", "onServiceDisconnected() called");
+            mGpService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mGpService = GpService.Stub.asInterface(service);
+        }
+    }
     private void addKitchenData()
     {
         List<Document> documentList = CDBHelper.getDocmentsByWhere(Expression.property("className").equalTo(Expression.string("KitchenClient"))
@@ -480,7 +506,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerBroadcast();
+
 
         this.sendBroadcast(new Intent(GlobalConstant.printer_msg_pause));
     }

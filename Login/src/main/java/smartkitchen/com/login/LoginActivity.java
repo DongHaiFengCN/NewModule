@@ -315,7 +315,7 @@ public void initWidget(){
                 String name = pRemberLogin.getString("name","");
                 mNameView.setText(name);
 
-                loginType = pRemberLogin.getInt("type",1);
+                loginType = pRemberLogin.getInt("loginType",1);
                 if(loginType==1){
                     login_tv_type.setText("管理员登录模式");
                 }
