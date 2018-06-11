@@ -155,7 +155,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setDeviceType(1);//点餐宝
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
-        newOrderObj.setCreatedYear("2018");
+        newOrderObj.setCreatedYear(getNianDate());
         tmpList = new ArrayList<>();
         tmpList.add(newGoods);
         newOrderObj.setGoodsList(tmpList);
@@ -191,6 +191,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
+        newOrderObj.setPrintFlag(1);
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());
@@ -231,6 +232,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(2);//赠菜订单
         newOrderObj.setDeviceType(1);//点餐宝
+        newOrderObj.setPrintFlag(1);
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());
@@ -270,6 +272,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(0);//添菜订单
         newOrderObj.setDeviceType(1);//点餐宝
+        newOrderObj.setPrintFlag(1);
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());
@@ -311,6 +314,7 @@ public class ShowParticularsActivity extends Activity implements View.OnClickLis
         newOrderObj.setState(1);//未买单
         newOrderObj.setOrderType(1);//退菜订单
         newOrderObj.setDeviceType(1);//点餐宝
+        newOrderObj.setPrintFlag(1);
         newOrderObj.setCreatedTime(getFormatDate());
         newOrderObj.setTableId(myapp.getTable_sel_obj().getId());
         newOrderObj.setCreatedYear(getNianDate());

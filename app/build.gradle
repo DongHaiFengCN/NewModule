@@ -23,10 +23,10 @@ android {
 }
 dependencies {
     implementation project(':mylibrary')
-    compile project(':Login')
-    compile project(':order')
-    compile project(':dishesmanager')
-    compile project(':tablemanager')
-    compile project(':statistics')
+    api project(':Login')
+    api project(':order')
+    api project(':dishesmanager')
+    api project(':tablemanager')
+    api project(':statistics')
 
 }

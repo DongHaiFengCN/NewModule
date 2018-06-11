@@ -168,7 +168,12 @@ public class SeekT9Adapter extends BaseAdapter {
                                         e.printStackTrace();
                                     }
                                 }
-                                selTasteDialog(tasteList, position, viewHolder);
+                                if (tasteList.size() == 1){
+                                    m_taste = tasteList.get(0);
+                                    setAdd(position, viewHolder);
+                                }else {
+                                    selTasteDialog(tasteList, position, viewHolder);
+                                }
                                 activity.getOrderAdapter().notifyDataSetChanged();
 
                             } else {

@@ -215,9 +215,14 @@ public class OrderDragAdapter extends BaseAdapter {
 
             //确认数据库口味不为空
             if (strings[0] != null) {
-
                 dishesMessage.setDishesTaste(strings[0]);
-                tasteSelectDialog(flag, position, dishesMessage, strings);
+                if (dishesC.getTasteIds().size() == 1){
+                    Refresh(flag, dishesMessage);
+                }else {
+
+                    tasteSelectDialog(flag, position, dishesMessage, strings);
+                }
+
 
             }else {
                 Refresh(flag, dishesMessage);
