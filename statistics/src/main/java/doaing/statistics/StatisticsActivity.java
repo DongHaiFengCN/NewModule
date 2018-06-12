@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,7 +63,7 @@ public class StatisticsActivity extends BaseToobarActivity {
     private float mt;
     private float gz;
     private float tg;
-
+    private float discounts;
 
     private TextView dateTv;
     private TextView monetaryTv;
@@ -77,7 +78,7 @@ public class StatisticsActivity extends BaseToobarActivity {
     private TextView mtTv;
     private TextView gzTv;
     private Calendar calendar;
-
+    private TextView discounts_tv;
     private int year;
     private int month;
     private int day;
@@ -106,7 +107,7 @@ public class StatisticsActivity extends BaseToobarActivity {
         mtTv = findViewById(R.id.statistics_mt_tv);
         memberTv = findViewById(R.id.statistics_member_tv);
         gzTv = findViewById(R.id.statistics_gz_tv);
-
+        discounts_tv = findViewById(R.id.statistics_discounts_tv);
 
         calendar = Calendar.getInstance();
 
@@ -364,6 +365,14 @@ public class StatisticsActivity extends BaseToobarActivity {
 
                     }
                 }
+                Array promotionDiscountDetailList = document1.getArray("promotionDiscountDetailList");
+                if(promotionDiscountDetailList == null){
+                    continue;
+                }
+                for (int i = 0; i < promotionDiscountDetailList.count(); i++){
+                    Dictionary discountDetai = promotionDiscountDetailList.getDictionary(i);
+                    discounts = discounts + discountDetai.getFloat("discounts");
+                }
 
             }
         } catch (CouchbaseLiteException e) {
@@ -385,8 +394,8 @@ public class StatisticsActivity extends BaseToobarActivity {
 
         }
         mlTv.setText(String.valueOf(ml));
-        monetaryTv.setText(String.valueOf(monetary));
-        realIncomeTv.setText(String.valueOf(realIncome));
+        monetaryTv.setText(String.valueOf(realIncome));
+        realIncomeTv.setText(String.valueOf(monetary));
         alipayTv.setText(String.valueOf(alipay));
         cashTv.setText(String.valueOf(cash));
         wechatTv.setText(String.valueOf(wechat));
@@ -395,6 +404,9 @@ public class StatisticsActivity extends BaseToobarActivity {
         mtTv.setText(String.valueOf(mt));
         bankTv.setText(String.valueOf(bank));
         gzTv.setText(String.valueOf(gz));
+        discounts_tv.setText(String.valueOf(discounts));
+
+
     }
 
 

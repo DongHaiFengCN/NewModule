@@ -30,6 +30,7 @@ import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
 import doaing.order.view.adapter.SeekT9DialogAdapter;
 import tools.CDBHelper;
+import tools.MyLog;
 import tools.ToolUtil;
 
 import static tools.Method.getNewFormatDate;
@@ -167,7 +168,12 @@ public class SeekT9Adapter extends BaseAdapter {
                                         e.printStackTrace();
                                     }
                                 }
-                                selTasteDialog(tasteList, position, viewHolder);
+                                if (tasteList.size() == 1){
+                                    m_taste = tasteList.get(0);
+                                    setAdd(position, viewHolder);
+                                }else {
+                                    selTasteDialog(tasteList, position, viewHolder);
+                                }
                                 activity.getOrderAdapter().notifyDataSetChanged();
 
                             } else {
@@ -278,6 +284,7 @@ public class SeekT9Adapter extends BaseAdapter {
         goodsObj.setDishesCount(1);
         goodsObj.setPrice(mGoodsList.get(position).getPrice());
         goodsObj.setGoodsType(0);
+        goodsObj.setState(2);
         goodsObj.setDishesId(mGoodsList.get(position).getDishesId());
         goodsObj.setDishesKindId(mGoodsList.get(position).getDishesKindId());
         goodsObj.setCreatedTime(getNewFormatDate());

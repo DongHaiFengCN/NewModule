@@ -2,9 +2,11 @@ package doaing.order.service;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -50,6 +52,7 @@ import bean.kitchenmanage.order.Goods;
 import bean.kitchenmanage.order.Order;
 import bean.kitchenmanage.table.Area;
 import bean.kitchenmanage.table.Table;
+import doaing.order.device.kitchen.AddkitchenActivity;
 import doaing.order.untils.GlobalConstant;
 import doaing.order.view.DeskActivity;
 import tools.CDBHelper;
@@ -80,6 +83,8 @@ public class NewOrderService extends Service {
 
     private static final int REQUEST_PRINT_RECEIPT = 0xfc;
 
+    private  PrinterServiceConnection conn;
+
     private Query listsLiveQuery() {
         return QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
@@ -98,21 +103,26 @@ public class NewOrderService extends Service {
     @Override
     public void onCreate() {
         MyLog.e(Tag,"oncreate");
-
         super.onCreate();
+
+        bindPrinterService();
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         MyLog.e(Tag,"onStartCommand");
 
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void startPrinter(){
         registerPrinterBroadcast();
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_pause));
         registerReceiver(CmdBroadcastReceiver, new IntentFilter(GlobalConstant.printer_msg_resum));
 
 
         MyLog.e(Tag,"************NewOrderService   started*********");
-        mGpService = DeskActivity.getmGpService();
 
         //只执行一个，后面的排队
         myExecutor   = Executors.newScheduledThreadPool(1);
@@ -135,7 +145,7 @@ public class NewOrderService extends Service {
                 }
             });
 
-            //connectAllPrinter();
+            connectAllPrinter();
         }else {
             if(PrinterStatusBroadcastReceiver!=null)
             {
@@ -145,7 +155,6 @@ public class NewOrderService extends Service {
         }
 
 
-        return super.onStartCommand(intent, flags, startId);
     }
     @Override
     public void onDestroy()
@@ -160,7 +169,32 @@ public class NewOrderService extends Service {
         unregisterReceiver(CmdBroadcastReceiver);
 
     }
+    private void bindPrinterService()
+    {
+        conn = new  PrinterServiceConnection();
+        Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
+        intent.setPackage(getPackageName());
+        boolean ret = bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    }
 
+    //打印机初始化
+    class PrinterServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+            MyLog.e("DEBUG_TAG", "onServiceDisconnected() called");
+            mGpService = null;
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+
+            MyLog.e("DEBUG_TAG", "onServiceconnected() called");
+            mGpService = GpService.Stub.asInterface(service);
+            startPrinter();
+
+        }
+    }
 
     private void printNewOrder(String orderId)
     {
@@ -277,11 +311,17 @@ public class NewOrderService extends Service {
         {
             boolean findflag = false;
             ArrayList<Goods> oneKitchenClientGoods = new ArrayList<Goods>();
-            List<String> dishesKindId = CDBHelper.getIdsByWhere(
-                    Expression.property("className").equalTo(Expression.string("Dish")
-                    .add(Expression.property("kindId").equalTo(Expression.string(kitchenClientObj.getId())))),
-                    null);
-            for (String dishKindId : dishesKindId)//2 for 遍历厨房下所含菜系
+            List<String> dishIds =new ArrayList<>();
+            List<String> dishKindIds = kitchenClientObj.getKindIds();
+            for(String kindId:dishKindIds){
+                List<String> dishesIds = CDBHelper.getIdsByWhere(
+                        Expression.property("className").equalTo(Expression.string("Dish"))
+                                .and(Expression.property("kindId").equalTo(Expression.string( kindId)))
+                        , null);
+
+                dishIds.addAll(dishesIds);
+            }
+            for (String dishKindId : dishIds)//2 for 遍历厨房下所含菜系
             {
                 for (Goods goodsC : goodsList)//3 for 该厨房下所应得商品
                 {

@@ -69,7 +69,7 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
                     map.put("state",row.getInt(1));
                     map.put("name",row.getString(2));
                     map.put("maxPersons",row.getInt("maxPersons"));
-                    map.put("currentPersions", row.getInt("currentPersions"));
+                    map.put("currentPersions", row.getInt("currentPersons"));
                     hashMapList.add(map);
                     //documentList.add(row.getString(0));
                    Log.e("","live change table name="+row.getString(2));
@@ -85,7 +85,7 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
                 SelectResult.expression(Expression.property("state")),
                 SelectResult.expression(Expression.property("name")),
                 SelectResult.expression(Expression.property("maxPersons")),
-                SelectResult.expression(Expression.property("currentPersions")))
+                SelectResult.expression(Expression.property("currentPersons")))
                 .from(DataSource.database(db))
                 .where(Expression.property("className").equalTo(Expression.string("Table"))
                         .and(Expression.property("areaId").equalTo(Expression.string(areaId))))

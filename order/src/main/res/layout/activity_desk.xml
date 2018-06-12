@@ -44,30 +44,31 @@
                 android:layout_height="30dp"
                 android:orientation="horizontal"
                 >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@mipmap/icon_shiyong"
-                    android:layout_marginLeft="10dp"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="已开台"
-                    android:gravity="center_vertical"
-                    />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:src="@mipmap/icon_kongxian"
-                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="空闲"
                     android:gravity="center_vertical"
+                    android:drawableLeft="@mipmap/icon_kongxian"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="已开台"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/icon_kaitai"
+                    android:paddingLeft="10dp"
+                    />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="预约"
+                    android:gravity="center_vertical"
+                    android:drawableLeft="@drawable/icon_yuyue"
+                    android:paddingLeft="10dp"
                     />
 
 

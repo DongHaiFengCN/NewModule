@@ -91,7 +91,6 @@ import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
 @Route(path = "/order/DeskActivity")
 public class DeskActivity extends AppCompatActivity {
 
-    private static GpService smGpService;
     private Database db;
     private ListView listViewArea;
     private AreaAdapter areaAdapter;
@@ -106,14 +105,13 @@ public class DeskActivity extends AppCompatActivity {
     List<DishKind> dishesKindCList;
     List<Document> dishes;
     private Map<String, List<Document>> dishesObjectCollection;
-    public GpService mGpService;
-    private PrinterServiceConnection conn = null;
+
 
     private String Tag = "DeskActivity";
     private MyApplication myapp;
     private long mExitTime = 0;
     private long boo;
-    private Intent orderIntent;
+
     private Handler uiHandler = new Handler()
     {
         @Override
@@ -129,10 +127,7 @@ public class DeskActivity extends AppCompatActivity {
                 case 2: //没有订单
                     Toast.makeText(DeskActivity.this,"没有订单！",Toast.LENGTH_SHORT).show();
                     break;
-                case 3: //打印机服务初始化完成，可以启动打印机状态检测程序以及订单监听程序
 
-                    startService(orderIntent);
-                    break;
                 default:
                     break;
             }
@@ -187,73 +182,15 @@ public class DeskActivity extends AppCompatActivity {
         obj.setChannelId(channelId);
         obj.setName("管理员");
         myapp.setEmployee(obj);
-        //  myapp.initDishesData();
+         // myapp.initDishesData();
         initWidget();
-        orderIntent = new Intent( this, NewOrderService.class);
-        //绑定佳博打印机服务，并设备公共打印服务句柄，其它模块共用打印服务句柄直接进行操作
-        bindPrinterService();
+
         initDishesData();
 
-        getPrinterStatus();
+
     }
 
 
-    private void getPrinterStatus()
-    {
-        Query listsLiveQuery = QueryBuilder.select(SelectResult.expression(Meta.id)
-                , SelectResult.expression(Expression.property("statePrinter")))
-                .from(DataSource.database(db))
-                .where(
-                        Expression.property("className").equalTo(Expression.string("KitchenClient"))
-                                .and(Expression.property("statePrinter").equalTo(Expression.booleanValue(false)))
-                );
-
-        listsLiveQuery.addChangeListener(new QueryChangeListener() {
-            @Override
-            public void changed(QueryChange change)
-            {
-
-                ResultSet rs = change.getResults();
-                Result result;
-
-                final  int sum = rs.allResults().size();
-
-                MyLog.e("changed","sum="+sum);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        if(sum>0)
-                        {
-                            msg_point.setVisibility(View.VISIBLE);
-                            msg_point.setText(""+sum);
-                        }
-                        else
-                        {
-                            msg_point.setVisibility(View.INVISIBLE);
-                            msg_point.setText(""+sum);
-                        }
-                    }});
-
-            }
-        });
-    }
-
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (keyCode == KeyEvent.KEYCODE_BACK) {
-//            if ((System.currentTimeMillis() - boo) > 2000) {
-//                Toast.makeText(getApplicationContext(), "再按一次退出系统",
-//                        Toast.LENGTH_SHORT).show();
-//                boo = System.currentTimeMillis();
-//            } else {
-//
-//                finish();
-//                System.exit(0);
-//            }
-//        }
-//        return false;
-//    }
 
     @Override
     protected void onResume() {
@@ -286,7 +223,7 @@ public class DeskActivity extends AppCompatActivity {
         if(isFinishing())
         {
             MyLog.e(Tag," on Stop isFinishing");
-            releaseResource();
+            //releaseResource();
         }
         MyLog.e(Tag," on Stop");
 
@@ -303,11 +240,7 @@ public class DeskActivity extends AppCompatActivity {
     {
         EventBus.getDefault().unregister(this);
 
-        // 注销打印消息
-        if (conn != null) {
-            unbindService(conn); // unBindService
-        }
-        stopService(orderIntent);
+
     }
     //点击返回键
     @Override
@@ -627,11 +560,10 @@ public class DeskActivity extends AppCompatActivity {
                 {
                     //使用&&预定状态
                  final   List<String> orderCList = CDBHelper.getIdsByWhere(
-                            Expression.property("className").equalTo(Expression.string("Order"))
-                                    .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))
-                                    .and(Expression.property("state").equalTo(Expression.intValue(1)))
-                                    .and(Expression.property("orderType").notEqualTo(Expression.intValue(1)))
-                            ,null);
+                         Expression.property("className").equalTo(Expression.string("Order"))
+                                 .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))
+                                 .and(Expression.property("state").equalTo(Expression.intValue(1)))
+                         ,null);
 
                     if(orderCList.size()>0)//有未买单订单，可以买单
                     {
@@ -957,40 +889,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
     }
 
-    private void bindPrinterService()
-    {
-        conn = new PrinterServiceConnection();
-        Intent intent = new Intent("com.gprinter.aidl.GpPrintService");
-        intent.setPackage(getPackageName());
-        boolean ret = bindService(intent, conn, Context.BIND_AUTO_CREATE);
-    }
 
-    //打印机初始化
-    class PrinterServiceConnection implements ServiceConnection {
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
 
-            Log.i(DEBUG_TAG, "onServiceDisconnected() called");
-            mGpService = null;
-        }
 
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            mGpService = GpService.Stub.asInterface(service);
-            setmGpService(mGpService);
-        }
-    }
-
-    public static GpService getmGpService() {
-        return smGpService;
-    }
-
-    public void setmGpService(GpService smGpService) {
-        this.smGpService = smGpService;
-
-        Message msg = Message.obtain();
-        msg.what = 3;
-        uiHandler.sendMessage(msg);
-
-    }
 }
