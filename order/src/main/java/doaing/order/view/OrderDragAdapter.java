@@ -294,7 +294,6 @@ public class OrderDragAdapter extends BaseAdapter {
         ImageView addtion;
         ImageView substruct;
 
-
     }
 
     interface ChangerNumbersListener {

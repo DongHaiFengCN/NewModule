@@ -627,7 +627,7 @@ public class DeskActivity extends AppCompatActivity {
                                             for (Document doc : documentList)
                                             {
                                                 MutableDocument mDoc = doc.toMutable();
-                                                mDoc.setString("tableNum",tableNum);
+                                                mDoc.setString("tableId",tableNum);
                                                 CDBHelper.saveDocument(mDoc);
                                             }
                                             dialog.dismiss();
@@ -760,11 +760,15 @@ private void cancelTableOrder(String Id,List<String> orderList)
     {
         String[] freetables=null;
         freeTableList.clear();
-        List<Document> tableDocList= CDBHelper.getDocmentsByWhere(
-                Expression.property("className").equalTo(Expression.string("Table"))
-                        .and(Expression.property("state").equalTo(Expression.intValue(0)))
-                , Ordering.property("num").ascending()
-        );
+        List<Document> documents = CDBHelper.getDocmentsByWhere(
+                Expression.property("className").equalTo(Expression.string("Table")),
+                null);
+        List<Document> tableDocList = new ArrayList<>();
+        for (Document doc : documents){
+            if (doc.getInt("state") == 0){
+                tableDocList.add(doc);
+            }
+        }
         Log.e("Desk","table---"+tableDocList.size());
         if(tableDocList.size()>0)
         {
@@ -776,7 +780,7 @@ private void cancelTableOrder(String Id,List<String> orderList)
 
                 freeTableList.add(doc);
                 freetables[i] = doc.getString("name");
-                tablesNos[i]=doc.getString("num");
+                tablesNos[i]=doc.getId();
                 i++;
 
             }

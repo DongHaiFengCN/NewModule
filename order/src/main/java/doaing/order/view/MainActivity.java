@@ -424,10 +424,13 @@ public class MainActivity extends AppCompatActivity {
     public void setTotal(float total) {
 
         this.total = total;
-
-        String to = MyBigDecimal.round(total + "", 1);
-
-        total_tv.setText(to + "元");
+        if (total == 0f){
+            return;
+        }
+        if (total_tv == null){
+            return;
+        }
+        total_tv.setText(total + "元");
 
     }
 
@@ -437,7 +440,9 @@ public class MainActivity extends AppCompatActivity {
     public void setPoint(int point) {
 
         this.point = point;
-
+        if (point_tv == null){
+            return;
+        }
         if (point > 0) {
 
             point_tv.setText(point + "");
