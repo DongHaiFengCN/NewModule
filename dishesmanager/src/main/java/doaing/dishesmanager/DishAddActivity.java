@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import doaing.dishesmanager.widget.DishesKindSpinner;
@@ -70,8 +71,6 @@ import tools.CDBHelper;
 import tools.ToolUtil;
 
 public class DishAddActivity extends AppCompatActivity {
-
-    private Document newKindDocument;
     private Database database;
     private static final int THUMBNAIL_SIZE = 150;
     private Bitmap bitmap;
@@ -200,7 +199,7 @@ public class DishAddActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -278,6 +277,7 @@ public class DishAddActivity extends AppCompatActivity {
                     String dishesNameCode26 = ToolUtil.getFirstSpell(dishesName);
                     disheDocument.setString("code26", dishesNameCode26);
 
+                    assert dishesNameCode26 != null;
                     String dishesNameCode9 = ToolUtil.ChangeSZ(dishesNameCode26);
                     disheDocument.setString("code9", dishesNameCode9);
 

@@ -49,6 +49,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread t, Throwable e) {
 
+        //抓取错误信息位置
         Log.e(TAG,Log.getStackTraceString(e));
         // 退出程序
         android.os.Process.killProcess(android.os.Process.myPid());
