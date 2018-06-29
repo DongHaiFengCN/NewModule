@@ -93,7 +93,7 @@ public class NewPswActivity extends AppCompatActivity {
                     .add("newPassword", psw1)
                     .build();
             Request request = new Request.Builder()
-                    .url(constant.forgetPswUrl)
+                    .url(constant.modifyPswUrl)
                     .post(requestBody)
                     .build();
             okHttpClient.newCall(request).enqueue(callback);

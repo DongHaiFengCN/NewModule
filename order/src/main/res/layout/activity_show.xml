@@ -222,17 +222,16 @@
 
         <LinearLayout
             android:id="@+id/show_but_dy"
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:layout_weight="1"
+            android:orientation="vertical">
+
             <ImageView
-                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:src="@drawable/animbendi"
-                />
+                android:layout_marginTop="5dp"
+                android:src="@drawable/animbendi" />
 
             <TextView
                 android:layout_width="match_parent"

@@ -60,6 +60,11 @@ public class Goods implements Cloneable {
 	 * 订单备注
 	 */
 	private String description;
+	/**
+	 *打印标志flag为0, 不需要打印；1,需要打印，但未打印，2，需要打印，已打印
+	 * V2.0
+	 */
+	private int printFlag;
 
 	public Goods() {
 	}
@@ -163,5 +168,13 @@ public class Goods implements Cloneable {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public int getPrintFlag() {
+		return printFlag;
+	}
+
+	public void setPrintFlag(int printFlag) {
+		this.printFlag = printFlag;
 	}
 }

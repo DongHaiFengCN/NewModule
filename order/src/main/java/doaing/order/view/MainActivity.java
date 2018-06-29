@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -48,11 +49,21 @@ import android.widget.Toast;
 import com.couchbase.lite.Array;
 import com.couchbase.lite.ArrayExpression;
 import com.couchbase.lite.CouchbaseLiteException;
+import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.ListenerToken;
+import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableArray;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
+import com.couchbase.lite.Query;
+import com.couchbase.lite.QueryBuilder;
+import com.couchbase.lite.QueryChange;
+import com.couchbase.lite.QueryChangeListener;
+import com.couchbase.lite.Result;
+import com.couchbase.lite.ResultSet;
+import com.couchbase.lite.SelectResult;
 import com.couchbase.lite.VariableExpression;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gprinter.aidl.GpService;
@@ -75,6 +86,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 import bean.kitchenmanage.depot.DishConsum;
@@ -689,10 +702,20 @@ public class MainActivity extends AppCompatActivity {
                         {
                             deductMaterial();
                             saveOrder();
+//                            Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
+//                            startActivity(intent);
+//                            finish();
 
-                            Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
-                            startActivity(intent);
-                            finish();
+
+                            if(hasPrinterGoods()){
+                                waitForPrinter();
+                            }
+                            else{
+                                Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+
                             dialog.dismiss();
 
                         }
@@ -709,6 +732,178 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
+    ListenerToken listenerToken;
+    Query myquery;
+    AlertDialog  printerDialog;
+    private TextView printerLab;
+    private void waitForPrinter(){
+        final StringBuilder printErrorDish = new StringBuilder();
+        myquery = listsLiveQuery(myApp.getTable_sel_obj().getId());
+        QueryChangeListener queryChangeListener = new QueryChangeListener() {
+            @Override
+            public void changed(QueryChange change)
+            {
+                ResultSet rs = change.getResults();
+                Result result;
+                while ((result = rs.next()) != null)
+                {
+                    String id=result.getString(0);
+                    Order obj = CDBHelper.getObjById(id,Order.class);
+                    int flag = obj.getPrintFlag();//doc.getInt("printFlag");
+                    obj.setPrintFlag(-1);
+                    CDBHelper.createAndUpdate(obj);
+                    MyLog.e("waitForPrinter","printFlag="+ flag);
+
+                    if(flag==2){
+                        stopTimer();
+                        cancelChangeListener();
+                        printerLab.setText("*打印完成*");
+                        Message message = new Message();
+                        message.what = 2;
+
+                        handler.sendMessageDelayed(message,1000);
+                    }
+                    else if(flag==1){
+                        stopTimer();
+                        cancelChangeListener();
+                        printErrorDish.append("*打印失败菜品*"+"\n");
+                        for(Goods goods:obj.getGoodsList()){
+                            if(goods.getPrintFlag()==1){
+                                printErrorDish.append(goods.getDishesName()+"\n");
+                            }
+                        }
+                        printerLab.setText(printErrorDish.toString());
+                        printerLab.setTextSize(18);
+
+                    }
+
+                }
+            }
+        };
+        listenerToken =  myquery.addChangeListener(queryChangeListener);
+
+
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.order_dialog_printer, null);
+
+        printerLab=(TextView) layout.findViewById(R.id.lab_msg2);
+
+        printerDialog= new  AlertDialog.Builder(this)
+                .setIcon(R.drawable.ic_printer)
+                .setTitle("正在打印，请等待...")
+                .setView(layout)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                            Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
+                            startActivity(intent);
+                            finish();
+
+                    }
+                })
+                .create();
+
+        printerDialog.show();
+
+        timer.schedule(timerTask,200,1000);
+    }
+    private Query listsLiveQuery(String tableId) {
+        return QueryBuilder.select(SelectResult.expression(Meta.id))
+                .from(DataSource.database(CDBHelper.getDatabase()))
+                .where(Expression.property("className").equalTo(Expression.string("Order"))
+                        .and(Expression.property("printFlag").greaterThan(Expression.intValue(0)))//未打印
+                        // .and(Expression.property("deviceType").equalTo(Expression.intValue(0)))//前台机器
+                        .and(Expression.property("tableId").equalTo(Expression.string(tableId)))
+                        .and(Expression.property("state").equalTo(Expression.intValue(1))));//未结账)
+    }
+    private  void stopTimer(){
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        if (timerTask != null) {
+            timerTask.cancel();
+            timerTask = null;
+        }
+    }
+    private void cancelChangeListener(){
+        myquery.removeChangeListener(listenerToken);
+    }
+
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+                printerLab.setText(" "+timerNum);
+                MyLog.e("timerNum=",""+timerNum);
+
+                timerNum--;
+                if(timerNum<0){
+                    stopTimer();
+                    cancelChangeListener();
+                    printerLab.setText("*打印失败*");
+                }
+            }
+            else if(msg.what ==2){
+
+                printerDialog.cancel();
+
+                  Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
+                    startActivity(intent);
+                    finish();
+
+
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    Timer timer = new Timer();
+    int   timerNum = 5;
+    TimerTask timerTask = new TimerTask() {
+        @Override
+        public void run() {
+            Message message = new Message();
+            message.what = 1;
+            handler.sendMessage(message);
+        }
+    };
+
+    private boolean hasPrinterGoods(){
+        boolean flag = false;
+
+        List<KitchenClient> kitchenClientList = CDBHelper.getObjByWhere(
+                Expression.property("className").equalTo(Expression.string("KitchenClient"))
+                        .and(Expression.property("mode").equalTo(Expression.intValue(1)))
+                ,null
+                ,KitchenClient.class
+        );
+        if (kitchenClientList.size() <= 0)
+        {
+            return flag;
+        }
+
+        List<String> dishKindIds = new ArrayList<>();
+        for (KitchenClient kitchenClientObj : kitchenClientList)//1 for 遍历所有厨房
+        {
+            dishKindIds.addAll(kitchenClientObj.getKindIds());
+        }
+
+       // List<Goods> tmpGoods = getGoodsList();
+        for(Goods obj:ylGoodsList){
+            String dishesKindId = obj.getDishesKindId();
+            for(String kindId:dishKindIds){
+                if(dishesKindId.equals(kindId)){
+                    flag=true;
+                    break;
+                }
+            }
+            if(flag)
+                break;
+        }
+        return flag;
+    }
+
 
     private void setOrderDialog() {
 
@@ -920,7 +1115,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void saveOrder()
     {
-
         zcGoodsList.clear();
 
         newOrderObj = new Order();

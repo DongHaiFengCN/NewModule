@@ -11,7 +11,7 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.3'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
         // 注册MobSDK
         classpath 'com.mob.sdk:MobSDK:+'
@@ -107,6 +107,8 @@ ext{
     gson                      ="com.google.code.gson:gson:${gsonVersion}"
     Json                      ="com.fasterxml.jackson.core:jackson-databind:2.9.0.pr3"
     couchbase                   = "com.couchbase.lite:couchbase-lite-android:2.0.0"
+
+   // bugly                     = "com.tencent.bugly:crashreport_upgrade:latest.release"
 
 }
 

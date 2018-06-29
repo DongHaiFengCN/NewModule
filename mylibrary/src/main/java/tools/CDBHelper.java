@@ -201,31 +201,33 @@ public class CDBHelper
         // config.setPinnedServerCertificate(pinnedServerCert);
 
         Replicator replicator = new Replicator(config);
-
         replicator.addChangeListener(new ReplicatorChangeListener() {
             @Override
             public void changed(ReplicatorChange change)
             {
-
-                if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.IDLE))
-                {
-
-                    Intent intent = new Intent();
-                    intent.setAction("sync_complete");
-                    mcontext.sendBroadcast(intent);
-                    Log.e("Replication Comp Log", "Schedular Completed");
-
+                Replicator.ActivityLevel level = change.getReplicator().getStatus().getActivityLevel();
+                MyLog.e("replicatior status","**********level**********="+level);
+                Intent intent = new Intent();
+                switch (level){
+                    case STOPPED:
+                        break;
+                    case OFFLINE:
+                        intent.setAction("sync_complete");
+                        mcontext.sendBroadcast(intent);
+                        break;
+                    case CONNECTING:
+                        break;
+                    case IDLE:
+                        intent.setAction("sync_complete");
+                        mcontext.sendBroadcast(intent);
+                        break;
+                    case BUSY:
+                        break;
+                    default:
+                        break;
                 }
-                if (change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.STOPPED) || change.getReplicator().getStatus().getActivityLevel().equals(Replicator.ActivityLevel.OFFLINE)) {
-                    // stopReplication();
 
-                    Intent intent = new Intent();
-                    intent.setAction("sync_complete");
-                    mcontext.sendBroadcast(intent);
 
-                    Log.e("Rep schedular  Log", "ReplicationTag Stopped");
-
-                }
             }
         });
         replicator.start();
