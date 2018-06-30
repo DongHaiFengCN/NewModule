@@ -874,7 +874,7 @@ public class MainActivity extends AppCompatActivity {
 
         List<KitchenClient> kitchenClientList = CDBHelper.getObjByWhere(
                 Expression.property("className").equalTo(Expression.string("KitchenClient"))
-                        .and(Expression.property("mode").equalTo(Expression.intValue(1)))
+                        .and(Expression.property("positionType").equalTo(Expression.intValue(1)))
                 ,null
                 ,KitchenClient.class
         );
