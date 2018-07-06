@@ -103,11 +103,11 @@ public class CDBHelper
     {
 
         DatabaseConfiguration config = new DatabaseConfiguration(context);
-//        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
-//        {
-//            File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
-//            config.setDirectory(folder.getAbsolutePath());
-//        }
+        if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+        {
+            File folder = new File(String.format("%s/SmartKitchen", Environment.getExternalStorageDirectory()));
+            config.setDirectory(folder.getAbsolutePath());
+        }
         try {
             db = new Database(dbName, config);
         } catch (CouchbaseLiteException e)

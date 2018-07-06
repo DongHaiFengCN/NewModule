@@ -1507,65 +1507,32 @@ public class MainActivity extends AppCompatActivity {
             goodsList.add(goods);
 
         }
-
         updataTotal();
-
         updataPoint();
-
-
-
         orderAdapter.notifyDataSetChanged();
-
     }
-
-
 
     private void updataPoint() {
 
-
-
         setPoint(orderAdapter.getCount());
-
     }
-
 
 
     private void updataTotal() {
 
-
-
         if (goodsList.size() == 0) {
-
-
 
             setTotal(0.00f);
 
-
-
         } else {
-
-
 
             float t = 0f;
 
-
-
             for (int i = 0; i < goodsList.size(); i++) {
 
-
-
                 t += (goodsList.get(i).getPrice()*getGoodsList().get(i).getDishesCount());
-
-
-
-
-
             }
-
             setTotal(t);
-
-
-
         }
 
     }
@@ -1596,7 +1563,6 @@ public class MainActivity extends AppCompatActivity {
                 goodsList.get(i).setDishesCount(goodsList.get(i).getDishesCount() - dishesMessage.getCount());
 
             }
-
         }
     }
 }

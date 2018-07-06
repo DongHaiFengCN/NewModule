@@ -17,13 +17,16 @@ import com.couchbase.lite.Document;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import bean.kitchenmanage.dish.Dish;
 import bean.kitchenmanage.dish.Taste;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
+import doaing.order.untils.MyBigDecimal;
 import tools.CDBHelper;
+import tools.MyLog;
 
 /*
 *
@@ -141,10 +144,8 @@ public class OrderDragAdapter extends BaseAdapter {
 
         }
 
-
         //设置数量
-
-        view.number.setText(numbers[position] + "");
+        view.number.setText(MyBigDecimal.add(numbers[position],0,2) + "");
         //加法指示器
         view.addtion.setOnClickListener(new View.OnClickListener() {
             @Override

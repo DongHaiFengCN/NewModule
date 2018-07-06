@@ -141,6 +141,8 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private List<PayDetail> payDetailList = new ArrayList<>();
     private float allTotal = 0;
     private TextView pay_marketing;
+    private Map<String, Object> map;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -599,7 +601,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private void printOrder() {
 
         ProgressBarasyncTask progressBarasyncTask = new ProgressBarasyncTask(PayActivity.this);
-        progressBarasyncTask.setDate(checkOrder);
+        progressBarasyncTask.setDate(checkOrderDoc);
         progressBarasyncTask.execute();
 
 
@@ -1254,7 +1256,9 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         checkOrderDoc.setFloat("needPay",Float.parseFloat(totalTv.getText().toString()));
         checkOrderDoc.setString("tableId",myApplication.getTable_sel_obj().getId());
         checkOrderDoc.setString("createdYear",getNianDate());
-        checkOrderDoc.setString("operator",myApplication.getEmployee().getName());
+        checkOrderDoc.setString("operator",myApplication.getEmployee().getId());
+        checkOrderDoc.setBoolean("hasHandover",false);
+        checkOrderDoc.setBoolean("hasClosing",false);
         MutableArray arrayPay = new MutableArray();
         for (int a = 0;a < payDetailList.size();a++){
             PayDetail payDetail = payDetailList.get(a);

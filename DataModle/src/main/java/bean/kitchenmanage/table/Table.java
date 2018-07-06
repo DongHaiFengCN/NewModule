@@ -71,6 +71,7 @@ public class Table implements Serializable{
 	 */
 	private String lastCheckOrderId;
 
+	private String reserverId;
 	public Table()
 	{
 	}
@@ -185,5 +186,13 @@ public class Table implements Serializable{
 
 	public void setLastCheckOrderId(String lastCheckOrderId) {
 		this.lastCheckOrderId = lastCheckOrderId;
+	}
+
+	public String getReserverId() {
+		return reserverId;
+	}
+
+	public void setReserverId(String reserverId) {
+		this.reserverId = reserverId;
 	}
 }

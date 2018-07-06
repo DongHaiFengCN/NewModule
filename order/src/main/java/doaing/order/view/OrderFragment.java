@@ -23,6 +23,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -397,7 +398,7 @@ public class OrderFragment extends Fragment {
 
                 if (amountView.getAmount() > 0f) {
 
-                    orderDragAdapter.updata(position, amountView.getAmount());
+                    orderDragAdapter.updata(position, MyBigDecimal.add(amountView.getAmount(),0,2));
 
                     dishesMessage.setCount(amountView.getAmount());
 

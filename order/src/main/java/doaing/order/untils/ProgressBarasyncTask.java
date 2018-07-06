@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 
+import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 
 import java.io.IOException;
@@ -271,9 +272,9 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
      * @param checkOrderC 需要打印的参数
 
 */
-    public void setDate(CheckOrder checkOrderC){
+    public void setDate(Document checkOrderC){
 
-        this.checkOrderC = checkOrderC;
+        this.checkOrderC = CDBHelper.getObjById(checkOrderC.getId(),CheckOrder.class);
     }
 
     private void setAll() {

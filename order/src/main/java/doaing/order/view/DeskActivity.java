@@ -87,6 +87,7 @@ import tools.CDBHelper;
 import tools.MyLog;
 
 import static doaing.order.device.ListViewAdapter.DEBUG_TAG;
+import static tools.Method.getFormatDate;
 
 @Route(path = "/order/DeskActivity")
 public class DeskActivity extends AppCompatActivity {
@@ -567,10 +568,11 @@ public class DeskActivity extends AppCompatActivity {
 
                     if(orderCList.size()>0)//有未买单订单，可以买单
                     {
-                        final String[] an = new  String[3];
+                        final String[] an = new  String[4];
                         an[0] = "是否消台";
                         an[1] = "是否换台";
                         an[2] = "是否合台";
+                        an[3] = "修改人数";
                         alertLog.setTitle("请选择操作");
                         alertLog.setSingleChoiceItems(an, 0, new DialogInterface.OnClickListener() {
                             @Override
@@ -644,7 +646,59 @@ public class DeskActivity extends AppCompatActivity {
                                 }
                                 else if(an[mPos].equals("是否合台"))
                                 {
+                                    List<Table> documentList = CDBHelper.getObjByWhere(
+                                            Expression.property("className").equalTo(Expression.string("Table"))
+                                                    .and(Expression.property("state").equalTo(Expression.value(2)))
+                                                    .and(Expression.property("id").notEqualTo(Expression.string(tableId))),null,Table.class
+                                    );
+                                    MyLog.e("documentList---"+documentList.size());
+                                    String[] tableName = new String[documentList.size()];
+                                    final String[] tableIds = new String[documentList.size()];
+                                    for (int i = 0 ; i < documentList.size(); i++){
+                                        tableName[i] = documentList.get(i).getName();
+                                        tableIds[i] = documentList.get(i).getId();
+                                    }
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(DeskActivity.this);
+                                    builder.setTitle("请点击您要合并的桌位");
+                                    builder.setSingleChoiceItems(tableName, 0, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            pos = i;
+                                        }
+                                    });
+                                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            String tabId = tableIds[pos];
+                                            //1\改变原桌位对象状态为空闲
+                                            changeOldTable(tableId);
+                                            //2\改变原桌位下订单为该桌位下
+                                            List<Document> documentList = CDBHelper.getDocmentsByWhere(
+                                                    Expression.property("className").equalTo(Expression.string("Order"))
+                                                            .and(Expression.property("state").equalTo(Expression.intValue(1))
+                                                                    .and(Expression.property("tableId").equalTo(Expression.string(tableId)))),
+                                                    null);
+                                            for (Document doc : documentList)
+                                            {
+                                                MutableDocument mDoc = doc.toMutable();
+                                                mDoc.setString("tableId",tabId);
+                                                CDBHelper.saveDocument(mDoc);
+                                            }
+                                            pos = 0;
+                                        }
+                                    });
+                                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
 
+                                        }
+                                    });
+                                    builder.show();
+
+                                    dialog.dismiss();
+                                }else if (an[mPos].equals("修改人数")){
+                                    amendTablePeople(tableId);
+                                    dialog.dismiss();
                                 }
                                 mPos = 0;
 
@@ -658,8 +712,9 @@ public class DeskActivity extends AppCompatActivity {
                     }
                     else
                     {
-                        String[] an = new  String[1];
+                        final String[] an = new  String[2];
                         an[0] = "是否消台";
+                        an[1] = "修改人数";
                         alertLog.setTitle("是否消台？");
                         alertLog.setSingleChoiceItems(an, 0, new DialogInterface.OnClickListener() {
                             @Override
@@ -669,10 +724,20 @@ public class DeskActivity extends AppCompatActivity {
                         }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                table.setState(0);
-                                CDBHelper.createAndUpdate(table);
-                                myapp.setTable_sel_obj(table);
-                                dialog.dismiss();
+                                if (an[mPos].equals("是否消台")) {
+                                    if (!TextUtils.isEmpty(table.getReserverId())) {
+                                        table.setState(1);
+                                    } else {
+                                        table.setState(0);
+                                    }
+                                    table.setState(0);
+                                    CDBHelper.createAndUpdate(table);
+                                    myapp.setTable_sel_obj(table);
+                                    dialog.dismiss();
+                                }else if (an[mPos].equals("修改人数")){
+                                    amendTablePeople(tableId);
+                                    dialog.dismiss();
+                                }
                             }
                         }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                             @Override
@@ -700,62 +765,103 @@ public class DeskActivity extends AppCompatActivity {
         CDBHelper.saveDocument(mDoc);
 
     }
-private void cancelTableOrder(String Id,List<String> orderList)
-{
-    final String tableId = Id;
-    final List<String> orderCList = orderList;
+    private void cancelTableOrder(String Id,List<String> orderList)
+    {
+        final String tableId = Id;
+        final List<String> orderCList = orderList;
 
-    final EditText  reason = new EditText(this);
-    final AlertDialog.Builder alertDlg = new AlertDialog.Builder(DeskActivity.this);
-    alertDlg.setView(reason);
-    alertDlg.setTitle("请输入消台原因");
-    alertDlg.setPositiveButton("确定",new DialogInterface.OnClickListener(){
-        @Override
-        public void onClick(DialogInterface dialog1, int which)
-        {
-            final String input = reason.getText().toString();
-            //1|
-            try {
-                CDBHelper.getDatabase().inBatch(new Runnable() {
-                    @Override
-                    public void run()
-                    {
-                        for(String  docId:orderCList)
-                        {
-                            Document doc = CDBHelper.getDocByID(docId);
-                            if(doc!=null)
-                            {
-                                MutableDocument mDoc= doc.toMutable();
-                                if(!TextUtils.isEmpty(input))
-                                    mDoc.setString("cancelReason",input);
-
-                                mDoc.setInt("orderState",2);
-                                CDBHelper.saveDocument(mDoc);
-                            }
-                        }
-
-                        Document tabDoc = CDBHelper.getDocByID(tableId);
-                        MutableDocument tabmDoc = tabDoc.toMutable();
-                        tabmDoc.setInt("state",0);
-                        CDBHelper.saveDocument(tabmDoc);
-                    }
-                });
-            } catch (CouchbaseLiteException e)
+        final EditText  reason = new EditText(this);
+        final AlertDialog.Builder alertDlg = new AlertDialog.Builder(DeskActivity.this);
+        alertDlg.setView(reason);
+        alertDlg.setTitle("请输入消台原因");
+        alertDlg.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog1, int which)
             {
-                Log.e(Tag, e.toString());
-            }
-            dialog1.dismiss();
-        }})
-            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog1, int which)
+                final String input = reason.getText().toString();
+                //1|
+                try {
+                    CDBHelper.getDatabase().inBatch(new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            for(String  docId:orderCList)
+                            {
+                                Document doc = CDBHelper.getDocByID(docId);
+                                if(doc!=null)
+                                {
+                                    MutableDocument mDoc= doc.toMutable();
+                                    if(!TextUtils.isEmpty(input))
+                                        mDoc.setString("cancelReason",input);
+
+                                    mDoc.setString("cancelTime",getFormatDate());
+                                    mDoc.setInt("state",2);
+                                    CDBHelper.saveDocument(mDoc);
+                                }
+                            }
+
+                            Document tabDoc = CDBHelper.getDocByID(tableId);
+                            MutableDocument tabmDoc = tabDoc.toMutable();
+                            if (!TextUtils.isEmpty(tabDoc.getString("reserverId"))){
+                                tabmDoc.setInt("state", 1);
+                            }else {
+                                tabmDoc.setInt("state", 0);
+                            }
+                            CDBHelper.saveDocument(tabmDoc);
+                        }
+                    });
+                } catch (CouchbaseLiteException e)
                 {
-                    dialog1.dismiss();
+                    Log.e(Tag, e.toString());
                 }
-            }).show();
+                dialog1.dismiss();
+            }})
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog1, int which)
+                    {
+                        dialog1.dismiss();
+                    }
+                }).show();
 
+    }
 
-}
+    private void amendTablePeople(String Id)
+    {
+        final String tableId = Id;
+
+        final EditText  reason = new EditText(this);
+        //设置输入类型为数字
+        reason.setInputType((InputType.TYPE_CLASS_NUMBER));
+        final AlertDialog.Builder alertDlg = new AlertDialog.Builder(DeskActivity.this);
+        alertDlg.setView(reason);
+        alertDlg.setTitle("请输入要修改的人数");
+        alertDlg.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog1, int which)
+            {
+                final String input = reason.getText().toString();
+
+                if (TextUtils.isEmpty(input)){
+                    Toast.makeText(DeskActivity.this,"输入为空重新输入",Toast.LENGTH_LONG).show();
+                    return;
+                }
+                //1|
+                myapp.getTable_sel_obj().setCurrentPersons(Integer.parseInt(input));
+                CDBHelper.createAndUpdate(myapp.getTable_sel_obj());
+
+                dialog1.dismiss();
+            }})
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog1, int which)
+                    {
+                        dialog1.dismiss();
+                    }
+                }).show();
+
+    }
+
     private   String [] findFreeTable()
     {
         String[] freetables=null;

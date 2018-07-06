@@ -379,19 +379,26 @@ public void initWidget(){
     }
 
     private boolean startReplicationOnOffLine() {
-
-        if(lastChannelId!=null&&lastPwd!=null){
-            myapp.setCompany_ID(lastChannelId);
-            CDBHelper.startPushAndPullReplicationForCurrentUser(lastChannelId,lastPwd);
-            return true;
-        }
-        else {
+        List<Document> companyList = CDBHelper.getDocmentsByClass(Company.class);
+        if (companyList.size() > 0) {
+            Document document = companyList.get(0);
+            String channelId = document.getString("channelId");
+            myapp.setCompany_ID(channelId);
+            String pwd = document.getString("pwd");
+            if (!TextUtils.isEmpty(channelId) && !TextUtils.isEmpty(pwd)) {
+                CDBHelper.startPushAndPullReplicationForCurrentUser(channelId, pwd);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
             return false;
         }
     }
 
     private void LoginOffLine(String name,String password) {
         showProgress(true);
+        List<Employee> employee = CDBHelper.getObjByClass(Employee.class);
 
         List<Employee> employeeList =CDBHelper.getObjByWhere(
                 Expression.property("className").equalTo(Expression.string("Employee"))
