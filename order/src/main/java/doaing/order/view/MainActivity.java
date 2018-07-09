@@ -1155,6 +1155,7 @@ public class MainActivity extends AppCompatActivity {
         newOrderObj.setCreatedTime(getNewFormatDate());
         newOrderObj.setCreatedYear(getNianDate());
         newOrderObj.setTableId(myApp.getTable_sel_obj().getId());
+        newOrderObj.setOperator(myApp.getTable_sel_obj().getId());
         if (!TextUtils.isEmpty(editText.getText().toString())){
             newOrderObj.setDescription(editText.getText().toString());
         }
@@ -1169,6 +1170,7 @@ public class MainActivity extends AppCompatActivity {
             zcOrderObj.setTableId(newOrderObj.getTableId());
             zcOrderObj.setCreatedYear(getNianDate());
             zcOrderObj.setGoodsList(zcGoodsList);
+            zcOrderObj.setOperator(myApp.getTable_sel_obj().getId());
             CDBHelper.createAndUpdateDefalut( zcOrderObj);
         }
         Table table = CDBHelper.getObjById(newOrderObj.getTableId(), Table.class);

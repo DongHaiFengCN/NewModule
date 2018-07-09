@@ -398,8 +398,6 @@ public void initWidget(){
 
     private void LoginOffLine(String name,String password) {
         showProgress(true);
-        List<Employee> employee = CDBHelper.getObjByClass(Employee.class);
-
         List<Employee> employeeList =CDBHelper.getObjByWhere(
                 Expression.property("className").equalTo(Expression.string("Employee"))
                         .and(Expression.property("userName").equalTo(Expression.string(name)))

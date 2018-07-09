@@ -343,16 +343,16 @@
             tools:ignore="Suspicious0dp" />
 
 
-        <ImageView
-            android:id="@+id/gz"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:padding="16dp"
-            android:src="@mipmap/icon_guazhang"
-            android:layout_height="match_parent"
-            android:background="@drawable/background_pay_select"
-            />
+        <!--<ImageView-->
+            <!--android:id="@+id/gz"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:clickable="true"-->
+            <!--android:padding="16dp"-->
+            <!--android:src="@mipmap/icon_guazhang"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:background="@drawable/background_pay_select"-->
+            <!--/>-->
 
         <ImageView
             android:layout_width="0.5dp"

@@ -163,7 +163,9 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         mPrinterId = gObj.getPrinterId();
         PortParamDataBase database = new PortParamDataBase(this);
         mPortParam = database.queryPortParamDataBase("" +mPrinterId);
-
+        if (mGpService == null){
+            return;
+        }
         try {
             if (mGpService.getPrinterConnectStatus(0) == GpDevice.STATE_CONNECTED)
             {

@@ -69,7 +69,7 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
     TextView tv_mode;
     Button submitArea;
     TextView balance;
-    private float chargeTotal,chargePresentTotal;
+    private float chargeTotal,chargePresentTotal,hangupTotal,hangupRemainder;;
     private boolean STATUS;
     private Array array;
     private IDBManager idbManager;
@@ -213,7 +213,10 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
             //充值卡金额返回支付界面
             chargeTotal = members.getFloat("chargeTotal");//本金
             chargePresentTotal = members.getFloat("chargePresentTotal");//增额
-            Tool.bindView(balance, MyBigDecimal.add(chargeTotal,chargePresentTotal,2)+"元");
+            hangupTotal = members.getFloat("hangupTotal");//总借款金额
+            hangupRemainder = members.getFloat("hangupRemainder");//借款消费金额
+            float usable = MyBigDecimal.sub(hangupTotal,hangupRemainder,2);
+            Tool.bindView(balance, MyBigDecimal.add(usable,MyBigDecimal.add(chargeTotal,chargePresentTotal,2),2)+"元");
             STATUS = members.getBoolean("valid");
             if (STATUS) {
 
@@ -309,6 +312,8 @@ public class SaleActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("mode",mode_type);
                 intent.putExtra("discounts",discounts);
                 intent.putExtra("counts",counts);
+                intent.putExtra("hangupRemainder",hangupRemainder);
+                intent.putExtra("hangupTotal",hangupTotal);
                 //返回支持打折菜品id
                 setResult(RESULT_OK, intent);
                 finish();

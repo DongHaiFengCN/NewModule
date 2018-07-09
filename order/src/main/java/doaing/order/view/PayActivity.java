@@ -125,10 +125,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private boolean isMember = true;
     private int mode;
     private float discountDetail = 0;
-    private float chargeTotal,chargePresentTotal,indexCharge,indexChargePresent;
+    private float chargeTotal,chargePresentTotal,hangupTotal,hangupRemainder,indexCharge,indexChargePresent;
     private List<PromotionDiscountDetail> promotionDiscountDetailList = new ArrayList<>();
+    private List<PayDetail> mubDetailList = new ArrayList<>();
     private List<Promotion> promotionCList;
-    private List<PromotionRule> promotionRulesList;
     private float subCopy;
     private float discountCopy;
     private List<Float> discountsList = new ArrayList<>();
@@ -139,9 +139,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private MutableDocument checkOrderDoc = new MutableDocument("CheckOrder."+ToolUtil.getUUID());
     //每增加一种支付方式创建一个支付详情，例如充值卡余额不足，剩下的部分用的现金。
     private List<PayDetail> payDetailList = new ArrayList<>();
-    private float allTotal = 0;
+    private float allTotal = 0,mebAllTotal = 0;
     private TextView pay_marketing;
     private Map<String, Object> map;
+    private int mebType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -234,7 +235,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         cash = findViewById(R.id.cash);
         pay_marketing = findViewById(R.id.pay_marketing);
         tableNumber = findViewById(R.id.table_number);
-        findViewById(R.id.gz).setOnClickListener(this);
         findViewById(R.id.tg).setOnClickListener(this);
         associator.setOnClickListener(this);
         discount.setOnClickListener(this);
@@ -280,20 +280,16 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             //转化二维码
 
         }
-
-
         //营销方式
-
         promotionCList = CDBHelper.getObjByClass( Promotion.class);
-        //活动
-        promotionRulesList = CDBHelper.getObjByClass(PromotionRule.class);
-
         Iterator iterator = promotionCList.iterator();
-
         //筛选活动时间
         while (iterator.hasNext()) {
 
             Promotion promotion = (Promotion) iterator.next();
+            if (promotion.getPromotionRuleList().get(0).getMode() ==4){
+                iterator.remove();
+            }
             if (promotion.getStartTime() == null||promotion.getStartTime().length()<10){
                 continue;
             }
@@ -319,7 +315,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             if (s > now || now > e) {
 
                 iterator.remove();
-
             }
         }
     }
@@ -409,6 +404,12 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         chargeTotal = data.getFloatExtra("chargeTotal", 0f);
         //当前卡中赠送余额
         chargePresentTotal= data.getFloatExtra("chargePresentTotal",0f);
+        //透支总额度
+        hangupTotal = data.getFloatExtra("hangupTotal",0f);
+        //透支使用额度
+        hangupRemainder = data.getFloatExtra("hangupRemainder",0f);
+        //剩下可用额度
+        final float usable = MyBigDecimal.sub(hangupTotal,hangupRemainder,2);
         final float r = MyBigDecimal.add(chargePresentTotal,chargeTotal,2);
         mode = data.getIntExtra("mode",0);
 
@@ -463,27 +464,39 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (r >= total) {//余额扣款
+                mebAllTotal = MyBigDecimal.add(r,usable,2);
+                if (mebAllTotal >= total) {//余额扣款
                     memberLogs = true;
-                    //会员卡支付
-                    setPayDetail(PayDetail.PAYPYTE_MEMBER, total);
                     if (chargeTotal >= total){
                         //更新本金余额
                         members.setFloat("chargeTotal", chargeTotal - total);
                         CDBHelper.saveDocument(members);
                         indexCharge = total;
-                    }else if (chargeTotal == 0){
-                        members.setFloat("chargePresentTotal",chargePresentTotal - total);
-                        CDBHelper.saveDocument(members);
-                        indexChargePresent = total;//增额扣款
-                    } else {
+                        //会员卡支付
+                        setMebDetail(PayDetail.PAYPYTE_MEMBER, total);
+                        mebType = 0;
+                    }else if (MyBigDecimal.add(chargeTotal,chargePresentTotal,2) >= total){
+                        //会员卡支付
+                        setMebDetail(PayDetail.PAYPYTE_MEMBER, total);
+                        //扣除剩下的本金
                         total = MyBigDecimal.sub(total,chargeTotal,2);
-                        indexCharge = chargeTotal;
-                        indexChargePresent = total;
+                        indexCharge = chargeTotal;//记录扣除的本金
+                        indexChargePresent = total;//记录扣除的赠送金额
                         members.setFloat("chargeTotal",0);
-                        members.setFloat("chargePresentTotal",chargePresentTotal - total);
+                        members.setFloat("chargePresentTotal",MyBigDecimal.sub(chargePresentTotal, total,2));
                         CDBHelper.saveDocument(members);
+
+                        mebType = 0;
+                    } else if (usable >= total){
+                        //扣除剩下的赠送金额
+                        total = MyBigDecimal.sub(total,chargePresentTotal,2);
+                        indexChargePresent = total;//记录扣除的赠送金额
+                        //更新透支余额
+                        members.setFloat("hangupRemainder", MyBigDecimal.add(hangupRemainder,total,2));
+                        CDBHelper.saveDocument(members);
+                        //挂账支付
+                        setMebDetail(PayDetail.PAYPYTE_HANG, total);
+                        mebType = 3;
                     }
                     Toast.makeText(PayActivity.this, "扣款成功！", Toast.LENGTH_SHORT).show();
                     members1 = CDBHelper.getObjById(members.getId(),Members.class);
@@ -494,7 +507,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                         Map<String, Object> map1 = mapper.convertValue(CDBHelper.getObjById(members1.getPromotionId(), Promotion.class), Map.class);
                         checkOrderDoc.setValue("promotion", map1);
                     }
-
+                    setPayDetail(PayDetail.PAYPYTE_MEMBER, total);
                     if (mode == 1){
                         setPromotionDiscountDetail(1,discountDetail);
                     }else if (mode == 2){
@@ -507,30 +520,41 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
                     } catch (CouchbaseLiteException e) {
                         e.printStackTrace();
                     }
-                    setMemberLogs();
+                    setMemberLogs(mebType);
                     alertDialog.dismiss();
 
 
-                } else if (total > r && r > 0) {
+                } else if (total > mebAllTotal && mebAllTotal > 0) {
 
                     //支付价格大于卡内余额，且卡内余额大于零，显示使用卡内全部余额
                     AlertDialog.Builder a = new AlertDialog.Builder(PayActivity.this);
                     a.setTitle("余额不足！");
-                    a.setMessage("使用卡内全部" + r + "元？");
+                    a.setMessage("使用卡内全部" + mebAllTotal + "元？");
                     a.setPositiveButton("是", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             memberLogs = false;
-                            //会员剩余金额清零
-                            members.setFloat("chargePresentTotal", 0f);
+                            if (usable >= 0) {
+                                //会员剩余金额清零
+                                members.setFloat("hangupRemainder", hangupTotal);
+                                //消费支付细节 6会员消费,计算剩余部分
+                                total = total - mebAllTotal;
+                                setMebDetail(PayDetail.PAYPYTE_HANG, mebAllTotal);
+                                mebType = 3;
+                            }else{
+                                //会员剩余金额清零
+                                members.setFloat("chargePresentTotal", 0f);
+                                //消费支付细节 6会员消费,计算剩余部分
+                                total = total - mebAllTotal;
+                                setMebDetail(PayDetail.PAYPYTE_MEMBER, mebAllTotal);
+                                mebType = 0;
+                            }
                             CDBHelper.saveDocument(members);
                             Toast.makeText(PayActivity.this,"扣款成功，请支付剩下余额。请选择支付方式",Toast.LENGTH_SHORT).show();
                             members1 = CDBHelper.getObjById(members.getId(),Members.class);
-                            indexChargePresent = r;
-                            //消费支付细节 6会员消费,计算剩余部分
-                            total = total - r;
-                            setPayDetail(PayDetail.PAYPYTE_MEMBER, r);
+                            setPayDetail(PayDetail.PAYPYTE_MEMBER, mebAllTotal);
                             factTv.setText("实际支付：" + total + "元");
+
                             alertDialog.dismiss();
 
                         }
@@ -580,6 +604,24 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
     }
 
+    /*
+     *
+     * 会员支付细节设置
+     *
+     * @param type 支付类型
+     * @param pay  支付的钱数
+     */
+    private void setMebDetail(int type, float pay) {
+
+        //支付细节
+        PayDetail p = new PayDetail();
+        p.setPayTypes(type);
+        p.setSubtotal(pay);
+        p.setCreatedTime(getFormatDate());
+        mubDetailList.add(p);
+    }
+
+
     //生成会员的副本
     private MutableDictionary getDictionary(){
 
@@ -621,10 +663,16 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
         if (ifChangeTable()) {
             Table obj = myApplication.getTable_sel_obj();
-            obj.setLastCheckOrderId(id);
-            obj.setState(0);
+            obj.setLastCheckOrderId(checkOrder.getId());
+            if (!TextUtils.isEmpty(obj.getReserverId())){
+                obj.setState(1);
+                obj.setCurrentPersons(0);
+            }else {
+                obj.setState(0);
+                obj.setCurrentPersons(0);
+            }
 
-            CDBHelper.createAndUpdate( tableC);
+            CDBHelper.createAndUpdate(obj);
         } else {
             Toast.makeText(getApplicationContext(), "有未买单信息，不能改变桌位状态", Toast.LENGTH_SHORT).show();
             return;
@@ -871,66 +919,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
             bankDialog.show();
 
 
-        } else if (i == R.id.gz) {
-            //TODO 挂账信息
-            View view1 = getLayoutInflater().inflate(R.layout.view_gz_dialog, null);
-            nameEt = view1.findViewById(R.id.order_name_tv);
-            contactWayEt = view1.findViewById(R.id.order_contactway_tv);
-
-            AlertDialog.Builder gzDialog = new AlertDialog.Builder(PayActivity.this);
-            gzDialog.setView(view1);
-            gzDialog.setTitle("挂帐");
-            gzDialog.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-
-                }
-            });
-            gzDialog.setNegativeButton("确定支付", null);
-
-            final AlertDialog alertDialog = gzDialog.show();
-            alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    if (nameEt.getText().length() == 0) {
-                        nameEt.setError("名字能为空！");
-                    } else if (contactWayEt.getText().length() == 0) {
-                        contactWayEt.setError("联系方式不能为空！");
-
-                    } else {
-                        HangInfo hangInfo = new HangInfo();
-                        hangInfo.setChannelId(myApplication.getCompany_ID());
-                        hangInfo.setClassName("HangInfo");
-                        hangInfo.setName(nameEt.getText().toString());
-                        hangInfo.setMobile(contactWayEt.getText().toString());
-                        Database database = CDBHelper.getDatabase();
-                        for (String id : checkOrder.getOrderId()) {
-                            Document document = database.getDocument(id);
-                            MutableDocument mutableDocument = document.toMutable();
-                            mutableDocument.setInt("state", 0);
-                            try {
-                                database.save(mutableDocument);
-                            } catch (CouchbaseLiteException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        ObjectMapper mapper = new ObjectMapper();
-                        Map<String ,Object> map = mapper.convertValue(hangInfo, Map.class);
-                        checkOrderDoc.setValue("hangInfo",map);
-                        setPayDetail(PayDetail.PAYPYTE_HANG, -total);
-                        total = 0;
-                        try {
-                            submitCheckOrderDoc();
-                        } catch (CouchbaseLiteException e) {
-                            e.printStackTrace();
-                        }
-                        isGuaZ = true;
-                    }
-                    alertDialog.dismiss();
-                }
-            });
-        }else if (i == R.id.tg){
+        } else if (i == R.id.tg){
             AlertDialog.Builder tgDialog = new AlertDialog.Builder(PayActivity.this);
             tgDialog.setTitle("团购支付");
 
@@ -1293,7 +1282,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         CDBHelper.createAndUpdate(table);
         if (!memberLogs){
             indexCharge = total;
-            setMemberLogs();
+            setMemberLogs(mebType);
             memberLogs = true;
         }
 
@@ -1350,10 +1339,10 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private void setMemberLogs(){
+    private void setMemberLogs(int type){
         MutableArray array = new MutableArray();
-        for (int a = 0;a < payDetailList.size();a++){
-            PayDetail payDetail = payDetailList.get(a);
+        for (int a = 0;a < mubDetailList.size();a++){
+            PayDetail payDetail = mubDetailList.get(a);
             ObjectMapper getMap = new ObjectMapper();
             Map<String ,Object> map = getMap.convertValue(payDetail, Map.class);
             array.addValue(map);
@@ -1363,11 +1352,11 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         mutableDocument.setString("className","MemberLogs");
         mutableDocument.setString("dataType","UserData");
         mutableDocument.setString("createdYear",getNianDate());
-        mutableDocument.setInt("type",0);
+        mutableDocument.setInt("type",type);
         mutableDocument.setArray("payDetailList",array);
         mutableDocument.setString("createdTime",getFormatDate());
         if (indexCharge != 0){
-            mutableDocument.setFloat("charge",indexCharge);
+            mutableDocument.setFloat("charge",indexCharge) ;
         }
         if (indexChargePresent != 0){
             mutableDocument.setFloat("chargePresent",indexChargePresent);

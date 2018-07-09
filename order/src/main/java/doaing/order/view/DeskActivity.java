@@ -98,7 +98,7 @@ public class DeskActivity extends AppCompatActivity {
     private RecyclerView listViewDesk;
     private LiveTableRecyclerAdapter tableadapter;
     private List<Document> freeTableList = new ArrayList<>();
-    private String[] tablesNos,tablesName;
+    private String[] tablesId,tablesName;
     public int pos = 0,mPos = 0;
     private Toolbar toolbar;
     private TextView msg_point;
@@ -591,7 +591,10 @@ public class DeskActivity extends AppCompatActivity {
                                 }
                                 else if(an[mPos].equals("是否换台")){
                                     tablesName = findFreeTable();
-                                    String[] areaTable = new String[tablesName.length];
+                                    if (tablesName == null){
+                                        return;
+                                    }
+                                    String[] areaTable = new String[freeTableList.size()];
                                     for (int i = 0; i< freeTableList.size();i++){
                                         Document selectTable = freeTableList.get(i);
                                         Document document = CDBHelper.getDocByID(selectTable.getString("areaId"));
@@ -599,21 +602,17 @@ public class DeskActivity extends AppCompatActivity {
                                         areaTable[i] = areaName+" : "+tablesName[i];
                                     }
                                     AlertDialog.Builder builder = new AlertDialog.Builder(DeskActivity.this);
-                                    builder.setTitle("请点击您要换的桌位号")
-                                            .setSingleChoiceItems(areaTable, 0, new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    pos = which;
-//                                                    Document selectTable = freeTableList.get(pos);
-//                                                    String tableName = selectTable.getString("tableName");
-//                                                    Document document = CDBHelper.getDocByID(getApplication(),selectTable.getString("areaId"));
-//                                                    String areaName = document.getString("areaName");
-//                                                    Toast.makeText(DeskActivity.this,areaName+":   "+tableName,Toast.LENGTH_SHORT).show();
-                                                }
-                                            }).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    builder.setTitle("请点击您要换的桌位号");
+                                    builder.setSingleChoiceItems(areaTable, 0, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            String tableNum = tablesNos[pos];
+                                            pos = which;
+                                        }
+                                    });
+                                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            String tabId = tablesId[pos];
                                             //1\改变所选桌位对象状态为使用
                                             MutableDocument selectTable = freeTableList.get(pos).toMutable();
                                             selectTable.setInt("state",2);
@@ -624,15 +623,14 @@ public class DeskActivity extends AppCompatActivity {
                                             List<Document> documentList = CDBHelper.getDocmentsByWhere(
                                                     Expression.property("className").equalTo(Expression.string("Order"))
                                                             .and(Expression.property("state").equalTo(Expression.intValue(1))
-                                                            .and(Expression.property("tableId").equalTo(Expression.string(table.getId())))),
+                                                                    .and(Expression.property("tableId").equalTo(Expression.string(tableId)))),
                                                     null);
                                             for (Document doc : documentList)
                                             {
                                                 MutableDocument mDoc = doc.toMutable();
-                                                mDoc.setString("tableId",tableNum);
+                                                mDoc.setString("tableId",tabId);
                                                 CDBHelper.saveDocument(mDoc);
                                             }
-                                            dialog.dismiss();
                                             pos = 0;
                                         }
                                     }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -641,8 +639,6 @@ public class DeskActivity extends AppCompatActivity {
                                             dialog.dismiss();
                                         }
                                     }).show();
-
-                                    dialog.dismiss();
                                 }
                                 else if(an[mPos].equals("是否合台"))
                                 {
@@ -672,7 +668,15 @@ public class DeskActivity extends AppCompatActivity {
                                             String tabId = tableIds[pos];
                                             //1\改变原桌位对象状态为空闲
                                             changeOldTable(tableId);
-                                            //2\改变原桌位下订单为该桌位下
+                                            //2\合并原桌位下人数到该桌位下
+                                            Document document = CDBHelper.getDocByID(tabId);//选择的桌位
+                                            Document docTable = CDBHelper.getDocByID(tableId);//原桌位
+                                            //原来桌位下的人数合并到选择桌位下
+                                            int currentPersons = document.getInt("currentPersons") + docTable.getInt("currentPersons");
+                                            MutableDocument mutableDocument = document.toMutable();
+                                            mutableDocument.setInt("currentPersons", currentPersons);
+                                            CDBHelper.saveDocument(mutableDocument);
+                                            //3\改变原桌位下订单为该桌位下
                                             List<Document> documentList = CDBHelper.getDocmentsByWhere(
                                                     Expression.property("className").equalTo(Expression.string("Order"))
                                                             .and(Expression.property("state").equalTo(Expression.intValue(1))
@@ -867,28 +871,35 @@ public class DeskActivity extends AppCompatActivity {
         String[] freetables=null;
         freeTableList.clear();
         List<Document> documents = CDBHelper.getDocmentsByWhere(
-                Expression.property("className").equalTo(Expression.string("Table")),
-                null);
+                Expression.property("className").equalTo(Expression.string("Table"))
+                        .and(Expression.property("areaId").isNot(Expression.string(null)))
+                ,null
+        );
         List<Document> tableDocList = new ArrayList<>();
         for (Document doc : documents){
             if (doc.getInt("state") == 0){
-                tableDocList.add(doc);
+                if (!TextUtils.isEmpty(doc.getString("areaId"))) {
+                    tableDocList.add(doc);
+
+                }
             }
         }
-        Log.e("Desk","table---"+tableDocList.size());
+
+        Log.e("Desk","table---"+documents.size());
         if(tableDocList.size()>0)
         {
-            tablesNos=new String[tableDocList.size()];
+            tablesId = new String[tableDocList.size()];
             freetables = new String[tableDocList.size()];
             int i=0;
             for(Document doc:tableDocList)
             {
-
-                freeTableList.add(doc);
-                freetables[i] = doc.getString("name");
-                tablesNos[i]=doc.getId();
-                i++;
-
+                Document document = CDBHelper.getDocByID(doc.getString("areaId"));
+                if (document != null){
+                    freeTableList.add(doc);
+                    freetables[i] = doc.getString("name");
+                    tablesId[i]=doc.getId();
+                    i++;
+                }
             }
         }
 

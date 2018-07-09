@@ -84,7 +84,7 @@ public class Order {
 	/**
 	 * 操作员员工号
 	 */
-	private String employeeNum;
+	private String 	operator;
 	/**
 	 *桌位状态记录对象
 	 */
@@ -255,12 +255,12 @@ public class Order {
 		this.tableId = tableId;
 	}
 
-	public String getEmployeeNum() {
-		return employeeNum;
+	public String getOperator() {
+		return 	operator;
 	}
 
-	public void setEmployeeNum(String employeeNum) {
-		this.employeeNum = employeeNum;
+	public void setOperator(String operator) {
+		this.	operator = operator;
 	}
 
 	public String getTableLogId() {
