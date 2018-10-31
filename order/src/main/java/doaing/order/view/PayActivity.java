@@ -133,7 +133,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     private float discountCopy;
     private List<Float> discountsList = new ArrayList<>();
     private List<Float> subList = new ArrayList<>();
-    private Table tableC;
+    private Document tableDoc;
     List<Goods> orderDishesList = new ArrayList<>();
     private CheckOrder checkOrder = new CheckOrder();
     private MutableDocument checkOrderDoc = new MutableDocument("CheckOrder."+ToolUtil.getUUID());
@@ -163,11 +163,12 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
         myApplication = (MyApplication) getApplication();
         //获取餐桌编号
-        tableC = myApplication.getTable_sel_obj();
-        if(tableC != null) {
-            Area areaCs = CDBHelper.getObjById(tableC.getAreaId(), Area.class);
+        tableDoc = myApplication.getTable_sel_obj();
+        if(tableDoc != null) {
+            Document tabDoc = CDBHelper.getDocByID(tableDoc.getString("tableId"));
+            Document areaDoc = CDBHelper.getDocByID(tabDoc.getString("msgTable_areaId"));
 
-            tableNumber.setText(areaCs.getName() + "桌/牌:" + tableC.getName());
+            tableNumber.setText(areaDoc.getString("name") + "桌/牌:" + tabDoc.getString("name"));
         }
 
         getAll();
@@ -190,7 +191,7 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
         //获取包含桌号xx的所有订单
         List<Order> orderCList = CDBHelper.getObjByWhere( Expression.property("className")
                         .equalTo(Expression.string("Order"))
-                        .and(Expression.property("tableId").equalTo(Expression.string(tableC.getId())))
+                        .and(Expression.property("tableMsgId").equalTo(Expression.string(tableDoc.getId())))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
                 , Ordering.property("createdTime").ascending()
                 , Order.class);
@@ -662,17 +663,14 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
     public void turnDesk() {
 
         if (ifChangeTable()) {
-            Table obj = myApplication.getTable_sel_obj();
-            obj.setLastCheckOrderId(checkOrder.getId());
-            if (!TextUtils.isEmpty(obj.getReserverId())){
-                obj.setState(1);
-                obj.setCurrentPersons(0);
+            MutableDocument obj = myApplication.getTable_sel_obj();
+            if (!TextUtils.isEmpty(obj.getString("reserverId"))){
+                obj.setInt("state",1);
             }else {
-                obj.setState(0);
-                obj.setCurrentPersons(0);
+                obj.setInt("state",0);
             }
-
-            CDBHelper.createAndUpdate(obj);
+            obj.setInt("currentPersons",0);
+            CDBHelper.saveDocument(obj);
         } else {
             Toast.makeText(getApplicationContext(), "有未买单信息，不能改变桌位状态", Toast.LENGTH_SHORT).show();
             return;
@@ -1277,9 +1275,6 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
         }
         CDBHelper.saveDocument(checkOrderDoc);
-        Table table = CDBHelper.getObjById(myApplication.getTable_sel_obj().getId(),Table.class);
-        table.setLastCheckOrderId(checkOrderDoc.getId());
-        CDBHelper.createAndUpdate(table);
         if (!memberLogs){
             indexCharge = total;
             setMemberLogs(mebType);
@@ -1394,12 +1389,11 @@ public class PayActivity extends AppCompatActivity implements View.OnClickListen
 
 
     private boolean ifChangeTable() {
-        List<Order> orderCList = CDBHelper.getObjByWhere(
+        List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableNum").equalTo(Expression.intValue(myApplication.getTable_sel_obj().getNum())))
-                , Ordering.property("createdTime").descending()
-                , Order.class);
+                        .and(Expression.property("tableMsgId").equalTo(Expression.string(myApplication.getTable_sel_obj().getId())))
+                , null);
 
         if (orderCList.size() > 0) {
             return false;

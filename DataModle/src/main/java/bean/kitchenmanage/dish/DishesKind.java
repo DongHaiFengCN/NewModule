@@ -10,7 +10,7 @@ import java.io.Serializable;
  * @Description: 菜品类文件
  * @date 2017 -7-29 上午1:06:02
  */
-public class DishKind implements Serializable
+public class DishesKind implements Serializable
 {
 	/**
 	 * 公司唯一身份id,用于数据同步,做为唯一管道符
@@ -19,7 +19,7 @@ public class DishKind implements Serializable
 	/**
 	 * 类名，用于数据库查询类过滤
 	 */
-	private String className="DishKind";
+	private String className="DishesKind";
 	/**
 	 * 对象id,等于docmentid,一般用于Pojo操作时使用。
 	 */
@@ -40,7 +40,7 @@ public class DishKind implements Serializable
 	/**
 	 * Instantiates a new Dishes kind c.
 	 */
-	public DishKind()
+	public DishesKind()
 	{
 	}
 	public String getChannelId() {

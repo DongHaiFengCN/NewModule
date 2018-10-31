@@ -358,7 +358,9 @@ public class CDBHelper
             return null;
         // 1
 
-
+        if (db == null){
+            MyLog.e("为空----");
+        }
         Query query = QueryBuilder.select(SelectResult.all(), SelectResult.expression(Meta.id))
                 .from(DataSource.database(db))
                 .where(Expression.property("className").equalTo(Expression.string(classname)));

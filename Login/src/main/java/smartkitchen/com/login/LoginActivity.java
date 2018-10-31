@@ -1,5 +1,6 @@
 package smartkitchen.com.login;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
@@ -13,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
@@ -44,6 +46,7 @@ import com.alibaba.android.arouter.launcher.ARouter;
 import com.couchbase.lite.ArrayFunction;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
+import com.couchbase.lite.MutableDocument;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -54,9 +57,6 @@ import java.util.List;
 
 import bean.kitchenmanage.user.Company;
 import bean.kitchenmanage.user.Employee;
-import cn.smssdk.EventHandler;
-import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
 import doaing.mylibrary.MyApplication;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -70,6 +70,7 @@ import smartkitchen.com.login.globle.constant;
 import smartkitchen.com.login.model.responseModle;
 import tools.CDBHelper;
 import tools.MyLog;
+import tools.ToolUtil;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -115,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_main);
-
+        checkPermission();
         myapp = (MyApplication) getApplicationContext();
         toolbar = findViewById(R.id.toolbar1);
         toolbar.setTitle("肴点点");
@@ -160,6 +161,27 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
+    private void checkPermission() {
+        // Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
+
 public void initWidget(){
     // Set up the login form.
     mNameView = findViewById(R.id.telephone);
@@ -398,10 +420,10 @@ public void initWidget(){
 
     private void LoginOffLine(String name,String password) {
         showProgress(true);
-        List<Employee> employeeList =CDBHelper.getObjByWhere(
+        List<Document> employeeList =CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Employee"))
                         .and(Expression.property("userName").equalTo(Expression.string(name)))
-                        .and(Expression.property("pwd").equalTo(Expression.string(password))),null,Employee.class
+                        .and(Expression.property("pwd").equalTo(Expression.string(password))),null
         );
 
         if(employeeList.size()>0) {
@@ -414,6 +436,7 @@ public void initWidget(){
             //是否记住密码
             saveShareParame(name,password);
             //全局用户
+            //myapp.setEmployee(employeeList.get(0));
             myapp.setEmployee(employeeList.get(0));
         }
         else {
@@ -607,6 +630,48 @@ public void initWidget(){
 
                         //是否记住密码
                         saveShareParame(userName,pwd);
+                        List<Document> employeeDoc = CDBHelper.getDocmentsByWhere(
+                                Expression.property("userName").equalTo(Expression.string
+                                        (mNameView.getText().toString()))
+
+                                , null
+                        );
+
+
+                        MyLog.e("login*********" + employeeDoc.size());
+                        //有管理员
+                        if (employeeDoc.size() > 0) {
+
+                            Document document = employeeDoc.get(0);
+
+                            Log.e("DOAING", document.getBoolean("isAdmin") + " !!!!!");
+
+
+                            if (document.getBoolean("isAdmin")) {
+
+                                myapp.setAdmin(true, employeeDoc.get(0).getId());
+
+                            } else {
+
+                                myapp.setEmployee(document);
+
+                            }
+
+                        } else {
+                            MutableDocument mutableDocument = new MutableDocument("Employee." +
+                                    ToolUtil
+                                            .getUUID());
+                            mutableDocument.setString("channelId", myapp.getCompany_ID());
+                            mutableDocument.setString("dataType ", "basic");
+                            mutableDocument.setString("className", "Employee");
+                            mutableDocument.setBoolean("isAdmin", true);
+                            mutableDocument.setString("pwd", "123456");
+                            mutableDocument.setString("mobile", mNameView.getText().toString());
+                            mutableDocument.setString("name", "管理员");
+                            mutableDocument.setString("userName", mNameView.getText().toString());
+                            CDBHelper.saveDocument(mutableDocument);
+                            myapp.setEmployee(mutableDocument);
+                        }
                         //
                       //  createAdminStation();
 

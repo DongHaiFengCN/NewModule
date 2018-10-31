@@ -9,12 +9,15 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 
+import com.couchbase.lite.Document;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.order.R;
+import tools.CDBHelper;
 
 /*
 *
@@ -57,8 +60,8 @@ public class SeekT9DialogAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         final HolderView holderView = (HolderView) holder;
-
-        holderView.itemTvCaipin.setText(list.get(position));
+        Document tasteDoc = CDBHelper.getDocByID(list.get(position));
+        holderView.itemTvCaipin.setText(tasteDoc.getString("name"));
 //
 //        holder.itemView.setTag(position);
         holderView.itemView.setOnClickListener(new View.OnClickListener() {

@@ -60,8 +60,6 @@ public class OrderDragAdapter extends BaseAdapter {
 
         this.numbers = numbers;
         notifyDataSetChanged();
-
-
     }
 
     ChangerNumbersListener changerNumbersListener;
@@ -144,15 +142,25 @@ public class OrderDragAdapter extends BaseAdapter {
 
         }
 
+
         //设置数量
         view.number.setText(MyBigDecimal.add(numbers[position],0,2) + "");
+//        final String count = view.number.getText().toString();
+//        if (count.equals("0.0")){
+//            view.number.setVisibility(View.GONE);
+//        }else{
+//            view.number.setVisibility(View.VISIBLE);
+//
+//        }
         //加法指示器
         view.addtion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Dish dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dish.class);
-
+                if (mlistDishes.get(position).getBoolean("sell")){
+                    return;
+                }
+                Document dishes = CDBHelper.getDocByID( mlistDishes.get(position).getId());
+                MyLog.e("dishId---"+dishes.getId());
                 setMessage(dishes, true, position);
 
             }
@@ -163,7 +171,8 @@ public class OrderDragAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
 
-                Dish dishes = CDBHelper.getObjById( mlistDishes.get(position).getId(), Dish.class);
+                Document dishes = CDBHelper.getDocByID( mlistDishes.get(position).getId());
+
                 setMessage(dishes, false, position);
 
             }
@@ -183,33 +192,33 @@ public class OrderDragAdapter extends BaseAdapter {
      */
 
 
-    private void setMessage(final Dish dishesC, final boolean flag, final int position) {
-
+    private void setMessage(final Document dishesC, final boolean flag, final int position) {
         final DishesMessage dishesMessage = new DishesMessage();
 
-        dishesMessage.setDishKindId(dishesC.getKindId());
+        dishesMessage.setDishKindId(dishesC.getString("kindId"));
 
         dishesMessage.setSingle(true);
 
         dishesMessage.setDishesC(dishesC);
 
-        dishesMessage.setName(dishesC.getName());
+        dishesMessage.setName(dishesC.getString("name"));
 
         //判断菜品引用的口味id在数据库中存在实例
 
         //有口味，添加选择口味dialog
-        if (dishesC.getTasteIds() != null && dishesC.getTasteIds().size() > 0) {
+        if (dishesC.getArray("tasteIds") != null && dishesC.getArray("tasteIds").count() > 0) {
 
             //初始化一个缓存口味的数组
-            final String[] strings = new String[dishesC.getTasteIds().size()];
+            final String[] strings = new String[dishesC.getArray("tasteIds").count()];
 
-            for (int i = 0; i < dishesC.getTasteIds().size(); i++) {
+            for (int i = 0; i < dishesC.getArray("tasteIds").count(); i++) {
 
-                Taste dishesTasteC = CDBHelper.getObjById( dishesC.getTasteIds().get(i), Taste.class);
+                Document dishesTasteC = CDBHelper.getDocByID( dishesC.getArray("tasteIds").getString(i));
 
                 if (dishesTasteC != null) {
 
-                    strings[i] = dishesTasteC.getName();
+                    strings[i] = dishesTasteC.getString("name");
+
                 }
 
             }
@@ -217,7 +226,7 @@ public class OrderDragAdapter extends BaseAdapter {
             //确认数据库口味不为空
             if (strings[0] != null) {
                 dishesMessage.setDishesTaste(strings[0]);
-                if (dishesC.getTasteIds().size() == 1){
+                if (dishesC.getArray("tasteIds").count() == 1){
                     Refresh(flag, dishesMessage);
                 }else {
 
@@ -233,6 +242,7 @@ public class OrderDragAdapter extends BaseAdapter {
 
             Refresh(flag, dishesMessage);
         }
+
 
 
     }

@@ -10,10 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableDocument;
+
 import java.util.List;
 
 import bean.kitchenmanage.order.Goods;
 import doaing.order.R;
+import tools.CDBHelper;
 import tools.MyLog;
 
 /**
@@ -35,7 +39,7 @@ public class OrderAdapter extends BaseAdapter {
 
 
 
-    private List<Goods> goodsCs;
+    private List<Document> goodsCs;
     private MainActivity context;
     private int Price = 0;
     private Handler mHandler= new Handler();
@@ -54,7 +58,7 @@ public class OrderAdapter extends BaseAdapter {
 
     public OrderAdapter(){}
 
-    public OrderAdapter(List<Goods> goodsCs, MainActivity mainActivity) {
+    public OrderAdapter(List<Document> goodsCs, MainActivity mainActivity) {
         this.goodsCs = goodsCs;
         this.context = mainActivity;
     }
@@ -99,16 +103,23 @@ public class OrderAdapter extends BaseAdapter {
 
             viewHold = (ViewHold) view.getTag();
         }
-
-        viewHold.name.setText(goodsCs.get(i).getDishesName());
-        if (TextUtils.isEmpty(goodsCs.get(i).getDishesTaste())){
+        final Document document = CDBHelper.getDocByID(goodsCs.get(i).getString("dishId"));
+        if (goodsCs.get(i).getInt("goodsType") == 0) {
+            viewHold.name.setText(document.getString("name"));
+        }else if (goodsCs.get(i).getInt("goodsType") == 1) {
+            viewHold.name.setText(document.getString("name")+"(退)");
+        }else if (goodsCs.get(i).getInt("goodsType") == 2) {
+            viewHold.name.setText(document.getString("name")+"(赠)");
+        }
+        if (TextUtils.isEmpty(goodsCs.get(i).getString("tasteId"))){
             viewHold.taste.setText("");
         }else{
-            viewHold.taste.setText(goodsCs.get(i).getDishesTaste());
+            Document tasteDoc = CDBHelper.getDocByID(goodsCs.get(i).getString("tasteId"));
+            viewHold.taste.setText(tasteDoc.getString("name"));
         }
 
-        viewHold.number.setNumber(goodsCs.get(i).getDishesCount()+"");
-
+        viewHold.number.setNumber(goodsCs.get(i).getFloat("count")+"");
+        MyLog.e("orderAdapter---"+goodsCs.get(i).getFloat("count"));
         viewHold.order_lin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,48 +132,31 @@ public class OrderAdapter extends BaseAdapter {
             public void OnChange(float ls,boolean flag)
             {
                 MyLog.e("OnChange    数量="+ls);
-                goodsCs.get(i).setDishesCount(ls);
-                onchangeListener.onchangeListener(flag, goodsCs.get(i).getPrice(),ls);
-                if (context.getGoodsList().size()==0 ){
-                    context.getT9GoodsList().clear();
-                    context.getSeekT9Adapter().notifyDataSetChanged();
-                }
-                if(ls <= 0){
 
-                    goodsCs.get(i).setDishesCount(0);
-                    goodsCs.remove(i);
-                    notifyDataSetChanged();
+                MutableDocument mutableDocument = CDBHelper.getDocByID(goodsCs.get(i).getId()).toMutable();
+                MyLog.e("========"+mutableDocument.getId());
+                if (mutableDocument.getInt("status") == 2) {
+                    mutableDocument.setFloat("count", ls);
+                    CDBHelper.saveDocument(mutableDocument);
+                    onchangeListener.onchangeListener(flag, document.getFloat("price"), ls);
+
+                    if (ls <= 0) {
+                        mutableDocument.setFloat("count", 0);
+                        CDBHelper.deleDocument(mutableDocument);
+                        goodsCs.remove(i);
+                        notifyDataSetChanged();
+                    }
+                    if (context.getGoodsList().size() == 0) {
+                        if (context.getT9GoodsList() != null) {
+                            context.getT9GoodsList().clear();
+                            context.getSeekT9Adapter().notifyDataSetChanged();
+                        }
+
+                    }
                 }
             }
         });
 
-//        }else{
-//           // final float price = goodsCs.get(i).getAllPrice();
-//            //设置item的点击事件
-//            viewHold.number.setChangeListener(new AmountView.ChangeListener() {
-//                @Override
-//                public void OnChange(float ls,boolean flag) {
-//
-//                    goodsCs.get(i).setDishesCount(ls);
-//                   // goodsCs.get(i).setAllPrice(MyBigDecimal.mul(ls,price,2));
-//
-//                    onchangeListener.onchangeListener(flag, goodsCs.get(i).getPrice() ,ls);
-//
-//
-//                    if(ls <= 0){
-//
-//                        goodsCs.get(i).setDishesCount(0);
-//                        goodsCs.remove(i);
-//                        notifyDataSetChanged();
-//
-//                    }
-//
-//
-//
-//                }
-//            });
-//
-//        }
         return view;
     }
 

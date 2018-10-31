@@ -65,7 +65,6 @@ dependencies {
     implementation rootProject.ext.libRxBindingAppcompatV7
     implementation rootProject.ext.libRxBindingDesign
     implementation rootProject.ext.libRetrofit
-    implementation rootProject.ext.libRetrofitConverterGson
     testImplementation rootProject.ext.libTestImplementation
     //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.2.0
     implementation project(':mylibrary')

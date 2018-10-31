@@ -11,10 +11,10 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.2.0'
         classpath 'com.jakewharton:butterknife-gradle-plugin:8.4.0'
         // 注册MobSDK
-        classpath 'com.mob.sdk:MobSDK:+'
+        //classpath 'com.mob.sdk:MobSDK:+'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -52,10 +52,10 @@ def gsonVersion = "2.8.0";
 ext{
     //  各个组件版本号的统一管理
     android = [
-            compileSdkVersion: 26,
-            buildToolsVersion: "26.1.1",
+            compileSdkVersion: 27,
+            buildToolsVersion: "27.1.1",
             minSdkVersion    : 21,
-            targetSdkVersion : 26,
+            targetSdkVersion : 27,
             versionCode      : 1,
             versionName      : '1.0.0',
     ]

@@ -29,6 +29,11 @@ android {
     }
 
 }
+repositories{
+    flatDir{
+        dirs 'libs' //就是你放aar的目录地址
+    }
+}
 
 dependencies {
     implementation rootProject.ext.libSupportAppcompat
@@ -52,5 +57,9 @@ dependencies {
     compile rootProject.ext.couchbase
     compile rootProject.ext.Json
     api 'com.alibaba:fastjson:1.1.64.android'
-    implementation files('libs/commons-io-2.6.jar')
+    api files('libs/commons-io-2.6.jar')
+    api files('libs/MobTools-2018.0704.1157.jar')
+    api files('libs/MobCommons-2018.0704.1311.jar')
+    api files('libs/SDKWrapper-2018.0201.1609.jar')
+    api files('libs/SMSSDK-3.2.1.jar')
 }

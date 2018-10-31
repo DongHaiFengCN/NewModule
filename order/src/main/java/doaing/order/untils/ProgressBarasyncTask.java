@@ -113,17 +113,18 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
 
             String waiter = "默认";
             MyApplication m = (MyApplication) payActivity.getApplicationContext();
+            Document document = CDBHelper.getDocByID(m.getEmployee().getId()) ;
+            if(m.getEmployee() != null &&document.getString("name") != null && !document.getString("name").isEmpty()){
 
-            if(m.getEmployee() != null &&m.getEmployee().getName() != null && !m.getEmployee().getName().isEmpty()){
-
-                waiter =m.getEmployee().getName();
+                waiter =document.getString("name");
             }
 
 
             setAll();
             //List<OrderC> list = checkOrderC.getOrderList();
             List<Company> companyCs = CDBHelper.getObjByClass(Company.class);
-            Area areaCs = CDBHelper.getObjById(m.getTable_sel_obj().getAreaId(),Area.class);
+            Document tableDoc = CDBHelper.getDocByID(m.getTable_sel_obj().getString("tableId"));
+            Document areaDoc = CDBHelper.getDocByID(m.getTable_sel_obj().getString("msgTable_areaId"));
             PrintUtils.selectCommand(PrintUtils.RESET);
             PrintUtils.selectCommand(PrintUtils.LINE_SPACING_DEFAULT);
             PrintUtils.selectCommand(PrintUtils.ALIGN_CENTER);
@@ -131,13 +132,13 @@ public class ProgressBarasyncTask extends AsyncTask<Integer, Integer, String> {
                 PrintUtils.printText(companyCs.get(0).getName()+"\n\n");
             }
             PrintUtils.selectCommand(PrintUtils.DOUBLE_HEIGHT_WIDTH);
-            PrintUtils.printText(areaCs.getName()+"/"+m.getTable_sel_obj().getName()+"\n\n");
+            PrintUtils.printText(areaDoc.getString("name")+"/"+tableDoc.getString("name")+"\n\n");
             PrintUtils.selectCommand(PrintUtils.NORMAL);
             PrintUtils.selectCommand(PrintUtils.ALIGN_LEFT);
             Order orderC = CDBHelper.getObjById(checkOrderC.getOrderId().get(0),Order.class);
             PrintUtils.printText(PrintUtils.printTwoData("订单编号", orderC.getSerialNum()+"\n"));
             PrintUtils.printText(PrintUtils.printTwoData("下单时间", checkOrderC.getCheckTime()+"\n"));
-            PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getCurrentPersons(), "收银员："+waiter+"\n"));
+            PrintUtils.printText(PrintUtils.printTwoData("人数："+m.getTable_sel_obj().getInt("currentPersons"), "收银员："+waiter+"\n"));
             PrintUtils.printText("--------------------------------\n");
             PrintUtils.selectCommand(PrintUtils.BOLD);
             PrintUtils.printText(PrintUtils.printThreeData("项目", "数量", "金额\n"));

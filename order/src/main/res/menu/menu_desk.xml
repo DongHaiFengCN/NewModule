@@ -17,25 +17,25 @@
            <!--android:icon="@drawable/animcut"-->
            <!--app:showAsAction="never"-->
            <!--android:title="设置微信二维码"/>-->
-       <item android:id="@+id/action_device"
-           android:icon="@mipmap/icon_chufang"
-           app:showAsAction="never"
-           android:title="厨房管理"/>
+       <!--<item android:id="@+id/action_device"-->
+           <!--android:icon="@mipmap/icon_chufang"-->
+           <!--app:showAsAction="never"-->
+           <!--android:title="厨房管理"/>-->
 
-       <item android:id="@+id/action_dishes"
-           android:icon="@mipmap/icon_caipin"
-           app:showAsAction="never"
-           android:title="菜品管理"/>
+       <!--<item android:id="@+id/action_dishes"-->
+           <!--android:icon="@mipmap/icon_caipin"-->
+           <!--app:showAsAction="never"-->
+           <!--android:title="菜品管理"/>-->
 
-       <item android:id="@+id/action_table"
-           android:icon="@mipmap/icon_zhuowei"
-           app:showAsAction="never"
-           android:title="桌位管理"/>
+       <!--<item android:id="@+id/action_table"-->
+           <!--android:icon="@mipmap/icon_zhuowei"-->
+           <!--app:showAsAction="never"-->
+           <!--android:title="桌位管理"/>-->
 
-       <item android:id="@+id/action_tj"
-           android:icon="@mipmap/icon_tongji"
-           app:showAsAction="never"
-           android:title="统计管理"/>
+       <!--<item android:id="@+id/action_tj"-->
+           <!--android:icon="@mipmap/icon_tongji"-->
+           <!--app:showAsAction="never"-->
+           <!--android:title="统计管理"/>-->
 
        <item
            android:icon="@mipmap/icon_guqing"

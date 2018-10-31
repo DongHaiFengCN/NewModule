@@ -4,28 +4,17 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.os.RemoteException;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.SparseArray;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -47,14 +36,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.couchbase.lite.Array;
-import com.couchbase.lite.ArrayExpression;
-import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.DataSource;
+import com.couchbase.lite.Database;
+import com.couchbase.lite.Dictionary;
 import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.ListenerToken;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.MutableArray;
+import com.couchbase.lite.MutableDictionary;
 import com.couchbase.lite.MutableDocument;
 import com.couchbase.lite.Ordering;
 import com.couchbase.lite.Query;
@@ -64,40 +54,20 @@ import com.couchbase.lite.QueryChangeListener;
 import com.couchbase.lite.Result;
 import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
-import com.couchbase.lite.VariableExpression;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gprinter.aidl.GpService;
-import com.gprinter.command.EscCommand;
-import com.gprinter.command.GpCom;
-import com.gprinter.io.GpDevice;
-import com.gprinter.io.PortParameters;
-import com.gprinter.save.PortParamDataBase;
-import com.gprinter.service.GpPrintService;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 
-import bean.kitchenmanage.depot.DishConsum;
-import bean.kitchenmanage.depot.Material;
 import bean.kitchenmanage.kitchen.KitchenClient;
-import bean.kitchenmanage.order.Goods;
-import bean.kitchenmanage.order.Order;
 import bean.kitchenmanage.order.OrderNum;
-import bean.kitchenmanage.table.Area;
-import bean.kitchenmanage.table.Table;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
@@ -106,11 +76,7 @@ import tools.CDBHelper;
 import tools.MyLog;
 import tools.ToolUtil;
 
-
-import static com.gprinter.service.GpPrintService.ACTION_CONNECT_STATUS;
-import static tools.Method.getFormatDate;
-import static tools.Method.getNewFormatDate;
-import static tools.Method.getNianDate;
+import static com.mob.commons.eventrecoder.EventRecorder.clear;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -124,65 +90,43 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private MyApplication myApp;
-
     private ListView order_lv;
-
     private TextView ok_tv;
-
     private TextView total_tv;
-
     private ImageView car_iv;
-
     private ImageButton delet_bt;
-
-    public List<SparseArray<Object>> orderItem = new ArrayList<>();
-
     public OrderAdapter orderAdapter;
-
     private int point = 0;
-
     private TextView point_tv;
-
     private float total = 0.0f;
-
     private Fragment seekT9Fragment;
-
     private Fragment orderFragment;
-
-    private List<Goods> t9GoodsList;
-
+    private List<MutableDocument> t9GoodsList;
     private SeekT9Adapter seekT9Adapter;
-
+    private OrderClassifyAdapter orderDragAdapter;
+    private OrderFragment.DishesKindAdapter dishesKindAdapter;
     private FragmentManager fm;//获得Fragment管理器
-
     private FragmentTransaction ft; //开启一个事务
-
     private boolean isFlag = true;
-
-
     private MenuItem menuItem;
-    private List<Goods> goodsList = new ArrayList<>();
-
-    private List<Goods> zcGoodsList = new ArrayList<>();
-    private List<Goods> ylGoodsList = new ArrayList<>();
-    private String gOrderId;
-    private EditText editText;
-    private Document document;
-    private StringBuffer materialStr = new StringBuffer();
-    private String tableName, areaName, currentPersions, serNum;
-    private Map<String, ArrayList<Goods>> allKitchenClientGoods = new HashMap<String, ArrayList<Goods>>();
-    private Map<String, String> allKitchenClientPrintNames = new HashMap<String, String>();
-
-
-    private static final int MAIN_QUERY_PRINTER_STATUS = 0xfe;
-    private static final int REQUEST_PRINT_LABEL = 0xfd;
-    private static final int REQUEST_PRINT_RECEIPT = 0xfc;
-    //private boolean printerSat = false;
-    private String hintDishes = "";
-    PortParameters mPortParam;
-    private int printerType = 58;
-    private Order newOrderObj;
+    private List<Document> goodsList = new ArrayList<>();
     Toolbar toolbar;
+    private Database db;
+    private Query listsLiveQuery = null;
+    private MutableDocument newOrderDoc;
+    private Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            //1.修改购物车金额
+            orderTotal();
+            //2.修改界面金额
+            total_tv.setText(total+"元");
+            setPoint(getGoodsList().size());
+            orderAdapter.notifyDataSetChanged();
+            return false;
+        }
+    });
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,6 +135,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         activityFrame = findViewById(R.id.activity_main_frame);
         toolbar.setTitle("");
+        db = CDBHelper.getDatabase();
+        if(db == null) throw new IllegalArgumentException();
         setSupportActionBar(toolbar);
         hideNavigationBar();
         //关键下面两句话，设置了回退按钮，及点击事件的效果
@@ -214,221 +160,129 @@ public class MainActivity extends AppCompatActivity {
 
         isFlag = sharedPreferences.getBoolean("isFlag",true);
         initView();
+        Listener();
         select(isFlag);
 
         MyLog.d("onCreate");
-        Handler mHandler = new Handler();
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                //yaliceshi();
-                //shanchu();
-            }
-        });
+    }
 
+    public void setOrderDragAdapter(OrderClassifyAdapter orderDragAdapter){
+        this.orderDragAdapter = orderDragAdapter;
+
+    }
+
+    public void setDishesKindAdapter(OrderFragment.DishesKindAdapter dishesKindAdapter){
+        this.dishesKindAdapter = dishesKindAdapter;
     }
     //全屏
     private void hideNavigationBar() {
 
         int systemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
         // Navigation bar hiding:  Backwards compatible to ICS.
-
         if (Build.VERSION.SDK_INT >= 14) {
-
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;
-
         }
-
         // 全屏展示
-
         if (Build.VERSION.SDK_INT >= 16) {
-
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_FULLSCREEN;
 
         }
-
         if (Build.VERSION.SDK_INT >= 18) {
-
             systemUiVisibility ^= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-
         }
         getWindow().getDecorView().setSystemUiVisibility(systemUiVisibility);
-
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-
             return true;
-
         }
-
         return false;
-
     }
-
     @Override
-
     protected void onStart() {
-
         super.onStart();
-
     }
 
-
-
     @Override
-
     protected void onDestroy() {
-
         super.onDestroy();
-
         MyLog.e("Main activity onDestroy");
-
         EventBus.getDefault().unregister(this);
-
     }
 
 
     public void setSeekT9Adapter(SeekT9Adapter seekT9Adapter) {
-
         this.seekT9Adapter = seekT9Adapter;
-
     }
 
     public SeekT9Adapter getSeekT9Adapter() {
-
         return seekT9Adapter;
-
     }
 
-    public void setT9GoodsList(List<Goods> t9GoodsList) {
-
+    public void setT9GoodsList(List<MutableDocument> t9GoodsList) {
         this.t9GoodsList = t9GoodsList;
-
     }
 
-
-
-    public List<Goods> getT9GoodsList() {
-
+    public List<MutableDocument> getT9GoodsList() {
         return t9GoodsList;
-
     }
-
 
     public OrderAdapter getOrderAdapter() {
-
         return orderAdapter;
-
     }
-
-    public List<Goods> getGoodsList() {
-
+    public List<Document> getGoodsList() {
         return goodsList;
-
     }
-
-
-
-    public void changeOrderGoodsByT9(Goods goodsObj)
-
-    {
-
+    public void changeOrderGoodsByT9(Document goodsObj) {
         boolean isName = false;
-
         for (int i = 0; i<goodsList.size();i++)//+for
-
         {
-
-            if (goodsList.get(i).getDishesName().equals(goodsObj.getDishesName()))//名称相等
-
+            Document goodsListDish = CDBHelper.getDocByID(goodsList.get(i).getString("dishId"));
+            Document goodsObjDish = CDBHelper.getDocByID(goodsObj.getString("dishId"));
+            MutableDocument goodsMutableDoc = CDBHelper.getDocByID(goodsList.get(i).getId()).toMutable();
+            if (goodsObjDish.getString("name").equals(goodsListDish.getString("name")))//名称相等
             {
-
-                if(goodsList.get(i).getDishesTaste()!=null)//口味不为空
-
+                if(goodsList.get(i).getString("tasteId")!=null)//口味不为空
                 {
-
-                    if(goodsList.get(i).getDishesTaste().equals(goodsObj.getDishesTaste()))//口味相等
-
+                    if(goodsList.get(i).getString("tasteId").equals(goodsObj.getString("tasteId")))//口味相等
                     {
-
-
-
-                        float tmp = MyBigDecimal.mul(goodsObj.getPrice(),goodsObj.getDishesCount(),1);
-
-                        goodsList.get(i).setDishesCount(MyBigDecimal.add(goodsObj.getDishesCount(),goodsList.get(i).getDishesCount(),1));
-
+                        float tmp = MyBigDecimal.mul(goodsObjDish.getFloat("price"),goodsObj.getFloat("count"),1);
+                        goodsMutableDoc.setFloat("count",MyBigDecimal.add(goodsObj.getFloat("count"),goodsList.get(i).getFloat("count"),1));
                         total =  getTotal();
-
                         total = MyBigDecimal.add(total,tmp,1);
-
                         setTotal(total);
-
                         isName = true;
-
                         break;
-
                     }
-
-
-
                 }//口味为空
-
                 else
-
                 {
-
-                    float tmp = MyBigDecimal.mul(goodsObj.getPrice(),goodsObj.getDishesCount(),1);
-
-                    goodsList.get(i).setDishesCount(MyBigDecimal.add(goodsObj.getDishesCount(),goodsList.get(i).getDishesCount(),1));
-
+                    float tmp = MyBigDecimal.mul(goodsObjDish.getFloat("price"),goodsObj.getFloat("count"),1);
+                    goodsMutableDoc.setFloat("count",MyBigDecimal.add(goodsObj.getFloat("count"),goodsList.get(i).getFloat("count"),1));
                     total =  getTotal();
-
                     total = MyBigDecimal.add(total,tmp,1);
-
                     setTotal(total);
-
                     isName = true;
-
                     break;
-
-
-
                 }
-
-
-
             }
-
         }//-for
 
-
-
         if (!isName){
-
             goodsList.add(goodsObj);
-
             //购物车计数器数据更新
-
             point = getPoint();
-
             point++;
-
             setPoint(point);
-
-
-
             //计算总价
 
             total =getTotal();
-
-            total = MyBigDecimal.add(total,MyBigDecimal.mul(goodsObj.getDishesCount(),goodsObj.getPrice(),1),1);
+            Document dishDoc = CDBHelper.getDocByID(goodsObj.getString("dishId"));
+            total = MyBigDecimal.add(total,MyBigDecimal.mul(goodsObj.getFloat("count"),dishDoc.getFloat("price"),1),1);
 
             setTotal(total);
-
-
 
         }
 
@@ -476,8 +330,67 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private Query listsLiveQuery()
+    {
+        return QueryBuilder.select(SelectResult.expression(Meta.id),
+                SelectResult.expression(Expression.property("count")))
+                .from(DataSource.database(db))
+                .where(Expression.property("goodsTableMsgId").equalTo(Expression.string(myApp.getTable_sel_obj().getId())));
+    }
 
+    public void Listener(){
+        listsLiveQuery = listsLiveQuery();
+        listsLiveQuery.addChangeListener(new QueryChangeListener() {
+            @Override
+            public void changed(QueryChange change) {
+                clear();
+                ResultSet rs = change.getResults();
+                Result row;
+                getGoodsList().clear();
+                total = 0;
+                while ((row = rs.next()) != null)
+                {
+                    Document document = CDBHelper.getDocByID(row.getString(0));
+                    if (document == null){
+                        continue;
+                    }
+                    if (document.getInt("status") == 2) {
+                        getGoodsList().add(document.toMutable());
+                    }
+                }
+//                Message message = Message.obtain();
+//                mHandler.sendMessage(message);
+                for (int i = 0 ; i <  getGoodsList().size();i++){
+                    if (getGoodsList().get(i).getInt("goodsType") == 0) {
+                        Document document1 = CDBHelper.getDocByID(getGoodsList().get(i).getString("dishId"));
+                        total = MyBigDecimal.add(total, MyBigDecimal.mul(document1.getFloat("price"),
+                                getGoodsList().get(i).getFloat("count"), 1), 1);
+                    }
+                }
+                total_tv.setText(total+"元");
+                setPoint(getGoodsList().size());
+                orderAdapter.notifyDataSetChanged();
+                if (orderDragAdapter != null) {
+                    orderDragAdapter.dishCount(getGoodsList());
+                    orderDragAdapter.notifyDataSetChanged();
+                }
+                if (dishesKindAdapter != null){
+                    dishesKindAdapter.dishKindCount(getGoodsList());
+                    dishesKindAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+    }
 
+    private void orderTotal(){
+        for (int i = 0 ; i <  getGoodsList().size();i++){
+            if (getGoodsList().get(i).getInt("goodsType") == 0) {
+                Document document1 = CDBHelper.getDocByID(getGoodsList().get(i).getString("dishId"));
+                total = MyBigDecimal.add(total, MyBigDecimal.mul(document1.getFloat("price"),
+                        getGoodsList().get(i).getFloat("count"), 1), 1);
+            }
+        }
+    }
     public void initView() {
         total_tv =   findViewById(R.id.total_tv);
         point_tv =  findViewById(R.id.point);
@@ -521,9 +434,9 @@ public class MainActivity extends AppCompatActivity {
 
 //1\
 
-                final Goods goods = goodsList.get(position);
+                final MutableDocument goods = getGoodsList().get(position).toMutable();
 
-                if (goods.getGoodsType() == 2){
+                if (goods.getInt("goodsType") == 2){
 
                     return ;
 
@@ -540,12 +453,12 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 //2\
 
-                                goods.setGoodsType(2);
-
-                                goods.setDishesName(goods.getDishesName() + "(赠)");
-                                total = MyBigDecimal.sub(total, MyBigDecimal.mul(goods.getPrice(), goods.getDishesCount(), 1), 1);
+                                goods.setInt("goodsType",2);
+                                Document document = CDBHelper.getDocByID(goods.getString("dishId"));
+                                total = MyBigDecimal.sub(total, MyBigDecimal.mul(document.getFloat("price"), goods.getFloat("count"), 1), 1);
                                 setTotal(total);
-                                orderAdapter.notifyDataSetChanged();
+                                CDBHelper.saveDocument(goods);
+                                Listener();
                                 dialog.dismiss();
                             }
 
@@ -681,10 +594,10 @@ public class MainActivity extends AppCompatActivity {
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     View view1 = getLayoutInflater().inflate(R.layout.view_pay_dialog, null);
+                    final EditText view_pay_ed = view1.findViewById(R.id.view_pay_ed);
                     builder.setView(view1);
                     builder.setCancelable(true);
                     final AlertDialog dialog = builder.create();
-                    editText = view1.findViewById(R.id.view_pay_ed);
                     Button fou = view1.findViewById(R.id.view_pay_fou);
                     fou.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -700,13 +613,20 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View v)
                         {
-                            deductMaterial();
-                            saveOrder();
+                            //deductMaterial();
+                            for (int i = 0; i < getGoodsList().size(); i++ ){
+                                Document goodsDoc = CDBHelper.getDocByID(getGoodsList().get(i).getId());
+                                if (goodsDoc.getInt("status") != 2){
+                                    getGoodsList().remove(i);
+                                    i--;
+                                }
+                            }
+                            saveOrder(view_pay_ed.getText().toString());
 //                            Intent intent = new Intent(MainActivity.this, ShowParticularsActivity.class);
 //                            startActivity(intent);
 //                            finish();
 
-
+                            //cleanCount();
                             if(hasPrinterGoods()){
                                 waitForPrinter();
                             }
@@ -748,11 +668,12 @@ public class MainActivity extends AppCompatActivity {
                 while ((result = rs.next()) != null)
                 {
                     String id=result.getString(0);
-                    Order obj = CDBHelper.getObjById(id,Order.class);
-                    int flag = obj.getPrintFlag();//doc.getInt("printFlag");
-                    obj.setPrintFlag(-1);
-                    CDBHelper.createAndUpdate(obj);
-                    MyLog.e("waitForPrinter","printFlag="+ flag);
+
+                    MutableDocument obj = CDBHelper.getDocByID(id).toMutable();
+                    int flag = obj.getInt("printFlag");
+                    MyLog.e("printerFlag------"+flag);
+                    obj.setInt("printFlag",-1);
+                    CDBHelper.saveDocument(obj);
 
                     if(flag==2){
                         stopTimer();
@@ -760,21 +681,22 @@ public class MainActivity extends AppCompatActivity {
                         printerLab.setText("*打印完成*");
                         Message message = new Message();
                         message.what = 2;
-
                         handler.sendMessageDelayed(message,1000);
                     }
                     else if(flag==1){
                         stopTimer();
                         cancelChangeListener();
                         printErrorDish.append("*打印失败菜品*"+"\n");
-                        for(Goods goods:obj.getGoodsList()){
-                            if(goods.getPrintFlag()==1){
-                                printErrorDish.append(goods.getDishesName()+"\n");
+                        Array array = obj.getArray("goodsList");
+                        for(int i = 0; i< array.count(); i++){
+                            Dictionary goodsDic = array.getDictionary(i);
+                            if(goodsDic.getInt("submitFlag")==1){
+                                Document dishDoc = CDBHelper.getDocByID(goodsDic.getString("dishId"));
+                                printErrorDish.append(dishDoc.getString("name")+"\n");
                             }
                         }
                         printerLab.setText(printErrorDish.toString());
-                        printerLab.setTextSize(18);
-
+                        printerLab.setTextSize(22);
                     }
 
                 }
@@ -813,7 +735,7 @@ public class MainActivity extends AppCompatActivity {
                 .where(Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("printFlag").greaterThan(Expression.intValue(0)))//未打印
                         // .and(Expression.property("deviceType").equalTo(Expression.intValue(0)))//前台机器
-                        .and(Expression.property("tableId").equalTo(Expression.string(tableId)))
+                        .and(Expression.property("tableMsgId").equalTo(Expression.string(tableId)))
                         .and(Expression.property("state").equalTo(Expression.intValue(1))));//未结账)
     }
     private  void stopTimer(){
@@ -888,10 +810,9 @@ public class MainActivity extends AppCompatActivity {
         {
             dishKindIds.addAll(kitchenClientObj.getKindIds());
         }
-
-       // List<Goods> tmpGoods = getGoodsList();
-        for(Goods obj:ylGoodsList){
-            String dishesKindId = obj.getDishesKindId();
+        for(Document obj:goodsList){
+            Document dishDoc = CDBHelper.getDocByID(obj.getString("dishId"));
+            String dishesKindId = dishDoc.getString("kindId");
             for(String kindId:dishKindIds){
                 if(dishesKindId.equals(kindId)){
                     flag=true;
@@ -952,12 +873,24 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
 
     }
-//     * 清空订单列表
 
+    //     * 清空订单列表
     private void clearOrder() {
 
 
-
+        for (int i = 0;i < getGoodsList().size();i++){
+            if (getGoodsList().get(i).getInt("status") == 2){
+                CDBHelper.deleDocumentById(getGoodsList().get(i).getId());
+                getGoodsList().remove(i);
+                i--;
+            }else{
+                if (getGoodsList().get(i).getInt("goodsType") == 0) {
+                    Document document1 = CDBHelper.getDocByID(getGoodsList().get(i).getString("dishId"));
+                    total = MyBigDecimal.add(total, MyBigDecimal.mul(document1.getFloat("price"),
+                            getGoodsList().get(i).getFloat("count"), 1), 1);
+                }
+            }
+        }
         point = 0;
 
         point_tv.setVisibility(View.INVISIBLE);
@@ -965,8 +898,6 @@ public class MainActivity extends AppCompatActivity {
         total_tv.setText("0.0元");
 
         total = 0;
-
-        getGoodsList().clear();
 
         orderAdapter.notifyDataSetChanged();
 
@@ -981,8 +912,6 @@ public class MainActivity extends AppCompatActivity {
 
         EventBus.getDefault().postSticky("1");
     }
-
-
 
     private String getOrderSerialNum() {
 
@@ -1061,133 +990,119 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
-    private void deductMaterial(){
-        for (Goods goods : getGoodsList()) {
-            VariableExpression DISHID = ArrayExpression.variable("dishesConsumList.dishId");
-            VariableExpression DISHCONSUM = ArrayExpression.variable("dishesConsumList");
-            List<Material> documents = CDBHelper.getObjByWhere(
-                    Expression.property("className").equalTo(Expression.string("Material"))
-                            .and(ArrayExpression.any(DISHCONSUM).in(Expression.property("dishesConsumList"))
-                                    .satisfies(DISHID.equalTo(Expression.string(goods.getDishesId()))))
-                    , null,Material.class);
-            if (documents.size() == 0){
-                ylGoodsList.add(goods);
-                continue;
-            }
-            //遍历原料
-            for (Material material : documents){
-                Document document = CDBHelper.getDocByID(material.getDepotId());
-                //查看是否为点餐厂库
-                if (document.getInt("mode") == 1){
-                    //判断原理是否为空
-                    if (material.getStock() > 0){
-                        for (DishConsum dishConsum : material.getDishesConsumList()){
-                            Document dish = CDBHelper.getDocByID(dishConsum.getDishId());
-                            //判断剩下是原理是否够
-                            if (material.getStock() - dishConsum.getConsums() > -1){
-                                material.setStock(MyBigDecimal.sub(material.getStock(),dishConsum.getConsums(),1));
-                                CDBHelper.createAndUpdate(material);
-                                if (material.getStock() - dishConsum.getConsums() <= material.getStockAlert()){
-                                    materialStr.append(dish.getString("name")+ "原料剩余不多，请采购！\n");
-                                }
-                                ylGoodsList.add(goods);
-                            }else{
-                                materialStr.append(dish.getString("name")+ "原料不足\n");
-                                continue;
-                            }
-                        }
-                    }else{
-                        materialStr.append(material.getName()+"原料不足\n");
-                        continue;
-                    }
-
-                }
-
-            }
-        }
-        if (materialStr.length() > 0) {
-            Toast.makeText(MainActivity.this, materialStr.toString(), Toast.LENGTH_SHORT).show();
-        }
-
-    }
-
-    private void saveOrder()
+    /**
+     * 生成order
+     */
+    private void saveOrder(String description)
     {
-        zcGoodsList.clear();
-
-        newOrderObj = new Order();
-        newOrderObj.setChannelId(myApp.getCompany_ID());
-        Order zcOrderObj = new Order();
-        zcOrderObj.setChannelId(myApp.getCompany_ID());
-
+        MutableArray zcArray = new MutableArray();
+        boolean isTotal = false;
+        total = 0;
+        newOrderDoc = new MutableDocument("Order."+ToolUtil.getUUID());
+        MyLog.e("newOrderDoc----"+newOrderDoc.getId());
+        newOrderDoc.setString("className","Order");
+        newOrderDoc.setString("channelId",myApp.getCompany_ID());
+        newOrderDoc.setString("tableMsgId",myApp.getTable_sel_obj().getId());
         List<Document> orderCList = CDBHelper.getDocmentsByWhere(
                 Expression.property("className").equalTo(Expression.string("Order"))
                         .and(Expression.property("state").equalTo(Expression.intValue(1)))
-                        .and(Expression.property("tableId").equalTo(Expression.string(myApp.getTable_sel_obj().getId())))
-                , Ordering.property("createdTime").descending()
+                        .and(Expression.property("tableMsgId").equalTo(Expression.string(myApp.getTable_sel_obj().getId())))
+                ,null
 
         );
         if (orderCList.size() > 0) {
-            newOrderObj.setOrderNum(orderCList.get(0).getInt("orderNum") + 1);
-            newOrderObj.setSerialNum(orderCList.get(0).getString("serialNum"));
+            newOrderDoc.setInt("orderNum",orderCList.get(0).getInt("orderNum") + 1);
+            newOrderDoc.setString("serialNum",orderCList.get(0).getString("serialNum"));
         } else {
-            newOrderObj.setOrderNum(1);
-            newOrderObj.setSerialNum(getOrderSerialNum());
+            newOrderDoc.setInt("orderNum",1);
+            newOrderDoc.setString("serialNum",getOrderSerialNum());
         }
-
-        for (int i = 0; i < ylGoodsList.size(); i++) {
-            Goods obj = ylGoodsList.get(i);
-            if (obj.getGoodsType() == 2) {
-                zcGoodsList.add(obj);
-                ylGoodsList.remove(i);
+        MutableArray goodsArray = new MutableArray();
+        for (int i = 0; i < getGoodsList().size(); i++) {
+            MutableDocument document = getGoodsList().get(i).toMutable();
+            document.setInt("status",1);
+            if (document.getInt("goodsType") == 2) {
+                zcArray.addDictionary(getGoodsDic(document));
+                getGoodsList().remove(i);
                 i--;
                 continue;
             }
+            if (document.getInt("goodsType") == 0){
+                isTotal = true;
+                Document dishDoc = CDBHelper.getDocByID(document.getString("dishId"));
+                total = MyBigDecimal.add(total,
+                        MyBigDecimal.mul(dishDoc.getFloat("price"),document.getFloat("count"),1),1);
+            }
+            CDBHelper.saveDocument(document);
         }
-        newOrderObj.setGoodsList(ylGoodsList);
-        newOrderObj.setTotalPrice(total);
-        newOrderObj.setState(1);//未买单
-        newOrderObj.setOrderType(0);//正常
-        newOrderObj.setDeviceType(1);//点餐宝
-        newOrderObj.setPrintFlag(0);
-        newOrderObj.setCreatedTime(getNewFormatDate());
-        newOrderObj.setCreatedYear(getNianDate());
-        newOrderObj.setTableId(myApp.getTable_sel_obj().getId());
-        newOrderObj.setOperator(myApp.getTable_sel_obj().getId());
-        if (!TextUtils.isEmpty(editText.getText().toString())){
-            newOrderObj.setDescription(editText.getText().toString());
+        for (Document document : getGoodsList()){
+            goodsArray.addDictionary(getGoodsDic(document));
         }
-        CDBHelper.createAndUpdateDefalut(newOrderObj);
-        if (zcGoodsList.size() > 0) {
-            zcOrderObj.setSerialNum(newOrderObj.getSerialNum());
-            zcOrderObj.setState(1);//未买单
-            zcOrderObj.setOrderType(2);//赠菜
-            zcOrderObj.setDeviceType(1);//点餐宝
-            zcOrderObj.setPrintFlag(0);
-            zcOrderObj.setCreatedTime(newOrderObj.getCreatedTime());
-            zcOrderObj.setTableId(newOrderObj.getTableId());
-            zcOrderObj.setCreatedYear(getNianDate());
-            zcOrderObj.setGoodsList(zcGoodsList);
-            zcOrderObj.setOperator(myApp.getTable_sel_obj().getId());
-            CDBHelper.createAndUpdateDefalut( zcOrderObj);
+        newOrderDoc.setArray("goodsList",goodsArray);
+        if (isTotal) {
+            newOrderDoc.setFloat("totalPrice",total);
         }
-        Table table = CDBHelper.getObjById(newOrderObj.getTableId(), Table.class);
-        Area area = CDBHelper.getObjById(table.getAreaId(),Area.class);
-        areaName = area.getName();
-        tableName = table.getName();
-        currentPersions = "" + myApp.getTable_sel_obj().getCurrentPersons();
-        if (newOrderObj.getOrderNum() == 1)//第一次下单
-            serNum = newOrderObj.getSerialNum();//流水号
-        else //多次下单
-            serNum = newOrderObj.getSerialNum() + "_" + newOrderObj.getOrderNum();
+        newOrderDoc.setInt("state",1);//未买单
+        newOrderDoc.setInt("printFlag",0);
+        newOrderDoc.setInt("orderType",0);
+        newOrderDoc.setInt("deviceType",0);//前台
+        newOrderDoc.setString("operator",myApp.getEmployee().getId());
+        if (description != null){
+            newOrderDoc.setString("description",description);
+        }
+        CDBHelper.saveDocument(newOrderDoc);
+        MyLog.e("存储成功");
+        if (zcArray.count() > 0){
+            for (int i = 0; i < zcArray.count(); i++){
+                MutableDictionary dictionary = zcArray.getDictionary(i);
+                MutableDocument document = CDBHelper.getDocByID(dictionary.getString("id")).toMutable();
+                document.setInt("status",1);
+                CDBHelper.saveDocument(document);
+            }
+            MutableDocument zcOrderDoc = new MutableDocument("Order."+ToolUtil.getUUID());
+            zcOrderDoc.setString("className","Order");
+            zcOrderDoc.setString("channelId",myApp.getCompany_ID());
+            zcOrderDoc.setString("tableMsgId",myApp.getTable_sel_obj().getId());
+            zcOrderDoc.setInt("state",1);//未买单
+            zcOrderDoc.setInt("printFlag",0);
+            zcOrderDoc.setInt("orderType",2);
+            zcOrderDoc.setInt("deviceType",0);//前台
+            zcOrderDoc.setFloat("totalPrice",0);
+            zcOrderDoc.setArray("goodsList",zcArray);
+            zcOrderDoc.setString("operator",myApp.getEmployee().getId());
+            if (orderCList.size() > 0) {
+                zcOrderDoc.setInt("orderNum",orderCList.get(0).getInt("orderNum") + 1);
+                zcOrderDoc.setString("serialNum",orderCList.get(0).getString("serialNum"));
+            } else {
+                zcOrderDoc.setInt("orderNum",1);
+                zcOrderDoc.setString("serialNum",getOrderSerialNum());
+            }
+            CDBHelper.saveDocument(zcOrderDoc);
+        }
+
+    }
+
+    /**
+     * 生成Goods副本
+     * @param goodsDoc
+     * @return
+     */
+    private MutableDictionary getGoodsDic(Document goodsDoc){
+        MutableDictionary goodsDic = new MutableDictionary();
+        goodsDic.setString("id",goodsDoc.getId());
+        goodsDic.setString("goodsTableMsgId",goodsDoc.getString("goodsTableMsgId"));
+        goodsDic.setString("tasteId",goodsDoc.getString("tasteId"));//口味ID
+        MyLog.e("dishId-------"+goodsDoc.getString("dishId"));
+        goodsDic.setString("dishId",goodsDoc.getString("dishId"));
+        goodsDic.setFloat("count",goodsDoc.getFloat("count"));///dsadsa
+        goodsDic.setInt("goodsType",goodsDoc.getInt("goodsType"));
+        goodsDic.setInt("status",goodsDoc.getInt("status"));//刚点餐 未生成订单
+        goodsDic.setInt("submitFlag",goodsDoc.getInt("submitFlag"));
+        return goodsDic;
     }
 
 
-
     @Override
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -1202,8 +1117,7 @@ public class MainActivity extends AppCompatActivity {
 
             //document = CDBHelper.getDocByID(getApplicationContext(),gOrderId);
 
-            Log.e("document", "" + document.getId());
-
+//            Log.e("document", "" + document.getId());
 
 
         }
@@ -1215,11 +1129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
-
     //隐藏所有Fragment
-
     private void hidtFragment(FragmentTransaction fragmentTransaction) {
         if (seekT9Fragment != null) {
 
@@ -1234,8 +1144,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-
 
     private void select(boolean isTrue) {
 
@@ -1300,8 +1208,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
 //*
 
 //     * 模拟原始数据
@@ -1362,156 +1268,53 @@ public class MainActivity extends AppCompatActivity {
 
 //     * @date 2017/12/22 14:58
 
-
-
-
-
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
 
     public void setMessage(DishesMessage dishesMessage) {
-
         boolean isDishes = true;
-
-
-
         // TODO 处理数据
-
-
-
         //没有菜默认添加
-
         if (goodsList.size() == 0) {
-
-
-
             isDishes = false;
-
-
-
             if (orderAdapter == null) {
-
-
-
                 orderAdapter = new OrderAdapter(goodsList, MainActivity.this);
-
-
-
                 if (order_lv == null){
-
                     order_lv = findViewById(R.id.order_lv);
-
                 }
-
-
-
                 order_lv.setAdapter(orderAdapter);
-
-
-
             }
-
-
-
-
-
         } else {
-
-
-
-            for (int i = 0; i < goodsList.size(); i++) {
-
-
-
-                if (goodsList.get(i).getDishesName().equals(dishesMessage.getDishes().getName())) {
-
-
-
-                    if (goodsList.get(i).getDishesTaste() == null &&
-
-                            dishesMessage.getDishesTaste() == null) {
-
-
-
-                        upOrderData(dishesMessage, i);
-
-
-
-                        isDishes = true;
-
-                        break;
-
-
-
-                    } else if (goodsList.get(i).getDishesTaste().equals(dishesMessage.getDishesTaste())) {
-
-
-
-                        upOrderData(dishesMessage, i);
-
-                        isDishes = true;
-
-                        break;
-
-
-
-                    } else {
-
-
-
-
-
-                        isDishes = false;
-
-
-
-                    }
-
-
-
-                } else {
-
-
-
-                    isDishes = false;
-
-                }
-
-
-
+            if (!dishesMessage.isOperation()) {
+                upOrderData(dishesMessage);
+                isDishes = true;
+            }else{
+                isDishes = false;
             }
-
-
-
         }
-
-
-
         //没找到菜品，添加菜品
 
         if (!isDishes && dishesMessage.isOperation()) {
 
-            Goods goods = new Goods();
-            goods.setDishesKindId(dishesMessage.getDishKindId());
-            goods.setDishesTaste(dishesMessage.getDishesTaste());
-
-            goods.setDishesName(dishesMessage.getName());
-
-            goods.setDishesCount(dishesMessage.getCount());
-
-            goods.setDishesId(dishesMessage.getDishes().getId());
-
-            goods.setGoodsType(0);
-
-            goods.setCreatedTime(getFormatDate());
-
-            goods.setPrice(dishesMessage.getDishes().getPrice());
-
-            goodsList.add(goods);
-
+            MutableDocument goodsDoc = new MutableDocument("MsgGoods."+ToolUtil.getUUID());
+            goodsDoc.setString("className","MsgGoods");
+            goodsDoc.setString("id",goodsDoc.getId());
+            goodsDoc.setString("channelId",myApp.getCompany_ID());
+            goodsDoc.setString("goodsTableMsgId",myApp.getTable_sel_obj().getId());
+            MyLog.e("dishId----"+dishesMessage.getDishes().getId());
+            goodsDoc.setString("tasteId",dishesMessage.getDishesTaste());//口味ID
+            goodsDoc.setString("dishId",dishesMessage.getDishes().getId());
+            goodsDoc.setFloat("count",dishesMessage.getCount());///dsadsa
+            goodsDoc.setInt("goodsType",0);
+            goodsDoc.setInt("status",2);//刚点餐 未生成订单
+            goodsDoc.setString("createdYear","2018");
+            goodsDoc.setString("dataType","BaseData");
+            getGoodsList().add(goodsDoc);
+            CDBHelper.saveDocument(goodsDoc);
         }
         updataTotal();
         updataPoint();
         orderAdapter.notifyDataSetChanged();
+        MyLog.e(" Main activity 执行");
     }
 
     private void updataPoint() {
@@ -1531,14 +1334,13 @@ public class MainActivity extends AppCompatActivity {
             float t = 0f;
 
             for (int i = 0; i < goodsList.size(); i++) {
-
-                t += (goodsList.get(i).getPrice()*getGoodsList().get(i).getDishesCount());
+                Document document = CDBHelper.getDocByID(goodsList.get(i).getString("dishId"));
+                t += (document.getFloat("price")*getGoodsList().get(i).getFloat("count"));
             }
             setTotal(t);
         }
 
     }
-
 
     @Override
     protected void onStop() {
@@ -1549,22 +1351,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //更新订单goodsList数据
-    private void upOrderData(DishesMessage dishesMessage, int i) {
+    private void upOrderData(DishesMessage dishesMessage) {
 
-        if (dishesMessage.isOperation()) {
+        if (!dishesMessage.isOperation()) {
+            for (int i = 0; i < goodsList.size();i++) {
+                Document docGood = goodsList.get(i);
+                if (docGood.getInt("status") == 2){
+                    if (docGood.getString("dishId").equals(dishesMessage.getDishes().getId())){
+                        if (docGood.getString("tasteId") == null && dishesMessage.getDishesTaste() == null) {
+                            if ((goodsList.get(i).getFloat("count") - dishesMessage.getCount()) == 0) {
+                                goodsList.remove(docGood);
+                                CDBHelper.deleDocument(docGood);
+                            } else {
+                                MutableDocument document = docGood.toMutable();
+                                document.setFloat("count",
+                                        MyBigDecimal.sub(docGood.getFloat("count"), dishesMessage.getCount(), 1));
+                                MyLog.e(""+document.getFloat("count"));
+                                CDBHelper.saveDocument(document);
+                            }
+                            break;
+                        }else if (docGood.getString("tasteId").equals(dishesMessage.getDishesTaste())){
+                            if ((goodsList.get(i).getFloat("count") - dishesMessage.getCount()) == 0) {
+                                goodsList.remove(docGood);
+                                CDBHelper.deleDocument(docGood);
 
-            goodsList.get(i).setDishesCount(goodsList.get(i).getDishesCount() + dishesMessage.getCount());
+                            } else {
+                                MutableDocument document = docGood.toMutable();
+                                document.setFloat("count",
+                                        MyBigDecimal.sub(docGood.getFloat("count"), dishesMessage.getCount(), 1));
+                                CDBHelper.saveDocument(document);
+                            }
+                            break;
+                        }
 
-        } else {
-            if ((goodsList.get(i).getDishesCount() - dishesMessage.getCount()) == 0) {
-
-                goodsList.remove(i);
-
-            } else {
-
-                goodsList.get(i).setDishesCount(goodsList.get(i).getDishesCount() - dishesMessage.getCount());
-
+                    }
+                }
             }
+            Listener();
         }
     }
 }

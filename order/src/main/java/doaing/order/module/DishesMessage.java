@@ -1,6 +1,8 @@
 package doaing.order.module;
 
 
+import com.couchbase.lite.Document;
+
 import bean.kitchenmanage.dish.Dish;
 
 /**
@@ -22,7 +24,7 @@ public class DishesMessage {
     String dishesTaste;
 
     //菜品实体
-    Dish dishes;
+    Document dishes;
 
     //加减操作 true +  false -
     boolean operation;
@@ -80,11 +82,11 @@ public class DishesMessage {
         this.dishesTaste = dishesTaste;
     }
 
-    public Dish getDishes() {
+    public Document getDishes() {
         return dishes;
     }
 
-    public void setDishesC(Dish dishes) {
+    public void setDishesC(Document dishes) {
         this.dishes = dishes;
     }
 

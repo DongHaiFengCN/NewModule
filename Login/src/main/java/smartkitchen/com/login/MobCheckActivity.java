@@ -16,7 +16,6 @@ import cn.smssdk.SMSSDK;
 import smartkitchen.com.login.forgetPsw.NewPswActivity;
 import smartkitchen.com.login.modifyPsw.ModifyPwdActivity;
 import smartkitchen.com.login.rebindTel.NewMobCheckActivity;
-import smartkitchen.com.login.rebindTel.RebindTelActivity;
 import smartkitchen.com.login.register.RegisterActivity;
 import tools.MyLog;
 

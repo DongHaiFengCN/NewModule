@@ -11,26 +11,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.couchbase.lite.Database;
 import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableDocument;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import bean.kitchenmanage.dish.Dish;
-import bean.kitchenmanage.dish.DishKind;
+import bean.kitchenmanage.dish.DishesKind;
 import bean.kitchenmanage.order.Goods;
 import doaing.order.R;
 import doaing.order.module.DishesMessage;
@@ -50,19 +53,19 @@ public class OrderFragment extends Fragment {
     ListView dishesRv;
     ListView orderList;
     private DishesKindAdapter leftAdapter;
-    private OrderDragAdapter orderDragAdapter;
+    private OrderClassifyAdapter orderClassifyAdapter;
     private View view;
-
+    private Database db;
     //缓存disheskind 与 对应菜品数量的number集合
 
     private Map<String, float[]> dishesCollection = new HashMap<>();
     private Map<String, List<Document>> dishesObjectCollection;
     private boolean[] booleans;
-    List<DishKind> dishesKindCList;
+    List<DishesKind> dishesKindCList;
 
     String kindId;
 
-    List<Goods> goodsCList;
+    List<Document> goodsCList;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -81,234 +84,61 @@ public class OrderFragment extends Fragment {
     }
 
     private void intiData1() {
-
-
+        db = CDBHelper.getDatabase();
         //获取初始化数据
-        dishesKindCList = ((MainActivity) getActivity()).getMyApp().getDishesKindCList();
+        dishesKindCList = CDBHelper.getObjByClass(DishesKind.class);
 
         booleans = new boolean[dishesKindCList.size()];
 
-        dishesObjectCollection = ((MainActivity) getActivity()).getMyApp().getDishesObjectCollection();
-
-
-        //初始化数量
-        for (Map.Entry<String, List<Document>> entry : dishesObjectCollection.entrySet()) {
-
-            float[] floats = new float[entry.getValue().size()];
-
-            dishesCollection.put(entry.getKey(), floats);
-
-        }
-
-
+        orderClassifyAdapter = new OrderClassifyAdapter(((MainActivity) getActivity()), db, dishesKindCList.get(0).getId());
+        ((MainActivity) getActivity()).setOrderDragAdapter(orderClassifyAdapter);
         leftAdapter = new DishesKindAdapter();
-
+        ((MainActivity) getActivity()).setDishesKindAdapter(leftAdapter);
         leftAdapter.setaBoolean(booleans);
 
         leftAdapter.setNames(dishesKindCList);
 
         orderList.setAdapter(leftAdapter);
 
-        orderDragAdapter = new OrderDragAdapter(getActivity());
-
-
         orderList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 leftAdapter.changeSelected(position);
-
-                if (dishesKindCList.size() != 0) {
-                    kindId = dishesKindCList.get(position).getId();
-                    orderDragAdapter.setMessage(dishesObjectCollection.get(kindId)
-                            , dishesCollection.get(kindId));
-                }
+                orderClassifyAdapter.setKindId(dishesKindCList.get(position).getId());
 
             }
         });
-        dishesRv.setAdapter(orderDragAdapter);
+        dishesRv.setAdapter(orderClassifyAdapter);
 
         dishesRv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Document document = (Document) orderDragAdapter.getItem(position);
+                String dishId = (String) orderClassifyAdapter.getItem(position);
 
-                Dish dishes = CDBHelper.getObjById(document.getId()
-                        , Dish.class);
-            if (!dishes.isSell()){
-                showDialog(dishes, position, orderDragAdapter.getNumbers()[position]);
-            }
-            }
-        });
-        orderList.performItemClick(orderList.getChildAt(0), 0, orderList
-                .getItemIdAtPosition(0));
-
-        orderDragAdapter.setChangerNumbersListener(new OrderDragAdapter.ChangerNumbersListener() {
-            @Override
-            public void getNumber(float[] numbers) {
-
-                //更新缓存数据
-                myNotifyDataSetChanged();
-
+                Document dishes = CDBHelper.getDocByID(dishId);
+                if (!dishes.getBoolean("sell")) {
+                    showDialog(dishes, position, orderClassifyAdapter.getNumber()[position]);
+                }
             }
         });
 
-        orderDragAdapter.setTouchListener(new OrderDragAdapter.SubtractionTouchListener() {
-            @Override
-            public void setSubtractionTouchListener(String id) {
-
-                List<String> stringList = new ArrayList<>();
-
-                for (int i = 0; i < goodsCList.size(); i++) {
-
-                    if (id.equals(goodsCList.get(i).getDishesId())) {
-
-                        stringList.add(goodsCList.get(i).getDishesTaste());
-
-                    }
-
-                }
-                orderDragAdapter.setList(stringList);
-            }
-
-        });
-
-        myNotifyDataSetChanged();
     }
-
-/*
-*
-     * 刷新所有展示数据
-*/
-
-
-    private void myNotifyDataSetChanged() {
-
-
-        //获取order数据
-        goodsCList = ((MainActivity) getActivity()).getGoodsList();
-
-        //重置菜品数量数据
-        resetNumber();
-
-        //如果有数据，数值复制给dishesCollection
-        if (!goodsCList.isEmpty()) {
-
-            //遍历已存的goodsList
-            for (Goods goods : goodsCList) {
-
-
-                //依次获取每个Goodc对应的映射表包含的dishe集合
-                List<Document> dishesCList = dishesObjectCollection.get(goods.getDishesKindId());
-
-                //获取缓存的数量对应数组
-                float[] floats = dishesCollection.get(goods.getDishesKindId());
-
-                //遍历disheList 得到所在映射表的位置
-                for (int i = 0; i < dishesCList.size(); i++) {
-
-                    //找到对应的位置
-                    if (dishesCList.get(i).getString("name").equals(goods.getDishesName())) {
-                        //   Log.e("DOAING", "修改前的数据：" + floats[i]);
-
-                        //   Log.e("DOAING", "添加的数据：" + goodsC.getDishesCount());
-                        floats[i] = goods.getDishesCount() + floats[i];
-                        //  Log.e("DOAING", "修改完成的数据：" + floats[i]);
-                        dishesCollection.put(goods.getDishesKindId(), floats);
-
-
-                        break;
-                    }
-                }
-                //保存
-
-            }
-
-
-        } else {
-            //重置所有标记
-
-            for (int i = 0; i < booleans.length; i++) {
-
-                booleans[i] = false;
-
-            }
-
-            //重置数量
-            resetNumber();
-
-
-        }
-
-        markDishesKindFlag();
-        leftAdapter.notifyDataSetChanged();
-        orderDragAdapter.notifyDataSetChanged();
-
-
-    }
-
-    private void resetNumber() {
-        //初始化数量
-        for (Map.Entry<String, float[]> entry : dishesCollection.entrySet()) {
-
-            float[] floats = dishesCollection.get(entry.getKey());
-
-            for (int i = 0; i < floats.length; i++) {
-
-                floats[i] = 0f;
-            }
-
-        }
-    }
-
-    private void markDishesKindFlag() {
-
-
-        //更新DishesKind 标记
-        for (int j = 0; j < dishesKindCList.size(); j++) {
-
-
-            String id = dishesKindCList.get(j).getId();
-
-
-            float[] floats = dishesCollection.get(id);
-            float count = 0f;
-            if(floats != null) {
-
-                for (float f : floats) {
-
-                    count += f;
-
-                }
-            }
-            if (count == 0f && booleans[j]) {
-
-                booleans[j] = false;
-
-            } else if (count > 0f && !booleans[j]) {
-
-                booleans[j] = true;
-            }
-
-        }
-
-    }
-
 
 /*
 *
      * 菜品选择弹出框编辑模块
 */
-    private void showDialog(final Dish dishes, final int position, float number) {
+    private void showDialog(final Document dishes, final int position, float number) {
 
         final DishesMessage dishesMessage = new DishesMessage();
 
         final List<String> tasteList = new ArrayList<>();
-        if (dishes.getTasteIds() != null && !dishes.getTasteIds().isEmpty()) {
+        if (dishes.getArray("tasteIds") != null && dishes.getArray("tasteIds").count() > 0) {
 
-            for (int i = 0; i < dishes.getTasteIds().size(); i++) {
-                Document document = CDBHelper.getDocByID(dishes.getTasteIds().get(i).toString());
+            for (int i = 0; i < dishes.getArray("tasteIds").count(); i++) {
+                Document document = CDBHelper.getDocByID(dishes.getArray("tasteIds").getString(i));
                 if (document == null || document.getString("name") == null) {
                     continue;
                 }
@@ -349,12 +179,12 @@ public class OrderFragment extends Fragment {
 
         amountView.setNumber(1.0 + "");
 
-        String all = MyBigDecimal.mul(amountView.getAmount() + "", dishes.getPrice() + "", 2);
+        String all = MyBigDecimal.mul(amountView.getAmount() + "", dishes.getFloat("price") + "", 2);
 
         price_tv.setText("总计 " + all + " 元");
 
 
-        dishesMessage.setDishKindId(dishes.getKindId());
+        dishesMessage.setDishKindId(dishes.getString("kindId"));
         dishesMessage.setOperation(true);
         dishesMessage.setSingle(false);
         final float[] l = new float[1];
@@ -369,7 +199,7 @@ public class OrderFragment extends Fragment {
             @Override
             public void OnChange(float ls, boolean flag) {
 
-                String all = MyBigDecimal.mul(ls + "", dishes.getPrice() + "", 2);
+                String all = MyBigDecimal.mul(ls + "", dishes.getFloat("price") + "", 2);
                 l[0] = Float.parseFloat(all);
 
 
@@ -378,13 +208,13 @@ public class OrderFragment extends Fragment {
             }
         });
 
-        dishesMessage.setName(dishes.getName());
+        dishesMessage.setName(dishes.getString("name"));
 
         dishesMessage.setDishesC(dishes);
 
         AlertDialog.Builder builder = new AlertDialog
                 .Builder(getActivity());
-        builder.setTitle(dishes.getName());
+        builder.setTitle(dishes.getString("name"));
         builder.setView(view);
         builder.setNegativeButton("取消", null);
         builder.setPositiveButton("确定", null);
@@ -398,13 +228,9 @@ public class OrderFragment extends Fragment {
 
                 if (amountView.getAmount() > 0f) {
 
-                    orderDragAdapter.updata(position, MyBigDecimal.add(amountView.getAmount(),0,2));
-
                     dishesMessage.setCount(amountView.getAmount());
 
                     EventBus.getDefault().postSticky(dishesMessage);
-
-                    myNotifyDataSetChanged();
 
                     alertDialog.dismiss();
 
@@ -423,33 +249,24 @@ public class OrderFragment extends Fragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
-
-        if (!hidden) {
-
-
-            myNotifyDataSetChanged();
-
-        }
     }
 
     public class DishesKindAdapter extends BaseAdapter {
 
 
         private int mSelect = 0; //选中项
-
+        boolean aBoolean[] = null;
+        Map<String,Integer> number = null;
 
         public void setaBoolean(boolean[] aBoolean) {
             this.aBoolean = aBoolean;
         }
 
-        boolean aBoolean[];
-
-        public void setNames(List<DishKind> names) {
+        public void setNames(List<DishesKind> names) {
             this.names = names;
         }
 
-
-        private List<DishKind> names;
+        private List<DishesKind> names;
 
         public DishesKindAdapter() {
         }
@@ -471,11 +288,11 @@ public class OrderFragment extends Fragment {
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
+        public View getView(final int i, View view, ViewGroup viewGroup) {
 
             LayoutInflater listContainerLeft;
             listContainerLeft = LayoutInflater.from(getActivity());
-            ListItemView listItemView = null;
+            final ListItemView listItemView;
             if (view == null) {
                 listItemView = new ListItemView();
                 view = listContainerLeft.inflate(R.layout.view_kindname_lv, null);
@@ -492,40 +309,19 @@ public class OrderFragment extends Fragment {
                 view.setBackgroundResource(R.drawable.animtablenoclick);
                 listItemView.tv_title.setTextColor(getActivity().getResources().getColor(R.color.md_black_1000));
             }
-
-            if (aBoolean[i]) {
-
-
-
-                listItemView.imagePoint.setVisibility(View.VISIBLE);
-
-                DishKind dishesKindC = dishesKindCList.get(i);
-
-                String id = dishesKindC.getId();
-                int count = 0;
-
-                for (int j = 0; j < goodsCList.size(); j++) {
-
-                    if(id.equals(goodsCList.get(j).getDishesKindId())){
-
-                        count++;
+            if (number != null) {
+                if (number.size() == 0) {
+                    listItemView.imagePoint.setVisibility(View.INVISIBLE);
+                } else {
+                    if (number.get(dishesKindCList.get(i).getId()) == null){
+                        listItemView.imagePoint.setVisibility(View.INVISIBLE);
+                    }else {
+                        listItemView.imagePoint.setVisibility(View.VISIBLE);
+                        listItemView.imagePoint.setText(number.get(dishesKindCList.get(i).getId()) + "");
                     }
                 }
-
-                listItemView.imagePoint.setText(count+"");
-
-
-
-
-
-
-            } else {
-
-                listItemView.imagePoint.setVisibility(View.INVISIBLE);
-                listItemView.imagePoint.setText(0+"");
             }
             listItemView.tv_title.setText(names.get(i).getName());
-
             return view;
 
         }
@@ -543,12 +339,39 @@ public class OrderFragment extends Fragment {
             TextView imagePoint;
         }
 
+        public void dishKindCount(List<Document> goodsDocList){
+            if (number == null){
+                number = new HashMap<>();
+            }
+            for (Document doc : resetNumber(goodsDocList)){
+                Document dishDoc = CDBHelper.getDocByID(doc.getString("dishId"));
+                if (number.get(dishDoc.getString("kindId")) == null){
+                    number.put(dishDoc.getString("kindId"),1);
+                }else {
+                    number.put(dishDoc.getString("kindId"),number.get(dishDoc.getString("kindId"))+1);
+                }
+            }
+        }
+
+        private List<Document> resetNumber(List<Document> goodsDocList) {
+            //初始化数量
+            number.clear();
+
+            Set set = new HashSet();
+            List<Document> newList = new ArrayList<>();
+            for (Iterator iter = goodsDocList.iterator(); iter.hasNext();){
+                Document object = (Document) iter.next();
+                if(set.add(object.getString("dishId"))) {
+                    newList.add(object);
+                }
+            }
+            return newList;
+        }
+
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void setOrderList(String s) {
-
-        myNotifyDataSetChanged();
 
     }
 
@@ -558,4 +381,6 @@ public class OrderFragment extends Fragment {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
     }
+
+
 }

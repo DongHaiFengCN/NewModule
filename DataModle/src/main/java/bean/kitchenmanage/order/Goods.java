@@ -11,6 +11,11 @@ package bean.kitchenmanage.order;
 public class Goods implements Cloneable {
 
 	/**
+	 * 方便对比
+	 */
+
+	private String id;
+	/**
 	 * 所包含菜品对象
 	 */
 
@@ -67,6 +72,14 @@ public class Goods implements Cloneable {
 	private int printFlag;
 
 	public Goods() {
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getDishesKindId() {

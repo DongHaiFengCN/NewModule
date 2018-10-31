@@ -9,11 +9,14 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 
+import com.couchbase.lite.Document;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import doaing.order.R;
+import tools.CDBHelper;
 /*
 *
  * Created by lenovo on 2017/11/9.
@@ -53,7 +56,8 @@ public class MyGridAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final HolderView holderView = (HolderView) holder;
-        holderView.itemRcTv.setText(tasteList.get(position));
+        Document doc = CDBHelper.getDocByID(tasteList.get(position));
+        holderView.itemRcTv.setText(doc.getString("name"));
         holderView.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

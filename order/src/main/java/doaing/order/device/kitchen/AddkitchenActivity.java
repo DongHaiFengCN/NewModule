@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -47,13 +46,11 @@ import com.gprinter.service.GpPrintService;
 import java.util.ArrayList;
 import java.util.List;
 
-import bean.kitchenmanage.dish.DishKind;
 import bean.kitchenmanage.kitchen.KitchenClient;
 import doaing.mylibrary.MyApplication;
 import doaing.order.R;
 import doaing.order.device.PortConfigurationActivity;
 import doaing.order.untils.GlobalConstant;
-import doaing.order.view.DeskActivity;
 import tools.CDBHelper;
 import tools.MyLog;
 import view.BaseToobarActivity;
@@ -194,7 +191,7 @@ public class AddkitchenActivity extends BaseToobarActivity implements View.OnCli
         btnConnectPrinter.setOnClickListener(this);
         Database db = CDBHelper.getDatabase();
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id)).from(DataSource.database(db))
-                .where(Expression.property("className").equalTo(Expression.string("DishKind")));
+                .where(Expression.property("className").equalTo(Expression.string("DishesKind")));
 
         try {
             ResultSet resultSet = query.execute();

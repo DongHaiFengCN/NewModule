@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="smartkitchen.com.main">
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 <application
     android:name="doaing.MainApplication"
     tools:replace="android:name"
@@ -14,6 +16,13 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
     </activity>
+    <activity
+        android:name="com.mob.tools.MobUIShell"
+        android:theme="@android:style/Theme.Translucent.NoTitleBar"
+        android:configChanges="keyboardHidden|orientation|screenSize"
+        android:windowSoftInputMode="stateHidden|adjustResize"/>
 
+    <meta-data android:name="Mob-AppKey" android:value="11534d36cd080"/>
+    <meta-data android:name="Mob-AppSecret" android:value="f498b1f609a79683545625dfab9a7917"/>
 </application>
 </manifest>

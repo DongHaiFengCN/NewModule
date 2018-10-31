@@ -10,11 +10,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.couchbase.lite.Document;
+import com.couchbase.lite.MutableDocument;
+
 import java.util.List;
 
 import bean.kitchenmanage.order.Goods;
 import doaing.order.R;
 import doaing.order.untils.MyBigDecimal;
+import tools.CDBHelper;
 
 /*
 *
@@ -25,8 +29,8 @@ import doaing.order.untils.MyBigDecimal;
 public class ShowParticularsAdapter extends BaseAdapter {
 
     private Activity activity;
-    private List<Goods> goodsCs;
-    public ShowParticularsAdapter(Activity activity, List<Goods> goodsCs)
+    private List<MutableDocument> goodsCs;
+    public ShowParticularsAdapter(Activity activity, List<MutableDocument> goodsCs)
     {
         this.activity = activity;
         this.goodsCs = goodsCs;
@@ -67,7 +71,7 @@ public class ShowParticularsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        if(goodsCs.get(position).getGoodsType()==1)//退菜
+        if(goodsCs.get(position).getInt("goodsType")==1)//退菜
         {
 
             viewHolder.mc.setTextColor(Color.parseColor("#fd7550"));
@@ -75,7 +79,7 @@ public class ShowParticularsAdapter extends BaseAdapter {
             viewHolder.dj.setTextColor(Color.parseColor("#fd7550"));
             viewHolder.sl.setTextColor(Color.parseColor("#fd7550"));
         }
-        else if (goodsCs.get(position).getGoodsType()==2)//赠菜
+        else if (goodsCs.get(position).getInt("goodsType")==2)//赠菜
         {
             viewHolder.mc.setTextColor(Color.parseColor("#56d16d"));
             viewHolder.kw.setTextColor(Color.parseColor("#56d16d"));
@@ -89,15 +93,23 @@ public class ShowParticularsAdapter extends BaseAdapter {
             viewHolder.dj.setTextColor(Color.parseColor("#3a3a3a"));
             viewHolder.sl.setTextColor(Color.parseColor("#3a3a3a"));
         }
-        viewHolder.mc.setText(goodsCs.get(position).getDishesName());
-        if(goodsCs.get(position).getDishesTaste() != null){
-            viewHolder.kw.setText(goodsCs.get(position).getDishesTaste());
+        Document dishDoc = CDBHelper.getDocByID(goodsCs.get(position).getString("dishId"));
+        if (goodsCs.get(position).getInt("goodsType") == 0) {
+            viewHolder.mc.setText(dishDoc.getString("name"));
+        }else if (goodsCs.get(position).getInt("goodsType") == 1) {
+            viewHolder.mc.setText(dishDoc.getString("name")+"(退)");
+        }else if (goodsCs.get(position).getInt("goodsType") == 2) {
+            viewHolder.mc.setText(dishDoc.getString("name")+"(赠)");
+        }
+        if(goodsCs.get(position).getString("tasteId") != null){
+            Document tasteDoc = CDBHelper.getDocByID(goodsCs.get(position).getString("tasteId"));
+            viewHolder.kw.setText(tasteDoc.getString("name"));
         }else{
             viewHolder.kw.setText("");
         }
-        viewHolder.dj.setText(""+ MyBigDecimal.mul(goodsCs.get(position).getPrice(),goodsCs.get(position).getDishesCount(),1));
+        viewHolder.dj.setText(""+ MyBigDecimal.mul(dishDoc.getFloat("price"),goodsCs.get(position).getFloat("count"),1));
 
-        viewHolder.sl.setText(goodsCs.get(position).getDishesCount()+"");
+        viewHolder.sl.setText(goodsCs.get(position).getFloat("count")+"");
 
         return convertView;
     }

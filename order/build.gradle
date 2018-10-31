@@ -5,15 +5,14 @@ if (isModule.toBoolean()) {
     apply plugin: 'com.android.library'
 }
 
-apply plugin: "com.mob.sdk"
+//apply plugin: "com.mob.sdk"
 
 // 在MobSDK的扩展中注册SMSSDK的相关信息
-MobSDK {
-    appKey "11534d36cd080"
-    appSecret "f498b1f609a79683545625dfab9a7917"
-
-    SMSSDK {}
-}
+//MobSDK {
+//    appKey "11534d36cd080"
+//    appSecret "f498b1f609a79683545625dfab9a7917"
+//    SMSSDK {}
+//}
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion

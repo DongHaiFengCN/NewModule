@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: "com.mob.sdk"
+//apply plugin: "com.mob.sdk"
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
 
@@ -25,7 +25,7 @@ dependencies {
     implementation project(':mylibrary')
     api project(':Login')
     api project(':order')
-    api project(':dishesmanager')
+    //api project(':dishesmanager')
     api project(':tablemanager')
     api project(':statistics')
 

@@ -242,9 +242,9 @@ public class DishesKindAdapter extends BaseAdapter {
                         public void onClick(View v) {
 
                             if (kindNameEt.getText().length() > 0) {
-                                MutableDocument document = new MutableDocument("DishKind." + ToolUtil.getUUID());
+                                MutableDocument document = new MutableDocument("DishesKind." + ToolUtil.getUUID());
                                 document.setString("channelId", ((MyApplication) context.getApplicationContext()).getCompany_ID());
-                                document.setString("className", "DishKind");
+                                document.setString("className", "DishesKind");
                                 document.setString("name", kindNameEt.getText().toString());
                                 try {
                                     database.save(document);
@@ -305,7 +305,7 @@ public class DishesKindAdapter extends BaseAdapter {
         //动态监听DishesKind信息
         Query query = QueryBuilder.select(SelectResult.expression(Meta.id))
                 .from(DataSource.database(this.database))
-                .where(Expression.property("className").equalTo(Expression.string("DishKind")));
+                .where(Expression.property("className").equalTo(Expression.string("DishesKind")));
 
 
         try {

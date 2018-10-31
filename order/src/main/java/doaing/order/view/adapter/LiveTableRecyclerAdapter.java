@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.couchbase.lite.DataSource;
 import com.couchbase.lite.Database;
+import com.couchbase.lite.Document;
 import com.couchbase.lite.Expression;
 import com.couchbase.lite.Meta;
 import com.couchbase.lite.Ordering;
@@ -26,10 +27,13 @@ import com.couchbase.lite.ResultSet;
 import com.couchbase.lite.SelectResult;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import doaing.order.R;
+import tools.CDBHelper;
 
 
 /**
@@ -67,13 +71,23 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
                     HashMap map = new HashMap();
                     map.put("id",row.getString(0));
                     map.put("state",row.getInt(1));
-                    map.put("name",row.getString(2));
-                    map.put("maxPersons",row.getInt("maxPersons"));
-                    map.put("currentPersions", row.getInt("currentPersons"));
+                    map.put("tableId",row.getString(2));
+                    map.put("reserverId",row.getString("reserverId"));
+                    map.put("currentPersons", row.getInt("currentPersons"));
                     hashMapList.add(map);
                     //documentList.add(row.getString(0));
                    Log.e("","live change table name="+row.getString(2));
                 }
+                Collections.sort(hashMapList, new Comparator<HashMap<String, Object>>() {
+                    @Override
+                    public int compare(HashMap<String, Object> stringObjectHashMap, HashMap<String, Object> t1) {
+                        Document stringDoc = CDBHelper.getDocByID((String) stringObjectHashMap.get("tableId"));
+                        Document t1Doc = CDBHelper.getDocByID((String) t1.get("tableId"));
+                        Integer  state1 = stringDoc.getInt("order");
+                        Integer  state2 = t1Doc.getInt("order");
+                        return state1.compareTo(state2);
+                    }
+                });
                 notifyDataSetChanged();
 
             }
@@ -83,13 +97,12 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
     {
         return QueryBuilder.select(SelectResult.expression(Meta.id),
                 SelectResult.expression(Expression.property("state")),
-                SelectResult.expression(Expression.property("name")),
-                SelectResult.expression(Expression.property("maxPersons")),
-                SelectResult.expression(Expression.property("currentPersons")))
+                SelectResult.expression(Expression.property("tableId")),
+                SelectResult.expression(Expression.property("reserverId")),
+                SelectResult.expression(Expression.property("currentPersons"))
+        )
                 .from(DataSource.database(db))
-                .where(Expression.property("className").equalTo(Expression.string("Table"))
-                        .and(Expression.property("areaId").equalTo(Expression.string(areaId))))
-                .orderBy(Ordering.property("num").ascending());
+                .where(Expression.property("msgTable_areaId").equalTo(Expression.string(areaId)));
     }
     @Override
     public TestHolderView onCreateViewHolder(ViewGroup parent, int viewType)
@@ -138,10 +151,15 @@ public class LiveTableRecyclerAdapter extends RecyclerView.Adapter<LiveTableRecy
         HashMap map = hashMapList.get(position);
         String docId=map.get("id").toString();
         int state = (int)map.get("state");
-        String name = map.get("name").toString();
+        String tableId = map.get("tableId").toString();
+        if (tableId == null){
+            return;
+        }
+        Document tableDoc = CDBHelper.getDocByID(tableId);
+        String name =tableDoc.getString("name");
         int maxPersons,currentPersions;
-        maxPersons = (int)map.get("maxPersons");
-        currentPersions = (int)map.get("currentPersions");
+        maxPersons = tableDoc.getInt("maxPersons");
+        currentPersions = (int)map.get("currentPersons");
         switch (state)
         {
             case 0:
